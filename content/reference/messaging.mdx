@@ -1,6 +1,5 @@
 ---
 title: Messaging & Email Relay
-aiDrafted: true
 ---
 
 # Messaging & Email Relay
@@ -11,25 +10,25 @@ When you email a discharge note, referral, or follow-up from Noctune, you choose
 
 Noctune supports three outbound-email modes:
 
-| Mode           | What the client sees                         | What happens to replies                          | Cost         |
-| -------------- | -------------------------------------------- | ------------------------------------------------ | ------------ |
-| **Noreply**    | From: `noreply@noctune.ai`                   | Bounce — client can't reply                      | Credits      |
-| **Nest**       | From: `{encounter-id}@mail.noctune.ai`       | Route into the Nest inbox, tied to the encounter | Subscription |
-| **Vet direct** | From: Noctune, Reply-To: your personal email | Go straight to your inbox                        | Subscription |
+| Mode           | What the client sees                         | What happens to replies                          | Cost                                    |
+| -------------- | -------------------------------------------- | ------------------------------------------------ | --------------------------------------- |
+| **Noreply**    | From: `noreply@noctune.ai`                   | Bounce — client can't reply                      | Free — included with every note         |
+| **Nest**       | From: `{encounter-id}@mail.noctune.ai`       | Route into the Nest inbox, tied to the encounter | Included in Lite / Pro / Practice plans |
+| **Vet direct** | From: Noctune, Reply-To: your personal email | Go straight to your inbox                        | Included in Lite / Pro / Practice plans |
 
-### Noreply (credits)
+### Noreply (free, included)
 
-The default. Use this when you just need to send something — discharge instructions, a receipt, an FYI — and don't need a response. Replies bounce with a polite message telling the client to call the practice. Each send draws from your credit balance.
+The default. Use this when you just need to send something — discharge instructions, a receipt, an FYI — and don't need a response. Replies bounce with a polite message telling the client to call the practice. **Noreply sends are free and included with every generated note** on any plan, including pay-per-note.
 
 ### Nest (subscription)
 
 The **Nest** is Noctune's bidirectional inbox. Each encounter gets a unique reply address (`{encounter-id}@mail.noctune.ai`), and any reply the client sends routes into the [Messages](/messages) thread for that encounter. This keeps the client's follow-up questions tied to the visit context, which other vets on your team can see.
 
-Nest replies are included in your subscription — no per-message credit cost.
+Nest is included in Lite, Pro, and Practice plans. Pay-per-note accounts can send via Noreply only.
 
 ### Vet direct (subscription)
 
-If you'd rather have replies go to your personal email inbox, choose Vet direct. This exposes your email address to the client, so it's best for relationships where that's already established. Subscription covers sending.
+If you'd rather have replies go to your personal email inbox, choose Vet direct. This exposes your email address to the client, so it's best for relationships where that's already established. Like Nest, it's included in any subscription plan.
 
 ## Choosing a mode
 
@@ -48,5 +47,5 @@ Replies from within the app always go back via Nest — once a conversation star
 
 ## What happens if a subscription lapses
 
-- **Noreply** keeps working as long as you have credits.
+- **Noreply** keeps working indefinitely — it's included with every generated note.
 - **Nest** and **Vet direct** require an active subscription. If yours lapses, new sends default to Noreply and existing Nest threads become read-only until you reactivate.
