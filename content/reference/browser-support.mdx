@@ -1,0 +1,36 @@
+***
+
+title: Browser Support
+aiDrafted: true
+---------------
+
+# Browser Support
+
+The Noctune web app is for **reviewing, editing, and managing** encounters. Recording itself happens on the [iOS app](#) (your phone is the microphone), or by uploading an existing audio file.
+
+## Tested browsers
+
+| Browser | Desktop           | Mobile                    |
+| ------- | ----------------- | ------------------------- |
+| Chrome  | Latest 2 versions | Android: latest           |
+| Safari  | Latest 2 versions | iOS: latest               |
+| Firefox | Latest 2 versions | Not tested — likely works |
+| Edge    | Latest 2 versions | —                         |
+
+Internet Explorer is not supported. Chromium forks (Brave, Arc, etc.) generally work but aren't formally tested.
+
+## Microphone permission
+
+The web app does not record audio — there's no need to grant microphone permission to the browser. Recording runs exclusively on the iOS app, which handles permissions through iOS itself.
+
+## Audio playback
+
+To play back a recording on the web, your browser needs standard `<audio>` support — universal in all tested browsers. No plugins or extensions needed.
+
+## Uploading audio
+
+Upload from the web accepts any of the formats listed in [Supported Formats & Limits](/reference/supported-formats). The upload happens over HTTPS and resumes automatically if your connection drops mid-upload.
+
+## Screen reader / keyboard
+
+All core flows are keyboard-accessible: browsing encounters, editing the SOAP note, managing patients and templates. We test with VoiceOver (macOS) and NVDA (Windows).

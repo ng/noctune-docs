@@ -1,0 +1,43 @@
+***
+
+title: Supported Formats & Limits
+aiDrafted: true
+---------------
+
+# Supported Formats & Limits
+
+What Noctune accepts when you upload or record audio.
+
+## Accepted audio formats
+
+Any of these work without transcoding on your end:
+
+* **MP3** — most common
+* **M4A** (AAC in MP4 container) — iPhone voice memos
+* **AAC** (raw)
+* **WAV** (PCM / Linear16)
+* **FLAC**
+* **Ogg**, **Opus**
+* **WebM** (audio track)
+* **MP4** (audio-only)
+* **MP2**
+
+If you have an unusual source, try it — Deepgram reports support for 100+ codec variants. If an upload rejects, transcode to MP3 or M4A and retry.
+
+## File size and duration
+
+| Limit                              | Value                                                 |
+| ---------------------------------- | ----------------------------------------------------- |
+| Max file size per upload           | `{TODO: confirm — typical 500 MB}`                    |
+| Max duration per encounter         | `{TODO: confirm — typical 3 hours}`                   |
+| Append audio to existing encounter | Yes, see [Review & Edit](/encounters/review-and-edit) |
+
+For appointments longer than the per-encounter cap, record in segments and upload each as its own encounter, or stop/restart recording mid-visit.
+
+## Image and document attachments
+
+Not yet supported. Messaging threads accept text only; discharge notes are text with optional PDF export.
+
+## Browser recording
+
+Live recording in the browser uses `MediaRecorder` and produces **WebM/Opus** (Chrome, Edge) or **MP4/AAC** (Safari, some iOS browsers). You don't need to configure anything — Noctune handles both.

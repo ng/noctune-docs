@@ -1,0 +1,58 @@
+***
+
+title: Data Storage & Retention
+aiDrafted: true
+---------------
+
+# Data Storage & Retention
+
+Noctune stores three things: your **audio recordings**, the **transcripts** derived from them, and the **SOAP notes** you edit. This page explains where each lives, how long, and what it costs to keep old material accessible.
+
+## Where your data lives
+
+| Data                            | Where it's stored             | Encryption                      |
+| ------------------------------- | ----------------------------- | ------------------------------- |
+| Audio files                     | AWS S3 (US region)            | AES-256 at rest, TLS in transit |
+| Transcripts                     | Postgres (managed, US region) | AES-256 at rest                 |
+| SOAP notes                      | Postgres (managed, US region) | AES-256 at rest                 |
+| Metadata (patient names, dates) | Postgres                      | AES-256 at rest                 |
+
+All data is stored in the United States. We don't replicate to other regions without explicit customer request.
+
+## Retention windows
+
+Included in every plan:
+
+| Data                  | Retention                                  | Notes                                         |
+| --------------------- | ------------------------------------------ | --------------------------------------------- |
+| Audio files           | `{TODO: confirm — typical 90 days active}` | Auto-moved to archival tier after the window  |
+| Transcripts           | Indefinite                                 | Small enough that storage is effectively free |
+| SOAP notes            | Indefinite                                 | Same as transcripts                           |
+| Messages (Nest inbox) | Indefinite                                 |                                               |
+
+Your **SOAP notes and transcripts are kept for as long as you have an account** — you never lose the record of what was said.
+
+## Archival tier and post-retention access
+
+After the audio retention window, your raw audio is moved to a cheaper **archival tier** (AWS S3 Intelligent-Tiering). You can still access it, but with two changes:
+
+1. **Restoration takes a few minutes** — the file has to thaw before playback or reprocessing.
+2. **There's a small per-request cost** to restore, passed through on your next invoice.
+
+Transcripts and SOAP notes are *never* archived — they remain instantly accessible for the life of your account.
+
+![Encounter detail page with an Archived audio banner and a Restore button](https://placecats.com/900/360)
+
+> **Why:** Raw audio is by far the bulk of storage cost. Archival cuts ongoing storage fees by ~90% without touching the structured data you actually reference day-to-day.
+
+## Deleting data
+
+You can delete any encounter from its detail page. This removes the audio, transcript, SOAP note, and messages associated with it. Deletion is permanent and happens within 30 days across all backups.
+
+## Account closure
+
+Closing your account deletes everything within 30 days. Request an export first (Settings → Billing → Request data export) if you want a copy.
+
+## Compliance
+
+Noctune follows healthcare-adjacent data handling practices. Veterinary records are not covered by HIPAA in the US, but we apply equivalent controls: encryption, access logging, role-based permissions, and audit trails. Contact support for a compliance brief if you need one for a corporate procurement review.

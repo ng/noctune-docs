@@ -2,12 +2,30 @@
   "name": "noctune-docs",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@10.33.0",
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
+    "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
+    "check": "pnpm format:check && pnpm lint:md && pnpm tsc && pnpm build",
+    "dev": "next dev",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint:md": "remark 'content/**/*.{md,mdx}' --frail --quiet",
+    "lint:md:fix": "remark 'content/**/*.{md,mdx}' --output --quiet",
+    "prepare": "husky",
     "start": "next start",
-    "lint": "next lint"
+    "tsc": "tsc --noEmit"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "prettier --write"
+    ],
+    "*.{md,mdx}": [
+      "prettier --write",
+      "remark --output --quiet"
+    ],
+    "*.{json,yml,yaml,css}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "next": "16.2.1",
@@ -20,6 +38,18 @@
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "pagefind": "^1.5.2",
+    "prettier": "^3.8.3",
+    "prettier-plugin-packagejson": "^2.5.22",
+    "remark-cli": "12.0.1",
+    "remark-lint": "10.0.1",
+    "remark-lint-no-dead-urls": "2.0.1",
+    "remark-mdx": "3.1.1",
+    "remark-preset-lint-markdown-style-guide": "6.0.1",
+    "remark-preset-lint-recommended": "7.0.1",
     "typescript": "^5.7.0"
-  }
+  },
+  "packageManager": "pnpm@10.33.0"
 }

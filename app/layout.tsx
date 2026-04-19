@@ -3,25 +3,26 @@ import { Footer, Layout, Navbar } from 'nextra-theme-docs'
 import { Banner, Head } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import 'nextra-theme-docs/style.css'
+import { Logo } from '../components/logo'
+import { DocsFooter } from '../components/footer'
 
 export const metadata: Metadata = {
   title: {
     default: 'Noctune Docs',
     template: '%s — Noctune Docs',
   },
-  description: 'User guides and API reference for Noctune.',
+  description: 'User guides and technical reference for Noctune.',
 }
 
 const banner = <Banner storageKey="noctune-docs-launch">Noctune docs are in preview.</Banner>
 
-const navbar = (
-  <Navbar
-    logo={<b>Noctune</b>}
-    projectLink="https://github.com/ng/noctune-docs"
-  />
-)
+const navbar = <Navbar logo={<Logo />} />
 
-const footer = <Footer>© {new Date().getFullYear()} Noctune</Footer>
+const footer = (
+  <Footer>
+    <DocsFooter />
+  </Footer>
+)
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -34,6 +35,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           footer={footer}
           pageMap={await getPageMap()}
           docsRepositoryBase="https://github.com/ng/noctune-docs/tree/main"
+          nextThemes={{ defaultTheme: 'light' }}
         >
           {children}
         </Layout>
