@@ -18,24 +18,22 @@ Any of these work without transcoding on your end:
 - **Ogg**, **Opus**
 - **WebM** (audio track)
 - **MP4** (audio-only)
-- **MP2**
+- **3GPP**, **AMR**
 
-If you have an unusual source, try it — Deepgram reports support for 100+ codec variants. If an upload rejects, transcode to MP3 or M4A and retry.
+Full allow-list: AAC, AMR, FLAC, MP3, MP4, M4A, Ogg, Opus, WAV, WebM, 3GPP, 3GPP2. If you have an unusual source and it rejects, transcode to MP3 or M4A and retry.
 
 ## File size and duration
 
 | Limit                              | Value                                                 |
 | ---------------------------------- | ----------------------------------------------------- |
-| Max file size per upload           | `{TODO: confirm — typical 500 MB}`                    |
-| Max duration per encounter         | `{TODO: confirm — typical 3 hours}`                   |
+| Max file size per upload           | 500 MB                                                |
+| Max duration per encounter         | 4 hours                                               |
 | Append audio to existing encounter | Yes, see [Review & Edit](/encounters/review-and-edit) |
 
-For appointments longer than the per-encounter cap, record in segments and upload each as its own encounter, or stop/restart recording mid-visit.
+For appointments longer than 4 hours, record in segments and upload each as its own encounter, or stop/restart recording mid-visit.
 
 ## Image and document attachments
 
-Not yet supported. Messaging threads accept text only; discharge notes are text with optional PDF export.
+Inbound email threads (Nest) **can receive attachments** sent by clients — photos, lab results, forms. They're stored alongside the thread and visible in the encounter. You **cannot send attachments** from Noctune; outbound sends are text-only.
 
-## Browser recording
-
-Live recording in the browser uses `MediaRecorder` and produces **WebM/Opus** (Chrome, Edge) or **MP4/AAC** (Safari, some iOS browsers). You don't need to configure anything — Noctune handles both.
+Noctune does **not** offer PDF export of SOAP notes or discharge summaries. Use the copy-to-clipboard or email flows to get content out.
