@@ -99,9 +99,6 @@ export function DocsFooter() {
           <a href={`${BRAND_URL}/cookies`} style={linkStyle}>
             Cookie Policy
           </a>
-          <a href={`${BRAND_URL}/hipaa`} style={linkStyle}>
-            HIPAA Compliance
-          </a>
         </div>
       </div>
 
