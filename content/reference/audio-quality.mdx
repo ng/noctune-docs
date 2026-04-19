@@ -1,0 +1,66 @@
+***
+
+title: Audio Quality
+aiDrafted: true
+---------------
+
+# Audio Quality
+
+Noctune's transcription accuracy depends on the audio it receives. This page covers what makes a clean recording and how to avoid the most common problems. The underlying transcription engine (Deepgram) accepts a very wide range of inputs, but a few habits make a noticeable difference.
+
+## Quick checklist
+
+* **Mic close, mouth forward.** 6–12 inches from your mouth is a good target.
+* **Record in a quiet space.** HVAC, dishwashers, and hallway chatter degrade accuracy more than you'd expect.
+* **One speaker at a time when possible.** Simultaneous speech is the #1 cause of garbled transcripts.
+* **Keep levels consistent.** Avoid shouting then whispering — the AI normalizes, but extremes introduce errors.
+
+## Sample rate
+
+Noctune handles any sample rate Deepgram does — commonly 8000, 16000, 24000, 32000, or 48000 Hz. In practice you don't need to think about this; recording at your device's native rate is correct. **Don't upsample** telephony audio (8 kHz) to 16 kHz — it introduces artifacts that hurt accuracy.
+
+| Source                      | Native rate | Good for Noctune?            |
+| --------------------------- | ----------- | ---------------------------- |
+| iPhone / Android voice memo | 44.1–48 kHz | Yes                          |
+| Browser `getUserMedia`      | 48 kHz      | Yes                          |
+| Bluetooth headset (HFP)     | 8–16 kHz    | Yes, but avoid when possible |
+| Desk phone handset          | 8 kHz       | Yes — don't resample         |
+
+## Format and codec
+
+Any of these work:
+
+* **MP3**, **M4A** (AAC), **AAC** — what most phone voice memos produce
+* **WAV** (PCM / Linear16), **FLAC** — higher bandwidth, no compression artifacts
+* **Ogg**, **Opus**, **WebM** — common for browser recording
+
+If you have a choice, favor **FLAC** or **WAV** (lossless) for archival clarity and **M4A/MP3** for smaller files. AAC and MP3 at reasonable bitrates (96 kbps+) are indistinguishable from lossless for transcription purposes.
+
+## Channels
+
+Mono is fine and what most voice recorders produce. Stereo offers no accuracy benefit unless each speaker is on a separate channel, which is rare for in-room recordings.
+
+## Reducing noise
+
+Things that noticeably help:
+
+1. **Clip-on lavalier or headset mic** over built-in laptop/phone mics — closer to mouth, less room.
+2. **Carpet, curtains, soft furniture** dampen reverb; tiled exam rooms are the worst case.
+3. **Turn off ceiling fans, radios, and diagnostic equipment** during the appointment when feasible.
+4. **Don't cover the mic.** Pockets muffle the mid-range frequencies speech relies on.
+
+## Length
+
+There is no lower bound on length. Upper bound is covered in [Supported Formats & Limits](/reference/supported-formats).
+
+## Common symptoms and fixes
+
+| Symptom                    | Likely cause                    | Fix                                                              |
+| -------------------------- | ------------------------------- | ---------------------------------------------------------------- |
+| Words dropped or merged    | Mic too far / mouth turned away | Move mic closer; face the mic                                    |
+| Repeated words ("the the") | Echo / reverb                   | Record in softer room                                            |
+| Owner's speech missing     | One-sided mic placement         | Place mic between you and the owner                              |
+| Drug names wrong           | Fast speech / background noise  | Speak drug names slightly slower; add to [templates](/templates) |
+| Breed names wrong          | Uncommon breed + noise          | Spell out once at start of visit                                 |
+
+Sources: Deepgram [Supported Audio Formats](https://developers.deepgram.com/docs/supported-audio-formats), [Determining Your Audio Format](https://developers.deepgram.com/docs/determining-your-audio-format-for-live-streaming-audio).

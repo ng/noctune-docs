@@ -1,0 +1,53 @@
+***
+
+title: Messaging & Email Relay
+aiDrafted: true
+---------------
+
+# Messaging & Email Relay
+
+When you email a discharge note, referral, or follow-up from Noctune, you choose how replies get back to you. The choice affects both the client's experience and what (if anything) it costs you.
+
+## The three reply modes
+
+Noctune supports three outbound-email modes:
+
+| Mode           | What the client sees                         | What happens to replies                          | Cost         |
+| -------------- | -------------------------------------------- | ------------------------------------------------ | ------------ |
+| **Noreply**    | From: `noreply@noctune.ai`                   | Bounce — client can't reply                      | Credits      |
+| **Nest**       | From: `{encounter-id}@mail.noctune.ai`       | Route into the Nest inbox, tied to the encounter | Subscription |
+| **Vet direct** | From: Noctune, Reply-To: your personal email | Go straight to your inbox                        | Subscription |
+
+### Noreply (credits)
+
+The default. Use this when you just need to send something — discharge instructions, a receipt, an FYI — and don't need a response. Replies bounce with a polite message telling the client to call the practice. Each send draws from your credit balance.
+
+### Nest (subscription)
+
+The **Nest** is Noctune's bidirectional inbox. Each encounter gets a unique reply address (`{encounter-id}@mail.noctune.ai`), and any reply the client sends routes into the [Messages](/messages) thread for that encounter. This keeps the client's follow-up questions tied to the visit context, which other vets on your team can see.
+
+Nest replies are included in your subscription — no per-message credit cost.
+
+### Vet direct (subscription)
+
+If you'd rather have replies go to your personal email inbox, choose Vet direct. This exposes your email address to the client, so it's best for relationships where that's already established. Subscription covers sending.
+
+## Choosing a mode
+
+When you compose a discharge or follow-up email, the mode picker appears above the recipient field. The default is **Noreply** for one-off courtesy sends.
+
+![Email composer with a From Mode selector showing Noreply, Nest, and Vet direct options](https://placecats.com/900/380)
+
+## Nest inbox
+
+Messages that arrive via Nest show up in both:
+
+* The per-encounter thread (open the encounter → Messages tab)
+* The global [Messages](/messages) inbox with an unread badge
+
+Replies from within the app always go back via Nest — once a conversation starts in the Nest, it stays there.
+
+## What happens if a subscription lapses
+
+* **Noreply** keeps working as long as you have credits.
+* **Nest** and **Vet direct** require an active subscription. If yours lapses, new sends default to Noreply and existing Nest threads become read-only until you reactivate.
