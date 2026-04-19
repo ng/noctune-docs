@@ -1,6 +1,5 @@
 import { generateStaticParamsFor, importPage } from 'nextra/pages'
 import { useMDXComponents as getMDXComponents } from 'nextra-theme-docs'
-import { AIDraft } from '../../components/ai-draft'
 
 export const generateStaticParams = generateStaticParamsFor('mdxPath')
 
@@ -18,13 +17,12 @@ export default async function Page(props: PageProps) {
   const params = await props.params
   const result = await importPage(params.mdxPath)
   const { default: MDXContent, ...rest } = result
-  const aiDrafted = (rest.metadata as { aiDrafted?: boolean }).aiDrafted === true
   const Wrapper = getMDXComponents().wrapper
-  const content = (
-    <>
-      {aiDrafted && <AIDraft />}
+  return Wrapper ? (
+    <Wrapper {...rest}>
       <MDXContent {...props} params={params} />
-    </>
+    </Wrapper>
+  ) : (
+    <MDXContent {...props} params={params} />
   )
-  return Wrapper ? <Wrapper {...rest}>{content}</Wrapper> : content
 }
