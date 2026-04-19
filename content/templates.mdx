@@ -4,22 +4,197 @@ title: Templates
 
 # Templates
 
-Templates control how Noctune formats a SOAP note. You can use the built-in defaults, customize them, or build your own from scratch.
+Templates control how Noctune formats a SOAP note. You can use the built-in defaults, customize them, or build your own from scratch. A well-written template is the single biggest lever you have over note quality — Noctune's AI follows your template carefully, so the quality of the output is bounded by the quality of the prompt you give it.
 
 ![Templates page with system templates, my templates, and community library sections](https://placecats.com/960/540)
 
 ## System vs. user templates
 
-- **System templates** are the Noctune-provided defaults (Wellness Exam, Emergency, Dental, etc.). You can't edit them, but you can duplicate one and modify the copy.
+- **System templates** are the Noctune-provided defaults (Wellness Exam, Emergency Triage, Dental, General SOAP). You can't edit them, but you can duplicate one and modify the copy.
 - **My templates** are yours. Edit, reorder, and delete freely.
 
 ![Side-by-side view of a system template and a user-owned template with edit controls](https://placecats.com/900/440)
 
 ## Creating a template
 
-Click **New Template**. A template is mostly a structured prompt — you describe each section (Subjective, Objective, Assessment, Plan) and any conventions you want followed (e.g. "use metric weights," "bullet Plan items").
+Click **New Template**. A template is a structured prompt: markdown headings for each section (Subjective, Objective, Assessment, Plan) plus one or two sentences describing what belongs in each.
 
 ![New template editor with section blocks for Subjective, Objective, Assessment, Plan](https://placecats.com/900/520)
+
+## Editing your own templates
+
+Open any template under **My Templates** and click **Edit**. You're editing plain markdown — headings (`##`, `###`), bullets, and instruction prose.
+
+![Template edit screen showing markdown editor on the left and live preview on the right](https://placecats.com/900/520)
+
+Save when you're done. Your next encounter using that template will reflect the changes immediately; past encounters keep whatever was generated at the time.
+
+## Auto-review on save
+
+When you save a template, Noctune automatically runs it through an AI reviewer and shows you suggestions: missing sections, vague instructions, sample data that might leak into real notes, and structural issues that make the output worse. Each suggestion has a **severity** (error / warning / info) and a suggested fix you can accept with one click.
+
+![Template review panel showing a quality score, summary, and list of suggestions with severity badges](https://placecats.com/900/460)
+
+You're **free to ignore** any suggestion — nothing is enforced. But the reviewer catches real problems that make notes worse, and applying its suggestions is the fastest way to get measurably better output. Think of it as a linter for your prompts.
+
+Common categories the reviewer flags:
+
+- **Sample data** — e.g. "Patient: Fluffy" in the template; the AI sometimes copies example names into real notes
+- **Missing section** — a standard section (Plan, Assessment) is absent
+- **Structure** — inconsistent heading levels, missing blank lines, or overlapping section purposes
+- **Placeholder** — a `{like_this}` placeholder without an instruction for what to fill in
+- **Instruction** — a section header with no guidance for what to write
+- **Best practice** — vet-specific advice like "specify metric vs. imperial units"
+
+## Writing LLM-friendly templates
+
+A few patterns reliably produce better notes. These are why our system templates look the way they do.
+
+### 1. Explicit section instructions
+
+**Bad:**
+
+```markdown
+## Subjective
+```
+
+**Good:**
+
+```markdown
+## Subjective
+
+Summarize the pet owner's concerns, symptoms, and history as provided.
+```
+
+**Why:** LLMs don't infer context from section names alone — especially the first time they see your template. One-sentence instructions shape what gets included and what's skipped.
+
+### 2. Say what to do when data is missing
+
+**Good:**
+
+```markdown
+### Objective
+
+Extract and summarize **all** examination findings, tests, and vital signs.
+If a finding is not mentioned in the transcript, omit it. Do not invent values.
+```
+
+**Why:** Models default to filling gaps plausibly — which in medical context means hallucinating vitals. Telling them explicitly to omit is the single most important anti-hallucination instruction.
+
+### 3. Use markdown headings, not custom formatting
+
+**Bad:** `SUBJECTIVE: | OBJECTIVE: | ...`
+
+**Good:** `### Subjective` on its own line
+
+**Why:** Models respect `##` / `###` more reliably than ALL-CAPS or custom delimiters. The output ends up better-structured with no extra effort.
+
+### 4. Anti-truncation instructions
+
+**Good:**
+
+```markdown
+### Objective
+
+Include every exam finding — do not truncate. If the visit contains multiple
+exam descriptions (e.g. separate sections on soft tissue and vitals), merge
+them into one comprehensive summary.
+```
+
+**Why:** Default model behavior is to summarize and compress. For clinical notes, you usually want the opposite. Tell it.
+
+### 5. Put meta-instructions at the top
+
+**Good:**
+
+```markdown
+## Formatting conventions
+
+- Use **metric units** (kg, cm, °C).
+- Bullet Plan items; prose everywhere else.
+- Reference the patient by name, not "the dog."
+
+## SOAP Note
+
+### Subjective
+
+...
+```
+
+**Why:** Instructions near the top carry more weight than instructions buried in section 4. If you want a convention to apply globally, write it globally.
+
+### 6. No sample data
+
+**Bad:**
+
+```markdown
+**Patient:** Fluffy
+**Weight:** 12.3 kg
+```
+
+**Good:**
+
+```markdown
+**Patient:** (patient's name from transcript)
+**Weight:** (weight in kg, or omit if not mentioned)
+```
+
+**Why:** Sample names and numbers sometimes get copied into real notes. Parenthesized instructions are clearly not data and the model fills them with real content.
+
+### 7. One section, one purpose
+
+If Assessment asks for "diagnosis and recommended treatments" and Plan asks for "treatments and follow-ups," you'll get duplicate content in both. Each section should have one job.
+
+## Example: an annotated template
+
+Here's a minimal wellness-exam template that follows all seven rules:
+
+```markdown
+## Formatting conventions
+
+- Use metric units (kg, cm, °C).
+- Omit any section where the transcript has no information — do not invent values.
+- Reference the patient by name.
+
+## SOAP Note
+
+### Subjective
+
+Summarize the owner's reported concerns, symptom timeline, and relevant history.
+
+### Objective
+
+All physical exam findings, weight, vitals (HR, RR, Temp, CRT, MM color),
+and point-of-care test results mentioned in the transcript. Merge duplicate
+findings into one comprehensive summary.
+
+### Assessment
+
+The veterinarian's working diagnosis and any differentials mentioned.
+
+### Plan
+
+- **Treatments and medications** (dose, route, duration)
+- **Follow-up** (timing and trigger)
+- **Client education points** covered during the visit
+
+## Client Communications
+
+Summarize what was discussed with the owner:
+
+- Findings shared
+- Risks or side effects explained
+- Questions asked and answered
+- Recommendations accepted or declined
+```
+
+**What each piece is doing:**
+
+- Formatting conventions at the top cover units, anti-hallucination, and voice globally — so each section doesn't need to repeat them.
+- Section instructions are one sentence, action-oriented.
+- Objective has an explicit anti-truncation instruction because incomplete vitals is a common failure mode.
+- Plan uses bullets (matches PIMS paste targets); Subjective and Assessment stay as prose.
+- Client Communications is separate from Plan — Plan is what you're doing, Client Communications is what you said. Separating them keeps both clean.
 
 ## Reordering
 
@@ -35,4 +210,4 @@ Every template (yours or a system template) has a **Duplicate** action. The copy
 
 ## Community templates
 
-See templates other vets have shared in the [Community Template Library](/community).
+See templates other vets have shared in the [Community Template Library](/community). Fork anything that looks useful and edit the copy.
