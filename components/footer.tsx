@@ -65,27 +65,30 @@ export function DocsFooter() {
           <a href={`${BRAND_URL}/#pricing`} style={linkStyle}>
             Pricing
           </a>
-          <a href={`${BRAND_URL}/#integrations`} style={linkStyle}>
-            Integrations
+          <a href={`${BRAND_URL}/#faq`} style={linkStyle}>
+            FAQ
           </a>
-          <a href={`${BRAND_URL}/#updates`} style={linkStyle}>
-            Updates
+          <a href={`${BRAND_URL}/#students`} style={linkStyle}>
+            For students
+          </a>
+          <a href={`${BRAND_URL}/platform`} style={linkStyle}>
+            Platform / API
+          </a>
+          <a href="/" style={linkStyle}>
+            Docs
           </a>
         </div>
 
         <div style={columnStyle}>
-          <div style={headingStyle}>Company</div>
-          <a href={`${BRAND_URL}/about`} style={linkStyle}>
-            About
+          <div style={headingStyle}>Account</div>
+          <a href={`${BRAND_URL}/sign-in`} style={linkStyle}>
+            Sign in
           </a>
-          <a href={`${BRAND_URL}/blog`} style={linkStyle}>
-            Blog
-          </a>
-          <a href={`${BRAND_URL}/careers`} style={linkStyle}>
-            Careers
+          <a href={`${BRAND_URL}/sign-up`} style={linkStyle}>
+            Get 10 free credits
           </a>
           <a href="mailto:jon@noctune.ai" style={linkStyle}>
-            Contact
+            Email us
           </a>
         </div>
 
