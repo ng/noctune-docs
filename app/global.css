@@ -16,6 +16,23 @@
 
   --noctune-teal-tint: rgba(42, 127, 120, 0.08);
   --noctune-green-tint: rgba(29, 110, 85, 0.1);
+
+  /*
+   * Override Nextra's HSL-computed palette with the exact brand hex.
+   * Nextra derives primary-50..800 from --nextra-primary-hue/saturation/lightness,
+   * which rounds our target #2a7f78 to rgb(42, 126, 119) — one off.
+   * Pin the exact steps so active nav, links, and highlights match the
+   * noctune-core button background exactly.
+   */
+  --x-color-primary-50: #e9f3f2;
+  --x-color-primary-100: #d4e7e5;
+  --x-color-primary-200: #a9cfcb;
+  --x-color-primary-300: #7eb7b1;
+  --x-color-primary-400: #539f97;
+  --x-color-primary-500: #3d8d85;
+  --x-color-primary-600: #2a7f78;
+  --x-color-primary-700: #236d67;
+  --x-color-primary-800: #1a5c57;
 }
 
 html.dark {
@@ -26,6 +43,17 @@ html.dark {
   --noctune-green-dark: #1d6e55;
   --noctune-teal-tint: rgba(91, 179, 172, 0.08);
   --noctune-green-tint: rgba(75, 196, 143, 0.08);
+
+  /* Dark-mode palette — shift the scale brighter so contrast holds. */
+  --x-color-primary-50: #0f2e2b;
+  --x-color-primary-100: #133832;
+  --x-color-primary-200: #1a4c44;
+  --x-color-primary-300: #236d64;
+  --x-color-primary-400: #2f8d82;
+  --x-color-primary-500: #4ba8a0;
+  --x-color-primary-600: #5bb3ac;
+  --x-color-primary-700: #8ed3cd;
+  --x-color-primary-800: #b4e4df;
 }
 
 /* Page background — teal-to-green radial tint, subtle. */
