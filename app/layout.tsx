@@ -28,7 +28,13 @@ const footer = (
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
-      <Head />
+      <Head
+        color={{
+          hue: 175,
+          saturation: 50,
+          lightness: { light: 33, dark: 60 },
+        }}
+      />
       <body>
         <Layout
           banner={banner}
