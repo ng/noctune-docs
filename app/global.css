@@ -1,29 +1,39 @@
 /* Noctune brand theming on top of Nextra defaults. */
 
 :root {
-  /* Brand teal #2a7f78 ≈ hsl(175, 50%, 33%) */
+  /* Noctune teal from noctune-core theme.ts: #2a7f78 */
+  --noctune-teal: #2a7f78;
+  --noctune-teal-dark: #1a5c57;
+  --noctune-teal-darker: #0f3d3a;
+  /* Pushed a touch greener for the landing gradient per product direction. */
+  --noctune-green: #1d6e55;
+  --noctune-green-dark: #0e4a38;
+
+  /* Drive Nextra's accent colors to match — HSL of #2a7f78 ≈ (175, 50%, 33%). */
   --nextra-primary-hue: 175deg;
   --nextra-primary-saturation: 50%;
   --nextra-primary-lightness: 33%;
 
-  --noctune-teal: #2a7f78;
-  --noctune-teal-dark: #1a5c57;
-  --noctune-teal-50: rgba(42, 127, 120, 0.06);
-  --noctune-teal-100: rgba(42, 127, 120, 0.12);
+  --noctune-teal-tint: rgba(42, 127, 120, 0.08);
+  --noctune-green-tint: rgba(29, 110, 85, 0.1);
 }
 
 html.dark {
   --nextra-primary-lightness: 60%;
   --noctune-teal: #5bb3ac;
   --noctune-teal-dark: #2a7f78;
+  --noctune-green: #4bc48f;
+  --noctune-green-dark: #1d6e55;
+  --noctune-teal-tint: rgba(91, 179, 172, 0.08);
+  --noctune-green-tint: rgba(75, 196, 143, 0.08);
 }
 
-/* Page background — soft brand-tinted gradient so it doesn't read as plain docs. */
+/* Page background — teal-to-green radial tint, subtle. */
 html,
 body {
   background:
-    radial-gradient(ellipse 1400px 600px at 20% -10%, var(--noctune-teal-50), transparent 60%),
-    radial-gradient(ellipse 1200px 500px at 100% 5%, var(--noctune-teal-100), transparent 55%),
+    radial-gradient(ellipse 1400px 600px at 15% -10%, var(--noctune-teal-tint), transparent 60%),
+    radial-gradient(ellipse 1300px 520px at 95% 0%, var(--noctune-green-tint), transparent 55%),
     #fafaf8;
   background-attachment: fixed;
 }
@@ -31,15 +41,20 @@ body {
 html.dark,
 html.dark body {
   background:
-    radial-gradient(ellipse 1400px 600px at 20% -10%, rgba(91, 179, 172, 0.07), transparent 60%),
-    radial-gradient(ellipse 1200px 500px at 100% 5%, rgba(91, 179, 172, 0.04), transparent 55%),
+    radial-gradient(ellipse 1400px 600px at 15% -10%, rgba(91, 179, 172, 0.06), transparent 60%),
+    radial-gradient(ellipse 1300px 520px at 95% 0%, rgba(75, 196, 143, 0.05), transparent 55%),
     #0f1011;
   background-attachment: fixed;
 }
 
-/* Homepage H1 gets the brand-gradient treatment used on noctune.ai. */
+/* H1 uses the brand gradient — teal into a greener teal. */
 article h1:first-of-type {
-  background: linear-gradient(135deg, var(--noctune-teal) 0%, var(--noctune-teal-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--noctune-teal) 0%,
+    var(--noctune-green) 60%,
+    var(--noctune-green-dark) 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -47,17 +62,36 @@ article h1:first-of-type {
   letter-spacing: -0.015em;
 }
 
+/* Match link color to the main site exactly (MUI primary.main #2a7f78). */
+article a,
+.nextra-sidebar a:not([aria-current='page']):hover {
+  color: var(--noctune-teal);
+}
+
+article a:hover {
+  color: var(--noctune-teal-dark);
+}
+
+html.dark article a:hover {
+  color: #8ed3cd;
+}
+
 /* Blockquotes wear the brand teal as an accent. */
 article blockquote {
   border-left-color: var(--noctune-teal) !important;
-  background: var(--noctune-teal-50);
+  background: var(--noctune-teal-tint);
 }
 
-/* Separators in the sidebar (section headings) get a bit more weight. */
+/* Sidebar section separators as uppercase brand labels. */
 .nextra-sidebar li[data-type='separator'] {
   color: var(--noctune-teal) !important;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   font-size: 11px;
+}
+
+/* Logo PNG is black-on-transparent; invert for readability in dark mode. */
+html.dark .noctune-logo {
+  filter: invert(1) hue-rotate(180deg);
 }

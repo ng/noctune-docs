@@ -9,6 +9,7 @@ export function Logo() {
         width={32}
         height={32}
         priority
+        className="noctune-logo"
         style={{ display: 'block', width: 32, height: 32 }}
       />
       <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.15 }}>
