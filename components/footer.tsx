@@ -96,9 +96,6 @@ export function DocsFooter() {
           <a href={`${BRAND_URL}/terms`} style={linkStyle}>
             Terms of Service
           </a>
-          <a href={`${BRAND_URL}/cookies`} style={linkStyle}>
-            Cookie Policy
-          </a>
         </div>
       </div>
 
