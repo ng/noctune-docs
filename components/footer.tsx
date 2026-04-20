@@ -84,7 +84,7 @@ export function DocsFooter() {
           <a href={`${BRAND_URL}/sign-in`} style={linkStyle}>
             Sign in
           </a>
-          <a href={`${BRAND_URL}/sign-up`} style={linkStyle}>
+          <a href={`${BRAND_URL}/sign-in`} style={linkStyle}>
             Try Noctune free
           </a>
           <a href="mailto:jon@noctune.ai" style={linkStyle}>
