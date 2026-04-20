@@ -1,0 +1,63 @@
+/* Noctune brand theming on top of Nextra defaults. */
+
+:root {
+  /* Brand teal #2a7f78 ≈ hsl(175, 50%, 33%) */
+  --nextra-primary-hue: 175deg;
+  --nextra-primary-saturation: 50%;
+  --nextra-primary-lightness: 33%;
+
+  --noctune-teal: #2a7f78;
+  --noctune-teal-dark: #1a5c57;
+  --noctune-teal-50: rgba(42, 127, 120, 0.06);
+  --noctune-teal-100: rgba(42, 127, 120, 0.12);
+}
+
+html.dark {
+  --nextra-primary-lightness: 60%;
+  --noctune-teal: #5bb3ac;
+  --noctune-teal-dark: #2a7f78;
+}
+
+/* Page background — soft brand-tinted gradient so it doesn't read as plain docs. */
+html,
+body {
+  background:
+    radial-gradient(ellipse 1400px 600px at 20% -10%, var(--noctune-teal-50), transparent 60%),
+    radial-gradient(ellipse 1200px 500px at 100% 5%, var(--noctune-teal-100), transparent 55%),
+    #fafaf8;
+  background-attachment: fixed;
+}
+
+html.dark,
+html.dark body {
+  background:
+    radial-gradient(ellipse 1400px 600px at 20% -10%, rgba(91, 179, 172, 0.07), transparent 60%),
+    radial-gradient(ellipse 1200px 500px at 100% 5%, rgba(91, 179, 172, 0.04), transparent 55%),
+    #0f1011;
+  background-attachment: fixed;
+}
+
+/* Homepage H1 gets the brand-gradient treatment used on noctune.ai. */
+article h1:first-of-type {
+  background: linear-gradient(135deg, var(--noctune-teal) 0%, var(--noctune-teal-dark) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  letter-spacing: -0.015em;
+}
+
+/* Blockquotes wear the brand teal as an accent. */
+article blockquote {
+  border-left-color: var(--noctune-teal) !important;
+  background: var(--noctune-teal-50);
+}
+
+/* Separators in the sidebar (section headings) get a bit more weight. */
+.nextra-sidebar li[data-type='separator'] {
+  color: var(--noctune-teal) !important;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 11px;
+}
