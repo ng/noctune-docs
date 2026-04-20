@@ -42,6 +42,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           footer={footer}
           pageMap={await getPageMap()}
           docsRepositoryBase="https://github.com/ng/noctune-docs/tree/main"
+          editLink=""
+          feedback={{
+            content: 'Question? Give us feedback',
+            link: 'mailto:jon@noctune.ai?subject=Noctune%20Docs%20Feedback',
+          }}
           nextThemes={{ defaultTheme: 'light' }}
         >
           {children}
