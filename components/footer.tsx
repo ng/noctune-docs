@@ -85,7 +85,7 @@ export function DocsFooter() {
             Sign in
           </a>
           <a href={`${BRAND_URL}/sign-up`} style={linkStyle}>
-            Get 10 free credits
+            Try Noctune free
           </a>
           <a href="mailto:jon@noctune.ai" style={linkStyle}>
             Email us
