@@ -32,6 +32,7 @@ function FooterLogo() {
         alt=""
         width={40}
         height={40}
+        className="noctune-logo"
         style={{ display: 'block', width: 40, height: 40 }}
       />
       <span style={{ fontWeight: 700, fontSize: 22 }}>Noctune</span>
