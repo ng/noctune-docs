@@ -53,7 +53,7 @@ export function DocsFooter() {
         <div>
           <FooterLogo />
           <p style={{ fontSize: 14, opacity: 0.7, lineHeight: 1.55, marginTop: 18, maxWidth: 320 }}>
-            The AI for veterinary medicine.
+            AI for veterinary medicine.
           </p>
         </div>
 

@@ -14,7 +14,7 @@ export function Logo() {
       />
       <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.15 }}>
         <span style={{ fontWeight: 700, fontSize: 16 }}>Noctune</span>
-        <span style={{ fontSize: 11, opacity: 0.65 }}>The AI for veterinary medicine</span>
+        <span style={{ fontSize: 11, opacity: 0.65 }}>AI for veterinary medicine</span>
       </div>
     </div>
   )
