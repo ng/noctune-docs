@@ -53,7 +53,7 @@ export function DocsFooter() {
         <div>
           <FooterLogo />
           <p style={{ fontSize: 14, opacity: 0.7, lineHeight: 1.55, marginTop: 18, maxWidth: 320 }}>
-            The AI for veterinary medicine.
+            AI for veterinary medicine.
           </p>
         </div>
 
@@ -84,8 +84,8 @@ export function DocsFooter() {
           <a href={`${BRAND_URL}/sign-in`} style={linkStyle}>
             Sign in
           </a>
-          <a href={`${BRAND_URL}/sign-up`} style={linkStyle}>
-            Get 10 free credits
+          <a href="/sign-in" style={linkStyle}>
+            Try Noctune free
           </a>
           <a href="mailto:jon@noctune.ai" style={linkStyle}>
             Email us
