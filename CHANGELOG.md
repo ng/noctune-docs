@@ -1,3 +1,13 @@
+## [1.1.0](https://github.com/ng/noctune-docs/compare/v1.0.1...v1.1.0) (2026-06-07)
+
+### Features
+
+- add Vercel Web Analytics ([#2](https://github.com/ng/noctune-docs/issues/2)) ([e171731](https://github.com/ng/noctune-docs/commit/e17173128ae8638a49af84c96f73939b2a6d843e))
+
+### Reverts
+
+- remove codecov badge from docs README — belongs on noctune-core ([e822e8e](https://github.com/ng/noctune-docs/commit/e822e8ef417ebe8210f41a682e6f558e3a142444))
+
 ## [1.0.1](https://github.com/ng/noctune-docs/compare/v1.0.0...v1.0.1) (2026-05-07)
 
 ### Bug Fixes
