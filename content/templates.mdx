@@ -37,6 +37,16 @@ When you save a template, Noctune automatically runs it through an AI reviewer a
 
 You're **free to ignore** any suggestion — nothing is enforced. But the reviewer catches real problems that make notes worse, and applying its suggestions is the fastest way to get measurably better output. Think of it as a linter for your prompts.
 
+```mermaid
+flowchart LR
+    Save([Save template]) --> Review[AI reviewer]
+    Review --> Sug{Suggestions?}
+    Sug -->|none| Done[Saved]
+    Sug -->|error / warning / info| Choose{Your call}
+    Choose -->|accept fix| Save
+    Choose -->|ignore| Done
+```
+
 Common categories the reviewer flags:
 
 - **Sample data** — e.g. "Patient: Fluffy" in the template; the AI sometimes copies example names into real notes

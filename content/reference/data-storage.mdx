@@ -30,6 +30,23 @@ Included in every plan:
 
 Your **SOAP notes and transcripts are kept for as long as you have an account** — you never lose the record of what was said.
 
+Audio moves through three states; transcripts and SOAP notes never leave the first:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Active: encounter created
+    Active --> Archived: audio after 90 days
+    Archived --> Active: restore (thaw, small per-request fee)
+    Active --> Deleted: delete encounter / close account
+    Archived --> Deleted: delete encounter / close account
+    Deleted --> [*]: purged within 30 days
+    note right of Active
+        Transcripts and SOAP notes stay here for the
+        life of your account — never archived or thawed.
+        Sentinel-flagged audio also stays Active indefinitely.
+    end note
+```
+
 ## Archival tier and post-retention access
 
 After the audio retention window, your raw audio is moved to a cheaper **archival tier** (AWS S3 Intelligent-Tiering). You can still access it, but with two changes:

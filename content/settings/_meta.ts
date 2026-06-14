@@ -1,6 +1,6 @@
 export default {
   index: 'Overview',
   account: 'Account',
-  billing: 'Billing & Credits',
+  billing: 'Billing & Notes',
   notifications: 'Notifications',
 }
