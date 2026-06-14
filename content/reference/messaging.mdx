@@ -16,8 +16,8 @@ Noctune supports three outbound-email modes:
 | **Nest**       | From: `{encounter-id}@replies.noctune.ai`    | Route into the Nest inbox, tied to the encounter | Included in Lite / Pro / Practice plans |
 | **Vet direct** | From: Noctune, Reply-To: your personal email | Go straight to your inbox                        | Included in Lite / Pro / Practice plans |
 
-```mermaid
-%%{init: {'theme':'base','themeVariables':{'primaryColor':'#2a7f78','primaryTextColor':'#ffffff','primaryBorderColor':'#1a5c57','lineColor':'#5bb3ac','secondaryColor':'#1d6e55','secondaryTextColor':'#ffffff','tertiaryColor':'#0f3d3a','tertiaryTextColor':'#ffffff','noteBkgColor':'#e9f3f2','noteTextColor':'#0f3d3a','noteBorderColor':'#2a7f78','fontFamily':'inherit'}}}%%
+<Diagram
+  chart={`
 flowchart TD
     Send([You send from an encounter]) --> Pick{Reply mode}
     Pick -->|No reply| NR["From: noreply@mail.noctune.ai"]
@@ -26,7 +26,8 @@ flowchart TD
     NR --> Bounce[/Client reply bounces/]
     NE --> Nest[(Nest inbox · Messages thread)]
     VD --> Personal[/Your personal inbox/]
-```
+`}
+/>
 
 ### No reply (free, included)
 

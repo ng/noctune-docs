@@ -37,8 +37,8 @@ When you save a template, Noctune automatically runs it through an AI reviewer a
 
 You're **free to ignore** any suggestion — nothing is enforced. But the reviewer catches real problems that make notes worse, and applying its suggestions is the fastest way to get measurably better output. Think of it as a linter for your prompts.
 
-```mermaid
-%%{init: {'theme':'base','themeVariables':{'primaryColor':'#2a7f78','primaryTextColor':'#ffffff','primaryBorderColor':'#1a5c57','lineColor':'#5bb3ac','secondaryColor':'#1d6e55','secondaryTextColor':'#ffffff','tertiaryColor':'#0f3d3a','tertiaryTextColor':'#ffffff','noteBkgColor':'#e9f3f2','noteTextColor':'#0f3d3a','noteBorderColor':'#2a7f78','fontFamily':'inherit'}}}%%
+<Diagram
+  chart={`
 flowchart LR
     Save([Save template]) --> Review[AI reviewer]
     Review --> Sug{Suggestions?}
@@ -46,7 +46,8 @@ flowchart LR
     Sug -->|error / warning / info| Choose{Your call}
     Choose -->|accept fix| Save
     Choose -->|ignore| Done
-```
+`}
+/>
 
 Common categories the reviewer flags:
 
