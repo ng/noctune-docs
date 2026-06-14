@@ -22,6 +22,7 @@ Each flagged encounter gets a small indicator on the encounter card and on the p
 ## What happens automatically
 
 ```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#2a7f78','primaryTextColor':'#ffffff','primaryBorderColor':'#1a5c57','lineColor':'#5bb3ac','secondaryColor':'#1d6e55','secondaryTextColor':'#ffffff','tertiaryColor':'#0f3d3a','tertiaryTextColor':'#ffffff','noteBkgColor':'#e9f3f2','noteTextColor':'#0f3d3a','noteBorderColor':'#2a7f78','fontFamily':'inherit'}}}%%
 flowchart TD
     T[Transcript analysis] --> D{Hostile language, threats,<br/>refusal of care, or<br/>escalating sentiment?}
     D -->|no| Normal[Normal retention schedule]
