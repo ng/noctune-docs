@@ -17,6 +17,7 @@ Noctune supports three outbound-email modes:
 | **Vet direct** | From: Noctune, Reply-To: your personal email | Go straight to your inbox                        | Included in Lite / Pro / Practice plans |
 
 ```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#2a7f78','primaryTextColor':'#ffffff','primaryBorderColor':'#1a5c57','lineColor':'#5bb3ac','secondaryColor':'#1d6e55','secondaryTextColor':'#ffffff','tertiaryColor':'#0f3d3a','tertiaryTextColor':'#ffffff','noteBkgColor':'#e9f3f2','noteTextColor':'#0f3d3a','noteBorderColor':'#2a7f78','fontFamily':'inherit'}}}%%
 flowchart TD
     Send([You send from an encounter]) --> Pick{Reply mode}
     Pick -->|No reply| NR["From: noreply@mail.noctune.ai"]
@@ -55,6 +56,17 @@ Messages that arrive via Nest show up in both:
 - The global [Messages](/messages) inbox with an unread badge
 
 Replies from within the app always go back via Nest — once a conversation starts in the Nest, it stays there.
+
+## Your handle inbox
+
+The reply modes above are all about **outbound** sends. There's also an inbound path that doesn't depend on you sending anything first: every vet (and every practice) has a permanent handle address, `{handle}@inbox.noctune.ai`. Anyone — a client, a referring clinic, another vet — can email it directly and the message lands in your [Messages](/messages) inbox, the same place Nest replies arrive.
+
+It's distinct from the reply modes:
+
+- Unlike **Vet direct**, it never exposes your personal email address.
+- Unlike **Nest**, it isn't tied to a single encounter — it's your standing address.
+
+See [Mail domains](#mail-domains) for how handles are assigned.
 
 ## Mail domains
 
