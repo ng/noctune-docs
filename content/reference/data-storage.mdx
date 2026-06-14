@@ -32,8 +32,8 @@ Your **SOAP notes and transcripts are kept for as long as you have an account** 
 
 Audio moves through three states; transcripts and SOAP notes never leave the first:
 
-```mermaid
-%%{init: {'theme':'base','themeVariables':{'primaryColor':'#2a7f78','primaryTextColor':'#ffffff','primaryBorderColor':'#1a5c57','lineColor':'#5bb3ac','secondaryColor':'#1d6e55','secondaryTextColor':'#ffffff','tertiaryColor':'#0f3d3a','tertiaryTextColor':'#ffffff','noteBkgColor':'#e9f3f2','noteTextColor':'#0f3d3a','noteBorderColor':'#2a7f78','fontFamily':'inherit'}}}%%
+<Diagram
+  chart={`
 stateDiagram-v2
     [*] --> Active: encounter created
     Active --> Archived: audio after 90 days
@@ -46,7 +46,8 @@ stateDiagram-v2
         life of your account — never archived or thawed.
         Sentinel-flagged audio also stays Active indefinitely.
     end note
-```
+`}
+/>
 
 ## Archival tier and post-retention access
 

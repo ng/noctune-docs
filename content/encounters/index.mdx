@@ -10,8 +10,8 @@ An **encounter** is one appointment: the audio, the transcript, and the SOAP not
 
 Every encounter moves through the same lifecycle, from captured audio to an exported note:
 
-```mermaid
-%%{init: {'theme':'base','themeVariables':{'primaryColor':'#2a7f78','primaryTextColor':'#ffffff','primaryBorderColor':'#1a5c57','lineColor':'#5bb3ac','secondaryColor':'#1d6e55','secondaryTextColor':'#ffffff','tertiaryColor':'#0f3d3a','tertiaryTextColor':'#ffffff','noteBkgColor':'#e9f3f2','noteTextColor':'#0f3d3a','noteBorderColor':'#2a7f78','fontFamily':'inherit'}}}%%
+<Diagram
+  chart={`
 flowchart LR
     iOS([Record on iOS]) --> Proc
     Web([Upload audio on web]) --> Proc
@@ -21,7 +21,8 @@ flowchart LR
     Review -->|looks good| Complete[Complete]
     Complete --> Export[/Export: copy or email/]
     Complete -.audio after 90 days.-> Archived[(Archived)]
-```
+`}
+/>
 
 ## Filter and search
 
