@@ -100,6 +100,12 @@ export function DocsFooter() {
           <a href={`${BRAND_URL}/terms`} style={linkStyle}>
             Terms of Service
           </a>
+          <a href={`${BRAND_URL}/ca-privacy`} style={linkStyle}>
+            California Privacy Notice
+          </a>
+          <a href={`${BRAND_URL}/do-not-sell`} style={linkStyle}>
+            Do Not Sell My Info
+          </a>
         </div>
       </div>
 
