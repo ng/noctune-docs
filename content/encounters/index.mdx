@@ -8,6 +8,20 @@ An **encounter** is one appointment: the audio, the transcript, and the SOAP not
 
 ![Encounters list page with filter pills for status, search bar, and New Encounter button](https://placecats.com/960/540)
 
+Every encounter moves through the same lifecycle, from captured audio to an exported note:
+
+```mermaid
+flowchart LR
+    iOS([Record on iOS]) --> Proc
+    Web([Upload audio on web]) --> Proc
+    Proc[Processing<br/>transcribe + draft SOAP] --> Draft[Draft]
+    Draft --> Review{Review & edit}
+    Review -->|regenerate / append audio| Review
+    Review -->|looks good| Complete[Complete]
+    Complete --> Export[/Export: copy or email/]
+    Complete -.audio after 90 days.-> Archived[(Archived)]
+```
+
 ## Filter and search
 
 Filter pills along the top narrow the list by status (Draft, Complete, Archived). The search bar on the right matches patient name, owner, and free text from the transcript.
