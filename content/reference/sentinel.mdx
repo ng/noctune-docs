@@ -21,6 +21,17 @@ Each flagged encounter gets a small indicator on the encounter card and on the p
 
 ## What happens automatically
 
+```mermaid
+flowchart TD
+    T[Transcript analysis] --> D{Hostile language, threats,<br/>refusal of care, or<br/>escalating sentiment?}
+    D -->|no| Normal[Normal retention schedule]
+    D -->|yes| Flag[Encounter flagged]
+    Flag --> A1[Audio preserved indefinitely]
+    Flag --> A2[Transcript + SOAP snapshot locked]
+    Flag --> A3[Flag on patient profile]
+    Flag --> A4["Searchable in Messages → Flagged"]
+```
+
 When a visit is flagged:
 
 1. **The audio is preserved indefinitely** — pulled out of the normal retention/archival schedule, no extra cost to you.
