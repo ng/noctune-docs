@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build",
+    "assets:verify": "node scripts/verify-raster-assets.mjs",
+    "build": "pnpm assets:verify && next build",
     "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
-    "check": "pnpm format:check && pnpm lint:md && pnpm test:capture-safety && pnpm screenshots:verify && pnpm tsc && pnpm build",
+    "check": "pnpm format:check && pnpm lint:md && pnpm test:assets && pnpm test:capture-safety && pnpm screenshots:verify && pnpm tsc && pnpm build",
     "dev": "next dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -18,6 +19,7 @@
     "screenshots:update": "node scripts/capture-screenshots.mjs",
     "screenshots:verify": "node scripts/verify-screenshots.mjs",
     "start": "next start",
+    "test:assets": "node --test scripts/verify-raster-assets.test.mjs",
     "test:capture-safety": "node --test capture/support/capture-safety.test.mjs",
     "tsc": "tsc --noEmit"
   },
