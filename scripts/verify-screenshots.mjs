@@ -123,6 +123,7 @@ console.log(
     `${formatBytes(largestBytes)} largest)`,
 )
 
+/** Recursively lists files below a directory. */
 async function walk(directory) {
   const entries = await fs.readdir(directory, { withFileTypes: true })
   return (
@@ -135,6 +136,7 @@ async function walk(directory) {
   ).flat()
 }
 
+/** Formats a byte count as a compact kibibyte value. */
 function formatBytes(bytes) {
   return `${(bytes / 1024).toFixed(1)} KiB`
 }

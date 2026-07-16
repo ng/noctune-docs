@@ -30,19 +30,23 @@ interface CaptureOutput {
   maxWidth?: number
 }
 
+const SCREENSHOT_OPTIONS = {
+  animations: 'disabled',
+  caret: 'hide',
+  fullPage: false,
+  omitBackground: false,
+  scale: 'css',
+  type: 'png',
+} as const
+
+/** Captures, policy-transforms, and writes one deterministic product screenshot. */
 export async function savePageScreenshot(page: Page, capture: CaptureOutput): Promise<void> {
+  await stabilizePageVisuals(page)
   await page.evaluate(async () => {
     await document.fonts.ready
   })
 
-  const png = await page.screenshot({
-    animations: 'disabled',
-    caret: 'hide',
-    fullPage: false,
-    scale: 'css',
-    style: STABLE_CAPTURE_CSS,
-    type: 'png',
-  })
+  const png = await takeStableScreenshot(page)
 
   const outputRoot = process.env.CAPTURE_OUTPUT_ROOT
     ? path.resolve(process.env.CAPTURE_OUTPUT_ROOT)
@@ -57,11 +61,29 @@ export async function savePageScreenshot(page: Page, capture: CaptureOutput): Pr
   if (imagePolicy.encoding.format !== 'webp') {
     throw new Error(`Unsupported screenshot format: ${imagePolicy.encoding.format}`)
   }
+  if (imagePolicy.output.channels !== 3 && imagePolicy.output.channels !== 4) {
+    throw new Error(`Unsupported screenshot channel count: ${imagePolicy.output.channels}`)
+  }
+  if (!imagePolicy.output.allowAlpha && imagePolicy.output.channels === 4) {
+    throw new Error('Screenshot policy cannot require four channels while disallowing alpha')
+  }
 
-  const result = await sharp(png)
-    .resize({ width: capture.maxWidth ?? imagePolicy.viewport.width, withoutEnlargement: true })
-    .removeAlpha()
-    .toColourspace('srgb')
+  let pipeline = sharp(png).resize({
+    width: capture.maxWidth ?? imagePolicy.viewport.width,
+    withoutEnlargement: true,
+  })
+
+  pipeline =
+    imagePolicy.output.channels === 3
+      ? pipeline.flatten({ background: imagePolicy.output.background })
+      : pipeline.ensureAlpha()
+  pipeline = pipeline.toColourspace(imagePolicy.output.colorSpace)
+
+  if (imagePolicy.output.allowEmbeddedMetadata) {
+    pipeline = pipeline.keepMetadata()
+  }
+
+  const result = await pipeline
     .webp({
       effort: imagePolicy.encoding.effort,
       quality: imagePolicy.encoding.quality,
@@ -70,4 +92,47 @@ export async function savePageScreenshot(page: Page, capture: CaptureOutput): Pr
     .toFile(outputPath)
 
   console.log(`[screenshots] ${capture.id}: ${result.width}x${result.height}, ${result.size} bytes`)
+}
+
+/** Disables visual motion and completes animations before stability polling. */
+async function stabilizePageVisuals(page: Page): Promise<void> {
+  await page.addStyleTag({ content: STABLE_CAPTURE_CSS })
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur()
+    }
+    for (const animation of document.getAnimations()) {
+      try {
+        animation.finish()
+      } catch {
+        animation.cancel()
+      }
+    }
+  })
+}
+
+/** Polls until two consecutive Playwright PNG captures are byte-identical. */
+async function takeStableScreenshot(page: Page): Promise<Buffer> {
+  const delays = [0, 100, 250, 500, 1_000, 2_000, 3_000]
+  let previous: Buffer | undefined
+
+  for (const delay of delays) {
+    if (delay) {
+      await page.waitForTimeout(delay)
+    }
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) => {
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+        }),
+    )
+
+    const current = await page.screenshot(SCREENSHOT_OPTIONS)
+    if (previous?.equals(current)) {
+      return current
+    }
+    previous = current
+  }
+
+  throw new Error('Page did not produce two consecutive identical screenshots')
 }

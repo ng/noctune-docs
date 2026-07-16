@@ -7,13 +7,10 @@ import { savePageScreenshot } from './support/save-screenshot'
 const IDS = {
   captureUser: 'd0c50000-0000-4000-8000-000000000001',
   mochiEncounter: 'd0c50000-0000-4000-8000-000000000201',
-  jasperEncounter: 'd0c50000-0000-4000-8000-000000000202',
-  lunaEncounter: 'd0c50000-0000-4000-8000-000000000203',
-  mochiPatient: 'd0c50000-0000-4000-8000-000000000101',
   mochiSoapNote: 'd0c50000-0000-4000-8000-000000000301',
-  wellnessTemplate: 'd0c50000-0000-4000-8000-000000000711',
 } as const
 
+/** Returns a required manifest entry by capture ID. */
 function requireCapture(id: string) {
   const capture = manifest.find((item) => item.id === id)
   if (!capture) throw new Error(`Capture manifest is missing ${id}`)
@@ -22,18 +19,21 @@ function requireCapture(id: string) {
 
 const captures = Object.fromEntries(manifest.map((item) => [item.id, item]))
 
+/** Returns a required capture from the pre-indexed manifest. */
 function capture(id: string) {
   const item = captures[id]
   if (!item) throw new Error(`Capture manifest is missing ${id}`)
   return item
 }
 
+/** Replaces signed encounter audio with a deterministic silent WAV response. */
 async function mockSignedAudio(page: Page): Promise<void> {
   await page.route(/\.m4a(?:\?.*)?$/i, async (route) => {
     await route.fulfill({ status: 200, contentType: 'audio/wav', body: silentWave() })
   })
 }
 
+/** Builds a valid one-second silent WAV buffer for mocked audio requests. */
 function silentWave(): Buffer {
   const sampleRate = 8_000
   const sampleCount = sampleRate
@@ -55,6 +55,7 @@ function silentWave(): Buffer {
   return wave
 }
 
+/** Opens an authenticated product route after installing deterministic browser state. */
 async function openProductPage(page: Page, route: string): Promise<void> {
   await setFixedCaptureTime(page)
   await mockSignedAudio(page)
@@ -62,6 +63,7 @@ async function openProductPage(page: Page, route: string): Promise<void> {
   await expect(page.getByRole('button', { name: 'New Encounter' })).toBeVisible()
 }
 
+/** Opens the seeded dashboard and waits for its fixture-backed content. */
 async function openPopulatedDashboard(page: Page, route: string): Promise<void> {
   await openProductPage(page, route)
   await expect(page).toHaveURL(/\/dashboard(?:[/?#]|$)/)
@@ -74,14 +76,16 @@ async function openPopulatedDashboard(page: Page, route: string): Promise<void> 
   await expect(page.getByRole('button', { name: 'Start an encounter' })).toBeVisible()
 }
 
-async function openEncounterDrawer(page: Page): Promise<void> {
-  await openPopulatedDashboard(page, '/dashboard')
+/** Opens the New Encounter drawer from its manifest-defined dashboard route. */
+async function openEncounterDrawer(page: Page, route: string): Promise<void> {
+  await openPopulatedDashboard(page, route)
   await page.getByRole('button', { name: 'Start an encounter' }).click()
   await expect(page.getByText('New encounter', { exact: true })).toBeVisible()
   await expect(page.getByPlaceholder('Search or type a new name...')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Record from web' })).toBeVisible()
 }
 
+/** Selects the seeded Mochi patient in the New Encounter drawer. */
 async function selectMochi(page: Page): Promise<void> {
   const patientSelector = page.getByPlaceholder('Search or type a new name...')
   await patientSelector.click()
@@ -89,14 +93,16 @@ async function selectMochi(page: Page): Promise<void> {
   await expect(patientSelector).toHaveValue('Mochi')
 }
 
-async function openMochiEncounter(page: Page): Promise<void> {
-  await openProductPage(page, `/encounters/${IDS.mochiEncounter}`)
+/** Opens Mochi's manifest-defined encounter and waits for generated content. */
+async function openMochiEncounter(page: Page, route: string): Promise<void> {
+  await openProductPage(page, route)
   await expect(page.getByText('Mochi', { exact: true }).first()).toBeVisible()
   await expect(page.getByRole('button', { name: 'Copy SOAP' })).toBeEnabled()
   await expect(page.getByRole('tab', { name: 'Transcript' })).toBeVisible()
   await expect(page.getByText(/Mochi is here for an appetite recheck/)).toBeVisible()
 }
 
+/** Mocks Mochi's encounter into a deterministic ready-for-review state. */
 async function mockMochiReadyForReview(page: Page): Promise<void> {
   await page.route(`**/api/v1/transcriptions/${IDS.mochiEncounter}`, async (route) => {
     if (route.request().method() !== 'GET') {
@@ -186,6 +192,90 @@ async function mockMochiReadyForReview(page: Page): Promise<void> {
   })
 }
 
+/** Orders tied practice-member fixtures before the product page consumes them. */
+async function mockDeterministicPracticeMembers(page: Page): Promise<void> {
+  const roleOrder = new Map([
+    ['owner', 0],
+    ['veterinarian', 1],
+    ['technician', 2],
+    ['receptionist', 3],
+  ])
+
+  await page.route('**/api/v1/practices/*/members', async (route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue()
+      return
+    }
+
+    const response = await route.fetch()
+    const payload = (await response.json()) as {
+      ok?: boolean
+      data?: Array<{ role?: string; userName?: string }>
+    }
+
+    if (!payload.ok || !payload.data) {
+      throw new Error('Could not prepare deterministic practice members')
+    }
+
+    payload.data.sort((left, right) => {
+      const leftRank = roleOrder.get(left.role ?? '') ?? Number.MAX_SAFE_INTEGER
+      const rightRank = roleOrder.get(right.role ?? '') ?? Number.MAX_SAFE_INTEGER
+      return (
+        leftRank - rightRank || (left.userName ?? '').localeCompare(right.userName ?? '', 'en-US')
+      )
+    })
+
+    await route.fulfill({
+      response,
+      contentType: 'application/json',
+      body: JSON.stringify(payload),
+    })
+  })
+}
+
+/** Pins the sidebar's unread-message badge without changing inbox fixture rows. */
+async function mockUnreadMessagesCount(page: Page, totalCount: number): Promise<void> {
+  await page.route('**/api/v1/messages/inbox?*', async (route) => {
+    const requestUrl = new URL(route.request().url())
+    const isCountRequest =
+      route.request().method() === 'GET' &&
+      requestUrl.searchParams.get('limit') === '0' &&
+      requestUrl.searchParams.get('unread') === 'true'
+
+    if (!isCountRequest) {
+      await route.continue()
+      return
+    }
+
+    const response = await route.fetch()
+    const payload = (await response.json()) as {
+      ok?: boolean
+      data?: {
+        pagination?: Record<string, unknown>
+      }
+    }
+
+    if (!payload.ok || !payload.data?.pagination) {
+      throw new Error('Could not prepare deterministic unread-message count')
+    }
+
+    await route.fulfill({
+      response,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        ...payload,
+        data: {
+          ...payload.data,
+          pagination: {
+            ...payload.data.pagination,
+            totalCount,
+          },
+        },
+      }),
+    })
+  })
+}
+
 test('dashboard — populated overview', async ({ page }) => {
   const item = requireCapture('dashboard-overview')
   await openPopulatedDashboard(page, item.route)
@@ -205,7 +295,7 @@ test('encounters — status filters and deterministic list', async ({ page }) =>
 
 test('encounters — New Encounter drawer', async ({ page }) => {
   const item = capture('encounters-new-encounter')
-  await openEncounterDrawer(page)
+  await openEncounterDrawer(page, item.route)
   await expect(page.getByText('Unlimited', { exact: true })).toBeVisible()
   await expect(page.getByText('Pro', { exact: true })).toBeVisible()
   await expect(page.getByPlaceholder('Select a template')).toHaveCount(2)
@@ -214,7 +304,7 @@ test('encounters — New Encounter drawer', async ({ page }) => {
 
 test('encounters — active browser recording', async ({ page }) => {
   const item = capture('encounters-browser-recording')
-  await openEncounterDrawer(page)
+  await openEncounterDrawer(page, item.route)
   await selectMochi(page)
   await page.getByRole('button', { name: 'Record from web' }).click()
   await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible()
@@ -226,7 +316,7 @@ test('encounters — active browser recording', async ({ page }) => {
 
 test('encounters — selected file queue', async ({ page }) => {
   const item = capture('encounters-upload-queue')
-  await openEncounterDrawer(page)
+  await openEncounterDrawer(page, item.route)
   await selectMochi(page)
   await page.locator('input[type="file"][accept]').setInputFiles({
     name: 'exam-room-follow-up.m4a',
@@ -250,7 +340,7 @@ test('encounters — processing after upload', async ({ page }) => {
 
 test('encounters — SOAP and transcript overview', async ({ page }) => {
   const item = capture('encounters-overview')
-  await openMochiEncounter(page)
+  await openMochiEncounter(page, item.route)
   await expect(page.getByText('Subjective', { exact: true }).first()).toBeVisible()
   await expect(page.getByText('Pet owner', { exact: true }).first()).toBeVisible()
   await savePageScreenshot(page, item)
@@ -258,7 +348,7 @@ test('encounters — SOAP and transcript overview', async ({ page }) => {
 
 test('encounters — markdown SOAP editor', async ({ page }) => {
   const item = capture('encounters-soap-edit')
-  await openMochiEncounter(page)
+  await openMochiEncounter(page, item.route)
   await page.getByRole('tab', { name: 'Edit' }).click()
   await expect(page.locator('#soap-note-markdown-editor')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Save' })).toBeVisible()
@@ -268,7 +358,7 @@ test('encounters — markdown SOAP editor', async ({ page }) => {
 
 test('encounters — regenerate template picker', async ({ page }) => {
   const item = capture('encounters-regenerate')
-  await openMochiEncounter(page)
+  await openMochiEncounter(page, item.route)
   await page.getByRole('button', { name: 'Regenerate Note' }).click()
   const dialog = page.getByRole('dialog')
   await expect(dialog.getByRole('heading', { name: 'Regenerate Note' })).toBeVisible()
@@ -281,7 +371,7 @@ test('encounters — regenerate template picker', async ({ page }) => {
 
 test('encounters — prior-visit context', async ({ page }) => {
   const item = capture('encounters-history')
-  await openMochiEncounter(page)
+  await openMochiEncounter(page, item.route)
   await page.getByRole('tab', { name: /Past Encounters/ }).click()
   await expect(page.getByPlaceholder('e.g. bloodwork, medications, weight')).toBeVisible()
   await expect(page.getByText(/Annual wellness examination with stable weight/)).toBeVisible()
@@ -291,7 +381,7 @@ test('encounters — prior-visit context', async ({ page }) => {
 
 test('sentinel — encounter safety alert and retained markers', async ({ page }) => {
   const item = capture('encounters-sentinel-alert')
-  await openProductPage(page, `/encounters/${IDS.jasperEncounter}`)
+  await openProductPage(page, item.route)
   await expect(page.getByText('Jasper', { exact: true }).first()).toBeVisible()
   await expect(page.getByText(/Noctune Sentinel/)).toBeVisible()
   await expect(page.getByText(/Client raised their voice/)).toBeVisible()
@@ -304,7 +394,7 @@ test('encounters — complete and prepare discharge', async ({ page }) => {
   const dischargeItem = capture('encounters-send-discharge')
 
   await mockMochiReadyForReview(page)
-  await openMochiEncounter(page)
+  await openMochiEncounter(page, completedItem.route)
 
   const completeButton = page.getByRole('button', { name: 'Complete', exact: true })
   await expect(completeButton).toBeEnabled()
@@ -349,7 +439,7 @@ test('patients — Add Patient dialog', async ({ page }) => {
 
 test('patients — profile with vitals trends', async ({ page }) => {
   const item = capture('patients-profile')
-  await openProductPage(page, `/patients/${IDS.mochiPatient}`)
+  await openProductPage(page, item.route)
   await expect(page.getByText('Vitals Trends', { exact: true })).toBeVisible()
   await expect(page.getByText('Encounter History', { exact: true })).toBeAttached()
   await expect(page.getByText('4.6', { exact: true })).toBeVisible()
@@ -459,7 +549,7 @@ test('community — browse published templates', async ({ page }) => {
 
 test('community — template detail and duplicate action', async ({ page }) => {
   const item = capture('community-detail')
-  await openProductPage(page, `/community/templates/${IDS.wellnessTemplate}`)
+  await openProductPage(page, item.route)
   await expect(page.getByText('Low-Stress Wellness Exam', { exact: true }).first()).toBeVisible()
   await expect(page.getByRole('button', { name: 'Duplicate' })).toBeVisible()
   await expect(page.getByLabel('Likes: 3')).toBeVisible()
@@ -469,19 +559,26 @@ test('community — template detail and duplicate action', async ({ page }) => {
 
 test('community — threaded notes from other vets', async ({ page }) => {
   const item = capture('community-notes')
-  await openProductPage(page, `/community/templates/${IDS.wellnessTemplate}`)
+  await openProductPage(page, item.route)
   const heading = page.getByText('Notes from other vets', { exact: true })
   await expect(heading).toBeAttached()
   await heading.evaluate((element) => element.scrollIntoView({ block: 'start' }))
   const notes = page.locator('#community-template-notes')
   await expect(notes.getByText(/evidence-only objective instructions/)).toBeVisible()
   await expect(notes.getByText(/mobility and cognition subsection/)).toBeVisible()
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        window.scrollTo(0, document.documentElement.scrollHeight)
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+      }),
+  )
   await savePageScreenshot(page, item)
 })
 
 test('community — report dialog', async ({ page }) => {
   const item = capture('community-report')
-  await openProductPage(page, `/community/templates/${IDS.wellnessTemplate}`)
+  await openProductPage(page, item.route)
   await page.getByRole('button', { name: 'More' }).click()
   await page.getByRole('menuitem', { name: 'Report' }).click()
   const dialog = page.getByRole('dialog')
@@ -504,6 +601,7 @@ test('email templates — categorized library and preview', async ({ page }) => 
 
 test('messages — Nest inbox with encounter context', async ({ page }) => {
   const item = capture('messages-inbox')
+  await mockUnreadMessagesCount(page, 2)
   await openProductPage(page, item.route)
   await expect(page.getByRole('heading', { name: 'Messages' })).toBeVisible()
   await expect(page.getByTestId('conversation-subject')).toHaveText(
@@ -528,11 +626,13 @@ test('messages — composer with reply-routing choices', async ({ page }) => {
   await expect(page.getByText('Noctune Nest', { exact: true })).toBeVisible()
   await expect(page.getByText('Noctune (no reply)', { exact: true })).toBeVisible()
   await expect(page.getByText('Your personal email', { exact: true })).toBeVisible()
+  await page.waitForLoadState('networkidle')
   await savePageScreenshot(page, item)
 })
 
 test('messages — Sentinel flagged filter', async ({ page }) => {
   const item = capture('messages-flagged')
+  await mockUnreadMessagesCount(page, 1)
   await openProductPage(page, item.route)
   await page.getByRole('button', { name: 'Flagged' }).click()
   await expect(page.getByText('Jasper', { exact: true })).toBeVisible()
@@ -548,6 +648,7 @@ test('messages — Sentinel flagged filter', async ({ page }) => {
 
 test('practice — plan, team, and pending invitation', async ({ page }) => {
   const item = capture('practice-overview')
+  await mockDeterministicPracticeMembers(page)
   await openProductPage(page, item.route)
   await expect(page.getByText('Northstar Veterinary Clinic', { exact: true })).toBeVisible()
   await expect(page.getByText('Active members', { exact: true })).toBeVisible()
@@ -558,7 +659,11 @@ test('practice — plan, team, and pending invitation', async ({ page }) => {
 
 test('practice — invite member dialog and clinical roles', async ({ page }) => {
   const item = capture('practice-invite')
+  await mockDeterministicPracticeMembers(page)
   await openProductPage(page, item.route)
+  await expect(page.getByText('taylor.nguyen@example.test', { exact: true })).toBeVisible()
+  await expect(page.getByText('Business Associate Agreement', { exact: true })).toBeVisible()
+  await page.waitForLoadState('networkidle')
   await page.getByRole('button', { name: 'Invite member' }).click()
   const dialog = page.getByRole('dialog')
   await expect(dialog.getByRole('heading', { name: 'Invite a member' })).toBeVisible()
@@ -593,6 +698,9 @@ test('settings — Pro plan, add-ons, and usage', async ({ page }) => {
 test('settings — notification defaults matrix', async ({ page }) => {
   const item = capture('settings-notifications')
   await openProductPage(page, item.route)
+  await expect(page.getByText('Pro', { exact: true }).first()).toBeVisible()
+  await expect(page.getByText('Nest', { exact: true })).toBeVisible()
+  await expect(page.getByText('Storage', { exact: true })).toBeVisible()
   await expect(page.getByText('What to notify you about', { exact: true })).toBeVisible()
   await expect(page.getByText('SOAP note ready', { exact: true })).toBeVisible()
   await expect(page.getByText('Sentinel triggered', { exact: true })).toBeVisible()

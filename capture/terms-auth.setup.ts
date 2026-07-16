@@ -2,9 +2,15 @@ import { expect, test } from '@playwright/test'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
+import manifest from './manifest.json'
 import { setFixedCaptureTime } from './support/fixed-time'
 
 const authStatePath = path.resolve(process.cwd(), '.capture/auth/terms-user.json')
+const signIn = manifest.find((capture) => capture.id === 'getting-started-sign-in')
+
+if (!signIn) {
+  throw new Error('Capture manifest is missing getting-started-sign-in')
+}
 
 test('authenticate the documentation legal-gate user', async ({ page }) => {
   const email = process.env.DOCS_TERMS_USER_EMAIL
@@ -17,9 +23,11 @@ test('authenticate the documentation legal-gate user', async ({ page }) => {
   }
 
   await setFixedCaptureTime(page)
-  await page.goto('/sign-in', { waitUntil: 'domcontentloaded' })
+  await page.goto(signIn.route, { waitUntil: 'networkidle' })
   await page.getByRole('button', { name: 'Sign in with email instead' }).click()
-  await page.getByLabel('Email').fill(email)
+  const emailInput = page.getByLabel('Email')
+  await expect(emailInput).toBeVisible()
+  await emailInput.fill(email)
   await page.getByLabel('Password').fill(password)
 
   await Promise.all([

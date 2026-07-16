@@ -4,6 +4,7 @@ import manifest from './manifest.json'
 import { setFixedCaptureTime } from './support/fixed-time'
 import { savePageScreenshot } from './support/save-screenshot'
 
+/** Returns a required manifest entry by capture ID. */
 function requireCapture(id: string) {
   const capture = manifest.find((item) => item.id === id)
   if (!capture) throw new Error(`Capture manifest is missing ${id}`)
@@ -30,7 +31,7 @@ test('getting started — legal acceptance gate', async ({ page }) => {
 
 test('data storage — archived audio with clinical record retained', async ({ page }) => {
   await setFixedCaptureTime(page)
-  await page.goto('/accept-terms', { waitUntil: 'domcontentloaded' })
+  await page.goto(terms.route, { waitUntil: 'domcontentloaded' })
   await page.getByLabel('I have read and agree to the Terms of Service').check()
   await page.getByLabel('I have read and agree to the Privacy Policy').check()
 

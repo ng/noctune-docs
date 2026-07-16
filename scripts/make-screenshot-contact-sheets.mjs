@@ -58,6 +58,7 @@ console.log(
   `[screenshots] wrote ${Math.ceil(manifest.length / itemsPerSheet)} contact sheets to ${path.relative(docsRoot, outputDir)}`,
 )
 
+/** Creates an escaped SVG label for a contact-sheet capture cell. */
 function labelSvg(id) {
   const escapedId = id
     .replaceAll('&', '&amp;')

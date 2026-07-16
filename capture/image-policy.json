@@ -12,6 +12,7 @@
   "output": {
     "colorSpace": "srgb",
     "channels": 3,
+    "background": "#ffffff",
     "allowAlpha": false,
     "allowEmbeddedMetadata": false
   },

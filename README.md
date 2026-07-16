@@ -4,6 +4,14 @@ User guides and (eventually) API reference for Noctune, built with [Nextra 4](ht
 
 ## Dev
 
+Install [Git LFS](https://git-lfs.com/) before cloning. In an existing checkout,
+initialize it once for your user and materialize the tracked assets:
+
+```bash
+git lfs install
+git lfs pull
+```
+
 ```bash
 pnpm install
 pnpm dev
@@ -14,6 +22,10 @@ Content lives in `content/`. Navigation order is controlled by `_meta.ts` files 
 ## UI screenshots
 
 Screenshots are generated from a local Noctune Core checkout, converted to WebP, and committed under `public/screenshots/`. The deployed docs use those static assets, so deployment does not need database, Supabase, or browser credentials.
+
+Raster assets (`.webp`, `.png`, `.jpg`, `.jpeg`, `.gif`, and `.avif`) are stored in
+Git LFS. The repository's pre-push hook uploads their LFS objects and runs `pnpm check`
+before Git updates the remote branch.
 
 Local capture expects:
 
@@ -30,7 +42,7 @@ pnpm screenshots:contact-sheet
 pnpm check
 ```
 
-`screenshots:update` refuses the Core database, migrates and seeds the disposable database, creates or updates only the reserved test auth identity, runs Core from an isolated worktree, and promotes staged images only after every capture passes validation. Capture routes, output paths, byte limits, and documentation references live in `capture/manifest.json`. Wrap product screenshots in `<BrowserFrame>` to apply the shared browser-neutral presentation without baking decoration into the image files.
+`screenshots:update` refuses the Core database, migrates and seeds the disposable database, creates or updates only the reserved test auth identities, runs Core from an isolated worktree, and promotes staged images only after every capture passes validation. Capture routes, output paths, byte limits, and documentation references live in `capture/manifest.json`. Wrap product screenshots in `<BrowserFrame>` to apply the shared browser-neutral presentation without baking decoration into the image files.
 
 `capture/image-policy.json` is the source of truth for the 1600×900 viewport, WebP
 encoder settings, color and metadata requirements, and payload budgets. The verifier

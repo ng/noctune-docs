@@ -7,6 +7,11 @@ import { fileURLToPath } from 'node:url'
 
 import dotenv from 'dotenv'
 
+import {
+  assertCaptureDatabase,
+  requireLoopbackBaseUrl,
+} from '../capture/support/capture-safety.mjs'
+
 const scriptsDir = path.dirname(fileURLToPath(import.meta.url))
 const docsRoot = path.resolve(scriptsDir, '..')
 const captureEnvPath = path.join(docsRoot, '.env.capture.local')
@@ -25,15 +30,12 @@ const termsUserEmail = captureEnv.DOCS_TERMS_USER_EMAIL || 'docs-terms@test.noct
 const captureUserPassword = `Docs-${randomBytes(24).toString('base64url')}!1a`
 const captureNow = captureEnv.DOCS_CAPTURE_NOW || '2026-07-15T17:00:00.000Z'
 
-if (!databaseUrl) {
-  throw new Error('CAPTURE_DATABASE_URL is required in .env.capture.local or the environment')
-}
-if (captureEnv.CAPTURE_DATABASE_GUARD !== 'noctune-docs-capture-only') {
-  throw new Error('CAPTURE_DATABASE_GUARD must acknowledge the disposable capture database')
-}
-if (sameDatabaseIdentity(databaseUrl, coreFileEnv.DATABASE_URL || process.env.DATABASE_URL)) {
-  throw new Error('Refusing to capture against the database configured in Noctune Core .env.local')
-}
+assertCaptureDatabase({
+  databaseUrl,
+  guard: captureEnv.CAPTURE_DATABASE_GUARD,
+  forbiddenDatabaseUrl: coreFileEnv.DATABASE_URL || process.env.DATABASE_URL,
+})
+requireLoopbackBaseUrl(baseURL)
 if (!captureUserEmail.endsWith('@test.noctune.local')) {
   throw new Error('DOCS_CAPTURE_USER_EMAIL must use the reserved @test.noctune.local domain')
 }
@@ -148,6 +150,7 @@ try {
   fs.rmSync(lockPath, { force: true })
 }
 
+/** Creates or refreshes the detached Noctune Core worktree used for capture. */
 async function ensureRuntimeWorktree(revision, runtimeDir, sourceDir) {
   await run('Pruning stale Core worktrees', 'git', ['worktree', 'prune'], sourceDir, process.env)
 
@@ -184,6 +187,7 @@ async function ensureRuntimeWorktree(revision, runtimeDir, sourceDir) {
   )
 }
 
+/** Copies the current documentation fixture seeder into the isolated worktree. */
 function syncCaptureSeeder(sourceDir, runtimeDir) {
   const source = path.join(sourceDir, 'scripts/seed-docs-capture.ts')
   const destination = path.join(runtimeDir, 'scripts/seed-docs-capture.ts')
@@ -197,17 +201,57 @@ function syncCaptureSeeder(sourceDir, runtimeDir) {
   fs.copyFileSync(source, destination)
 }
 
+/** Replaces the validated screenshot tree as one rollback-safe directory swap. */
 function promoteScreenshots(captures, stagingRoot) {
+  const screenshotRoot = 'public/screenshots'
+  const stagedScreenshots = safeChildPath(stagingRoot, screenshotRoot)
+  const destinationRoot = safeChildPath(docsRoot, screenshotRoot)
+  const destinationParent = path.dirname(destinationRoot)
+  const nextRoot = path.join(destinationParent, `.screenshots-next-${process.pid}`)
+  const backupRoot = path.join(destinationParent, `.screenshots-backup-${process.pid}`)
+
   for (const capture of captures) {
     const source = safeChildPath(stagingRoot, capture.output)
     const destination = safeChildPath(docsRoot, capture.output)
-    const temporary = `${destination}.tmp-${process.pid}`
-    fs.mkdirSync(path.dirname(destination), { recursive: true })
-    fs.copyFileSync(source, temporary)
-    fs.renameSync(temporary, destination)
+    if (!destination.startsWith(`${destinationRoot}${path.sep}`)) {
+      throw new Error(`Capture output must stay within ${screenshotRoot}: ${capture.output}`)
+    }
+    if (!fs.existsSync(source)) {
+      throw new Error(`Validated capture is missing before promotion: ${capture.output}`)
+    }
   }
+
+  fs.rmSync(nextRoot, { force: true, recursive: true })
+  fs.rmSync(backupRoot, { force: true, recursive: true })
+  fs.cpSync(stagedScreenshots, nextRoot, { errorOnExist: true, recursive: true })
+
+  const hadDestination = fs.existsSync(destinationRoot)
+  if (hadDestination) {
+    fs.renameSync(destinationRoot, backupRoot)
+  }
+
+  try {
+    fs.renameSync(nextRoot, destinationRoot)
+  } catch (promotionError) {
+    try {
+      if (hadDestination && !fs.existsSync(destinationRoot)) {
+        fs.renameSync(backupRoot, destinationRoot)
+      }
+    } catch (rollbackError) {
+      throw new AggregateError(
+        [promotionError, rollbackError],
+        'Screenshot promotion failed and the previous screenshot tree could not be restored',
+      )
+    } finally {
+      fs.rmSync(nextRoot, { force: true, recursive: true })
+    }
+    throw promotionError
+  }
+
+  fs.rmSync(backupRoot, { force: true, recursive: true })
 }
 
+/** Resolves an untrusted relative path while requiring it to remain below a root. */
 function safeChildPath(root, relativePath) {
   const resolvedRoot = path.resolve(root)
   const resolved = path.resolve(resolvedRoot, relativePath)
@@ -217,6 +261,7 @@ function safeChildPath(root, relativePath) {
   return resolved
 }
 
+/** Acquires the single-writer screenshot update lock, clearing one stale lock if needed. */
 function acquireLock(lockPath) {
   for (let attempt = 0; attempt < 2; attempt += 1) {
     try {
@@ -235,6 +280,7 @@ function acquireLock(lockPath) {
   throw new Error('Could not acquire the screenshot update lock')
 }
 
+/** Reports whether an operating-system process ID is still active. */
 function processIsRunning(pid) {
   try {
     process.kill(pid, 0)
@@ -244,22 +290,7 @@ function processIsRunning(pid) {
   }
 }
 
-function sameDatabaseIdentity(left, right) {
-  if (!left || !right) return false
-  return databaseIdentity(left) === databaseIdentity(right)
-}
-
-function databaseIdentity(value) {
-  const url = new URL(value)
-  if (url.protocol !== 'postgres:' && url.protocol !== 'postgresql:') {
-    throw new Error('Capture database URLs must use postgres:// or postgresql://')
-  }
-  const hostname = url.hostname.toLowerCase().replace(/-pooler(?=\.)/, '')
-  const port = url.port || '5432'
-  const database = decodeURIComponent(url.pathname).replace(/^\/+|\/+$/g, '')
-  return `${hostname}:${port}/${database}`
-}
-
+/** Runs a labeled child command and forwards termination signals until it exits. */
 async function run(label, command, args, cwd, env) {
   console.log(`\n[screenshots] ${label}`)
   await new Promise((resolve, reject) => {
@@ -294,6 +325,7 @@ async function run(label, command, args, cwd, env) {
   })
 }
 
+/** Runs a child command and returns its trimmed standard output. */
 async function captureOutput(command, args, cwd) {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {

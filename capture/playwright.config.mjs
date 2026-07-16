@@ -4,6 +4,8 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { assertCaptureDatabase, requireLoopbackBaseUrl } from './support/capture-safety.mjs'
+
 const captureDir = path.dirname(fileURLToPath(import.meta.url))
 const docsRoot = path.resolve(captureDir, '..')
 const captureEnvPath = path.join(docsRoot, '.env.capture.local')
@@ -26,21 +28,16 @@ const coreEnv = {
 const databaseUrl = captureEnv.CAPTURE_DATABASE_URL
 const baseURL = captureEnv.CAPTURE_BASE_URL || 'http://localhost:3100'
 
-if (!databaseUrl) {
-  throw new Error('CAPTURE_DATABASE_URL is required in .env.capture.local or the environment')
-}
-if (captureEnv.CAPTURE_DATABASE_GUARD !== 'noctune-docs-capture-only') {
-  throw new Error('CAPTURE_DATABASE_GUARD must acknowledge the disposable capture database')
-}
-if (sameDatabaseIdentity(databaseUrl, coreEnv.DATABASE_URL)) {
-  throw new Error('Refusing to capture against the database configured in Noctune Core .env.local')
-}
+assertCaptureDatabase({
+  databaseUrl,
+  guard: captureEnv.CAPTURE_DATABASE_GUARD,
+  forbiddenDatabaseUrl: coreEnv.DATABASE_URL,
+})
 if (!coreEnv.NEXT_PUBLIC_SUPABASE_URL || !coreEnv.SUPABASE_SERVICE_ROLE_KEY) {
   throw new Error('Noctune Core DEV Supabase configuration is required for authenticated capture')
 }
 
-const appUrl = new URL(baseURL)
-const localHost = appUrl.hostname === 'localhost' || appUrl.hostname === '127.0.0.1'
+const appUrl = requireLoopbackBaseUrl(baseURL)
 const port = appUrl.port || (appUrl.protocol === 'https:' ? '443' : '80')
 const childEnv = {
   ...process.env,
@@ -55,6 +52,7 @@ const childEnv = {
 }
 const authStatePath = path.join(docsRoot, '.capture/auth/user.json')
 const termsAuthStatePath = path.join(docsRoot, '.capture/auth/terms-user.json')
+const deterministicChromiumArgs = ['--disable-gpu', '--font-render-hinting=none']
 
 export default defineConfig({
   testDir: '.',
@@ -77,6 +75,9 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     trace: 'off',
     video: 'off',
+    launchOptions: {
+      args: deterministicChromiumArgs,
+    },
     actionTimeout: 15_000,
     navigationTimeout: 30_000,
   },
@@ -97,7 +98,11 @@ export default defineConfig({
         storageState: authStatePath,
         permissions: ['microphone'],
         launchOptions: {
-          args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'],
+          args: [
+            ...deterministicChromiumArgs,
+            '--use-fake-ui-for-media-stream',
+            '--use-fake-device-for-media-stream',
+          ],
         },
       },
     },
@@ -114,30 +119,12 @@ export default defineConfig({
       },
     },
   ],
-  webServer: localHost
-    ? {
-        command: `corepack pnpm exec next dev -p ${port}`,
-        cwd: runtimeCoreDir,
-        env: childEnv,
-        url: baseURL,
-        reuseExistingServer: false,
-        timeout: 180_000,
-      }
-    : undefined,
+  webServer: {
+    command: `corepack pnpm exec next dev -p ${port}`,
+    cwd: runtimeCoreDir,
+    env: childEnv,
+    url: baseURL,
+    reuseExistingServer: false,
+    timeout: 180_000,
+  },
 })
-
-function sameDatabaseIdentity(left, right) {
-  if (!left || !right) return false
-  return databaseIdentity(left) === databaseIdentity(right)
-}
-
-function databaseIdentity(value) {
-  const url = new URL(value)
-  if (url.protocol !== 'postgres:' && url.protocol !== 'postgresql:') {
-    throw new Error('Capture database URLs must use postgres:// or postgresql://')
-  }
-  const hostname = url.hostname.toLowerCase().replace(/-pooler(?=\.)/, '')
-  const port = url.port || '5432'
-  const database = decodeURIComponent(url.pathname).replace(/^\/+|\/+$/g, '')
-  return `${hostname}:${port}/${database}`
-}
