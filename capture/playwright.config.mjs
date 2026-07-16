@@ -53,6 +53,7 @@ const childEnv = {
   SUPABASE_REALTIME_ENABLED: 'false',
 }
 const authStatePath = path.join(docsRoot, '.capture/auth/user.json')
+const termsAuthStatePath = path.join(docsRoot, '.capture/auth/terms-user.json')
 
 export default defineConfig({
   testDir: '.',
@@ -85,11 +86,11 @@ export default defineConfig({
     },
     {
       name: 'auth-setup',
-      testMatch: /auth\.setup\.ts/,
+      testMatch: /\/auth\.setup\.ts$/,
     },
     {
       name: 'authenticated',
-      testMatch: /authenticated\.spec\.ts/,
+      testMatch: /\/authenticated\.spec\.ts$/,
       dependencies: ['auth-setup'],
       use: {
         storageState: authStatePath,
@@ -97,6 +98,18 @@ export default defineConfig({
         launchOptions: {
           args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'],
         },
+      },
+    },
+    {
+      name: 'terms-auth-setup',
+      testMatch: /\/terms-auth\.setup\.ts$/,
+    },
+    {
+      name: 'terms-authenticated',
+      testMatch: /\/terms-authenticated\.spec\.ts$/,
+      dependencies: ['terms-auth-setup'],
+      use: {
+        storageState: termsAuthStatePath,
       },
     },
   ],

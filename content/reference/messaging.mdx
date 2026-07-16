@@ -4,84 +4,57 @@ title: Messaging & Email Relay
 
 # Messaging & Email Relay
 
-When you email a discharge note, referral, or follow-up from Noctune, you choose how replies get back to you. The choice affects both the client's experience and what (if anything) it costs you.
+Every outbound Noctune message has a reply route. The route determines which address the recipient sees and where a reply arrives.
 
-## The three reply modes
+## Reply routes
 
-Noctune supports three outbound-email modes:
+| Route                   | Recipient experience                                    | Reply destination                           | Requirement                |
+| ----------------------- | ------------------------------------------------------- | ------------------------------------------- | -------------------------- |
+| **Noctune Nest**        | A Noctune relay identity; personal address stays hidden | Encounter thread or global Messages inbox   | Nest entitlement           |
+| **Noctune (no reply)**  | From `noreply@mail.noctune.ai`; one-way message         | Recipient cannot reply through that message | Available without Nest     |
+| **Your personal email** | Your personal address is shared                         | Your personal inbox                         | No Nest entitlement needed |
 
-| Mode           | What the client sees                         | What happens to replies                          | Cost                                    |
-| -------------- | -------------------------------------------- | ------------------------------------------------ | --------------------------------------- |
-| **No reply**   | From: `noreply@mail.noctune.ai`              | Bounce — client can't reply                      | Free — included with every note         |
-| **Nest**       | From: `{encounter-id}@replies.noctune.ai`    | Route into the Nest inbox, tied to the encounter | Included in Lite / Pro / Practice plans |
-| **Vet direct** | From: Noctune, Reply-To: your personal email | Go straight to your inbox                        | Included in Lite / Pro / Practice plans |
+When Nest is active, a new composer starts on the Nest route. Otherwise it starts on no-reply. You can change the route before sending.
 
-<Diagram
-  chart={`
-flowchart TD
-    Send([You send from an encounter]) --> Pick{Reply mode}
-    Pick -->|No reply| NR["From: noreply@mail.noctune.ai"]
-    Pick -->|Nest| NE["From: encounter-id@replies.noctune.ai"]
-    Pick -->|Vet direct| VD["From: Noctune<br/>Reply-To: your email"]
-    NR --> Bounce[/Client reply bounces/]
-    NE --> Nest[(Nest inbox · Messages thread)]
-    VD --> Personal[/Your personal inbox/]
-`}
+<BrowserFrame
+  src="/screenshots/messages/composer.webp"
+  alt="Noctune message composer with the reply-route picker open for Nest, no-reply, and personal email"
+  url="app.noctune.ai/messages"
 />
 
-### No reply (free, included)
+## Noctune Nest
 
-The default. Use this when you just need to send something — discharge instructions, a receipt, an FYI — and don't need a response. Replies bounce with a polite message telling the client to call the practice. **No reply sends are free and included with every generated note** on any plan, including pay-per-note.
+Nest is the reply-enabled Noctune inbox. The label adapts to context:
 
-### Nest (subscription)
+- In an encounter, **This encounter** keeps replies attached to that clinical record.
+- In a global composer, **The Nest** or the patient's Nest returns replies to Messages.
 
-The **Nest** is Noctune's bidirectional inbox. Each encounter gets a unique reply address (`{encounter-id}@replies.noctune.ai`), and any reply the client sends routes into the [Messages](/messages) thread for that encounter. This keeps the client's follow-up questions tied to the visit context, which other vets on your team can see.
+The recipient never needs a Noctune account. They reply with ordinary email, and Noctune threads the inbound message into [Messages](/messages). Practice teammates can then see the same encounter context and assignment state.
 
-Nest is included in Lite, Pro, and Practice plans. Pay-per-note accounts can send via No reply only.
+## No reply
 
-### Vet direct (subscription)
+Use **Noctune (no reply)** for one-way communication. The composer explains that the recipient cannot respond and shows `noreply@mail.noctune.ai`. This route does not create a Nest conversation.
 
-If you'd rather have replies go to your personal email inbox, choose Vet direct. This exposes your email address to the client, so it's best for relationships where that's already established. Like Nest, it's included in any subscription plan.
+## Personal email
 
-## Choosing a mode
+Use **Your personal email** when the reply should leave Noctune and go directly to your mailbox. The selector keeps a warning visible because this shares your address and removes the reply from the team's Noctune workflow.
 
-When you compose a discharge or follow-up email, the mode picker appears above the recipient field. The default is **No reply** for one-off courtesy sends.
+## Direct inbound handles
 
-![Email composer with a From Mode selector showing No reply, Nest, and Vet direct options](https://placecats.com/900/380)
+Noctune also provides inbound handles that do not require an earlier outbound message. A personal or practice address under `inbox.noctune.ai` can receive direct mail in Messages. The Account tab shows the current personal handle; paid access can expose handle customization where available.
 
-## Nest inbox
-
-Messages that arrive via Nest show up in both:
-
-- The per-encounter thread (open the encounter → Messages tab)
-- The global [Messages](/messages) inbox with an unread badge
-
-Replies from within the app always go back via Nest — once a conversation starts in the Nest, it stays there.
-
-## Your handle inbox
-
-The reply modes above are all about **outbound** sends. There's also an inbound path that doesn't depend on you sending anything first: every vet (and every practice) has a permanent handle address, `{handle}@inbox.noctune.ai`. Anyone — a client, a referring clinic, another vet — can email it directly and the message lands in your [Messages](/messages) inbox, the same place Nest replies arrive.
-
-It's distinct from the reply modes:
-
-- Unlike **Vet direct**, it never exposes your personal email address.
-- Unlike **Nest**, it isn't tied to a single encounter — it's your standing address.
-
-See [Mail domains](#mail-domains) for how handles are assigned.
+This differs from Nest: a handle is a standing inbox identity, while an encounter Nest route is tied to a particular visit.
 
 ## Mail domains
 
-Noctune splits email across three subdomains so each kind of traffic keeps its own reputation — a client marking an encounter reply as spam never affects your discharge sends or your direct mailbox.
+| Domain               | Purpose                                     | Example shape                    |
+| -------------------- | ------------------------------------------- | -------------------------------- |
+| `mail.noctune.ai`    | Outbound transactional and no-reply mail    | `noreply@mail.noctune.ai`        |
+| `replies.noctune.ai` | Reply tokens for encounter-linked Nest mail | unique reply token at the domain |
+| `inbox.noctune.ai`   | Personal and practice inbound handles       | `{handle}@inbox.noctune.ai`      |
 
-| Subdomain            | Direction     | Used for                                                | Address shape                       |
-| -------------------- | ------------- | ------------------------------------------------------- | ----------------------------------- |
-| `mail.noctune.ai`    | Outbound only | Transactional sends (`noreply@`). Won't accept replies. | `noreply@mail.noctune.ai`           |
-| `replies.noctune.ai` | Inbound       | Per-encounter Nest reply tokens                         | `{encounter-id}@replies.noctune.ai` |
-| `inbox.noctune.ai`   | Inbound       | Your handle and your practice's shared inbox            | `{handle}@inbox.noctune.ai`         |
+The domains separate one-way sending, reply routing, and standing inbound mail.
 
-Your **handle** is the address clients and other vets can write to directly. Everyone gets one automatically; you can pick a custom handle on a paid plan, and a practice can claim a shared one (e.g. `valleyvet@inbox.noctune.ai`). Mail to your handle lands in [Messages](/messages) just like Nest replies. Handles are globally unique and, once retired, are never reissued.
+## Entitlement changes
 
-## What happens if a subscription lapses
-
-- **No reply** keeps working indefinitely — it's included with every generated note.
-- **Nest** and **Vet direct** require an active subscription. If yours lapses, new sends default to No reply and existing Nest threads become read-only until you reactivate.
+If Nest is unavailable in the active billing workspace, the composer hides or disables that route and uses no-reply instead. Personal email remains a separate choice. Existing messages stay visible in the inbox even when the current workspace cannot start a new Nest send.

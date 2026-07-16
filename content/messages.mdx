@@ -4,63 +4,62 @@ title: Messages
 
 # Messages
 
-Messages has two jobs in Noctune: it's an inbox for vet-to-vet threads, and it's the home of **the Nest** — where pet-owner replies to your emails land, tied back to the encounter they're about.
+Messages collects client replies that return through Noctune Nest and direct mail sent to a Noctune inbox handle. **Sent** keeps the outbound messages you initiated from Noctune.
 
-![Messages inbox with filter tabs for Vet threads and Nest threads, plus a flagged filter](https://placecats.com/960/540)
+<BrowserFrame
+  src="/screenshots/messages/inbox.webp"
+  alt="Noctune Messages inbox with two client threads, selected Mochi conversation, encounter link, assignment, and reply actions"
+  url="app.noctune.ai/messages"
+/>
 
-## The Nest
+## Inbox and Sent
 
-When you email a discharge note or follow-up from an encounter, you pick how replies route. Choose **Nest** and replies come back to `{encounter-id}@replies.noctune.ai` — they appear as a new thread in Messages, tied to the encounter they reference.
+Use the top tabs to switch between incoming and outgoing mail. Inbox filters include **All**, **Unread**, **Flagged**, **Last 7 days**, and **Archived**. In a practice workspace, **Mine** and **Unassigned** help divide follow-up work.
 
-- **Full reference:** [Messaging & Email Relay](/reference/messaging)
-- **Why it matters:** the client's follow-up question arrives in context — you (or another vet) sees the original visit alongside the reply.
+Choose a thread to read the message history. Encounter-linked replies show the patient and a **See encounter** action, so you can move directly to the SOAP note, transcript, and clinical context. Assignment is visible in the list for team triage.
 
-![Nest thread view with encounter context sidebar showing patient, date, and SOAP summary](https://placecats.com/900/520)
+## Noctune Nest
 
-## Noctune Nest vs. no reply vs. personal email
+When an outbound message uses Nest, a client reply returns to Noctune without exposing your personal address. A reply to an encounter-linked message remains associated with that encounter; a reply to a global message returns to the Messages inbox.
 
-Short version:
+See [Messaging & Email Relay](/reference/messaging) for the routing details.
 
-- **Noctune Nest** — replies return to the encounter or your Noctune inbox without exposing your real address. Included in subscription.
-- **Noctune (no reply)** — a one-way message. The recipient cannot reply.
-- **Your personal email** — replies go straight to your personal inbox, and the recipient sees your address.
+## Choose how replies route
 
-See [Messaging & Email Relay](/reference/messaging) for the full comparison.
+- **Noctune Nest** — replies return to Noctune. In an encounter composer, the option is labeled **This encounter**; elsewhere it is **The Nest** or the patient's Nest.
+- **Noctune (no reply)** — a one-way message from `noreply@mail.noctune.ai`.
+- **Your personal email** — replies go to your personal inbox, and your address is shared with the recipient.
 
-## Vet-to-vet threads
+## Start a message
 
-The other half of the inbox is vet-to-vet correspondence for referrals and consults. Threads group messages between you and another vet (or a whole team).
+Choose **New Message** in the top bar or from a thread. Add one or more **To** recipients, reveal **Bcc** if needed, choose the reply route, enter a subject and message, and send. The composer supports a practice footer when a practice workspace is active.
 
-![Vet-to-vet thread with alternating messages, referral context, and SOAP attachment](https://placecats.com/900/480)
+<BrowserFrame
+  src="/screenshots/messages/composer.webp"
+  alt="New message composer with the sender route picker open for Nest, no-reply, and personal email; recipient, subject, template, body, and send controls"
+  url="app.noctune.ai/messages"
+/>
 
-## Starting a new message
+### Insert an email template
 
-Choose **New Message** in the top right. The composer opens without leaving your current page. Add one or more recipients, choose how replies should route, then enter a subject and message.
+Choose **Templates** to search your [Email Templates](/email-templates). Insertion preserves text already in the draft, fills an empty subject, and resolves available merge fields. Use the immediate **Undo** action if you picked the wrong template.
 
-![New message composer with recipient picker, sender route, template picker, subject, and body](https://placecats.com/900/480)
-
-### Use an email template
-
-Choose **Templates** in the composer to search your saved [Email Templates](/email-templates). Inserting a template fills an empty subject and appends the body without replacing anything you already wrote. An **Undo** action is available immediately after insertion.
-
-Placeholders such as the patient's name are filled from the recipient's patient record. Placeholders that cannot be filled appear in amber with an explanation. You can correct the recipient or patient record, go back and edit the message, or explicitly choose **Send anyway**; in that case the recipient sees the placeholder text.
+Unresolved fields appear with an explanation. Fix the recipient or source data, edit the draft, or explicitly confirm **Send anyway**; the unresolved text is delivered if you proceed.
 
 ### Reply to a thread
 
-Open a thread and choose **Reply**. Replies use the same full-size composer, template picker, placeholder checks, and sender-routing options as a new message.
+Open the thread and choose **Reply**. It uses the same message editor, templates, merge-field checks, and sender routing as a new message.
 
-### Attachments
+## Review Sentinel-flagged work
 
-Attachments appear on the message that included them. Select an attachment to download it. If a thread contains several messages, expand a collapsed message to see its sender, recipients, timestamp, and attachments.
+The **Flagged** filter narrows Inbox to encounters where [Noctune Sentinel](/reference/sentinel) detected hostile behavior. The list keeps the patient, owner, subject, assignment, and safety label together.
 
-## Flagged filter
+<BrowserFrame
+  src="/screenshots/messages/flagged.webp"
+  alt="Messages inbox filtered to the Sentinel-flagged Jasper conversation"
+  url="app.noctune.ai/messages"
+/>
 
-The **Flagged** filter surfaces encounters where [Noctune Sentinel](/reference/sentinel) detected hostility during the visit. Use this when you need to look back on a difficult client.
+## Unread badge and notifications
 
-![Messages inbox with Flagged tab active, showing encounters with hostile-visit indicators](https://placecats.com/900/440)
-
-## Notifications
-
-You get an email for new messages if that's enabled under [Notifications settings](/settings/notifications). The in-app badge updates in real time.
-
-![Sidebar showing the Messages item with an unread count badge](https://placecats.com/600/240)
+The sidebar badge reflects unread messages. The notification matrix also shows the current email and push defaults for new client replies under [Notifications](/settings/notifications).

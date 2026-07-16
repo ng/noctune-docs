@@ -4,28 +4,30 @@ title: Account
 
 # Account
 
-The Account tab is your personal profile — name, email, and password. Nothing here affects your practice or billing.
+The Account tab controls the personal identity and encounter preference Noctune currently exposes in Settings.
 
-![Account settings tab with profile photo, name, email, and password change fields](https://placecats.com/960/540)
+<BrowserFrame
+  src="/screenshots/settings/account.webp"
+  alt="Noctune Account settings with display-name preview, inbound email identity, and auto-finish preference"
+  url="app.noctune.ai/settings?tab=account"
+/>
 
-## Profile
+## Display name
 
-Your name and photo appear on messages and in the team roster. Click the avatar to upload or change the photo.
+Your display name appears on messages, signed notes, mentions, and practice membership. The preview shows how it will look in a client reply. Edit the field and choose **Save**; the button remains disabled when nothing has changed.
 
-![Profile card with avatar upload, display name, and role](https://placecats.com/900/360)
+The current Account tab derives the avatar initials from this name. It does not provide profile-photo upload.
 
-## Email
+## Inbound email
 
-Changing your email requires confirming the new address via a verification link. Until you confirm, you can still sign in with the old one.
+The inbound section shows your standing Noctune mailbox under `inbox.noctune.ai`. Mail sent to that address appears in [Messages](/messages) without exposing your personal email.
 
-![Email change form with current email, new email, and verification status](https://placecats.com/900/300)
+Handle customization is gated by the available account capability. When customization is not available, the section keeps the assigned address visible and links to the relevant billing option.
 
-## Password
+## Encounter preference
 
-If you signed up with Google or Apple, you don't have a password yet — click **Set password** to create one. This is useful if you want email/password as a backup sign-in method.
+**Auto-finish on copy or send** marks an encounter complete when you copy the SOAP note or send a discharge message. Turn it off if you prefer to finish every encounter explicitly after those actions.
 
-![Password change form with current password, new password, and confirm fields](https://placecats.com/900/360)
+## Sign-in credentials
 
-## Logging out
-
-The **Log out** button at the bottom signs you out everywhere. If you suspect your account was accessed from a device you don't own, use this and then change your password.
+Email-address changes, password changes, linked Google or Apple identities, and global sign-out are not managed by the current Account tab shown above. Use the authentication flow presented on the sign-in screen or contact support when an account identity needs administrative help.

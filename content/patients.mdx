@@ -4,34 +4,50 @@ title: Patients
 
 # Patients
 
-The Patients page is your list of every animal you've seen. Each patient row links to a profile with vitals, history, and every past encounter.
+Patient Records brings each animal's encounters and extracted clinical trends together. Use **All Patients**, **Active**, or **Recent**, and search by patient or owner details.
 
-![Patients list page with search, species filter, and Add Patient button](https://placecats.com/960/540)
+<BrowserFrame
+  src="/screenshots/patients/list.webp"
+  alt="Patient Records page with patient counts, filters, search, flagged indicator, encounter totals, and row actions"
+  url="app.noctune.ai/patients"
+/>
 
-## Adding a patient
+## Add a patient
 
-Click **Add Patient** in the top right. Name, species, breed, and owner are the only required fields — the rest can be filled in later (or auto-filled from a recording).
+Choose **Add Patient**, enter the patient name, and confirm. This lightweight form is designed for quick capture; the current web dialog does not ask for species, breed, sex, birth date, or owner contact.
 
-![Add patient dialog with name, species, breed, sex, date of birth, and owner fields](https://placecats.com/900/520)
+<BrowserFrame
+  src="/screenshots/patients/add-patient.webp"
+  alt="Add Patient dialog with a required patient name field"
+  url="app.noctune.ai/patients"
+/>
+
+You can also create a patient from the selector in the New Encounter drawer.
 
 ## Patient profile
 
-Open a patient to see everything about them in one place:
+The profile header summarizes available species and breed information, encounter count, last visit, and status. When an owner email is on file, **Email owner** opens a pre-addressed message.
 
-- **Demographics** — name, species, breed, age, sex, microchip
-- **Vitals** — weight, temperature, heart rate trends across visits
-- **History** — every encounter tied to this patient, newest first
+Vitals discussed in encounters appear as trends for weight, temperature, heart rate, respiratory rate, and body-condition score. These are AI-extracted values, so verify them against the transcript before making a clinical decision.
 
-![Patient profile page with demographics card, vital trend charts, and encounter history list](https://placecats.com/1000/560)
+<BrowserFrame
+  src="/screenshots/patients/profile.webp"
+  alt="Mochi patient profile with demographics, encounter count, Email owner action, and five vitals trend cards"
+  url="app.noctune.ai/patients/d0c50000-0000-4000-8000-000000000101"
+/>
 
-## Prior visit context
+The **Encounter History** section below the trends lists the patient's visits and opens the underlying record.
 
-When you start a new encounter for an existing patient, Noctune pulls relevant context from prior visits into the SOAP note's drafting — so ongoing conditions and medications show up in the assessment without you having to dictate them again.
+## Prior-visit context during review
 
-![Prior visit context panel showing recent diagnoses and active medications](https://placecats.com/900/360)
+An encounter's **Past Encounters** tab keeps the patient's earlier clinical summaries next to the current note. Search the history, expand a visit, or open the full prior encounter in a new tab.
 
-## Editing and deleting
+<BrowserFrame
+  src="/screenshots/encounters/detail/past-encounters.webp"
+  alt="Past Encounters panel showing Mochi's earlier wellness and new-patient visits"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
 
-Every field on the profile is editable inline. The three-dot menu in the header has **Delete Patient** — this also removes the tie from past encounters but leaves the encounters themselves intact.
+## Rename or remove a patient
 
-![Patient header with three-dot action menu open showing Edit and Delete options](https://placecats.com/700/260)
+Use the pencil action in the list or profile to rename a patient. The trash action in the list opens **Remove Patient**. Removal archives the patient so it no longer appears in the active list; existing transcripts and SOAP notes are not deleted.

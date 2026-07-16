@@ -13,7 +13,7 @@ export default {
     [
       remarkLintNoDeadUrls,
       {
-        skipUrlPatterns: ['^https?://placecats\\.com', '^https?://localhost', '^#'],
+        skipUrlPatterns: ['^https?://localhost', '^#'],
       },
     ],
   ],

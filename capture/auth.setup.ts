@@ -5,6 +5,7 @@ import path from 'node:path'
 import { setFixedCaptureTime } from './support/fixed-time'
 
 const authStatePath = path.resolve(process.cwd(), '.capture/auth/user.json')
+const capturePracticeId = 'd0c50000-0000-4000-8000-000000000601'
 
 test('authenticate the documentation capture user', async ({ page }) => {
   const email = process.env.DOCS_CAPTURE_USER_EMAIL
@@ -29,6 +30,17 @@ test('authenticate the documentation capture user', async ({ page }) => {
     page.getByRole('button', { name: /^sign in$/i }).click(),
   ])
   await expect(page.getByRole('button', { name: 'Start an encounter' })).toBeVisible()
+
+  // PracticeProvider resolves the seeded default workspace asynchronously
+  // after sign-in. Persist auth only once that selection is in the browser
+  // state, otherwise practice-scoped hooks can issue their first request in
+  // personal mode and keep the resulting empty state.
+  await expect
+    .poll(async () => {
+      const cookies = await page.context().cookies()
+      return cookies.find((cookie) => cookie.name === 'noctune-practice-id')?.value
+    })
+    .toBe(capturePracticeId)
 
   await fs.mkdir(path.dirname(authStatePath), { recursive: true })
   await page.context().storageState({ path: authStatePath })

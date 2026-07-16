@@ -4,37 +4,46 @@ title: Encounters
 
 # Encounters
 
-An **encounter** is one appointment: the audio, the transcript, and the SOAP note generated from them. The Encounters page is where you browse everything you've recorded.
+An **encounter** is one appointment and its audio, transcript, generated notes, messages, and patient context. The Encounters page is the complete work queue.
 
-![Encounters list page with filter pills for status, search bar, and New Encounter button](https://placecats.com/960/540)
+<BrowserFrame
+  src="/screenshots/encounters/list.webp"
+  alt="Noctune Encounters page with status filters, date range, search, and five example encounters"
+  url="app.noctune.ai/encounters"
+/>
 
-Every encounter moves through the same lifecycle, from captured audio to an exported note:
+## Encounter states
 
 <Diagram
   chart={`
 flowchart LR
-    iOS([Record on iOS]) --> Proc
-    Web([Upload audio on web]) --> Proc
-    Proc[Processing<br/>transcribe + draft SOAP] --> Draft[Draft]
-    Draft --> Review{Review & edit}
-    Review -->|regenerate / append audio| Review
-    Review -->|looks good| Complete[Complete]
-    Complete --> Export[/Export: copy or email/]
-    Complete -.audio after 90 days.-> Archived[(Archived)]
+    Capture([Record or upload]) --> Progress[In progress]
+    Progress --> Review[Needs review]
+    Progress -->|processing problem| Issues[Issues]
+    Issues -->|retry succeeds| Review
+    Review -->|edit, regenerate, or add audio| Review
+    Review --> Complete[Completed]
 `}
 />
 
-## Filter and search
+- **In progress** means Noctune is uploading, transcribing, or generating notes.
+- **Needs review** means the draft is ready for a clinician.
+- **Completed** means the encounter has been reviewed and finished.
+- **Issues** collects encounters that need a retry or another corrective action.
 
-Filter pills along the top narrow the list by status (Draft, Complete, Archived). The search bar on the right matches patient name, owner, and free text from the transcript.
+The status displayed on an individual row can be more specific, such as **Transcribing**, **Ready**, or **Completed**.
 
-![Encounter filter pills — All, Drafts, Complete, Archived — with the Complete filter selected](https://placecats.com/900/160)
+## Filter, date, and search
 
-## Opening an encounter
+Use **All**, **Needs review**, **In progress**, **Completed**, and **Issues** to narrow the queue. The date control can limit results to a recent range or show **All time**.
 
-Click a row to open it. Inside, you'll see the transcript on one side and the SOAP note on the other. See [Review & Edit](/encounters/review-and-edit) for everything you can do there.
+Search matches the patient name or source audio filename. It does not search the transcript, owner name, or teammate name.
+
+## Open an encounter
+
+Choose a row to open the review workspace. The SOAP note is on the left; transcript, messages, and prior visits are on the right. See [Review & Edit](/encounters/review-and-edit) for the available actions.
 
 ## In this section
 
-- [New Encounter](/encounters/new-encounter) — record or upload audio
-- [Review & Edit](/encounters/review-and-edit) — edit SOAP notes, regenerate, append audio, export
+- [New Encounter](/encounters/new-encounter) — record or queue audio
+- [Review & Edit](/encounters/review-and-edit) — verify the transcript, edit notes, and finish the encounter
