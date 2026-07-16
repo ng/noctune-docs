@@ -4,9 +4,40 @@ title: New Encounter
 
 # New Encounter
 
-Noctune records on your **iOS device** — your phone is the microphone. The web app is for reviewing and editing. From the web, you'll either upload an existing recording or initiate a visit that syncs from your phone.
+Start an encounter from the web with your computer's microphone, upload one or more existing audio files, or record with the iOS app. All three routes produce the same transcript and draft SOAP note.
 
-![New Encounter entry screen with Upload and "Open on iOS" options](https://placecats.com/900/500)
+![New Encounter drawer with Record from web and file upload controls](https://placecats.com/900/500)
+
+## Recording from the web
+
+1. Open **New Encounter**.
+2. Select a patient. You can type a new patient's name and press **Enter** to create the patient without leaving the drawer.
+3. Choose SOAP and discharge-note templates.
+4. Select **Record from web** and allow microphone access when your browser asks.
+5. Use **Pause** and **Resume** as needed. Select the microphone name to switch inputs without interrupting the take.
+6. Select **Stop**. The recording joins the file queue; choose **Process file** to create the encounter.
+
+The audio area stays available as a drop zone while you record. After stopping, you can record another take or add existing files before processing them together.
+
+![Active browser recording with timer, waveform, microphone picker, pause, and stop controls](https://placecats.com/900/460)
+
+### Leave the drawer without losing a take
+
+Closing the drawer during a recording does not stop it. A recording control remains visible as you move around Noctune. Choose **Return** to reopen the drawer, or **Stop** to finish the take and return it to the queue.
+
+Noctune warns before you close or reload the browser tab while a recording or unprocessed queue is active.
+
+### Recover an interrupted recording
+
+Noctune saves recording chunks locally in your browser while you work. If the tab or browser crashes, reopen Noctune and use the recovery prompt to:
+
+- **Recover & upload** the take, selecting a patient first if it did not have one
+- **Download** a local copy
+- **Discard** one take or all recoverable takes
+
+The notification bell also indicates when recoverable recordings are waiting. If local browser storage is unavailable, recording continues in memory and Noctune warns that crash recovery is unavailable.
+
+If a microphone is unplugged, Noctune tries the system default. When no input remains, the take pauses until a microphone becomes available; the elapsed recording and captured audio are preserved.
 
 ## Recording on iOS
 
@@ -23,6 +54,8 @@ Noctune records on your **iOS device** — your phone is the microphone. The web
 ## Uploading audio from the web
 
 If you already have a recording — a phone voice memo, dictaphone file, or audio from another scribe tool — upload it directly from the web. See [Supported Formats & Limits](/reference/supported-formats) for what's accepted.
+
+Drop files into the same audio area used for browser recording, or choose **browse files**. Each file appears in the queue. You can remove individual files before selecting **Process files**.
 
 ![Upload dialog showing supported audio formats and file selection area](https://placecats.com/900/420)
 
