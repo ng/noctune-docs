@@ -13,6 +13,7 @@ const assetRoot = process.env.CAPTURE_OUTPUT_ROOT
 const manifestPath = path.join(docsRoot, 'capture/manifest.json')
 const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'))
 const errors = []
+const placeholderImageHost = ['place', 'cats.com'].join('')
 
 for (const capture of manifest) {
   const outputPath = path.resolve(assetRoot, capture.output)
@@ -63,14 +64,12 @@ for (const capture of manifest) {
   }
 }
 
-if (process.argv.includes('--strict')) {
-  const contentRoot = path.join(docsRoot, 'content')
-  for (const file of await walk(contentRoot)) {
-    if (!file.endsWith('.mdx')) continue
-    const content = await fs.readFile(file, 'utf8')
-    if (content.includes('placecats.com')) {
-      errors.push(`${path.relative(docsRoot, file)} still references placecats.com`)
-    }
+const contentRoot = path.join(docsRoot, 'content')
+for (const file of await walk(contentRoot)) {
+  if (!file.endsWith('.mdx')) continue
+  const content = await fs.readFile(file, 'utf8')
+  if (content.includes(placeholderImageHost)) {
+    errors.push(`${path.relative(docsRoot, file)} still references ${placeholderImageHost}`)
   }
 }
 
