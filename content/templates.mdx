@@ -4,222 +4,124 @@ title: Templates
 
 # Templates
 
-Templates control how Noctune formats a SOAP note. You can use the built-in defaults, customize them, or build your own from scratch. A well-written template is the single biggest lever you have over note quality — Noctune's AI follows your template carefully, so the quality of the output is bounded by the quality of the prompt you give it.
+SOAP and discharge templates tell Noctune how to structure generated notes. The editor keeps markdown instructions on the left and a rendered preview or quality review on the right.
 
-![Templates page with system templates, my templates, and community library sections](https://placecats.com/960/540)
-
-## System vs. user templates
-
-- **System templates** are the Noctune-provided defaults (Wellness Exam, Emergency Triage, Dental, General SOAP). You can't edit them, but you can duplicate one and modify the copy.
-- **My templates** are yours. Edit, reorder, and delete freely.
-
-![Side-by-side view of a system template and a user-owned template with edit controls](https://placecats.com/900/440)
-
-## Creating a template
-
-Click **New Template**. A template is a structured prompt: markdown headings for each section (Subjective, Objective, Assessment, Plan) plus one or two sentences describing what belongs in each.
-
-![New template editor with section blocks for Subjective, Objective, Assessment, Plan](https://placecats.com/900/520)
-
-## Editing your own templates
-
-Open any template under **My Templates** and click **Edit**. You're editing plain markdown — headings (`##`, `###`), bullets, and instruction prose.
-
-![Template edit screen showing markdown editor on the left and live preview on the right](https://placecats.com/900/520)
-
-Save when you're done. Your next encounter using that template will reflect the changes immediately; past encounters keep whatever was generated at the time.
-
-## Auto-review on save
-
-When you save a template, Noctune automatically runs it through an AI reviewer and shows you suggestions: missing sections, vague instructions, sample data that might leak into real notes, and structural issues that make the output worse. Each suggestion has a **severity** (error / warning / info) and a suggested fix you can accept with one click.
-
-![Template review panel showing a quality score, summary, and list of suggestions with severity badges](https://placecats.com/900/460)
-
-You're **free to ignore** any suggestion — nothing is enforced. But the reviewer catches real problems that make notes worse, and applying its suggestions is the fastest way to get measurably better output. Think of it as a linter for your prompts.
-
-<Diagram
-  chart={`
-flowchart LR
-    Save([Save template]) --> Review[AI reviewer]
-    Review --> Sug{Suggestions?}
-    Sug -->|none| Done[Saved]
-    Sug -->|error / warning / info| Choose{Your call}
-    Choose -->|accept fix| Save
-    Choose -->|ignore| Done
-`}
+<BrowserFrame
+  src="/screenshots/templates/editor.webp"
+  alt="Noctune SOAP template editor with markdown instructions, live preview, template selector, Publish, Set Default, Delete, and Save controls"
+  url="app.noctune.ai/templates"
 />
 
-Common categories the reviewer flags:
+## SOAP and discharge templates
 
-- **Sample data** — e.g. "Patient: Fluffy" in the template; the AI sometimes copies example names into real notes
-- **Missing section** — a standard section (Plan, Assessment) is absent
-- **Structure** — inconsistent heading levels, missing blank lines, or overlapping section purposes
-- **Placeholder** — a `{like_this}` placeholder without an instruction for what to fill in
-- **Instruction** — a section header with no guidance for what to write
-- **Best practice** — vet-specific advice like "specify metric vs. imperial units"
+Use the tabs at the top to switch between the two purposes:
 
-## Writing LLM-friendly templates
+- **SOAP Templates** produce the clinical note.
+- **Discharge Templates** produce the client-facing summary.
 
-A few patterns reliably produce better notes. These are why our system templates look the way they do.
+System templates are maintained by Noctune and open read-only. Custom templates belong to you or your workspace and can be edited, saved, set as the default, published, or deleted. The selector labels system, personal, practice, default, and published entries where applicable.
 
-### 1. Explicit section instructions
+## Create a custom template
 
-**Bad:**
+Choose **New Template**, name it, and select an existing template as the starting point. Noctune creates an editable copy, which is safer and faster than beginning with an empty prompt.
+
+<BrowserFrame
+  src="/screenshots/templates/new-template.webp"
+  alt="Create a custom template dialog with a name and starting-template selection"
+  url="app.noctune.ai/templates"
+/>
+
+After creation, edit the plain markdown. The toolbar supports headings, bold, italics, bulleted and numbered lists, inline code, undo, and redo. **Preview** shows how those instructions are organized; it does not generate a patient note.
+
+Choose **Save Template** after making changes. New encounters use the saved content; existing notes are not rewritten.
+
+## Review template quality
+
+Open **Review** and choose **Review Template**, or save changed content to run the same review gate. The reviewer looks for sample values, missing sections, weak structure, placeholders, unclear instructions, and clinical prompting best practices.
+
+<BrowserFrame
+  src="/screenshots/templates/review.webp"
+  alt="Template Review tab with two evidence-focused suggestions, locations, proposed replacement text, and Fix controls"
+  url="app.noctune.ai/templates"
+/>
+
+Suggestions are guidance, not a publishing requirement. Use **Locate** to find the source text, apply a single replacement, or use **Fix All** when every suggestion still matches the current draft. If you edit after the review, re-run it before applying a batch so the fixes target the intended text.
+
+## Set the default
+
+Choose **Set Default** on the template you want preselected for new encounters. SOAP and discharge defaults are independent. The default does not change existing encounters.
+
+## Publish to the community
+
+Owners of saved custom templates can choose **Publish**. The confirmation explains that every Noctune user will be able to preview, duplicate, and report the template. Add optional notes to tell other clinicians what the template is for.
+
+<BrowserFrame
+  src="/screenshots/templates/publish.webp"
+  alt="Publish to community gallery confirmation with privacy guidance and optional notes for other veterinarians"
+  url="app.noctune.ai/templates"
+/>
+
+Remove patient information, client names, and internal-only instructions before publishing. Publishing is reversible with **Unpublish**; clinicians who already duplicated the template keep their copies.
+
+## Write reliable clinical instructions
+
+A template is an instruction set, not a filled example. These patterns make the generated note easier to verify.
+
+### Give each section one job
 
 ```markdown
 ## Subjective
+
+Summarize the owner's concerns, symptom timeline, home observations, and relevant history.
+
+## Objective
+
+Record only examination findings, measurements, and test results explicitly stated in the encounter.
+
+## Assessment
+
+List each supported problem and the veterinarian's clinical interpretation.
+
+## Plan
+
+Capture diagnostics, treatment, client education, and follow-up timing discussed during the visit.
 ```
 
-**Good:**
+Avoid asking both Assessment and Plan for the same treatment content; overlapping instructions create duplicate prose.
+
+### State what to do when information is missing
 
 ```markdown
-## Subjective
-
-Summarize the pet owner's concerns, symptoms, and history as provided.
+If a finding or value is not stated in the transcript, omit it. Do not infer or invent it.
 ```
 
-**Why:** LLMs don't infer context from section names alone — especially the first time they see your template. One-sentence instructions shape what gets included and what's skipped.
+This is especially important for vital signs, medication doses, diagnostic results, and follow-up intervals.
 
-### 2. Say what to do when data is missing
+### Prefer markdown headings
 
-**Good:**
+Use `##` and `###` headings on their own lines. Models and the Noctune preview interpret them more reliably than all-caps labels or custom delimiters.
 
-```markdown
-### Objective
-
-Extract and summarize **all** examination findings, tests, and vital signs.
-If a finding is not mentioned in the transcript, omit it. Do not invent values.
-```
-
-**Why:** Models default to filling gaps plausibly — which in medical context means hallucinating vitals. Telling them explicitly to omit is the single most important anti-hallucination instruction.
-
-### 3. Use markdown headings, not custom formatting
-
-**Bad:** `SUBJECTIVE: | OBJECTIVE: | ...`
-
-**Good:** `### Subjective` on its own line
-
-**Why:** Models respect `##` / `###` more reliably than ALL-CAPS or custom delimiters. The output ends up better-structured with no extra effort.
-
-### 4. Anti-truncation instructions
-
-**Good:**
-
-```markdown
-### Objective
-
-Include every exam finding — do not truncate. If the visit contains multiple
-exam descriptions (e.g. separate sections on soft tissue and vitals), merge
-them into one comprehensive summary.
-```
-
-**Why:** Default model behavior is to summarize and compress. For clinical notes, you usually want the opposite. Tell it.
-
-### 5. Put meta-instructions at the top
-
-**Good:**
+### Put global conventions first
 
 ```markdown
 ## Formatting conventions
 
-- Use **metric units** (kg, cm, °C).
-- Bullet Plan items; prose everywhere else.
-- Reference the patient by name, not "the dog."
-
-## SOAP Note
-
-### Subjective
-
-...
+- Use the units stated in the encounter.
+- Refer to the patient by name.
+- Use bullets for Plan items and prose for Subjective and Assessment.
+- Preserve every stated abnormal finding.
 ```
 
-**Why:** Instructions near the top carry more weight than instructions buried in section 4. If you want a convention to apply globally, write it globally.
+Instructions near the top can apply to every later section without repetition.
 
-### 6. No sample data
+### Do not include realistic sample data
 
-**Bad:**
+Avoid example patient names, weights, doses, and test results. They can be mistaken for encounter facts. Describe the source instead:
 
 ```markdown
-**Patient:** Fluffy
-**Weight:** 12.3 kg
+**Weight:** Use the weight stated in the encounter, including its unit; otherwise omit.
 ```
 
-**Good:**
+## Use a community template
 
-```markdown
-**Patient:** (patient's name from transcript)
-**Weight:** (weight in kg, or omit if not mentioned)
-```
-
-**Why:** Sample names and numbers sometimes get copied into real notes. Parenthesized instructions are clearly not data and the model fills them with real content.
-
-### 7. One section, one purpose
-
-If Assessment asks for "diagnosis and recommended treatments" and Plan asks for "treatments and follow-ups," you'll get duplicate content in both. Each section should have one job.
-
-## Example: an annotated template
-
-Here's a minimal wellness-exam template that follows all seven rules:
-
-```markdown
-## Formatting conventions
-
-- Use metric units (kg, cm, °C).
-- Omit any section where the transcript has no information — do not invent values.
-- Reference the patient by name.
-
-## SOAP Note
-
-### Subjective
-
-Summarize the owner's reported concerns, symptom timeline, and relevant history.
-
-### Objective
-
-All physical exam findings, weight, vitals (HR, RR, Temp, CRT, MM color),
-and point-of-care test results mentioned in the transcript. Merge duplicate
-findings into one comprehensive summary.
-
-### Assessment
-
-The veterinarian's working diagnosis and any differentials mentioned.
-
-### Plan
-
-- **Treatments and medications** (dose, route, duration)
-- **Follow-up** (timing and trigger)
-- **Client education points** covered during the visit
-
-## Client Communications
-
-Summarize what was discussed with the owner:
-
-- Findings shared
-- Risks or side effects explained
-- Questions asked and answered
-- Recommendations accepted or declined
-```
-
-**What each piece is doing:**
-
-- Formatting conventions at the top cover units, anti-hallucination, and voice globally — so each section doesn't need to repeat them.
-- Section instructions are one sentence, action-oriented.
-- Objective has an explicit anti-truncation instruction because incomplete vitals is a common failure mode.
-- Plan uses bullets (matches PIMS paste targets); Subjective and Assessment stay as prose.
-- Client Communications is separate from Plan — Plan is what you're doing, Client Communications is what you said. Separating them keeps both clean.
-
-## Reordering
-
-Drag templates by the handle on the left to change their order in the picker that appears during recording. The top template becomes your default.
-
-![Template list with a drag handle visible on a row mid-drag](https://placecats.com/900/300)
-
-## Duplicating
-
-Every template (yours or a system template) has a **Duplicate** action. The copy lands in **My Templates** and is fully editable.
-
-![Three-dot menu on a template showing Duplicate, Edit, and Delete options](https://placecats.com/700/300)
-
-## Community templates
-
-See templates other vets have shared in the [Community Template Library](/community). Fork anything that looks useful and edit the copy.
+The [Community Template Library](/community) contains published templates from other clinicians. Choose **Duplicate** on a detail page to create your own editable copy; the published original stays unchanged.

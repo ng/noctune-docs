@@ -4,32 +4,73 @@ title: New Encounter
 
 # New Encounter
 
-Noctune records on your **iOS device** — your phone is the microphone. The web app is for reviewing and editing. From the web, you'll either upload an existing recording or initiate a visit that syncs from your phone.
+Start from **New Encounter** in the top bar or **Start an encounter** on the Dashboard. The same drawer handles live browser recording and existing audio files.
 
-![New Encounter entry screen with Upload and "Open on iOS" options](https://placecats.com/900/500)
+<BrowserFrame
+  src="/screenshots/encounters/new-encounter/drawer.webp"
+  alt="New Encounter drawer with patient, SOAP template, discharge template, browser recording, and file upload controls"
+  url="app.noctune.ai/dashboard"
+/>
 
-## Recording on iOS
+## Choose the patient and templates
 
-1. Open the Noctune iOS app and tap **Record**.
-2. Select the patient (or create one on the fly — see [Patients](/patients)).
-3. Pick a [template](/templates) if you want the SOAP note formatted a specific way.
-4. Talk through the appointment normally — no scripts, no trigger words.
-5. Tap **Stop** when the appointment ends. The encounter uploads automatically and appears in the web app.
+Select a patient before recording. If the patient does not exist, type the new name and use the create option in the selector.
 
-![iOS recording screen with elapsed timer and Stop button](https://placecats.com/900/460)
+The two template choices have different jobs:
 
-> **Tip:** You can pause and resume on iOS — pauses don't add to the audio file, so there's no dead air in the transcript.
+- **SOAP template** controls the clinician-facing note.
+- **Discharge template** controls the client-facing summary.
 
-## Uploading audio from the web
+The plan card at the top shows the note allowance and active plan for the current billing workspace.
 
-If you already have a recording — a phone voice memo, dictaphone file, or audio from another scribe tool — upload it directly from the web. See [Supported Formats & Limits](/reference/supported-formats) for what's accepted.
+## Record in the browser
 
-![Upload dialog showing supported audio formats and file selection area](https://placecats.com/900/420)
+1. Select the patient and templates.
+2. Choose **Record from web** and allow microphone access.
+3. Use **Pause** and **Resume** when needed. The recording strip shows elapsed time, waveform history, and the active input.
+4. Choose **Stop** to add the take to the queue.
+5. Add another take or file if the appointment has multiple parts, then choose **Process file** or **Process files**.
+
+<BrowserFrame
+  src="/screenshots/encounters/new-encounter/browser-recording.webp"
+  alt="New Encounter drawer during an active browser recording with timer, waveform, pause, stop, discard, and microphone controls"
+  url="app.noctune.ai/dashboard"
+/>
+
+### Move around without stopping
+
+Closing the drawer does not end an active take. A recording dock remains available while you move through Noctune; use it to return to the drawer or stop the recording. Noctune also warns before a tab closes while a recording or unprocessed queue is active.
+
+### Recover an interrupted take
+
+While recording, Noctune stores recovery chunks in the browser. After a crash or accidental close, the recovery prompt can upload, download, or discard the local take. Successful upload or explicit discard removes the recovery copy.
+
+If local browser storage is unavailable, recording can continue in memory, but the drawer warns that crash recovery is unavailable. If the active microphone disappears, Noctune attempts another input and otherwise pauses without discarding captured audio.
+
+## Upload existing audio
+
+Drop supported audio into the recording area or choose **browse files**. Every accepted file appears in the queue with its name and size. Remove any unwanted row before processing.
+
+<BrowserFrame
+  src="/screenshots/encounters/new-encounter/upload-queue.webp"
+  alt="New Encounter drawer with Mochi selected and one audio file ready to process"
+  url="app.noctune.ai/dashboard"
+/>
+
+See [Supported Formats & Limits](/reference/supported-formats) for accepted extensions and size limits.
+
+## Record on iOS
+
+The Noctune iOS app can record an appointment and upload it into the same account. Select the patient and note templates in the app, record the visit, then stop and submit. The encounter appears in the web queue for review. The current iOS controls are shown in the app itself and can differ slightly by release.
 
 ## What happens next
 
-Once audio is submitted, Noctune transcribes it and drafts a SOAP note — typically in under a minute. When it's ready the encounter moves from **Processing** to **Draft** and you can open it for review.
+Submitted audio appears under **In progress** while Noctune transcribes and generates notes. When the note is ready, the encounter moves to **Needs review**. Processing problems appear under **Issues**.
 
-![Encounter card in Processing state with progress indicator](https://placecats.com/700/220)
+<BrowserFrame
+  src="/screenshots/encounters/detail/processing.webp"
+  alt="Encounter processing screen showing that the recording is being transcribed"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000203"
+/>
 
-Next: [Review & Edit](/encounters/review-and-edit)
+Next: follow the full [Encounter workflow](/encounters#encounter-workflow), then see [Review & Edit](/encounters/review-and-edit) for detailed review tools.

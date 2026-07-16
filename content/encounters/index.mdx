@@ -4,37 +4,108 @@ title: Encounters
 
 # Encounters
 
-An **encounter** is one appointment: the audio, the transcript, and the SOAP note generated from them. The Encounters page is where you browse everything you've recorded.
+An **encounter** is one appointment and its audio, transcript, generated notes, messages, and patient context. The Encounters page is the complete work queue.
 
-![Encounters list page with filter pills for status, search bar, and New Encounter button](https://placecats.com/960/540)
+<BrowserFrame
+  src="/screenshots/encounters/list.webp"
+  alt="Noctune Encounters page with status filters, date range, search, and five example encounters"
+  url="app.noctune.ai/encounters"
+/>
 
-Every encounter moves through the same lifecycle, from captured audio to an exported note:
+## Encounter workflow
+
+### 1. Upload or record the appointment
+
+Start a **New Encounter**, select the patient and note templates, then record in the browser or add existing audio. Review the queue and choose **Process file** or **Process files**.
+
+<BrowserFrame
+  src="/screenshots/encounters/new-encounter/upload-queue.webp"
+  alt="New Encounter drawer with a patient selected and one audio file ready to process"
+  url="app.noctune.ai/dashboard"
+/>
+
+### 2. Let Noctune process the recording
+
+Noctune securely saves the audio, transcribes it, and generates the SOAP and discharge notes. You can leave the processing screen and return from the Encounters queue when the draft is ready.
+
+<BrowserFrame
+  src="/screenshots/encounters/detail/processing.webp"
+  alt="Encounter processing screen showing that the recording is being transcribed"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000203"
+/>
+
+### 3. Review the generated note
+
+When the encounter moves to **Needs review**, open it and verify the SOAP note against the transcript and audio. Patient details and the main actions remain visible at the top.
+
+<BrowserFrame
+  src="/screenshots/encounters/detail/overview.webp"
+  alt="Ready encounter with the generated SOAP note beside the speaker-labeled transcript"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
+
+### 4. Edit and save
+
+Use **Edit** for any corrections, then choose **Save**. Saving creates an audited note version but keeps the encounter open until you complete it.
+
+<BrowserFrame
+  src="/screenshots/encounters/detail/soap-edit.webp"
+  alt="Encounter SOAP editor with formatting, Save, and Cancel controls"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
+
+### 5. Complete the review
+
+Choose **Complete** when the clinical record is ready. The action changes to **Completed**, while the note, transcript, and communication tools remain available.
+
+<BrowserFrame
+  src="/screenshots/encounters/detail/completed.webp"
+  alt="Reviewed encounter showing the disabled Completed action"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
+
+### 6. Send the discharge summary
+
+Open **Send Email** and choose **Send discharge notes**. Add the recipient and send the client-facing summary. If you open the discharge dialog before completing the encounter, **Send + Complete** performs both actions together; after completion, the action is **Send**.
+
+<BrowserFrame
+  src="/screenshots/encounters/detail/send-discharge.webp"
+  alt="Send Discharge Summary dialog with the pet owner email prepared and Send enabled"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
+
+## Encounter states
 
 <Diagram
   chart={`
 flowchart LR
-    iOS([Record on iOS]) --> Proc
-    Web([Upload audio on web]) --> Proc
-    Proc[Processing<br/>transcribe + draft SOAP] --> Draft[Draft]
-    Draft --> Review{Review & edit}
-    Review -->|regenerate / append audio| Review
-    Review -->|looks good| Complete[Complete]
-    Complete --> Export[/Export: copy or email/]
-    Complete -.audio after 90 days.-> Archived[(Archived)]
+    Capture([Record or upload]) --> Progress[In progress]
+    Progress --> Review[Needs review]
+    Progress -->|processing problem| Issues[Issues]
+    Issues -->|retry succeeds| Review
+    Review -->|edit, regenerate, or add audio| Review
+    Review --> Complete[Completed]
 `}
 />
 
-## Filter and search
+- **In progress** means Noctune is uploading, transcribing, or generating notes.
+- **Needs review** means the draft is ready for a clinician.
+- **Completed** means the encounter has been reviewed and finished.
+- **Issues** collects encounters that need a retry or another corrective action.
 
-Filter pills along the top narrow the list by status (Draft, Complete, Archived). The search bar on the right matches patient name, owner, and free text from the transcript.
+The status displayed on an individual row can be more specific, such as **Transcribing**, **Ready**, or **Completed**.
 
-![Encounter filter pills — All, Drafts, Complete, Archived — with the Complete filter selected](https://placecats.com/900/160)
+## Filter, date, and search
 
-## Opening an encounter
+Use **All**, **Needs review**, **In progress**, **Completed**, and **Issues** to narrow the queue. The date control can limit results to a recent range or show **All time**.
 
-Click a row to open it. Inside, you'll see the transcript on one side and the SOAP note on the other. See [Review & Edit](/encounters/review-and-edit) for everything you can do there.
+Search matches the patient name or source audio filename. It does not search the transcript, owner name, or teammate name.
+
+## Open an encounter
+
+Choose a row to open the review workspace. The SOAP note is on the left; transcript, messages, and prior visits are on the right. See [Review & Edit](/encounters/review-and-edit) for the available actions.
 
 ## In this section
 
-- [New Encounter](/encounters/new-encounter) — record or upload audio
-- [Review & Edit](/encounters/review-and-edit) — edit SOAP notes, regenerate, append audio, export
+- [New Encounter](/encounters/new-encounter) — record or queue audio
+- [Review & Edit](/encounters/review-and-edit) — verify the transcript, edit notes, and finish the encounter

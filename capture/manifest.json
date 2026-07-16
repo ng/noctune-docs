@@ -1,0 +1,218 @@
+[
+  {
+    "id": "getting-started-sign-in",
+    "route": "/sign-in",
+    "output": "public/screenshots/getting-started/sign-in.webp",
+    "docs": ["content/getting-started.mdx"]
+  },
+  {
+    "id": "getting-started-terms",
+    "route": "/accept-terms",
+    "output": "public/screenshots/getting-started/accept-terms.webp",
+    "docs": ["content/getting-started.mdx"]
+  },
+  {
+    "id": "dashboard-overview",
+    "route": "/dashboard",
+    "output": "public/screenshots/dashboard/overview.webp",
+    "docs": ["content/dashboard.mdx", "content/getting-started.mdx"]
+  },
+  {
+    "id": "encounters-list",
+    "route": "/encounters",
+    "output": "public/screenshots/encounters/list.webp",
+    "docs": ["content/encounters/index.mdx"]
+  },
+  {
+    "id": "encounters-new-encounter",
+    "route": "/dashboard",
+    "output": "public/screenshots/encounters/new-encounter/drawer.webp",
+    "docs": ["content/encounters/new-encounter.mdx"]
+  },
+  {
+    "id": "encounters-browser-recording",
+    "route": "/dashboard",
+    "output": "public/screenshots/encounters/new-encounter/browser-recording.webp",
+    "docs": ["content/encounters/new-encounter.mdx"]
+  },
+  {
+    "id": "encounters-upload-queue",
+    "route": "/dashboard",
+    "output": "public/screenshots/encounters/new-encounter/upload-queue.webp",
+    "docs": ["content/encounters/index.mdx", "content/encounters/new-encounter.mdx"]
+  },
+  {
+    "id": "encounters-processing",
+    "route": "/encounters/d0c50000-0000-4000-8000-000000000203",
+    "output": "public/screenshots/encounters/detail/processing.webp",
+    "docs": ["content/encounters/index.mdx", "content/encounters/new-encounter.mdx"]
+  },
+  {
+    "id": "encounters-overview",
+    "route": "/encounters/d0c50000-0000-4000-8000-000000000201",
+    "output": "public/screenshots/encounters/detail/overview.webp",
+    "docs": ["content/encounters/index.mdx", "content/encounters/review-and-edit.mdx"]
+  },
+  {
+    "id": "encounters-soap-edit",
+    "route": "/encounters/d0c50000-0000-4000-8000-000000000201",
+    "output": "public/screenshots/encounters/detail/soap-edit.webp",
+    "docs": ["content/encounters/index.mdx", "content/encounters/review-and-edit.mdx"]
+  },
+  {
+    "id": "encounters-completed",
+    "route": "/encounters/d0c50000-0000-4000-8000-000000000201",
+    "output": "public/screenshots/encounters/detail/completed.webp",
+    "docs": ["content/encounters/index.mdx", "content/encounters/review-and-edit.mdx"]
+  },
+  {
+    "id": "encounters-send-discharge",
+    "route": "/encounters/d0c50000-0000-4000-8000-000000000201",
+    "output": "public/screenshots/encounters/detail/send-discharge.webp",
+    "docs": ["content/encounters/index.mdx", "content/encounters/review-and-edit.mdx"]
+  },
+  {
+    "id": "encounters-regenerate",
+    "route": "/encounters/d0c50000-0000-4000-8000-000000000201",
+    "output": "public/screenshots/encounters/detail/regenerate.webp",
+    "docs": ["content/encounters/review-and-edit.mdx"]
+  },
+  {
+    "id": "encounters-history",
+    "route": "/encounters/d0c50000-0000-4000-8000-000000000201",
+    "output": "public/screenshots/encounters/detail/past-encounters.webp",
+    "docs": ["content/encounters/review-and-edit.mdx", "content/patients.mdx"]
+  },
+  {
+    "id": "encounters-sentinel-alert",
+    "route": "/encounters/d0c50000-0000-4000-8000-000000000202",
+    "output": "public/screenshots/encounters/detail/sentinel-alert.webp",
+    "docs": ["content/reference/sentinel.mdx"]
+  },
+  {
+    "id": "encounters-archived-audio",
+    "route": "/encounters/d0c50000-0000-4000-8000-000000000206",
+    "output": "public/screenshots/encounters/detail/archived-audio.webp",
+    "docs": ["content/reference/data-storage.mdx"]
+  },
+  {
+    "id": "patients-list",
+    "route": "/patients",
+    "output": "public/screenshots/patients/list.webp",
+    "docs": ["content/patients.mdx"]
+  },
+  {
+    "id": "patients-add",
+    "route": "/patients",
+    "output": "public/screenshots/patients/add-patient.webp",
+    "docs": ["content/patients.mdx"]
+  },
+  {
+    "id": "patients-profile",
+    "route": "/patients/d0c50000-0000-4000-8000-000000000101",
+    "output": "public/screenshots/patients/profile.webp",
+    "docs": ["content/patients.mdx"]
+  },
+  {
+    "id": "templates-editor",
+    "route": "/templates",
+    "output": "public/screenshots/templates/editor.webp",
+    "docs": ["content/templates.mdx"]
+  },
+  {
+    "id": "templates-new",
+    "route": "/templates",
+    "output": "public/screenshots/templates/new-template.webp",
+    "docs": ["content/templates.mdx"]
+  },
+  {
+    "id": "templates-review",
+    "route": "/templates",
+    "output": "public/screenshots/templates/review.webp",
+    "docs": ["content/templates.mdx"]
+  },
+  {
+    "id": "templates-publish",
+    "route": "/templates",
+    "output": "public/screenshots/templates/publish.webp",
+    "docs": ["content/templates.mdx", "content/community.mdx"]
+  },
+  {
+    "id": "community-browse",
+    "route": "/community/templates",
+    "output": "public/screenshots/community/browse.webp",
+    "docs": ["content/community.mdx"]
+  },
+  {
+    "id": "community-detail",
+    "route": "/community/templates/d0c50000-0000-4000-8000-000000000711",
+    "output": "public/screenshots/community/detail.webp",
+    "docs": ["content/community.mdx"]
+  },
+  {
+    "id": "community-notes",
+    "route": "/community/templates/d0c50000-0000-4000-8000-000000000711",
+    "output": "public/screenshots/community/notes.webp",
+    "docs": ["content/community.mdx"]
+  },
+  {
+    "id": "community-report",
+    "route": "/community/templates/d0c50000-0000-4000-8000-000000000711",
+    "output": "public/screenshots/community/report.webp",
+    "docs": ["content/community.mdx"]
+  },
+  {
+    "id": "email-templates-library",
+    "route": "/email-library",
+    "output": "public/screenshots/email-templates/library.webp",
+    "docs": ["content/email-templates.mdx"]
+  },
+  {
+    "id": "messages-inbox",
+    "route": "/messages",
+    "output": "public/screenshots/messages/inbox.webp",
+    "docs": ["content/messages.mdx"]
+  },
+  {
+    "id": "messages-composer",
+    "route": "/messages",
+    "output": "public/screenshots/messages/composer.webp",
+    "docs": ["content/messages.mdx", "content/reference/messaging.mdx"]
+  },
+  {
+    "id": "messages-flagged",
+    "route": "/messages",
+    "output": "public/screenshots/messages/flagged.webp",
+    "docs": ["content/messages.mdx", "content/reference/sentinel.mdx"]
+  },
+  {
+    "id": "practice-overview",
+    "route": "/practice",
+    "output": "public/screenshots/practice/overview.webp",
+    "docs": ["content/practice.mdx"]
+  },
+  {
+    "id": "practice-invite",
+    "route": "/practice",
+    "output": "public/screenshots/practice/invite-member.webp",
+    "docs": ["content/practice.mdx"]
+  },
+  {
+    "id": "settings-account",
+    "route": "/settings?tab=account",
+    "output": "public/screenshots/settings/account.webp",
+    "docs": ["content/settings/index.mdx", "content/settings/account.mdx"]
+  },
+  {
+    "id": "settings-billing",
+    "route": "/settings?tab=billing",
+    "output": "public/screenshots/settings/billing.webp",
+    "docs": ["content/settings/index.mdx", "content/settings/billing.mdx"]
+  },
+  {
+    "id": "settings-notifications",
+    "route": "/settings?tab=notifications",
+    "output": "public/screenshots/settings/notifications.webp",
+    "docs": ["content/settings/index.mdx", "content/settings/notifications.mdx"]
+  }
+]

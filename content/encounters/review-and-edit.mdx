@@ -4,42 +4,70 @@ title: Review & Edit
 
 # Review & Edit
 
-Open any encounter to see the transcript and SOAP note side by side. This is where you'll spend most of your time in Noctune.
+Open a ready encounter to review the generated SOAP note beside the source transcript. The header keeps patient details and the main actions visible while you work.
 
-![Encounter detail page with transcript on the left, SOAP note editor on the right, and action bar along the top](https://placecats.com/1000/560)
+<BrowserFrame
+  src="/screenshots/encounters/detail/overview.webp"
+  alt="Mochi encounter with the generated SOAP note on the left and speaker-labeled transcript on the right"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
 
-## Transcript and audio
+## Verify the transcript and audio
 
-The transcript is segmented by speaker turn with timestamps. Click any segment to jump the audio player to that moment — useful for double-checking a dosage or a breed name that the AI got wrong.
+Transcript segments are labeled by speaker and time. Select a segment to seek the audio player to that point. Use this when checking a dosage, measurement, name, or other clinical detail against the recording.
 
-![Transcript segment with timestamp and speaker label, with the audio player cued to that moment](https://placecats.com/900/320)
+**Save Audio** downloads the recording when it is available. Audio access follows the [storage and retention policy](/reference/data-storage); the transcript and notes remain available when older audio is gated.
 
-## Editing the SOAP note
+## Edit the SOAP note
 
-The SOAP editor is free-form — edit anything you want. Section headers (Subjective, Objective, Assessment, Plan) render as markdown.
+Open **Edit** to work in the markdown editor. Its toolbar supports headings, bold, italics, lists, inline code, undo, and redo. Choose **Save** to create an audited edit or **Cancel** to discard the draft.
 
-![SOAP note editor showing Subjective, Objective, Assessment, and Plan sections](https://placecats.com/900/520)
+<BrowserFrame
+  src="/screenshots/encounters/detail/soap-edit.webp"
+  alt="Mochi encounter with the SOAP markdown editor, formatting toolbar, Save, and Cancel controls"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
 
-### Regenerate
+## Regenerate with different templates
 
-Not happy with the draft? Click **Regenerate** to produce a new version from the same transcript. You can optionally switch templates before regenerating.
+Choose **Regenerate Note** to select the SOAP and discharge templates for a new generated version. Earlier versions remain available from the version selector, so you can compare them or return to prior text.
 
-![Regenerate button and template picker in the action bar](https://placecats.com/900/180)
+<BrowserFrame
+  src="/screenshots/encounters/detail/regenerate.webp"
+  alt="Regenerate Note dialog with the current SOAP and discharge template selections"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
 
-> **Heads up:** Regenerating replaces the current note. Copy anything you want to keep first.
+## Review prior visits
 
-### Append audio
+Open **Past Encounters** to see the same patient's earlier notes without leaving the current appointment. Expand a prior row for its note, jump by date, or search the history for a term such as a medication or weight.
 
-If the visit continued after you stopped recording, use **Append Audio** to add more audio to the same encounter. The transcript extends and the SOAP note is regenerated from the full recording.
+<BrowserFrame
+  src="/screenshots/encounters/detail/past-encounters.webp"
+  alt="Mochi encounter with the Past Encounters tab showing two earlier visits and a history search field"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
 
-![Append audio dialog with drag-and-drop zone and note about transcript being extended](https://placecats.com/800/380)
+## Add later audio
 
-## Exporting
+If the visit continued, choose **Add Audio** and select another supported file. Noctune appends it to the encounter, extends the transcript, and generates an updated note from the combined record.
 
-When the note is final:
+## Copy, email, and complete
 
-- **Copy** — copies to clipboard for pasting into your PIMS
-- **Email discharge notes** — a client-safe version sent to the pet owner
-- **Email to yourself** — the full SOAP, dropped in your inbox for mobile reference
+- **Copy SOAP** copies the clinician note for a PIMS or another record system. If discharge notes exist, **Copy Discharge** is available too.
+- **Complete** marks the clinical review finished. The action changes to **Completed**, while the encounter remains available.
+- **Send Email** opens the encounter email choices. Choose **Send discharge notes**, add the recipient, and send the client-facing summary.
+- Before completion, the discharge dialog offers **Send + Complete** as the primary action and **Send only** as an option. After completion, the primary action is **Send**.
+- If **Auto-finish on copy or send** is enabled in [Account settings](/settings/account), copying the SOAP note or sending discharge notes can also complete the encounter.
 
-![Action bar close-up showing Copy, Export, and Download buttons](https://placecats.com/900/160)
+<BrowserFrame
+  src="/screenshots/encounters/detail/completed.webp"
+  alt="Reviewed encounter showing the disabled Completed action"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
+
+<BrowserFrame
+  src="/screenshots/encounters/detail/send-discharge.webp"
+  alt="Send Discharge Summary dialog with the pet owner email prepared and Send enabled"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>

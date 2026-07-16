@@ -1,0 +1,52 @@
+---
+title: Email Templates
+---
+
+# Email Templates
+
+Email Templates are reusable subjects and messages for onboarding, reminders, post-visit follow-up, and administrative communication. They are separate from [SOAP templates](/templates), which control generated clinical notes.
+
+<BrowserFrame
+  src="/screenshots/email-templates/library.webp"
+  alt="Email Templates library with search, categories, favorites, usage sorting, template list, rendered placeholder preview, and message insertion action"
+  url="app.noctune.ai/email-library"
+/>
+
+## Find and organize templates
+
+Search template names, subjects, and message text. Filter to **Favorites**, **Onboarding**, **Reminders**, **Post-visit**, or **Admin**, and sort by **Most used**, **Recently used**, or **A–Z**. Select the star to add or remove a favorite.
+
+Favorites belong to the current user. Usage changes only when a message is sent, so opening a template or abandoning a draft does not affect its ranking.
+
+## Create or edit a template
+
+Choose **New template**, then add a name, optional category, subject, and body. The body supports markdown for bold, italics, and bulleted lists. Use **Write** to edit and **Preview** to check the rendered message.
+
+You can also duplicate an existing template and edit the copy. Noctune warns before discarding unsaved changes.
+
+## Add merge fields
+
+Type `{` at the cursor to open the searchable field menu. The editor displays a recognized field as a labeled chip.
+
+| Group    | Available values               |
+| -------- | ------------------------------ |
+| Patient  | Patient's name, species, breed |
+| You      | Your display name              |
+| Practice | Practice name, phone, email    |
+| Date     | Today's date                   |
+
+Preview uses example values to show the finished shape. An unrecognized or unresolved field appears in amber.
+
+## Insert into a message
+
+From the library, choose **Insert into message**. You can also choose **Templates** inside a new message or reply.
+
+When inserted:
+
+- the subject fills only when the current subject is empty
+- the body is appended without replacing text you already wrote
+- sender, practice, and date fields resolve from the active workspace
+- patient fields resolve when a recipient matches an owner email on a patient record
+- **Undo** restores the draft to its pre-insert state
+
+Before sending, Noctune identifies fields it could not resolve. Correct the recipient or source record, edit the message, or explicitly choose **Send anyway**. Sending anyway leaves that field text in the delivered email.
