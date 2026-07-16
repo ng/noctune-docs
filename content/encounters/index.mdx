@@ -12,6 +12,68 @@ An **encounter** is one appointment and its audio, transcript, generated notes, 
   url="app.noctune.ai/encounters"
 />
 
+## Encounter workflow
+
+### 1. Upload or record the appointment
+
+Start a **New Encounter**, select the patient and note templates, then record in the browser or add existing audio. Review the queue and choose **Process file** or **Process files**.
+
+<BrowserFrame
+  src="/screenshots/encounters/new-encounter/upload-queue.webp"
+  alt="New Encounter drawer with a patient selected and one audio file ready to process"
+  url="app.noctune.ai/dashboard"
+/>
+
+### 2. Let Noctune process the recording
+
+Noctune securely saves the audio, transcribes it, and generates the SOAP and discharge notes. You can leave the processing screen and return from the Encounters queue when the draft is ready.
+
+<BrowserFrame
+  src="/screenshots/encounters/detail/processing.webp"
+  alt="Encounter processing screen showing that the recording is being transcribed"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000203"
+/>
+
+### 3. Review the generated note
+
+When the encounter moves to **Needs review**, open it and verify the SOAP note against the transcript and audio. Patient details and the main actions remain visible at the top.
+
+<BrowserFrame
+  src="/screenshots/encounters/detail/overview.webp"
+  alt="Ready encounter with the generated SOAP note beside the speaker-labeled transcript"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
+
+### 4. Edit and save
+
+Use **Edit** for any corrections, then choose **Save**. Saving creates an audited note version but keeps the encounter open until you complete it.
+
+<BrowserFrame
+  src="/screenshots/encounters/detail/soap-edit.webp"
+  alt="Encounter SOAP editor with formatting, Save, and Cancel controls"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
+
+### 5. Complete the review
+
+Choose **Complete** when the clinical record is ready. The action changes to **Completed**, while the note, transcript, and communication tools remain available.
+
+<BrowserFrame
+  src="/screenshots/encounters/detail/completed.webp"
+  alt="Reviewed encounter showing the disabled Completed action"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
+
+### 6. Send the discharge summary
+
+Open **Send Email** and choose **Send discharge notes**. Add the recipient and send the client-facing summary. If you open the discharge dialog before completing the encounter, **Send + Complete** performs both actions together; after completion, the action is **Send**.
+
+<BrowserFrame
+  src="/screenshots/encounters/detail/send-discharge.webp"
+  alt="Send Discharge Summary dialog with the pet owner email prepared and Send enabled"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
+
 ## Encounter states
 
 <Diagram

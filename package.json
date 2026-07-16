@@ -13,6 +13,7 @@
     "lint:md:fix": "remark 'content/**/*.{md,mdx}' --output --quiet",
     "prepare": "husky",
     "release": "semantic-release",
+    "screenshots:contact-sheet": "node scripts/make-screenshot-contact-sheets.mjs",
     "screenshots:install": "playwright install chromium",
     "screenshots:update": "node scripts/capture-screenshots.mjs",
     "screenshots:verify": "node scripts/verify-screenshots.mjs",

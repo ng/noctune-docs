@@ -1,5 +1,7 @@
 import { ImageZoom } from 'nextra/components'
 
+import imagePolicy from '../capture/image-policy.json'
+
 import styles from './browser-frame.module.css'
 
 interface BrowserFrameProps {
@@ -20,8 +22,8 @@ export function BrowserFrame({
   src,
   alt,
   url = 'app.noctune.ai',
-  width = 1600,
-  height = 900,
+  width = imagePolicy.viewport.width,
+  height = imagePolicy.viewport.height,
 }: BrowserFrameProps) {
   return (
     <figure className={styles.frame}>
@@ -51,7 +53,15 @@ export function BrowserFrame({
       </div>
 
       <div className={styles.viewport}>
-        <ImageZoom className={styles.image} src={src} alt={alt} width={width} height={height} />
+        <ImageZoom
+          className={styles.image}
+          src={src}
+          alt={alt}
+          width={width}
+          height={height}
+          loading="lazy"
+          decoding="async"
+        />
       </div>
     </figure>
   )

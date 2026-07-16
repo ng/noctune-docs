@@ -5,9 +5,12 @@ import { setFixedCaptureTime } from './support/fixed-time'
 import { savePageScreenshot } from './support/save-screenshot'
 
 const IDS = {
+  captureUser: 'd0c50000-0000-4000-8000-000000000001',
   mochiEncounter: 'd0c50000-0000-4000-8000-000000000201',
   jasperEncounter: 'd0c50000-0000-4000-8000-000000000202',
+  lunaEncounter: 'd0c50000-0000-4000-8000-000000000203',
   mochiPatient: 'd0c50000-0000-4000-8000-000000000101',
+  mochiSoapNote: 'd0c50000-0000-4000-8000-000000000301',
   wellnessTemplate: 'd0c50000-0000-4000-8000-000000000711',
 } as const
 
@@ -94,6 +97,95 @@ async function openMochiEncounter(page: Page): Promise<void> {
   await expect(page.getByText(/Mochi is here for an appetite recheck/)).toBeVisible()
 }
 
+async function mockMochiReadyForReview(page: Page): Promise<void> {
+  await page.route(`**/api/v1/transcriptions/${IDS.mochiEncounter}`, async (route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue()
+      return
+    }
+
+    const response = await route.fetch()
+    const payload = (await response.json()) as {
+      ok?: boolean
+      data?: Record<string, unknown>
+    }
+
+    if (!payload.ok || !payload.data) {
+      throw new Error('Could not prepare the Mochi encounter for the ready-review capture')
+    }
+
+    await route.fulfill({
+      response,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        ...payload,
+        data: {
+          ...payload.data,
+          finishedAt: null,
+          finishedBy: null,
+          finishMethod: null,
+        },
+      }),
+    })
+  })
+
+  await page.route(
+    `**/api/v1/transcriptions/${IDS.mochiEncounter}/soap-notes/${IDS.mochiSoapNote}`,
+    async (route) => {
+      if (route.request().method() !== 'GET') {
+        await route.continue()
+        return
+      }
+
+      const response = await route.fetch()
+      const payload = (await response.json()) as {
+        ok?: boolean
+        data?: Record<string, unknown>
+      }
+
+      if (!payload.ok || !payload.data) {
+        throw new Error('Could not prepare deterministic discharge notes for the Mochi encounter')
+      }
+
+      await route.fulfill({
+        response,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          ...payload,
+          data: {
+            ...payload.data,
+            dischargeMarkdown:
+              'Mochi’s examination was reassuring today. Continue her current diet, monitor appetite and energy, and contact Northstar Veterinary Clinic if vomiting returns or her appetite decreases.',
+          },
+        }),
+      })
+    },
+  )
+
+  await page.route(`**/api/v1/encounters/${IDS.mochiEncounter}/finish`, async (route) => {
+    if (route.request().method() !== 'POST') {
+      await route.continue()
+      return
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        ok: true,
+        data: {
+          finishedAt: '2026-07-15T17:00:00.000Z',
+          finishedBy: IDS.captureUser,
+          finishMethod: 'explicit',
+          wasFirstFinish: false,
+          totalFinished: 8,
+          milestoneCrossed: null,
+        },
+      }),
+    })
+  })
+}
+
 test('dashboard — populated overview', async ({ page }) => {
   const item = requireCapture('dashboard-overview')
   await openPopulatedDashboard(page, item.route)
@@ -146,6 +238,16 @@ test('encounters — selected file queue', async ({ page }) => {
   await savePageScreenshot(page, item)
 })
 
+test('encounters — processing after upload', async ({ page }) => {
+  const item = capture('encounters-processing')
+  await openProductPage(page, item.route)
+  await expect(page.getByRole('heading', { name: 'Transcribing Your Recording' })).toBeVisible()
+  await expect(page.getByText('Transcribing', { exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Upload Another' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'View Encounters' })).toBeVisible()
+  await savePageScreenshot(page, item)
+})
+
 test('encounters — SOAP and transcript overview', async ({ page }) => {
   const item = capture('encounters-overview')
   await openMochiEncounter(page)
@@ -195,6 +297,34 @@ test('sentinel — encounter safety alert and retained markers', async ({ page }
   await expect(page.getByText(/Client raised their voice/)).toBeVisible()
   await expect(page.getByText(/This encounter is preserved for you/)).toBeVisible()
   await savePageScreenshot(page, item)
+})
+
+test('encounters — complete and prepare discharge', async ({ page }) => {
+  const completedItem = capture('encounters-completed')
+  const dischargeItem = capture('encounters-send-discharge')
+
+  await mockMochiReadyForReview(page)
+  await openMochiEncounter(page)
+
+  const completeButton = page.getByRole('button', { name: 'Complete', exact: true })
+  await expect(completeButton).toBeEnabled()
+  await completeButton.click()
+  await expect(page.getByRole('button', { name: 'Completed', exact: true })).toBeVisible()
+  await savePageScreenshot(page, completedItem)
+
+  await page.getByRole('button', { name: 'Send Email' }).click()
+  await page.getByRole('menuitem', { name: /Send discharge notes/ }).click()
+
+  const dialog = page.getByRole('dialog')
+  await expect(
+    dialog.getByRole('heading', { name: 'Send Discharge Summary', exact: true }),
+  ).toBeVisible()
+  const recipient = dialog.getByLabel('To')
+  await recipient.fill('jamie.chen@example.test')
+  await recipient.press('Enter')
+  await expect(dialog.getByText('jamie.chen@example.test', { exact: true })).toBeVisible()
+  await expect(dialog.getByRole('button', { name: 'Send', exact: true })).toBeEnabled()
+  await savePageScreenshot(page, dischargeItem)
 })
 
 test('patients — searchable patient list', async ({ page }) => {
@@ -407,7 +537,12 @@ test('messages — Sentinel flagged filter', async ({ page }) => {
   await page.getByRole('button', { name: 'Flagged' }).click()
   await expect(page.getByText('Jasper', { exact: true })).toBeVisible()
   await expect(page.getByText('Flagged', { exact: true }).last()).toBeVisible()
-  await expect(page.getByText(/Please confirm how long Jasper/).first()).toBeVisible()
+  await expect(page.getByTestId('conversation-subject')).toHaveText('Jasper’s activity restriction')
+  await expect(
+    page
+      .getByTestId('message-expanded-d0c50000-0000-4000-8000-000000000502')
+      .getByText(/Please confirm how long Jasper/),
+  ).toBeVisible()
   await savePageScreenshot(page, item)
 })
 

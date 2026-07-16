@@ -11,9 +11,12 @@ const assetRoot = process.env.CAPTURE_OUTPUT_ROOT
   ? path.resolve(process.env.CAPTURE_OUTPUT_ROOT)
   : docsRoot
 const manifestPath = path.join(docsRoot, 'capture/manifest.json')
+const imagePolicyPath = path.join(docsRoot, 'capture/image-policy.json')
 const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'))
+const imagePolicy = JSON.parse(await fs.readFile(imagePolicyPath, 'utf8'))
 const errors = []
 const placeholderImageHost = ['place', 'cats.com'].join('')
+const byteSizes = []
 
 for (const capture of manifest) {
   const outputPath = path.resolve(assetRoot, capture.output)
@@ -33,27 +36,50 @@ for (const capture of manifest) {
   if (metadata.format !== 'webp') {
     errors.push(`${capture.id}: expected WebP, got ${metadata.format || 'unknown'}`)
   }
+  if (metadata.space !== imagePolicy.output.colorSpace) {
+    errors.push(
+      `${capture.id}: expected ${imagePolicy.output.colorSpace} color space, got ${metadata.space || 'unknown'}`,
+    )
+  }
+  if (metadata.channels !== imagePolicy.output.channels) {
+    errors.push(
+      `${capture.id}: expected ${imagePolicy.output.channels} channels, got ${metadata.channels || 'unknown'}`,
+    )
+  }
+  if (!imagePolicy.output.allowAlpha && metadata.hasAlpha) {
+    errors.push(`${capture.id}: alpha channel is not allowed`)
+  }
+  if (
+    !imagePolicy.output.allowEmbeddedMetadata &&
+    (metadata.exif || metadata.icc || metadata.iptc || metadata.xmp)
+  ) {
+    errors.push(`${capture.id}: embedded metadata is not allowed`)
+  }
   if (!metadata.width || !metadata.height) {
     errors.push(`${capture.id}: image dimensions are unavailable`)
   } else {
-    if (metadata.width > capture.maxWidth) {
-      errors.push(`${capture.id}: width ${metadata.width} exceeds ${capture.maxWidth}`)
+    const maxWidth = capture.maxWidth ?? imagePolicy.viewport.width
+    const expectedWidth = capture.expectedWidth ?? imagePolicy.viewport.width
+    const expectedHeight = capture.expectedHeight ?? imagePolicy.viewport.height
+    if (metadata.width > maxWidth) {
+      errors.push(`${capture.id}: width ${metadata.width} exceeds ${maxWidth}`)
     }
-    if (capture.expectedWidth && metadata.width !== capture.expectedWidth) {
-      errors.push(`${capture.id}: expected width ${capture.expectedWidth}, got ${metadata.width}`)
+    if (metadata.width !== expectedWidth) {
+      errors.push(`${capture.id}: expected width ${expectedWidth}, got ${metadata.width}`)
     }
-    if (capture.expectedHeight && metadata.height !== capture.expectedHeight) {
-      errors.push(
-        `${capture.id}: expected height ${capture.expectedHeight}, got ${metadata.height}`,
-      )
+    if (metadata.height !== expectedHeight) {
+      errors.push(`${capture.id}: expected height ${expectedHeight}, got ${metadata.height}`)
     }
   }
-  if (capture.minBytes && stats.size < capture.minBytes) {
-    errors.push(`${capture.id}: ${stats.size} bytes is below ${capture.minBytes}`)
+  const minBytes = capture.minBytes ?? imagePolicy.budgets.minPerImageBytes
+  const maxBytes = capture.maxBytes ?? imagePolicy.budgets.maxPerImageBytes
+  if (stats.size < minBytes) {
+    errors.push(`${capture.id}: ${stats.size} bytes is below ${minBytes}`)
   }
-  if (stats.size > capture.maxBytes) {
-    errors.push(`${capture.id}: ${stats.size} bytes exceeds ${capture.maxBytes}`)
+  if (stats.size > maxBytes) {
+    errors.push(`${capture.id}: ${stats.size} bytes exceeds ${maxBytes}`)
   }
+  byteSizes.push(stats.size)
 
   const publicUrl = `/${capture.output.replace(/^public\//, '')}`
   for (const docsFile of capture.docs) {
@@ -62,6 +88,19 @@ for (const capture of manifest) {
       errors.push(`${capture.id}: ${docsFile} does not reference ${publicUrl}`)
     }
   }
+}
+
+const totalBytes = byteSizes.reduce((sum, size) => sum + size, 0)
+const averageBytes = byteSizes.length ? totalBytes / byteSizes.length : 0
+const largestBytes = byteSizes.length ? Math.max(...byteSizes) : 0
+
+if (totalBytes > imagePolicy.budgets.maxTotalBytes) {
+  errors.push(`screenshot set: ${totalBytes} bytes exceeds ${imagePolicy.budgets.maxTotalBytes}`)
+}
+if (averageBytes > imagePolicy.budgets.maxAverageBytes) {
+  errors.push(
+    `screenshot set: ${Math.round(averageBytes)} average bytes exceeds ${imagePolicy.budgets.maxAverageBytes}`,
+  )
 }
 
 const contentRoot = path.join(docsRoot, 'content')
@@ -78,7 +117,11 @@ if (errors.length) {
   process.exit(1)
 }
 
-console.log(`[screenshots] verified ${manifest.length} capture${manifest.length === 1 ? '' : 's'}`)
+console.log(
+  `[screenshots] verified ${manifest.length} capture${manifest.length === 1 ? '' : 's'} ` +
+    `(${formatBytes(totalBytes)} total, ${formatBytes(averageBytes)} average, ` +
+    `${formatBytes(largestBytes)} largest)`,
+)
 
 async function walk(directory) {
   const entries = await fs.readdir(directory, { withFileTypes: true })
@@ -90,4 +133,8 @@ async function walk(directory) {
       }),
     )
   ).flat()
+}
+
+function formatBytes(bytes) {
+  return `${(bytes / 1024).toFixed(1)} KiB`
 }

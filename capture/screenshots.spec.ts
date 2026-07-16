@@ -12,7 +12,7 @@ if (!signIn) {
 
 test('getting started — sign-in options', async ({ page }) => {
   await setFixedCaptureTime(page)
-  await page.goto(signIn.route, { waitUntil: 'domcontentloaded' })
+  await page.goto(signIn.route, { waitUntil: 'networkidle' })
   await expect(page.getByRole('heading', { name: 'Sign in to Noctune' })).toBeVisible()
 
   await page.getByRole('button', { name: /sign in with email instead/i }).click()

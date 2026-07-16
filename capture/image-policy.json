@@ -1,0 +1,24 @@
+{
+  "viewport": {
+    "width": 1600,
+    "height": 900
+  },
+  "encoding": {
+    "format": "webp",
+    "quality": 84,
+    "effort": 6,
+    "smartSubsample": true
+  },
+  "output": {
+    "colorSpace": "srgb",
+    "channels": 3,
+    "allowAlpha": false,
+    "allowEmbeddedMetadata": false
+  },
+  "budgets": {
+    "minPerImageBytes": 10000,
+    "maxPerImageBytes": 120000,
+    "maxAverageBytes": 65000,
+    "maxTotalBytes": 2000000
+  }
+}

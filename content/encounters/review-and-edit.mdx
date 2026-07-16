@@ -55,5 +55,19 @@ If the visit continued, choose **Add Audio** and select another supported file. 
 ## Copy, email, and complete
 
 - **Copy SOAP** copies the clinician note for a PIMS or another record system. If discharge notes exist, **Copy Discharge** is available too.
-- **Send Email** opens the encounter email choices for a discharge or follow-up message.
-- The completion control marks the review finished. If **Auto-finish on copy or send** is enabled in [Account settings](/settings/account), copying or sending also completes the encounter.
+- **Complete** marks the clinical review finished. The action changes to **Completed**, while the encounter remains available.
+- **Send Email** opens the encounter email choices. Choose **Send discharge notes**, add the recipient, and send the client-facing summary.
+- Before completion, the discharge dialog offers **Send + Complete** as the primary action and **Send only** as an option. After completion, the primary action is **Send**.
+- If **Auto-finish on copy or send** is enabled in [Account settings](/settings/account), copying the SOAP note or sending discharge notes can also complete the encounter.
+
+<BrowserFrame
+  src="/screenshots/encounters/detail/completed.webp"
+  alt="Reviewed encounter showing the disabled Completed action"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
+
+<BrowserFrame
+  src="/screenshots/encounters/detail/send-discharge.webp"
+  alt="Send Discharge Summary dialog with the pet owner email prepared and Send enabled"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>

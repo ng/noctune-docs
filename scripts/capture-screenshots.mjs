@@ -268,8 +268,23 @@ async function run(label, command, args, cwd, env) {
       env,
       stdio: 'inherit',
     })
-    child.on('error', reject)
+
+    const forwardSigint = () => child.kill('SIGINT')
+    const forwardSigterm = () => child.kill('SIGTERM')
+    const cleanupSignalHandlers = () => {
+      process.off('SIGINT', forwardSigint)
+      process.off('SIGTERM', forwardSigterm)
+    }
+
+    process.once('SIGINT', forwardSigint)
+    process.once('SIGTERM', forwardSigterm)
+
+    child.on('error', (error) => {
+      cleanupSignalHandlers()
+      reject(error)
+    })
     child.on('exit', (code, signal) => {
+      cleanupSignalHandlers()
       if (code === 0) {
         resolve()
         return

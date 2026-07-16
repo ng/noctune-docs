@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 const captureDir = path.dirname(fileURLToPath(import.meta.url))
 const docsRoot = path.resolve(captureDir, '..')
 const captureEnvPath = path.join(docsRoot, '.env.capture.local')
+const imagePolicy = JSON.parse(fs.readFileSync(path.join(captureDir, 'image-policy.json'), 'utf8'))
 
 const captureEnv = {
   ...(fs.existsSync(captureEnvPath) ? dotenv.parse(fs.readFileSync(captureEnvPath)) : {}),
@@ -67,7 +68,7 @@ export default defineConfig({
   use: {
     ...devices['Desktop Chrome'],
     baseURL,
-    viewport: { width: 1600, height: 900 },
+    viewport: imagePolicy.viewport,
     deviceScaleFactor: 1,
     colorScheme: 'light',
     locale: 'en-US',

@@ -3,6 +3,8 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import sharp from 'sharp'
 
+import imagePolicy from '../image-policy.json'
+
 const STABLE_CAPTURE_CSS = `
   *, *::before, *::after {
     animation-delay: 0s !important;
@@ -25,7 +27,7 @@ const STABLE_CAPTURE_CSS = `
 interface CaptureOutput {
   id: string
   output: string
-  maxWidth: number
+  maxWidth?: number
 }
 
 export async function savePageScreenshot(page: Page, capture: CaptureOutput): Promise<void> {
@@ -52,9 +54,19 @@ export async function savePageScreenshot(page: Page, capture: CaptureOutput): Pr
   }
   await fs.mkdir(path.dirname(outputPath), { recursive: true })
 
+  if (imagePolicy.encoding.format !== 'webp') {
+    throw new Error(`Unsupported screenshot format: ${imagePolicy.encoding.format}`)
+  }
+
   const result = await sharp(png)
-    .resize({ width: capture.maxWidth, withoutEnlargement: true })
-    .webp({ effort: 6, quality: 88, smartSubsample: true })
+    .resize({ width: capture.maxWidth ?? imagePolicy.viewport.width, withoutEnlargement: true })
+    .removeAlpha()
+    .toColourspace('srgb')
+    .webp({
+      effort: imagePolicy.encoding.effort,
+      quality: imagePolicy.encoding.quality,
+      smartSubsample: imagePolicy.encoding.smartSubsample,
+    })
     .toFile(outputPath)
 
   console.log(`[screenshots] ${capture.id}: ${result.width}x${result.height}, ${result.size} bytes`)
