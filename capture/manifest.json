@@ -1,0 +1,35 @@
+[
+  {
+    "id": "getting-started-sign-in",
+    "route": "/sign-in",
+    "output": "public/screenshots/getting-started/sign-in.webp",
+    "docs": ["content/getting-started.mdx"],
+    "maxWidth": 1600,
+    "expectedWidth": 1600,
+    "expectedHeight": 900,
+    "minBytes": 10000,
+    "maxBytes": 500000
+  },
+  {
+    "id": "dashboard-overview",
+    "route": "/dashboard",
+    "output": "public/screenshots/dashboard/overview.webp",
+    "docs": ["content/dashboard.mdx", "content/getting-started.mdx"],
+    "maxWidth": 1600,
+    "expectedWidth": 1600,
+    "expectedHeight": 900,
+    "minBytes": 10000,
+    "maxBytes": 500000
+  },
+  {
+    "id": "encounters-new-encounter",
+    "route": "/dashboard",
+    "output": "public/screenshots/encounters/new-encounter/drawer.webp",
+    "docs": ["content/encounters/new-encounter.mdx"],
+    "maxWidth": 1600,
+    "expectedWidth": 1600,
+    "expectedHeight": 900,
+    "minBytes": 10000,
+    "maxBytes": 500000
+  }
+]
