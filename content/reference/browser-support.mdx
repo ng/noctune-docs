@@ -4,7 +4,7 @@ title: Browser Support
 
 # Browser Support
 
-The Noctune web app is for **reviewing, editing, and managing** encounters. Recording itself happens on the [iOS app](#) (your phone is the microphone), or by uploading an existing audio file.
+The Noctune web app can **record, upload, review, edit, and manage** encounters. Browser recording uses your computer's microphone and requires microphone permission.
 
 ## Tested browsers
 
@@ -19,7 +19,17 @@ Edge (Chromium) is fully supported — it's the same rendering engine as Chrome.
 
 ## Microphone permission
 
-The web app does not record audio — there's no need to grant microphone permission to the browser. Recording runs exclusively on the iOS app, which handles permissions through iOS itself.
+The first time you choose **Record from web**, your browser asks whether Noctune may use the microphone. Allow access to begin recording. If access is denied or no input is available, the New Encounter drawer shows the problem and a **Try again** action.
+
+You can change microphones during a take. If the active device disconnects, Noctune switches to the system default when one is available; otherwise the take pauses until an input returns.
+
+Browser or operating-system privacy settings can continue blocking the microphone after you dismiss the prompt. In that case, allow microphone access for Noctune in the site's permissions and try again.
+
+## Local recording recovery
+
+During a browser recording, Noctune stores small audio chunks and recovery details in IndexedDB on that device. This lets Noctune offer recovery after a tab or browser crash. Private browsing, storage quotas, and enterprise browser policies can disable this storage; recording then continues in memory, but it cannot be recovered after the tab closes.
+
+Keep the tab open while a recording or file queue is active. Noctune displays a browser warning if you try to close or reload it.
 
 ## Audio playback
 

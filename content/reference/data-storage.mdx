@@ -14,8 +14,11 @@ Noctune stores three things: your **audio recordings**, the **transcripts** deri
 | Transcripts                     | Postgres (managed, US region) | AES-256 at rest                 |
 | SOAP notes                      | Postgres (managed, US region) | AES-256 at rest                 |
 | Metadata (patient names, dates) | Postgres                      | AES-256 at rest                 |
+| In-progress browser recordings  | IndexedDB on your device      | Browser/device controls         |
 
-All data is stored in the United States. We don't replicate to other regions without explicit customer request.
+All server-side data is stored in the United States. We don't replicate it to other regions without explicit customer request.
+
+Browser recordings are the exception while they are in progress: Noctune temporarily saves chunks on the recording device so a take can be recovered after a crash. After the take uploads successfully or you discard it, Noctune removes that local recovery data. If browser storage is unavailable, the take remains in memory until it is uploaded or the tab closes.
 
 ## Retention windows
 

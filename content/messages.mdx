@@ -17,13 +17,13 @@ When you email a discharge note or follow-up from an encounter, you pick how rep
 
 ![Nest thread view with encounter context sidebar showing patient, date, and SOAP summary](https://placecats.com/900/520)
 
-## No reply vs. Nest vs. Vet direct
+## Noctune Nest vs. no reply vs. personal email
 
 Short version:
 
-- **No reply** — one-way courtesy sends. Replies bounce. Free, included with every generated note.
-- **Nest** — bidirectional, tied to the encounter. Included in subscription.
-- **Vet direct** — replies go to your personal email. Included in subscription, but exposes your address.
+- **Noctune Nest** — replies return to the encounter or your Noctune inbox without exposing your real address. Included in subscription.
+- **Noctune (no reply)** — a one-way message. The recipient cannot reply.
+- **Your personal email** — replies go straight to your personal inbox, and the recipient sees your address.
 
 See [Messaging & Email Relay](/reference/messaging) for the full comparison.
 
@@ -35,9 +35,23 @@ The other half of the inbox is vet-to-vet correspondence for referrals and consu
 
 ## Starting a new message
 
-**New Message** in the top right. Pick a recipient, optionally attach an encounter for context, write your note.
+Choose **New Message** in the top right. The composer opens without leaving your current page. Add one or more recipients, choose how replies should route, then enter a subject and message.
 
-![New message composer with recipient picker, encounter attachment, and body field](https://placecats.com/900/480)
+![New message composer with recipient picker, sender route, template picker, subject, and body](https://placecats.com/900/480)
+
+### Use an email template
+
+Choose **Templates** in the composer to search your saved [Email Templates](/email-templates). Inserting a template fills an empty subject and appends the body without replacing anything you already wrote. An **Undo** action is available immediately after insertion.
+
+Placeholders such as the patient's name are filled from the recipient's patient record. Placeholders that cannot be filled appear in amber with an explanation. You can correct the recipient or patient record, go back and edit the message, or explicitly choose **Send anyway**; in that case the recipient sees the placeholder text.
+
+### Reply to a thread
+
+Open a thread and choose **Reply**. Replies use the same full-size composer, template picker, placeholder checks, and sender-routing options as a new message.
+
+### Attachments
+
+Attachments appear on the message that included them. Select an attachment to download it. If a thread contains several messages, expand a collapsed message to see its sender, recipients, timestamp, and attachments.
 
 ## Flagged filter
 

@@ -18,6 +18,7 @@ export default {
   },
   patients: 'Patients',
   templates: 'Templates',
+  'email-templates': 'Email Templates',
   '--practice': {
     type: 'separator',
     title: 'Practice',
