@@ -4,27 +4,37 @@ title: Notifications
 
 # Notifications
 
-Control when Noctune emails you and when it pings you in-app.
+The Notifications tab shows the current email and push defaults for Noctune events.
 
-![Notifications settings tab with toggles for encounter ready, messages, weekly summary, and product updates](https://placecats.com/960/540)
+<BrowserFrame
+  src="/screenshots/settings/notifications.webp"
+  alt="Noctune notification defaults with event descriptions and disabled Email and Push switches"
+  url="app.noctune.ai/settings?tab=notifications"
+/>
 
-## Email notifications
+## Current status: read-only defaults
 
-Each event has its own toggle. Turning everything off is fine — you'll still see in-app badges, you just won't get email.
+The switches, **Reset to defaults**, and **Edit quiet hours** are currently disabled. This screen is a read-only view of the notification matrix, not an editable preference form. The visual switch position shows the present default behavior.
 
-![Email notification toggle list with per-event switches](https://placecats.com/900/480)
+## Encounter events
 
-Common events:
+- **SOAP note ready** — processing has produced a note ready for review.
+- **Sentinel triggered** — the hostile-encounter safety workflow was triggered.
+- **Weekly recap** — a Monday summary of encounter count, dictation time, and top species.
 
-- **Encounter ready** — your SOAP draft is finished processing
-- **New message** — someone sent you a vet-to-vet message
-- **Weekly summary** — recap of encounters and activity
-- **Product updates** — new features and changes
+## Message events
 
-## In-app notifications
+- **New client reply** — a client replied through Noctune Nest.
+- **Mention** — a teammate mentioned you in a thread.
 
-In-app notifications (the badges in the sidebar) are always on. They're the source of truth — email just mirrors them.
+## Billing and product events
 
-## Digest timing
+- **Low note balance** — the available note balance falls below ten.
+- **Payment receipts** — a top-up or renewal produced a receipt.
+- **What's new** — occasional product-change messages.
 
-Weekly summary sends on Sunday evenings in your local timezone. You can turn it off without affecting any other emails.
+## Quiet hours and in-app state
+
+The footer displays push quiet hours of **8 PM–7 AM**. Locked push cells use a dash where that event does not have a configurable push channel.
+
+The Messages sidebar badge and other in-app state can still update independently of this static defaults screen.

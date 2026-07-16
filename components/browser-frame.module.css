@@ -1,0 +1,148 @@
+.frame {
+  overflow: hidden;
+  margin: 1.75rem 0;
+  border: 1px solid rgba(15, 61, 58, 0.18);
+  border-radius: 14px;
+  background: #eef2f1;
+  box-shadow:
+    0 20px 48px rgba(15, 61, 58, 0.13),
+    0 3px 10px rgba(15, 30, 29, 0.08);
+  isolation: isolate;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 72px;
+  gap: 12px;
+  align-items: center;
+  min-height: 44px;
+  padding: 7px 12px;
+  border-bottom: 1px solid rgba(15, 61, 58, 0.13);
+  background: linear-gradient(180deg, #fafcfb 0%, #edf2f1 100%);
+}
+
+.navigation {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #6b7775;
+}
+
+.icon {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.45;
+}
+
+.address {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  justify-self: center;
+  width: min(100%, 560px);
+  height: 29px;
+  padding: 0 11px;
+  overflow: hidden;
+  border: 1px solid rgba(15, 61, 58, 0.13);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 1px 1px rgba(15, 61, 58, 0.03);
+  color: #52605e;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.lock {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 auto;
+  stroke: #2a7f78;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.35;
+}
+
+.toolbarBalance {
+  width: 72px;
+}
+
+.viewport,
+.viewport :global([data-rmiz]),
+.viewport :global([data-rmiz-content]) {
+  display: block;
+}
+
+.viewport {
+  line-height: 0;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fff;
+}
+
+:global(html.dark) .frame {
+  border-color: rgba(142, 211, 205, 0.22);
+  background: #1a1f1e;
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.34),
+    0 3px 10px rgba(0, 0, 0, 0.24);
+}
+
+:global(html.dark) .toolbar {
+  border-bottom-color: rgba(142, 211, 205, 0.16);
+  background: linear-gradient(180deg, #252b2a 0%, #1b211f 100%);
+}
+
+:global(html.dark) .navigation {
+  color: #98a6a3;
+}
+
+:global(html.dark) .address {
+  border-color: rgba(142, 211, 205, 0.16);
+  background: rgba(8, 13, 12, 0.72);
+  color: #c1cdca;
+}
+
+:global(html.dark) .lock {
+  stroke: #5bb3ac;
+}
+
+@media (max-width: 640px) {
+  .frame {
+    margin: 1.25rem 0;
+    border-radius: 10px;
+  }
+
+  .toolbar {
+    grid-template-columns: 48px minmax(0, 1fr) 48px;
+    gap: 8px;
+    min-height: 40px;
+    padding: 6px 9px;
+  }
+
+  .navigation {
+    gap: 7px;
+  }
+
+  .navigation .icon:last-child {
+    display: none;
+  }
+
+  .address {
+    height: 27px;
+    padding: 0 9px;
+    font-size: 11px;
+  }
+
+  .toolbarBalance {
+    width: 48px;
+  }
+}

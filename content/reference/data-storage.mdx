@@ -4,75 +4,59 @@ title: Data Storage & Retention
 
 # Data Storage & Retention
 
-Noctune stores three things: your **audio recordings**, the **transcripts** derived from them, and the **SOAP notes** you edit. This page explains where each lives, how long, and what it costs to keep old material accessible.
+An encounter contains several records with different access rules: uploaded audio, transcript segments, generated notes, patient metadata, and messages. Browser recording also uses temporary local storage before upload.
 
-## Where your data lives
+## What remains available
 
-| Data                            | Where it's stored             | Encryption                      |
-| ------------------------------- | ----------------------------- | ------------------------------- |
-| Audio files                     | AWS S3 (US region)            | AES-256 at rest, TLS in transit |
-| Transcripts                     | Postgres (managed, US region) | AES-256 at rest                 |
-| SOAP notes                      | Postgres (managed, US region) | AES-256 at rest                 |
-| Metadata (patient names, dates) | Postgres                      | AES-256 at rest                 |
-| In-progress browser recordings  | IndexedDB on your device      | Browser/device controls         |
+| Record                               | Standard behavior                                                                 |
+| ------------------------------------ | --------------------------------------------------------------------------------- |
+| Transcript and speaker segments      | Remain available with the encounter                                               |
+| SOAP and discharge-note versions     | Remain available with the encounter, including audited edits and regenerations    |
+| Patient and encounter metadata       | Remain available with the corresponding records                                   |
+| Encounter messages                   | Remain in the encounter and Messages inbox                                        |
+| Audio, first 31 days                 | Playable and downloadable                                                         |
+| Audio older than 31 days             | Gated unless the billing workspace has Long-term Storage or Sentinel preservation |
+| In-progress browser recording chunks | Stored temporarily in that browser for crash recovery                             |
 
-All server-side data is stored in the United States. We don't replicate it to other regions without explicit customer request.
+The retention check uses the encounter creation time. Audio becomes gated when it is more than 31 whole days old—not at the start of day 31.
 
-Browser recordings are the exception while they are in progress: Noctune temporarily saves chunks on the recording device so a take can be recovered after a crash. After the take uploads successfully or you discard it, Noctune removes that local recovery data. If browser storage is unavailable, the take remains in memory until it is uploaded or the tab closes.
+## Audio after the standard window
 
-## Retention windows
+Without **Long-term Storage**, an older encounter shows **Audio archived** in place of the player. The banner gives the recording age and a **Restore Audio** action that leads to the storage upgrade path. The SOAP note and transcript remain readable while audio is gated.
 
-Included in every plan:
+<BrowserFrame
+  src="/screenshots/encounters/detail/archived-audio.webp"
+  alt="Pepper encounter with a 46-day Audio archived banner, retained SOAP note and transcript area, and Restore Audio action"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000206"
+/>
 
-| Data                  | Retention      | Notes                                         |
-| --------------------- | -------------- | --------------------------------------------- |
-| Audio files           | 90 days active | Auto-moved to archival tier after the window  |
-| Transcripts           | Indefinite     | Small enough that storage is effectively free |
-| SOAP notes            | Indefinite     | Same as transcripts                           |
-| Messages (Nest inbox) | Indefinite     |                                               |
+Long-term Storage keeps recordings instantly playable beyond the standard window. Access is based on the active personal or practice billing workspace.
 
-Your **SOAP notes and transcripts are kept for as long as you have an account** — you never lose the record of what was said.
+## Sentinel preservation
 
-Audio moves through three states; transcripts and SOAP notes never leave the first:
+[Noctune Sentinel](/reference/sentinel) bypasses the normal audio gate for an encounter marked for client hostility. Its audio stays available for protective documentation even when the workspace does not have Long-term Storage.
 
 <Diagram
   chart={`
-stateDiagram-v2
-    [*] --> Active: encounter created
-    Active --> Archived: audio after 90 days
-    Archived --> Active: restore (thaw, small per-request fee)
-    Active --> Deleted: delete encounter / close account
-    Archived --> Deleted: delete encounter / close account
-    Deleted --> [*]: purged within 30 days
-    note right of Active
-        Transcripts and SOAP notes stay here for the
-        life of your account — never archived or thawed.
-        Sentinel-flagged audio also stays Active indefinitely.
-    end note
+flowchart TD
+    Created([Encounter created]) --> Window[Audio available for 31 days]
+    Window --> Check{Long-term Storage or<br/>Sentinel preservation?}
+    Check -->|yes| Available[Audio remains available]
+    Check -->|no| Archived[Audio archived banner]
+    Archived --> Upgrade[Add Long-term Storage]
+    Upgrade --> Available
+    Created --> Clinical[Transcript and notes remain available]
 `}
 />
 
-## Archival tier and post-retention access
+## Browser recording recovery
 
-After the audio retention window, your raw audio is moved to a cheaper **archival tier** (AWS S3 Intelligent-Tiering). You can still access it, but with two changes:
+During a live browser take, Noctune writes recovery chunks to IndexedDB on that device. The local copy lets the recovery prompt offer upload, download, or discard after a crash. Successful upload or explicit discard removes the corresponding local session.
 
-1. **Restoration takes a few minutes** — the file has to thaw before playback or reprocessing.
-2. **There's a small per-request cost** to restore, passed through on your next invoice.
+If IndexedDB is unavailable, the recording stays in memory and the drawer warns that crash protection is unavailable. Closing the tab can then lose the unprocessed take.
 
-Transcripts and SOAP notes are _never_ archived — they remain instantly accessible for the life of your account.
+## Deletion and account policy
 
-![Encounter detail page with an Archived audio banner and a Restore button](https://placecats.com/900/360)
+Archiving audio is not the same as deleting an encounter: the clinical record remains present. Patient removal is also a soft archive and does not delete existing transcripts or notes. For an account-level export, deletion request, or organization-specific retention requirement, contact Noctune support before changing access to the account.
 
-> **Why:** Raw audio is by far the bulk of storage cost. Archival cuts ongoing storage fees by ~90% without touching the structured data you actually reference day-to-day.
-
-## Deleting data
-
-You can delete any encounter from its detail page. This removes the audio, transcript, SOAP note, and messages associated with it. Deletion is permanent and happens within 30 days across all backups.
-
-## Account closure
-
-Closing your account deletes everything within 30 days. Request an export first (Settings → Billing → Request data export) if you want a copy.
-
-## Compliance
-
-Noctune follows healthcare-adjacent data handling practices. Veterinary records are not covered by HIPAA in the US, but we apply equivalent controls: encryption, access logging, role-based permissions, and audit trails. Contact support for a compliance brief if you need one for a corporate procurement review.
+Veterinary records are not generally HIPAA-covered records in the United States, but your organization may have its own legal or contractual retention duties. Follow those duties when deciding what to export or retain.

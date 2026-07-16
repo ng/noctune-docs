@@ -4,57 +4,56 @@ title: Noctune Sentinel
 
 # Noctune Sentinel
 
-Veterinary visits occasionally go sideways — an agitated client, threats, or refusal of care that might later become a dispute. **Noctune Sentinel** watches for these and quietly preserves what happened so you're protected. **This costs you nothing** and is on by default for every account.
+Noctune Sentinel surfaces potentially hostile client behavior in a recorded encounter and preserves the source audio beyond the standard retention window. It is a documentation aid, not a clinical, legal, or security determination.
 
-## What we flag
+## What Sentinel surfaces
 
-During analysis of a transcript, Noctune detects:
+During encounter processing, Sentinel can mark client language or behavior that warrants later review, including confrontational statements and explicit refusal of recommended care. A flagged encounter can include:
 
-- **Hostile language** directed at you, your staff, or the clinic
-- **Threats** — physical, legal, or financial
-- **Explicit refusal of care** — so there's a clear record of what was offered vs. declined
-- **Sentiment trends** that escalate across a conversation
+- a safety summary above the SOAP note
+- timestamped reasons that seek to the relevant transcript and audio moment
+- a **Flagged** indicator in encounter, patient, and message lists
+- preservation copy explaining that the encounter's audio remains available
 
-Each flagged encounter gets a small indicator on the encounter card and on the patient's profile.
-
-![Encounter card with a small shield icon indicating a safety flag](https://placecats.com/900/280)
+<BrowserFrame
+  src="/screenshots/encounters/detail/sentinel-alert.webp"
+  alt="Jasper encounter with a Noctune Sentinel safety alert, preservation notice, and timestamped client-hostility markers"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000202"
+/>
 
 ## What happens automatically
 
 <Diagram
   chart={`
 flowchart TD
-    T[Transcript analysis] --> D{Hostile language, threats,<br/>refusal of care, or<br/>escalating sentiment?}
-    D -->|no| Normal[Normal retention schedule]
-    D -->|yes| Flag[Encounter flagged]
-    Flag --> A1[Audio preserved indefinitely]
-    Flag --> A2[Transcript + SOAP snapshot locked]
-    Flag --> A3[Flag on patient profile]
-    Flag --> A4["Searchable in Messages → Flagged"]
+    Transcript[Encounter transcript and speaker segments] --> Analyze{Client-hostility signal?}
+    Analyze -->|no| Standard[Standard audio-retention policy]
+    Analyze -->|yes| Flag[Flag encounter]
+    Flag --> Summary[Show safety summary and markers]
+    Flag --> Patient[Show patient and list indicators]
+    Flag --> Inbox[Include in Messages → Flagged]
+    Flag --> Preserve[Bypass the standard audio gate]
 `}
 />
 
-When a visit is flagged:
+The retention bypass does not require Long-term Storage and does not remove access to the editable SOAP note. Normal note versioning and audit history continue to apply.
 
-1. **The audio is preserved indefinitely** — pulled out of the normal retention/archival schedule, no extra cost to you.
-2. **A snapshot of the transcript and SOAP note is locked** — edits after the flag fires are tracked as new versions, originals stay intact.
-3. **A flag appears on the patient's profile** — future-you (or another vet on the team) sees it before the next visit. See [Patients](/patients).
-4. **The encounter is searchable** in the [Messages inbox](/messages) under the "Flagged" filter so you can find it quickly.
+## Find flagged encounters
 
-None of this shares your data with anyone outside your practice. We don't notify authorities, insurers, or third parties — it's entirely a protective record for you.
+Open [Messages](/messages) and choose **Flagged**. The filtered list keeps the patient, owner, subject, assignment, unread state, and Sentinel indicator together.
 
-## Opting out
+<BrowserFrame
+  src="/screenshots/messages/flagged.webp"
+  alt="Messages inbox filtered to Jasper's Sentinel-flagged encounter conversation"
+  url="app.noctune.ai/messages"
+/>
 
-You can mute the indicator on any individual encounter if it was a false positive (Encounter → three-dot menu → **Unflag**). The underlying audio preservation and lock stay in place — unflagging only hides the indicator. You can't opt out account-wide, because the protection exists _for_ you.
+The Patient Records list also displays a flag beside a patient with flagged history, helping the care team review context before a later appointment.
 
-## Reviewing flagged encounters
+## Scope and limitations
 
-The [Messages inbox](/messages) has a **Flagged** filter that surfaces every encounter with an active safety flag, sorted newest first. The patient profile also shows a historical hostile-encounter count so you can read the room before seeing a repeat client.
-
-![Messages inbox filtered to Flagged, showing a list of past hostile encounters](https://placecats.com/900/460)
-
-## What we _don't_ do
-
-- **No recording without your knowledge.** Safety detection runs on audio you already chose to record. It doesn't turn on the mic, extend recording time, or transmit extra data.
-- **No sharing.** Flagged data stays in your practice unless you explicitly export or forward it.
-- **No AI-generated testimony.** Flags are a signal, not a legal determination. What gets preserved is your own audio and transcript — the source of truth.
+- Sentinel analyzes audio that a user already chose to record; it does not turn on a microphone by itself.
+- A flag is a reason to review the original audio and transcript, not proof that an event occurred exactly as summarized.
+- Speaker attribution and transcription can be imperfect. Check the timestamped source before relying on a marker.
+- Sentinel does not contact authorities, insurers, clients, or outside parties as part of the flagging workflow.
+- A care team remains responsible for its own safety, documentation, and escalation policies.
