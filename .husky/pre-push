@@ -1,2 +1,2 @@
-git lfs pre-push "$@"
+git lfs pre-push "$@" || exit $?
 pnpm check

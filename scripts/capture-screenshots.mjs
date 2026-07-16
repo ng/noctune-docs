@@ -9,6 +9,7 @@ import dotenv from 'dotenv'
 
 import {
   assertCaptureDatabase,
+  parseCaptureDatabaseAllowlist,
   requireLoopbackBaseUrl,
 } from '../capture/support/capture-safety.mjs'
 
@@ -29,11 +30,15 @@ const captureUserEmail = captureEnv.DOCS_CAPTURE_USER_EMAIL || 'docs-capture@tes
 const termsUserEmail = captureEnv.DOCS_TERMS_USER_EMAIL || 'docs-terms@test.noctune.local'
 const captureUserPassword = `Docs-${randomBytes(24).toString('base64url')}!1a`
 const captureNow = captureEnv.DOCS_CAPTURE_NOW || '2026-07-15T17:00:00.000Z'
+const allowedDatabaseFingerprints = parseCaptureDatabaseAllowlist(
+  JSON.parse(fs.readFileSync(path.join(docsRoot, 'capture/database-allowlist.json'), 'utf8')),
+)
 
 assertCaptureDatabase({
   databaseUrl,
   guard: captureEnv.CAPTURE_DATABASE_GUARD,
-  forbiddenDatabaseUrl: coreFileEnv.DATABASE_URL || process.env.DATABASE_URL,
+  allowedDatabaseFingerprints,
+  forbiddenDatabaseUrls: [coreFileEnv.DATABASE_URL, process.env.DATABASE_URL],
 })
 requireLoopbackBaseUrl(baseURL)
 if (!captureUserEmail.endsWith('@test.noctune.local')) {

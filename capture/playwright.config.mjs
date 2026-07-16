@@ -4,12 +4,19 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { assertCaptureDatabase, requireLoopbackBaseUrl } from './support/capture-safety.mjs'
+import {
+  assertCaptureDatabase,
+  parseCaptureDatabaseAllowlist,
+  requireLoopbackBaseUrl,
+} from './support/capture-safety.mjs'
 
 const captureDir = path.dirname(fileURLToPath(import.meta.url))
 const docsRoot = path.resolve(captureDir, '..')
 const captureEnvPath = path.join(docsRoot, '.env.capture.local')
 const imagePolicy = JSON.parse(fs.readFileSync(path.join(captureDir, 'image-policy.json'), 'utf8'))
+const allowedDatabaseFingerprints = parseCaptureDatabaseAllowlist(
+  JSON.parse(fs.readFileSync(path.join(captureDir, 'database-allowlist.json'), 'utf8')),
+)
 
 const captureEnv = {
   ...(fs.existsSync(captureEnvPath) ? dotenv.parse(fs.readFileSync(captureEnvPath)) : {}),
@@ -21,8 +28,9 @@ const runtimeCoreDir = process.env.CAPTURE_RUNTIME_CORE_DIR
   : sourceCoreDir
 const coreEnvPath = path.join(sourceCoreDir, '.env.local')
 
+const coreFileEnv = fs.existsSync(coreEnvPath) ? dotenv.parse(fs.readFileSync(coreEnvPath)) : {}
 const coreEnv = {
-  ...(fs.existsSync(coreEnvPath) ? dotenv.parse(fs.readFileSync(coreEnvPath)) : {}),
+  ...coreFileEnv,
   ...process.env,
 }
 const databaseUrl = captureEnv.CAPTURE_DATABASE_URL
@@ -31,14 +39,15 @@ const baseURL = captureEnv.CAPTURE_BASE_URL || 'http://localhost:3100'
 assertCaptureDatabase({
   databaseUrl,
   guard: captureEnv.CAPTURE_DATABASE_GUARD,
-  forbiddenDatabaseUrl: coreEnv.DATABASE_URL,
+  allowedDatabaseFingerprints,
+  forbiddenDatabaseUrls: [coreFileEnv.DATABASE_URL, process.env.DATABASE_URL],
 })
 if (!coreEnv.NEXT_PUBLIC_SUPABASE_URL || !coreEnv.SUPABASE_SERVICE_ROLE_KEY) {
   throw new Error('Noctune Core DEV Supabase configuration is required for authenticated capture')
 }
 
 const appUrl = requireLoopbackBaseUrl(baseURL)
-const port = appUrl.port || (appUrl.protocol === 'https:' ? '443' : '80')
+const port = appUrl.port || '80'
 const childEnv = {
   ...process.env,
   ...coreEnv,

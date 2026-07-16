@@ -30,7 +30,9 @@ before Git updates the remote branch.
 Local capture expects:
 
 - Noctune Core at `../noctune-core` with its DEV Supabase settings in `.env.local`.
-- A disposable Neon database used only for synthetic documentation fixtures.
+- A disposable Neon database used only for synthetic documentation fixtures,
+  with its credential-free fingerprint independently reviewed in
+  `capture/database-allowlist.json`.
 - `.env.capture.local`, copied from the commented `.env.capture.example`.
 
 Install Chromium once, then refresh, review, and validate the assets:
