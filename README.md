@@ -27,6 +27,11 @@ Raster assets (`.webp`, `.png`, `.jpg`, `.jpeg`, `.gif`, and `.avif`) are stored
 Git LFS. The repository's pre-push hook uploads their LFS objects and runs `pnpm check`
 before Git updates the remote branch.
 
+Vercel's Git LFS support must remain enabled under **Project Settings → Git** so
+deployment checkouts contain the raster bytes instead of pointer files. The build
+runs `pnpm assets:verify` first and fails with a targeted error if any pointer or
+invalid raster reaches the deployment workspace.
+
 Local capture expects:
 
 - Noctune Core at `../noctune-core` with its DEV Supabase settings in `.env.local`.

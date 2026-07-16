@@ -12,6 +12,8 @@ Product screenshots are generated assets. Do not hand-edit or re-encode files un
 - Never use production/customer data or generative-image tools for product UI screenshots.
 - Keep raster assets in Git LFS. Do not bypass the `.gitattributes` rules or commit
   raster binaries directly to regular Git history.
+- Keep Git LFS enabled for the Vercel project. `pnpm assets:verify` must pass before
+  a deployment build so LFS pointer files can never be published as images.
 - Add a database fingerprint to `capture/database-allowlist.json` only after a
   human independently confirms that the target is disposable and capture-only.
 - Run `pnpm screenshots:update` to rebuild assets atomically from the disposable fixture
