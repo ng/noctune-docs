@@ -29,4 +29,4 @@ pnpm screenshots:update
 pnpm check
 ```
 
-`screenshots:update` refuses the Core database, migrates and seeds the disposable database, creates or updates only the reserved test auth identity, runs Core from an isolated worktree, and promotes staged images only after every capture passes validation. Capture routes, output paths, byte limits, and documentation references live in `capture/manifest.json`.
+`screenshots:update` refuses the Core database, migrates and seeds the disposable database, creates or updates only the reserved test auth identity, runs Core from an isolated worktree, and promotes staged images only after every capture passes validation. Capture routes, output paths, byte limits, and documentation references live in `capture/manifest.json`. Wrap product screenshots in `<BrowserFrame>` to apply the shared browser-neutral presentation without baking decoration into the image files.
