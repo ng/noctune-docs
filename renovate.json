@@ -1,6 +1,134 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
+  "extends": ["config:recommended"],
+  "minimumReleaseAge": "3 days",
+  "automerge": true,
+  "automergeType": "branch",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "commitMessagePrefix": "chore",
+  "packageRules": [
+    {
+      "description": "Catch-all weekly batch for ungrouped patch updates. Lives FIRST so the more-specific ecosystem rules below can override its groupName for packages that have a dedicated bucket. Renovate cascades packageRules — last match wins per field. Includes packageManager so pnpm patch bumps fall into the batch.",
+      "matchUpdateTypes": ["patch"],
+      "matchDepTypes": ["dependencies", "devDependencies", "packageManager"],
+      "groupName": "patch-updates",
+      "groupSlug": "patch-updates",
+      "schedule": ["before 9am on monday"],
+      "automerge": true,
+      "labels": ["dependencies", "patch"]
+    },
+    {
+      "description": "Catch-all weekly batch for ungrouped minor updates. Same shape as patch-updates: more-specific ecosystem rules below override the groupName. The 3-day minimumReleaseAge from the top level still applies — minors enter the batch only after the supply-chain delay.",
+      "matchUpdateTypes": ["minor"],
+      "matchDepTypes": ["dependencies", "devDependencies", "packageManager"],
+      "groupName": "minor-updates",
+      "groupSlug": "minor-updates",
+      "schedule": ["before 9am on monday"],
+      "automerge": true,
+      "labels": ["dependencies", "minor"]
+    },
+    {
+      "description": "AWS SDK — @aws-sdk/* + @smithy/* release in lockstep, batch into one PR",
+      "matchPackagePatterns": ["^@aws-sdk/", "^@smithy/"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "aws-sdk",
+      "groupSlug": "aws-sdk",
+      "automerge": true,
+      "labels": ["dependencies", "aws-sdk"]
+    },
+    {
+      "description": "MUI — @mui/* updated together (minor/patch only; majors stay individual)",
+      "matchPackagePatterns": ["^@mui/"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "mui",
+      "groupSlug": "mui",
+      "automerge": true,
+      "labels": ["dependencies", "mui"]
+    },
+    {
+      "description": "MUI majors — manual review",
+      "matchPackagePatterns": ["^@mui/"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["dependencies", "mui", "manual"]
+    },
+    {
+      "description": "Supabase — auth + ssr ship together",
+      "matchPackagePatterns": ["^@supabase/"],
+      "groupName": "supabase",
+      "groupSlug": "supabase",
+      "automerge": true,
+      "labels": ["dependencies", "supabase"]
+    },
+    {
+      "description": "Drizzle — drizzle-orm + drizzle-kit + plugins versioned together",
+      "matchPackagePatterns": ["^drizzle-"],
+      "groupName": "drizzle",
+      "groupSlug": "drizzle",
+      "automerge": true,
+      "labels": ["dependencies", "drizzle"]
+    },
+    {
+      "description": "Vitest ecosystem — runner + plugins update together",
+      "matchPackageNames": ["vitest", "vite"],
+      "matchPackagePatterns": ["^@vitest/", "^vite-"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "vitest",
+      "groupSlug": "vitest",
+      "automerge": true,
+      "labels": ["dependencies", "vitest"]
+    },
+    {
+      "description": "Linting / formatting — eslint + plugins + prettier batch together",
+      "matchPackageNames": ["eslint", "prettier"],
+      "matchPackagePatterns": ["^@typescript-eslint/", "^eslint-", "^@stylistic/", "^prettier-"],
+      "groupName": "linting",
+      "groupSlug": "linting",
+      "automerge": true,
+      "labels": ["devDependencies", "linting"]
+    },
+    {
+      "description": "TypeScript types — @types/* batch (lowest blast radius). React @types are pulled out into the nextjs-react group below.",
+      "matchPackagePatterns": ["^@types/"],
+      "matchPackageNames": ["!@types/react", "!@types/react-dom"],
+      "groupName": "types",
+      "groupSlug": "types",
+      "automerge": true,
+      "labels": ["devDependencies", "types"]
+    },
+    {
+      "description": "Next.js + React — always step together; minors/patches batched, majors manual. Includes React's @types so a React major doesn't slip into the generic types batch.",
+      "matchPackageNames": ["next", "react", "react-dom", "@types/react", "@types/react-dom"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "nextjs-react",
+      "groupSlug": "nextjs-react",
+      "automerge": true,
+      "labels": ["dependencies", "nextjs", "react"]
+    },
+    {
+      "description": "Next.js + React majors — manual review (breaking changes likely). @types/react* are bundled here too so a React major doesn't fall through to the @types group's automerge.",
+      "matchPackageNames": ["next", "react", "react-dom", "@types/react", "@types/react-dom"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["dependencies", "nextjs", "react", "manual"]
+    },
+    {
+      "description": "Major updates that didn't match a more-specific rule — stay individual",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "commitMessagePrefix": "feat(deps-major):",
+      "commitMessageAction": "Update {{packageName}}",
+      "labels": ["dependencies", "major"]
+    },
+    {
+      "description": "Default commit-message prefix for ungrouped minor updates",
+      "matchPackagePatterns": [".*"],
+      "matchUpdateTypes": ["minor"],
+      "commitMessagePrefix": "chore(deps):",
+      "commitMessageAction": "Update {{packageName}}"
+    }
   ]
 }
