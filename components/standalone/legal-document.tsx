@@ -10,7 +10,7 @@ const ROUTE_ALIASES: Record<string, string> = {
   '/terms': '/ios/terms',
 }
 
-const ALLOWED_INTERNAL_ROUTES = new Set(['/ios', '/ios/privacy', '/ios/terms'])
+const ALLOWED_INTERNAL_ROUTES = new Set(['/ios/support', '/ios/privacy', '/ios/terms'])
 
 function LegalLink({ href = '', children }: ComponentPropsWithoutRef<'a'>) {
   const safeHref = ROUTE_ALIASES[href] ?? href
@@ -33,7 +33,7 @@ export async function LegalDocument({ id }: { id: LegalDocumentId }) {
 
   return (
     <main id="main-content" className={styles.main}>
-      <a className={styles.backLink} href="/ios">
+      <a className={styles.backLink} href="/ios/support">
         <span aria-hidden="true">←</span> Noctune for iOS Support
       </a>
       {document.available ? (

@@ -5,11 +5,19 @@ import test from 'node:test'
 
 const repositoryRoot = path.resolve(import.meta.dirname, '..')
 const prerenderRoot = path.join(repositoryRoot, '.next/server/app')
+const routesManifestPath = path.join(repositoryRoot, '.next/routes-manifest.json')
 
-const supportHref = '/ios'
+const supportHref = '/ios/support'
 const privacyHref = '/ios/privacy'
 const termsHref = '/ios/terms'
 const supportEmail = 'support@noctune.com'
+
+const permanentRedirects = new Map([
+  ['/ios', supportHref],
+  ['/ios-support', supportHref],
+  ['/ios-support/privacy', privacyHref],
+  ['/ios-support/terms', termsHref],
+])
 
 const requiredSupportCopy = [
   ['page heading', /\bNoctune for iOS Support\b/i],
@@ -69,6 +77,8 @@ const prohibitedCommercialCopy = [
 ]
 
 test('prerenders an isolated, noncommercial iOS support and legal surface', async () => {
+  await assertPermanentRedirects()
+
   const support = await readPrerenderedRoute(supportHref)
   assertPrerenderedDocument(supportHref, support)
 
@@ -126,6 +136,17 @@ test('prerenders an isolated, noncommercial iOS support and legal surface', asyn
     assertLegalAnchors(route, legalText, extractAnchors(legal.body))
   }
 })
+
+async function assertPermanentRedirects() {
+  const manifest = JSON.parse(await fs.readFile(routesManifestPath, 'utf8'))
+
+  for (const [source, destination] of permanentRedirects) {
+    const redirect = manifest.redirects.find((candidate) => candidate.source === source)
+    assert.ok(redirect, `Missing permanent redirect from ${source} to ${destination}`)
+    assert.equal(redirect.destination, destination, `${source} redirects to the wrong destination`)
+    assert.equal(redirect.statusCode, 308, `${source} must use a permanent 308 redirect`)
+  }
+}
 
 async function readPrerenderedRoute(route) {
   const relativeRoute = route.replace(/^\/+|\/+$/g, '') || 'index'

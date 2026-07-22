@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { IOS_SUPPORT_EMAIL } from '../../../lib/ios-support'
+import { IOS_SUPPORT_EMAIL } from '../../../../lib/ios-support'
 import styles from './page.module.css'
 
 export const metadata: Metadata = {
@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description:
     'Support for existing Noctune users on iPhone and iPad, including recording, uploads, notes, and account deletion.',
   alternates: {
-    canonical: '/ios',
+    canonical: '/ios/support',
   },
 }
 
