@@ -214,6 +214,14 @@ export default function IOSSupportPage() {
             <span>Terms of Service</span>
             <span aria-hidden="true">→</span>
           </a>
+          <a href="/ios/ca-privacy">
+            <span>California Privacy</span>
+            <span aria-hidden="true">→</span>
+          </a>
+          <a href="/ios/do-not-sell">
+            <span>Do Not Sell My Info</span>
+            <span aria-hidden="true">→</span>
+          </a>
         </div>
       </section>
     </main>
