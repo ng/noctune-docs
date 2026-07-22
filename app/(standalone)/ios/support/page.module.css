@@ -67,8 +67,7 @@
 
 .contact h2,
 .sectionHeading h2,
-.deletion h2,
-.legal h2 {
+.deletion h2 {
   margin: 8px 0 10px;
   color: #193b37;
   font-size: clamp(1.5rem, 3vw, 2rem);
@@ -77,7 +76,6 @@
 }
 
 .contact p,
-.legal p,
 .deletionIntro p {
   margin: 0;
   color: #586764;
@@ -243,13 +241,15 @@
 }
 
 .disclaimer {
+  width: min(820px, 100%);
   display: flex;
   gap: 18px;
-  margin-top: 22px;
+  box-sizing: border-box;
+  margin-top: 32px;
   padding: 25px 28px;
-  border: 1px solid #e2d9bd;
+  border: 1px solid #c9ded9;
   border-radius: 18px;
-  background: #fffaf0;
+  background: #f3f8f6;
 }
 
 .disclaimerMark {
@@ -259,60 +259,25 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  color: #714f05;
-  background: #f2dda2;
+  color: #174c48;
+  background: #dcece8;
   font-weight: 800;
 }
 
 .disclaimer h2 {
   margin: 1px 0 6px;
-  color: #443812;
+  color: #193b37;
   font-size: 1rem;
 }
 
 .disclaimer p {
   margin: 0;
-  color: #665c3e;
+  color: #52645f;
   font-size: 14px;
   line-height: 1.65;
 }
 
-.legal {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(300px, 1.1fr);
-  gap: 52px;
-  align-items: end;
-  margin-top: 92px;
-}
-
-.legalLinks {
-  display: grid;
-  gap: 10px;
-}
-
-.legalLinks a {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  min-height: 58px;
-  padding: 0 18px;
-  border: 1px solid #d8e4e1;
-  border-radius: 13px;
-  color: #174c48;
-  background: #ffffff;
-  font-size: 14px;
-  font-weight: 720;
-  text-decoration: none;
-}
-
-.legalLinks a:hover {
-  border-color: #8cbdb6;
-  background: #f5faf8;
-}
-
-.contactAction a:focus-visible,
-.legalLinks a:focus-visible {
+.contactAction a:focus-visible {
   outline: 3px solid #256f69;
   outline-offset: 4px;
 }
@@ -324,18 +289,9 @@
   }
 
   .contact,
-  .deletion,
-  .legal {
-    grid-template-columns: 1fr;
-  }
-
-  .contact,
   .deletion {
+    grid-template-columns: 1fr;
     gap: 28px;
-  }
-
-  .legal {
-    gap: 24px;
   }
 }
 
@@ -360,8 +316,7 @@
   }
 
   .help,
-  .deletion,
-  .legal {
+  .deletion {
     margin-top: 68px;
   }
 

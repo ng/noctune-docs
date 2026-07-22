@@ -110,6 +110,11 @@ test('prerenders an isolated, noncommercial iOS support and legal surface', asyn
   }
 
   const supportAnchors = extractAnchors(support.body)
+  const supportMain = extractElementContents(support.body, 'main', supportHref)
+  const supportMainAnchors = extractAnchors(supportMain)
+  const supportFooterAnchors = extractAnchors(
+    extractElementContents(support.body, 'footer', supportHref),
+  )
   assert.ok(supportAnchors.length > 0, `${supportHref} should contain support/legal links`)
   assertSupportAnchors(supportAnchors)
   for (const [href, label] of [
@@ -118,14 +123,21 @@ test('prerenders an isolated, noncommercial iOS support and legal surface', asyn
     [caPrivacyHref, 'California Privacy'],
     [doNotSellHref, 'Do Not Sell My Info'],
   ]) {
-    const matchingAnchors = supportAnchors.filter(
-      (anchor) => anchor.href === href && anchor.text === label,
+    assert.ok(
+      supportFooterAnchors.some((anchor) => anchor.href === href && anchor.text === label),
+      `${supportHref} footer must link to ${href} with the label ${JSON.stringify(label)}`,
     )
     assert.ok(
-      matchingAnchors.length >= 2,
-      `${supportHref} must link to ${href} from its content and footer with the label ${JSON.stringify(label)}`,
+      supportMainAnchors.every((anchor) => anchor.href !== href),
+      `${supportHref} must keep ${href} out of its iOS-specific content`,
+    )
+    assert.equal(
+      supportAnchors.filter((anchor) => anchor.href === href).length,
+      1,
+      `${supportHref} must expose ${href} only once, in its footer`,
     )
   }
+  assertClinicalReviewPlacement(supportMain, supportText)
   assert.ok(
     supportAnchors.some(
       ({ href }) =>
@@ -173,6 +185,25 @@ async function assertStandaloneTypographyBase() {
     baseRule[1],
     /\bfont-family\s*:[^;]*\bsystem-ui\b[^;]*;/i,
     'Standalone pages must define the shared sans-serif font stack',
+  )
+}
+
+function assertClinicalReviewPlacement(main, supportText) {
+  const clinicalReview = supportText.indexOf('Clinical review is required')
+  const contact = supportText.indexOf('Get help from Noctune')
+
+  assert.ok(clinicalReview >= 0, 'Clinical-review guidance is missing')
+  assert.ok(contact >= 0, 'Support contact section is missing')
+  assert.ok(clinicalReview < contact, 'Clinical-review guidance must appear near the top')
+  assert.match(
+    main,
+    /\bdata-support-section=["']top["'][^>]*>[\s\S]*?<\/section>(?:\s|<!--[\s\S]*?-->)*<aside\b[^>]*\bdata-support-section=["']clinical-review["']/i,
+    'Clinical-review guidance must immediately follow the page introduction',
+  )
+  assert.match(
+    main,
+    /\bdata-callout-icon=["']info["'][^>]*>\s*i\s*<\/div\s*>/i,
+    'Clinical-review guidance must render the informational i icon',
   )
 }
 
@@ -321,6 +352,17 @@ function mailtoAddress(href, { allowedQueryKeys = new Set() } = {}) {
 function extractBody(html, route) {
   const match = html.match(/<body\b[^>]*>([\s\S]*?)<\/body\s*>/i)
   assert.ok(match, `${route} prerender is missing a body element`)
+  return match[1]
+}
+
+function extractElementContents(html, tagName, route) {
+  const escapedTagName = escapeRegExp(tagName)
+  const pattern = new RegExp(
+    `<${escapedTagName}\\b[^>]*>([\\s\\S]*?)<\\/${escapedTagName}\\s*>`,
+    'i',
+  )
+  const match = html.match(pattern)
+  assert.ok(match, `${route} prerender is missing a ${tagName} element`)
   return match[1]
 }
 

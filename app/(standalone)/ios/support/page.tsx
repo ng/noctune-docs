@@ -110,6 +110,24 @@ export default function IOSSupportPage() {
         </div>
       </section>
 
+      <aside
+        className={styles.disclaimer}
+        aria-labelledby="clinical-review-heading"
+        data-support-section="clinical-review"
+      >
+        <div className={styles.disclaimerMark} aria-hidden="true" data-callout-icon="info">
+          i
+        </div>
+        <div>
+          <h2 id="clinical-review-heading">Clinical review is required</h2>
+          <p>
+            Generated notes are drafts for review by a veterinary professional. They are not an
+            independent diagnosis, treatment, prescription, or medical advice. Review, edit, and
+            approve every note before use in a clinical record.
+          </p>
+        </div>
+      </aside>
+
       <section
         id="contact"
         className={styles.contact}
@@ -183,46 +201,6 @@ export default function IOSSupportPage() {
             email support.
           </li>
         </ol>
-      </section>
-
-      <aside className={styles.disclaimer} aria-labelledby="clinical-review-heading">
-        <div className={styles.disclaimerMark} aria-hidden="true">
-          !
-        </div>
-        <div>
-          <h2 id="clinical-review-heading">Clinical review is required</h2>
-          <p>
-            Generated notes are drafts for review by a veterinary professional. They are not an
-            independent diagnosis, treatment, prescription, or medical advice. Review, edit, and
-            approve every note before use in a clinical record.
-          </p>
-        </div>
-      </aside>
-
-      <section className={styles.legal} aria-labelledby="legal-heading">
-        <div>
-          <div className={styles.sectionLabel}>Legal information</div>
-          <h2 id="legal-heading">Policies for Noctune users</h2>
-          <p>These documents open in the same support-only presentation.</p>
-        </div>
-        <div className={styles.legalLinks}>
-          <a href="/ios/privacy">
-            <span>Privacy Policy</span>
-            <span aria-hidden="true">→</span>
-          </a>
-          <a href="/ios/terms">
-            <span>Terms of Service</span>
-            <span aria-hidden="true">→</span>
-          </a>
-          <a href="/ios/ca-privacy">
-            <span>California Privacy</span>
-            <span aria-hidden="true">→</span>
-          </a>
-          <a href="/ios/do-not-sell">
-            <span>Do Not Sell My Info</span>
-            <span aria-hidden="true">→</span>
-          </a>
-        </div>
       </section>
     </main>
   )
