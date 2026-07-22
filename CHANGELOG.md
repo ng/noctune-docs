@@ -1,3 +1,13 @@
+## [1.3.0](https://github.com/ng/noctune-docs/compare/v1.2.0...v1.3.0) (2026-07-22)
+
+### Features
+
+- add standalone iOS support surface ([1c68e81](https://github.com/ng/noctune-docs/commit/1c68e81fce2d9aae30c893ffffbcb9b6113d84fb))
+
+### Bug Fixes
+
+- publish iOS support under /ios ([c1cf1db](https://github.com/ng/noctune-docs/commit/c1cf1dba8b0583ff22d757af00a20dcf8f2d6fff))
+
 ## [1.2.0](https://github.com/ng/noctune-docs/compare/v1.1.0...v1.2.0) (2026-07-16)
 
 ### Features
