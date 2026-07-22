@@ -1,3 +1,9 @@
+## [1.3.3](https://github.com/ng/noctune-docs/compare/v1.3.2...v1.3.3) (2026-07-22)
+
+### Bug Fixes
+
+- restyle iOS support cards ([95177eb](https://github.com/ng/noctune-docs/commit/95177ebd37b18fc848fa57f46220ed27ab642178))
+
 ## [1.3.2](https://github.com/ng/noctune-docs/compare/v1.3.1...v1.3.2) (2026-07-22)
 
 ### Bug Fixes
