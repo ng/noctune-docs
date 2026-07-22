@@ -6,11 +6,19 @@ import { getLegalDocument, type LegalDocumentId } from '../../lib/legal-document
 import styles from './legal-document.module.css'
 
 const ROUTE_ALIASES: Record<string, string> = {
+  '/ca-privacy': '/ios/ca-privacy',
+  '/do-not-sell': '/ios/do-not-sell',
   '/privacy': '/ios/privacy',
   '/terms': '/ios/terms',
 }
 
-const ALLOWED_INTERNAL_ROUTES = new Set(['/ios', '/ios/privacy', '/ios/terms'])
+const ALLOWED_INTERNAL_ROUTES = new Set([
+  '/ios/support',
+  '/ios/privacy',
+  '/ios/terms',
+  '/ios/ca-privacy',
+  '/ios/do-not-sell',
+])
 
 function LegalLink({ href = '', children }: ComponentPropsWithoutRef<'a'>) {
   const safeHref = ROUTE_ALIASES[href] ?? href
@@ -33,7 +41,7 @@ export async function LegalDocument({ id }: { id: LegalDocumentId }) {
 
   return (
     <main id="main-content" className={styles.main}>
-      <a className={styles.backLink} href="/ios">
+      <a className={styles.backLink} href="/ios/support">
         <span aria-hidden="true">←</span> Noctune for iOS Support
       </a>
       {document.available ? (
