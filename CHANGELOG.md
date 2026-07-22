@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/ng/noctune-docs/compare/v1.3.0...v1.3.1) (2026-07-22)
+
+### Bug Fixes
+
+- publish support at /ios/support ([4d07aa7](https://github.com/ng/noctune-docs/commit/4d07aa70eae2c1aa2dc4a8f4db413d1a2c1a7e33))
+- restore iOS fonts and legal links ([1857a42](https://github.com/ng/noctune-docs/commit/1857a42e439f6a2f64c3d9ed70b46c6e19b6fd37))
+
 ## [1.3.0](https://github.com/ng/noctune-docs/compare/v1.2.0...v1.3.0) (2026-07-22)
 
 ### Features
