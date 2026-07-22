@@ -5,11 +5,30 @@ import test from 'node:test'
 
 const repositoryRoot = path.resolve(import.meta.dirname, '..')
 const prerenderRoot = path.join(repositoryRoot, '.next/server/app')
+const routesManifestPath = path.join(repositoryRoot, '.next/routes-manifest.json')
+const globalStylesPath = path.join(repositoryRoot, 'app/global.css')
 
-const supportHref = '/ios'
+const supportHref = '/ios/support'
 const privacyHref = '/ios/privacy'
 const termsHref = '/ios/terms'
+const caPrivacyHref = '/ios/ca-privacy'
+const doNotSellHref = '/ios/do-not-sell'
 const supportEmail = 'support@noctune.com'
+
+const allowedInternalHrefs = new Set([
+  supportHref,
+  privacyHref,
+  termsHref,
+  caPrivacyHref,
+  doNotSellHref,
+])
+
+const permanentRedirects = new Map([
+  ['/ios', supportHref],
+  ['/ios-support', supportHref],
+  ['/ios-support/privacy', privacyHref],
+  ['/ios-support/terms', termsHref],
+])
 
 const requiredSupportCopy = [
   ['page heading', /\bNoctune for iOS Support\b/i],
@@ -69,6 +88,8 @@ const prohibitedCommercialCopy = [
 ]
 
 test('prerenders an isolated, noncommercial iOS support and legal surface', async () => {
+  await Promise.all([assertPermanentRedirects(), assertStandaloneTypographyBase()])
+
   const support = await readPrerenderedRoute(supportHref)
   assertPrerenderedDocument(supportHref, support)
 
@@ -91,18 +112,20 @@ test('prerenders an isolated, noncommercial iOS support and legal surface', asyn
   const supportAnchors = extractAnchors(support.body)
   assert.ok(supportAnchors.length > 0, `${supportHref} should contain support/legal links`)
   assertSupportAnchors(supportAnchors)
-  assert.ok(
-    supportAnchors.some(
-      ({ href, text }) => href === privacyHref && /\bPrivacy Policy\b/i.test(text),
-    ),
-    `${supportHref} must link to ${privacyHref} with a Privacy Policy label`,
-  )
-  assert.ok(
-    supportAnchors.some(
-      ({ href, text }) => href === termsHref && /\bTerms of Service\b/i.test(text),
-    ),
-    `${supportHref} must link to ${termsHref} with a Terms of Service label`,
-  )
+  for (const [href, label] of [
+    [privacyHref, 'Privacy Policy'],
+    [termsHref, 'Terms of Service'],
+    [caPrivacyHref, 'California Privacy'],
+    [doNotSellHref, 'Do Not Sell My Info'],
+  ]) {
+    const matchingAnchors = supportAnchors.filter(
+      (anchor) => anchor.href === href && anchor.text === label,
+    )
+    assert.ok(
+      matchingAnchors.length >= 2,
+      `${supportHref} must link to ${href} from its content and footer with the label ${JSON.stringify(label)}`,
+    )
+  }
   assert.ok(
     supportAnchors.some(
       ({ href }) =>
@@ -114,6 +137,8 @@ test('prerenders an isolated, noncommercial iOS support and legal surface', asyn
   for (const [route, heading] of [
     [privacyHref, /\bPrivacy Policy\b/i],
     [termsHref, /\bTerms of Service\b/i],
+    [caPrivacyHref, /\bCalifornia Privacy Notice\b/i],
+    [doNotSellHref, /\bDo Not Sell or Share My Personal Information\b/i],
   ]) {
     const legal = await readPrerenderedRoute(route)
     assertPrerenderedDocument(route, legal)
@@ -126,6 +151,30 @@ test('prerenders an isolated, noncommercial iOS support and legal surface', asyn
     assertLegalAnchors(route, legalText, extractAnchors(legal.body))
   }
 })
+
+async function assertPermanentRedirects() {
+  const manifest = JSON.parse(await fs.readFile(routesManifestPath, 'utf8'))
+
+  for (const [source, destination] of permanentRedirects) {
+    const redirect = manifest.redirects.find((candidate) => candidate.source === source)
+    assert.ok(redirect, `Missing permanent redirect from ${source} to ${destination}`)
+    assert.equal(redirect.destination, destination, `${source} redirects to the wrong destination`)
+    assert.equal(redirect.statusCode, 308, `${source} must use a permanent 308 redirect`)
+  }
+}
+
+async function assertStandaloneTypographyBase() {
+  const globalStyles = await fs.readFile(globalStylesPath, 'utf8')
+  const baseRule = globalStyles.match(/html\s*,\s*body\s*\{([^}]+)\}/i)
+
+  assert.ok(baseRule, 'Global styles must define an html/body base rule')
+  assert.match(baseRule[1], /\bmargin\s*:\s*0\s*;/i, 'Standalone pages must reset body margin')
+  assert.match(
+    baseRule[1],
+    /\bfont-family\s*:[^;]*\bsystem-ui\b[^;]*;/i,
+    'Standalone pages must define the shared sans-serif font stack',
+  )
+}
 
 async function readPrerenderedRoute(route) {
   const relativeRoute = route.replace(/^\/+|\/+$/g, '') || 'index'
@@ -213,8 +262,6 @@ function assertPrerenderedDocument(route, document) {
 }
 
 function assertSupportAnchors(anchors) {
-  const allowedInternalHrefs = new Set([supportHref, privacyHref, termsHref])
-
   for (const anchor of anchors) {
     if (allowedInternalHrefs.has(anchor.href)) continue
 
@@ -228,8 +275,6 @@ function assertSupportAnchors(anchors) {
 }
 
 function assertLegalAnchors(route, legalText, anchors) {
-  const allowedInternalHrefs = new Set([supportHref, privacyHref, termsHref])
-
   for (const anchor of anchors) {
     if (allowedInternalHrefs.has(anchor.href)) continue
 
@@ -286,7 +331,7 @@ function extractAnchors(body) {
   for (const match of markup.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a\s*>/gi)) {
     const href = attributeValue(match[1], 'href')
     assert.ok(href, `Rendered anchor is missing href: ${match[0].slice(0, 160)}`)
-    anchors.push({ href, text: visibleText(match[2]) })
+    anchors.push({ href, text: accessibleText(match[2]) })
   }
 
   return anchors
@@ -312,6 +357,15 @@ function visibleText(html) {
     .replace(/\u00a0/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
+}
+
+function accessibleText(html) {
+  return visibleText(
+    html.replace(
+      /<([a-z][\w:-]*)\b(?=[^>]*\baria-hidden\s*=\s*(?:"true"|'true'|true))[^>]*>[\s\S]*?<\/\1\s*>/gi,
+      ' ',
+    ),
+  )
 }
 
 function stripNonVisibleElements(html) {

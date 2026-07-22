@@ -35,9 +35,11 @@ export default function StandaloneLayout({ children }: { children: ReactNode }) 
             <div className={styles.copyright}>© {new Date().getFullYear()} Noctune</div>
           </div>
           <nav className={styles.footerLinks} aria-label="iOS support and legal">
-            <a href="/ios">iOS Support</a>
+            <a href="/ios/support">iOS Support</a>
             <a href="/ios/privacy">Privacy Policy</a>
             <a href="/ios/terms">Terms of Service</a>
+            <a href="/ios/ca-privacy">California Privacy</a>
+            <a href="/ios/do-not-sell">Do Not Sell My Info</a>
             <a href={`mailto:${IOS_SUPPORT_EMAIL}?subject=Noctune%20for%20iOS%20Support`}>
               Email Support
             </a>

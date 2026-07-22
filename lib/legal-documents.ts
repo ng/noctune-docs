@@ -1,4 +1,4 @@
-export type LegalDocumentId = 'privacy' | 'terms'
+export type LegalDocumentId = 'privacy' | 'terms' | 'ca-privacy' | 'do-not-sell'
 
 const LEGAL_DOCUMENTS = {
   privacy: {
@@ -8,6 +8,14 @@ const LEGAL_DOCUMENTS = {
   terms: {
     title: 'Terms of Service',
     source: 'https://app.noctune.ai/legal/terms-of-service.md',
+  },
+  'ca-privacy': {
+    title: 'California Privacy Notice',
+    source: 'https://app.noctune.ai/legal/ca-privacy-notice.md',
+  },
+  'do-not-sell': {
+    title: 'Do Not Sell or Share My Personal Information',
+    source: 'https://app.noctune.ai/legal/do-not-sell.md',
   },
 } as const satisfies Record<LegalDocumentId, { title: string; source: string }>
 

@@ -59,6 +59,10 @@ html.dark {
 /* Page background — teal-to-green radial tint, subtle. */
 html,
 body {
+  margin: 0;
+  font-family:
+    ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
   background:
     radial-gradient(ellipse 1400px 600px at 15% -10%, var(--noctune-teal-tint), transparent 60%),
     radial-gradient(ellipse 1300px 520px at 95% 0%, var(--noctune-green-tint), transparent 55%),
