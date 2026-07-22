@@ -7,6 +7,7 @@ const repositoryRoot = path.resolve(import.meta.dirname, '..')
 const prerenderRoot = path.join(repositoryRoot, '.next/server/app')
 const routesManifestPath = path.join(repositoryRoot, '.next/routes-manifest.json')
 const globalStylesPath = path.join(repositoryRoot, 'app/global.css')
+const supportStylesPath = path.join(repositoryRoot, 'app/(standalone)/ios/support/page.module.css')
 
 const supportHref = '/ios/support'
 const privacyHref = '/ios/privacy'
@@ -88,7 +89,11 @@ const prohibitedCommercialCopy = [
 ]
 
 test('prerenders an isolated, noncommercial iOS support and legal surface', async () => {
-  await Promise.all([assertPermanentRedirects(), assertStandaloneTypographyBase()])
+  await Promise.all([
+    assertPermanentRedirects(),
+    assertStandaloneTypographyBase(),
+    assertSupportCardStyles(),
+  ])
 
   const docsHome = await readPrerenderedRoute('/')
   assertDocsNavigation(docsHome)
@@ -141,6 +146,7 @@ test('prerenders an isolated, noncommercial iOS support and legal surface', asyn
     )
   }
   assertClinicalReviewPlacement(supportMain, supportText)
+  assertSupportCardTreatments(supportMain)
   assert.ok(
     supportAnchors.some(
       ({ href }) =>
@@ -212,6 +218,44 @@ async function assertStandaloneTypographyBase() {
   )
 }
 
+async function assertSupportCardStyles() {
+  const styles = await fs.readFile(supportStylesPath, 'utf8')
+  const calloutRule = extractCssRule(styles, '.disclaimer')
+  const contactRule = extractCssRule(styles, '.contact')
+
+  for (const [cardName, rule] of [
+    ['clinical-review callout', calloutRule],
+    ['contact card', contactRule],
+  ]) {
+    assert.match(rule, /\bwidth\s*:\s*100%\s*;/i, `${cardName} must fill the content width`)
+    assert.match(
+      rule,
+      /\bbox-sizing\s*:\s*border-box\s*;/i,
+      `${cardName} must keep padding inside its full width`,
+    )
+  }
+
+  assert.notEqual(
+    cssDeclaration(calloutRule, 'background'),
+    cssDeclaration(contactRule, 'background'),
+    'Clinical-review and contact cards must use distinct surface treatments',
+  )
+  assert.notEqual(
+    cssDeclaration(contactRule, 'box-shadow'),
+    'none',
+    'Contact card must retain its elevated-card treatment',
+  )
+
+  const contactButtonRule = extractCssRule(styles, '.contactAction a')
+  assert.match(contactButtonRule, /\bdisplay\s*:\s*inline-flex\s*;/i)
+  assert.match(contactButtonRule, /\bmin-height\s*:\s*(?:4[4-9]|[5-9]\d)px\s*;/i)
+  assert.doesNotMatch(
+    cssDeclaration(contactButtonRule, 'background'),
+    /^(?:none|transparent)$/i,
+    'Contact email action must render as a visible CTA',
+  )
+}
+
 function assertClinicalReviewPlacement(main, supportText) {
   const clinicalReview = supportText.indexOf('Clinical review is required')
   const contact = supportText.indexOf('Get help from Noctune')
@@ -226,8 +270,34 @@ function assertClinicalReviewPlacement(main, supportText) {
   )
   assert.match(
     main,
-    /\bdata-callout-icon=["']info["'][^>]*>\s*i\s*<\/div\s*>/i,
-    'Clinical-review guidance must render the informational i icon',
+    /<div\b(?=[^>]*\bdata-callout-icon=["']review-note["'])(?=[^>]*\baria-hidden=["']true["'])[^>]*>\s*<svg\b(?=[^>]*\bfocusable=["']false["'])/i,
+    'Clinical-review guidance must render its decorative review-note icon',
+  )
+}
+
+function assertSupportCardTreatments(main) {
+  assert.match(
+    main,
+    /<aside\b(?=[^>]*\bdata-support-section=["']clinical-review["'])(?=[^>]*\bdata-card-treatment=["']tinted-callout["'])(?=[^>]*\bdata-card-width=["']full["'])(?=[^>]*\baria-labelledby=["']clinical-review-heading["'])[^>]*>/i,
+    'Clinical-review guidance must use the full-width tinted-callout treatment',
+  )
+  assert.match(
+    main,
+    /<section\b(?=[^>]*\bdata-support-section=["']contact["'])(?=[^>]*\bdata-card-treatment=["']contact-cta["'])(?=[^>]*\bdata-card-width=["']full["'])(?=[^>]*\baria-labelledby=["']contact-heading["'])[^>]*>/i,
+    'Contact section must use the full-width CTA-card treatment',
+  )
+  assert.match(
+    main,
+    new RegExp(
+      `<a\\b(?=[^>]*\\bdata-contact-action=["']email["'])(?=[^>]*\\bhref=["']mailto:${escapeRegExp(supportEmail)}\\?subject=Noctune%20for%20iOS%20Support["'])[^>]*>`,
+      'i',
+    ),
+    'Contact card must render the support address as the primary email CTA',
+  )
+  assert.match(
+    visibleText(main),
+    /\bDo not send recordings or identifying clinical information by email\b/i,
+    'Contact card must keep the email privacy advisory visible',
   )
 }
 
@@ -403,6 +473,20 @@ function extractElementContentsByClass(html, tagName, className, route) {
   }
 
   assert.fail(`${route} prerender is missing a ${tagName}.${className} element`)
+}
+
+function extractCssRule(styles, selector) {
+  const pattern = new RegExp(`${escapeRegExp(selector)}\\s*\\{([^}]*)\\}`, 'i')
+  const match = styles.match(pattern)
+  assert.ok(match, `${supportStylesPath} is missing the ${selector} rule`)
+  return match[1]
+}
+
+function cssDeclaration(rule, property) {
+  const pattern = new RegExp(`(?:^|;)\\s*${escapeRegExp(property)}\\s*:\\s*([^;]+)`, 'i')
+  const match = rule.match(pattern)
+  assert.ok(match, `CSS rule is missing the ${property} declaration`)
+  return match[1].trim()
 }
 
 function extractAnchors(body) {
