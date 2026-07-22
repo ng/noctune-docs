@@ -113,12 +113,17 @@ export default function IOSSupportPage() {
       <aside
         className={styles.disclaimer}
         aria-labelledby="clinical-review-heading"
+        data-card-treatment="tinted-callout"
+        data-card-width="full"
         data-support-section="clinical-review"
       >
-        <div className={styles.disclaimerMark} aria-hidden="true" data-callout-icon="info">
-          i
+        <div className={styles.disclaimerMark} aria-hidden="true" data-callout-icon="review-note">
+          <svg viewBox="0 0 24 24" fill="none" focusable="false">
+            <path d="M5 4.5h14v11H9l-4 4z" />
+            <path d="m9.5 12.25 5.75-5.75 2.25 2.25-5.75 5.75-3 .75z" />
+          </svg>
         </div>
-        <div>
+        <div className={styles.disclaimerBody}>
           <h2 id="clinical-review-heading">Clinical review is required</h2>
           <p>
             Generated notes are drafts for review by a veterinary professional. They are not an
@@ -132,20 +137,46 @@ export default function IOSSupportPage() {
         id="contact"
         className={styles.contact}
         aria-labelledby="contact-heading"
+        data-card-treatment="contact-cta"
+        data-card-width="full"
         data-support-section="contact"
       >
-        <div>
+        <div className={styles.contactIntro}>
           <div className={styles.sectionLabel}>Contact</div>
           <h2 id="contact-heading">Get help from Noctune</h2>
-          <p>For help with the iOS app or access to an existing account, email:</p>
+          <p>
+            For help with the iOS app or access to an existing account, include your device model,
+            iOS version, app version, and the approximate time of the problem.
+          </p>
         </div>
         <div className={styles.contactAction}>
-          <a href={`mailto:${IOS_SUPPORT_EMAIL}?subject=Noctune%20for%20iOS%20Support`}>
-            {IOS_SUPPORT_EMAIL}
+          <a
+            href={`mailto:${IOS_SUPPORT_EMAIL}?subject=Noctune%20for%20iOS%20Support`}
+            data-contact-action="email"
+          >
+            <svg
+              className={styles.contactActionIcon}
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M4 6.5h16v11H4z" />
+              <path d="m4.75 7.25 7.25 5.5 7.25-5.5" />
+            </svg>
+            <span>{IOS_SUPPORT_EMAIL}</span>
           </a>
-          <p>
-            Include your device model, iOS version, app version, and the approximate time of the
-            problem. Do not send recordings or identifying clinical information by email.
+          <p className={styles.contactPrivacy}>
+            <svg
+              className={styles.contactPrivacyIcon}
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M12 3.5 5.5 6v4.75c0 4.35 2.6 8.15 6.5 9.75 3.9-1.6 6.5-5.4 6.5-9.75V6z" />
+            </svg>
+            <span>Do not send recordings or identifying clinical information by email.</span>
           </p>
         </div>
       </section>
