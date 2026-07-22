@@ -13,18 +13,24 @@ const LEGAL_DOCUMENTS = {
 
 export async function getLegalDocument(id: LegalDocumentId) {
   const document = LEGAL_DOCUMENTS[id]
-  const response = await fetch(document.source, {
-    next: { revalidate: 3600 },
-  })
+  try {
+    const response = await fetch(document.source, {
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(10_000),
+    })
 
-  if (!response.ok) {
-    throw new Error(`Unable to load canonical ${id} document (${response.status})`)
+    if (!response.ok) {
+      throw new Error(`Unable to load canonical ${id} document (${response.status})`)
+    }
+
+    const markdown = await response.text()
+    if (!markdown.trim()) {
+      throw new Error(`Canonical ${id} document was empty`)
+    }
+
+    return { ...document, markdown, available: true as const }
+  } catch (error) {
+    console.error(`Unable to render canonical ${id} document`, error)
+    return { ...document, markdown: '', available: false as const }
   }
-
-  const markdown = await response.text()
-  if (!markdown.trim()) {
-    throw new Error(`Canonical ${id} document was empty`)
-  }
-
-  return { ...document, markdown }
 }

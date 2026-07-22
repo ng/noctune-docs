@@ -5,6 +5,7 @@
   --support-teal: #256f69;
   --support-teal-dark: #174c48;
   --support-surface: #ffffff;
+
   min-height: 100svh;
   color: var(--support-ink);
   background:

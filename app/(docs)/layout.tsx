@@ -1,8 +1,18 @@
+import type { Metadata } from 'next'
 import { Footer, Layout, Navbar } from 'nextra-theme-docs'
 import { Banner } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
+import 'nextra-theme-docs/style.css'
 import { DocsFooter } from '../../components/footer'
 import { Logo } from '../../components/logo'
+
+export const metadata: Metadata = {
+  title: {
+    default: 'Noctune Docs',
+    template: '%s — Noctune Docs',
+  },
+  description: 'User guides and technical reference for Noctune.',
+}
 
 const banner = <Banner storageKey="noctune-docs-launch">Noctune docs are in preview.</Banner>
 

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: 'Terms of Service',
   description: 'Noctune Terms of Service in a public, support-only presentation.',
   alternates: {
-    canonical: '/ios-support/terms',
+    canonical: '/ios/terms',
   },
 }
 

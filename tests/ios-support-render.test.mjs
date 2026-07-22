@@ -6,9 +6,9 @@ import test from 'node:test'
 const repositoryRoot = path.resolve(import.meta.dirname, '..')
 const prerenderRoot = path.join(repositoryRoot, '.next/server/app')
 
-const supportHref = '/ios-support'
-const privacyHref = '/ios-support/privacy'
-const termsHref = '/ios-support/terms'
+const supportHref = '/ios'
+const privacyHref = '/ios/privacy'
+const termsHref = '/ios/terms'
 const supportEmail = 'support@noctune.com'
 
 const requiredSupportCopy = [

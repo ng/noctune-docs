@@ -1,14 +1,13 @@
 import type { Metadata } from 'next'
+import { IOS_SUPPORT_EMAIL } from '../../../lib/ios-support'
 import styles from './page.module.css'
-
-const SUPPORT_EMAIL = 'support@noctune.com'
 
 export const metadata: Metadata = {
   title: 'Noctune for iOS Support',
   description:
     'Support for existing Noctune users on iPhone and iPad, including recording, uploads, notes, and account deletion.',
   alternates: {
-    canonical: '/ios-support',
+    canonical: '/ios',
   },
 }
 
@@ -123,8 +122,8 @@ export default function IOSSupportPage() {
           <p>For help with the iOS app or access to an existing account, email:</p>
         </div>
         <div className={styles.contactAction}>
-          <a href={`mailto:${SUPPORT_EMAIL}?subject=Noctune%20for%20iOS%20Support`}>
-            {SUPPORT_EMAIL}
+          <a href={`mailto:${IOS_SUPPORT_EMAIL}?subject=Noctune%20for%20iOS%20Support`}>
+            {IOS_SUPPORT_EMAIL}
           </a>
           <p>
             Include your device model, iOS version, app version, and the approximate time of the
@@ -207,11 +206,11 @@ export default function IOSSupportPage() {
           <p>These documents open in the same support-only presentation.</p>
         </div>
         <div className={styles.legalLinks}>
-          <a href="/ios-support/privacy">
+          <a href="/ios/privacy">
             <span>Privacy Policy</span>
             <span aria-hidden="true">→</span>
           </a>
-          <a href="/ios-support/terms">
+          <a href="/ios/terms">
             <span>Terms of Service</span>
             <span aria-hidden="true">→</span>
           </a>
