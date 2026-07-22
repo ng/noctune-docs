@@ -90,6 +90,9 @@ const prohibitedCommercialCopy = [
 test('prerenders an isolated, noncommercial iOS support and legal surface', async () => {
   await Promise.all([assertPermanentRedirects(), assertStandaloneTypographyBase()])
 
+  const docsHome = await readPrerenderedRoute('/')
+  assertDocsNavigation(docsHome)
+
   const support = await readPrerenderedRoute(supportHref)
   assertPrerenderedDocument(supportHref, support)
 
@@ -163,6 +166,27 @@ test('prerenders an isolated, noncommercial iOS support and legal surface', asyn
     assertLegalAnchors(route, legalText, extractAnchors(legal.body))
   }
 })
+
+function assertDocsNavigation(document) {
+  for (const [navigationName, className] of [
+    ['desktop sidebar', 'nextra-sidebar'],
+    ['mobile navigation', 'nextra-mobile-nav'],
+  ]) {
+    const navigation = extractElementContentsByClass(document.body, 'aside', className, '/')
+    const anchors = extractAnchors(navigation)
+    assert.ok(
+      anchors.some(({ href, text }) => href === supportHref && text === 'Noctune for iOS Support'),
+      `${navigationName} must expose ${supportHref}`,
+    )
+
+    for (const hiddenLegalHref of [privacyHref, termsHref, caPrivacyHref, doNotSellHref]) {
+      assert.ok(
+        anchors.every(({ href }) => href !== hiddenLegalHref),
+        `${navigationName} must hide ${hiddenLegalHref}`,
+      )
+    }
+  }
+}
 
 async function assertPermanentRedirects() {
   const manifest = JSON.parse(await fs.readFile(routesManifestPath, 'utf8'))
@@ -364,6 +388,21 @@ function extractElementContents(html, tagName, route) {
   const match = html.match(pattern)
   assert.ok(match, `${route} prerender is missing a ${tagName} element`)
   return match[1]
+}
+
+function extractElementContentsByClass(html, tagName, className, route) {
+  const escapedTagName = escapeRegExp(tagName)
+  const pattern = new RegExp(
+    `<${escapedTagName}\\b([^>]*)>([\\s\\S]*?)<\\/${escapedTagName}\\s*>`,
+    'gi',
+  )
+
+  for (const match of html.matchAll(pattern)) {
+    const classes = attributeValue(match[1], 'class')?.split(/\s+/) ?? []
+    if (classes.includes(className)) return match[2]
+  }
+
+  assert.fail(`${route} prerender is missing a ${tagName}.${className} element`)
 }
 
 function extractAnchors(body) {
