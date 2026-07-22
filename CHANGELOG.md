@@ -1,3 +1,9 @@
+## [1.3.2](https://github.com/ng/noctune-docs/compare/v1.3.1...v1.3.2) (2026-07-22)
+
+### Bug Fixes
+
+- hide iOS legal pages from docs navigation ([fa8a155](https://github.com/ng/noctune-docs/commit/fa8a1559697baa8625d42d725b32565770caf6f6))
+
 ## [1.3.1](https://github.com/ng/noctune-docs/compare/v1.3.0...v1.3.1) (2026-07-22)
 
 ### Bug Fixes
