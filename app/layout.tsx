@@ -1,32 +1,13 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
-import { Footer, Layout, Navbar } from 'nextra-theme-docs'
-import { Banner, Head } from 'nextra/components'
-import { getPageMap } from 'nextra/page-map'
-import 'nextra-theme-docs/style.css'
+import { Head } from 'nextra/components'
 import './global.css'
-import { Logo } from '../components/logo'
-import { DocsFooter } from '../components/footer'
 
 export const metadata: Metadata = {
-  title: {
-    default: 'Noctune Docs',
-    template: '%s — Noctune Docs',
-  },
-  description: 'User guides and technical reference for Noctune.',
+  metadataBase: new URL('https://docs.noctune.ai'),
 }
 
-const banner = <Banner storageKey="noctune-docs-launch">Noctune docs are in preview.</Banner>
-
-const navbar = <Navbar logo={<Logo />} />
-
-const footer = (
-  <Footer>
-    <DocsFooter />
-  </Footer>
-)
-
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <Head
@@ -37,21 +18,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         }}
       />
       <body>
-        <Layout
-          banner={banner}
-          navbar={navbar}
-          footer={footer}
-          pageMap={await getPageMap()}
-          docsRepositoryBase="https://github.com/ng/noctune-docs/tree/main"
-          editLink=""
-          feedback={{
-            content: 'Question? Give us feedback',
-            link: 'mailto:jon@noctune.ai?subject=Noctune%20Docs%20Feedback',
-          }}
-          nextThemes={{ defaultTheme: 'light' }}
-        >
-          {children}
-        </Layout>
+        {children}
         <Analytics />
       </body>
     </html>
