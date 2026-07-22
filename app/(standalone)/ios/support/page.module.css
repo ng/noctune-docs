@@ -54,15 +54,18 @@
 }
 
 .contact {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(300px, 1.1fr);
-  gap: 40px;
-  margin-top: 68px;
-  padding: 34px;
-  border: 1px solid #bdd8d2;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 40px;
+  padding: 44px 48px 46px;
+  border: 1px solid #dfe5e3;
   border-radius: 24px;
-  background: linear-gradient(135deg, rgba(42, 127, 120, 0.08), transparent 52%), #ffffff;
-  box-shadow: 0 18px 52px rgba(27, 65, 60, 0.08);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 12px 32px rgba(27, 65, 60, 0.08);
+}
+
+.contactIntro {
+  max-width: 860px;
 }
 
 .contact h2,
@@ -82,28 +85,71 @@
   line-height: 1.65;
 }
 
+.contactIntro p {
+  font-size: 16px;
+}
+
 .contactAction {
-  align-self: center;
-  padding: 22px;
-  border: 1px solid #e0e8e5;
-  border-radius: 16px;
-  background: #f8faf9;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px 28px;
+  margin-top: 28px;
 }
 
 .contactAction a {
-  color: #174c48;
-  font-size: clamp(1.08rem, 3vw, 1.35rem);
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  box-sizing: border-box;
+  padding: 0 21px;
+  border-radius: 12px;
+  color: #ffffff;
+  background: #2a8179;
+  box-shadow: 0 5px 12px rgba(25, 76, 72, 0.16);
+  font-size: clamp(1rem, 2.4vw, 1.15rem);
   font-weight: 760;
-  text-decoration: underline;
-  text-decoration-color: #87b8b1;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 4px;
+  line-height: 1.2;
+  text-decoration: none;
+  transition:
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.contactAction a:hover {
+  background: #216f68;
+  box-shadow: 0 7px 16px rgba(25, 76, 72, 0.2);
+}
+
+.contactAction a span {
   overflow-wrap: anywhere;
 }
 
-.contactAction p {
-  margin-top: 13px;
-  font-size: 13px;
+.contactActionIcon,
+.contactPrivacyIcon {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.contactPrivacy {
+  max-width: 500px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #5f6c69;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.contactPrivacyIcon {
+  color: #a96508;
 }
 
 .help {
@@ -241,39 +287,56 @@
 }
 
 .disclaimer {
-  width: min(820px, 100%);
+  width: 100%;
+  max-width: none;
   display: flex;
-  gap: 18px;
+  align-items: flex-start;
+  gap: 28px;
   box-sizing: border-box;
   margin-top: 32px;
-  padding: 25px 28px;
-  border: 1px solid #c9ded9;
-  border-radius: 18px;
-  background: #f3f8f6;
+  padding: 36px 40px;
+  border: 1px solid #c8e1dd;
+  border-radius: 24px;
+  background: #eef8f6;
 }
 
 .disclaimerMark {
   flex: 0 0 auto;
-  width: 30px;
-  height: 30px;
+  width: 58px;
+  height: 58px;
   display: grid;
   place-items: center;
-  border-radius: 50%;
-  color: #174c48;
-  background: #dcece8;
-  font-weight: 800;
+  border-radius: 16px;
+  color: #287d76;
+  background: #dcefed;
+}
+
+.disclaimerMark svg {
+  width: 30px;
+  height: 30px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.disclaimerBody {
+  min-width: 0;
+  max-width: 900px;
 }
 
 .disclaimer h2 {
-  margin: 1px 0 6px;
+  margin: 0 0 8px;
   color: #193b37;
-  font-size: 1rem;
+  font-size: clamp(1.15rem, 2vw, 1.35rem);
+  letter-spacing: -0.015em;
+  line-height: 1.25;
 }
 
 .disclaimer p {
   margin: 0;
   color: #52645f;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.65;
 }
 
@@ -288,7 +351,6 @@
     padding: 58px 0 72px;
   }
 
-  .contact,
   .deletion {
     grid-template-columns: 1fr;
     gap: 28px;
@@ -307,12 +369,19 @@
 
   .contact {
     margin-top: 48px;
-    padding: 24px;
+    padding: 28px 24px;
     border-radius: 20px;
   }
 
   .contactAction {
-    padding: 18px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .contactAction a {
+    width: 100%;
   }
 
   .help,
@@ -339,6 +408,23 @@
   }
 
   .disclaimer {
-    padding: 21px;
+    gap: 16px;
+    padding: 22px;
+    border-radius: 20px;
+  }
+
+  .disclaimerMark {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+  }
+
+  .disclaimerMark svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .disclaimer p {
+    font-size: 14.5px;
   }
 }
