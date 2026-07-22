@@ -6,7 +6,7 @@
     "assets:verify": "node scripts/verify-raster-assets.mjs",
     "build": "pnpm assets:verify && next build",
     "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
-    "check": "pnpm format:check && pnpm lint:md && pnpm test:assets && pnpm test:capture-safety && pnpm screenshots:verify && pnpm tsc && pnpm build",
+    "check": "pnpm format:check && pnpm lint:md && pnpm test:assets && pnpm test:capture-safety && pnpm screenshots:verify && pnpm tsc && pnpm build && pnpm test:ios-support",
     "dev": "next dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -21,6 +21,7 @@
     "start": "next start",
     "test:assets": "node --test scripts/verify-raster-assets.test.mjs",
     "test:capture-safety": "node --test capture/support/capture-safety.test.mjs",
+    "test:ios-support": "node --test tests/ios-support-render.test.mjs",
     "tsc": "tsc --noEmit"
   },
   "lint-staged": {
@@ -41,7 +42,9 @@
     "nextra": "^4.2.17",
     "nextra-theme-docs": "^4.2.17",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@playwright/test": "1.59.1",
