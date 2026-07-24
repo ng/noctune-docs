@@ -1,3 +1,9 @@
+## [1.3.4](https://github.com/ng/noctune-docs/compare/v1.3.3...v1.3.4) (2026-07-24)
+
+### Bug Fixes
+
+- omit commercial wording from the iOS legal presentation ([8338856](https://github.com/ng/noctune-docs/commit/8338856ee26c9c314c82beb2969db79c7d912cab))
+
 ## [1.3.3](https://github.com/ng/noctune-docs/compare/v1.3.2...v1.3.3) (2026-07-22)
 
 ### Bug Fixes
