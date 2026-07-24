@@ -99,7 +99,7 @@ async function openMochiEncounter(page: Page, route: string): Promise<void> {
   await expect(page.getByText('Mochi', { exact: true }).first()).toBeVisible()
   await expect(page.getByRole('button', { name: 'Copy SOAP' })).toBeEnabled()
   await expect(page.getByRole('tab', { name: 'Transcript' })).toBeVisible()
-  await expect(page.getByText(/Mochi is here for an appetite recheck/)).toBeVisible()
+  await expect(page.getByText(/Mochi is here for her appetite recheck/)).toBeVisible()
 }
 
 /** Mocks Mochi's encounter into a deterministic ready-for-review state. */
@@ -286,7 +286,7 @@ test('encounters — status filters and deterministic list', async ({ page }) =>
   const item = capture('encounters-list')
   await openProductPage(page, item.route)
   await expect(page.getByRole('heading', { name: 'Encounters' })).toBeVisible()
-  await expect(page.getByText('5 encounters', { exact: true })).toBeVisible()
+  await expect(page.getByText('6 encounters', { exact: true })).toBeVisible()
   await expect(page.getByRole('button', { name: /Needs review/ })).toBeVisible()
   await expect(page.getByText('Jasper', { exact: true })).toBeVisible()
   await expect(page.getByText('luna-wellness.m4a', { exact: true })).toBeVisible()
@@ -384,7 +384,7 @@ test('sentinel — encounter safety alert and retained markers', async ({ page }
   await openProductPage(page, item.route)
   await expect(page.getByText('Jasper', { exact: true }).first()).toBeVisible()
   await expect(page.getByText(/Noctune Sentinel/)).toBeVisible()
-  await expect(page.getByText(/Client raised their voice/)).toBeVisible()
+  await expect(page.getByText(/declining a recommended recheck/).first()).toBeVisible()
   await expect(page.getByText(/This encounter is preserved for you/)).toBeVisible()
   await savePageScreenshot(page, item)
 })
@@ -421,7 +421,7 @@ test('patients — searchable patient list', async ({ page }) => {
   const item = capture('patients-list')
   await openProductPage(page, item.route)
   await expect(page.getByRole('heading', { name: 'Patient Records' })).toBeVisible()
-  await expect(page.getByText('Showing 3 of 3 patients', { exact: true })).toBeVisible()
+  await expect(page.getByText('Showing 5 of 5 patients', { exact: true })).toBeVisible()
   await expect(page.getByRole('button', { name: 'View patient Jasper' })).toBeVisible()
   await savePageScreenshot(page, item)
 })
