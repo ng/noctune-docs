@@ -1,3 +1,5 @@
+import { applyIosLineMarkers } from './ios-line-markers'
+
 export type LegalDocumentId = 'privacy' | 'terms' | 'ca-privacy' | 'do-not-sell'
 
 const LEGAL_DOCUMENTS = {
@@ -31,12 +33,12 @@ export async function getLegalDocument(id: LegalDocumentId) {
       throw new Error(`Unable to load canonical ${id} document (${response.status})`)
     }
 
-    const markdown = await response.text()
-    if (!markdown.trim()) {
+    const raw = await response.text()
+    if (!raw.trim()) {
       throw new Error(`Canonical ${id} document was empty`)
     }
 
-    return { ...document, markdown, available: true as const }
+    return { ...document, markdown: applyIosLineMarkers(raw), available: true as const }
   } catch (error) {
     console.error(`Unable to render canonical ${id} document`, error)
     return { ...document, markdown: '', available: false as const }
