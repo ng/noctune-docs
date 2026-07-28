@@ -43,7 +43,9 @@ test('data storage — archived audio with clinical record retained', async ({ p
   await page.goto(archivedAudio.route, { waitUntil: 'domcontentloaded' })
   await expect(page.getByText('Pepper', { exact: true }).first()).toBeVisible()
   await expect(page.getByText('Audio archived', { exact: true })).toBeVisible()
-  await expect(page.getByText(/Recorded 46 days ago/)).toBeVisible()
+  // The day count renders from real server time, not the frozen capture clock,
+  // so it grows as the fixture anchor ages — assert the shape, not the number.
+  await expect(page.getByText(/Recorded \d+ days ago/)).toBeVisible()
   await expect(page.getByRole('button', { name: 'Restore Audio' })).toBeVisible()
   await expect(page.getByText('Routine vaccine visit. Pepper is doing well at home')).toBeVisible()
 
