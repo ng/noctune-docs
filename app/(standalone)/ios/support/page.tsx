@@ -27,6 +27,22 @@ const helpTopics = [
   },
   {
     number: '02',
+    title: 'Agree to how recordings are used',
+    body: (
+      <>
+        After you accept the Terms, Noctune shows a one-time{' '}
+        <strong>How your recordings are used</strong> screen before the app opens. It explains that
+        a recording you submit is <strong>sent to Deepgram</strong> to turn speech into text and{' '}
+        <strong>sent to Amazon Web Services (AWS)</strong> to draft your note, and it links to the{' '}
+        <strong>Privacy Policy</strong>. Choose <strong>Agree &amp; Continue</strong> to reach the
+        app, or <strong>Sign out</strong> to leave without agreeing. Noctune remembers the choice on
+        that device, so the screen does not return unless the disclosure changes, you sign in to a
+        different account, or you reinstall the app.
+      </>
+    ),
+  },
+  {
+    number: '03',
     title: 'Record and allow microphone access',
     body: (
       <>
@@ -39,7 +55,7 @@ const helpTopics = [
     ),
   },
   {
-    number: '03',
+    number: '04',
     title: 'Add audio from your device',
     body: (
       <>
@@ -52,7 +68,7 @@ const helpTopics = [
     ),
   },
   {
-    number: '04',
+    number: '05',
     title: 'Background recording and Live Activity',
     body: (
       <>
@@ -65,7 +81,7 @@ const helpTopics = [
     ),
   },
   {
-    number: '05',
+    number: '06',
     title: 'Follow processing and recover from a failure',
     body: (
       <>
@@ -79,7 +95,7 @@ const helpTopics = [
     ),
   },
   {
-    number: '06',
+    number: '07',
     title: 'Review the transcript, note, and source audio',
     body: (
       <>
