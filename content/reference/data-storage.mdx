@@ -6,6 +6,17 @@ title: Data Storage & Retention
 
 An encounter contains several records with different access rules: uploaded audio, transcript segments, generated notes, patient metadata, and messages. Browser recording also uses temporary local storage before upload.
 
+## Where your recording is processed
+
+When you submit a recording, Noctune uses two subprocessors to turn it into a draft note:
+
+| Step           | Subprocessor              | What it receives                                      |
+| -------------- | ------------------------- | ----------------------------------------------------- |
+| Speech to text | Deepgram                  | The submitted audio, to produce the transcript        |
+| Note drafting  | Amazon Web Services (AWS) | The transcript, to draft the SOAP and discharge notes |
+
+Noctune then stores the audio, transcript, and generated notes in its own systems under the retention rules below. The iOS app asks you to agree to this processing the first time you sign in, on a **How your recordings are used** screen shown after the Terms. Noctune's Privacy Policy is the authoritative statement of how your data is handled.
+
 ## What remains available
 
 | Record                               | Standard behavior                                                                 |
