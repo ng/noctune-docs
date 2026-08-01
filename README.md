@@ -19,6 +19,38 @@ pnpm dev
 
 Content lives in `content/`. Navigation order is controlled by `_meta.ts` files alongside pages.
 
+## Legal documents
+
+The iOS-facing legal pages (`/ios/privacy`, `/ios/terms`, `/ios/ca-privacy`,
+`/ios/do-not-sell`) do **not** store their own copy of the text. Each is a server
+component that live-fetches the canonical Markdown from `app.noctune.ai/legal/*.md`
+(`lib/legal-documents.ts`) and re-renders it through the `ios-line` marker transform
+(`lib/ios-line-markers.ts`), which drops the plan/pricing/billing lines the canonical
+doc annotates for the support-only iOS presentation. The canonical source is edited in
+**noctune-core** (`public/legal/*.md`); this repo owns only the presentation.
+
+Because the fetch is cached with `export const revalidate = 3600`, a legal change that
+lands in noctune-core prod (`app.noctune.ai`) propagates to `docs.noctune.ai`
+**automatically within ≤1 hour** — no edit or deploy in this repo is required. The page
+serves its last snapshot until the ISR window rolls over, then the next request
+re-fetches the updated canonical text.
+
+Apple reads `https://docs.noctune.ai/ios/privacy` directly, so when a legal change must
+be live before an App Store resubmission, verify propagation rather than assuming it —
+check the canonical source first, then the docs render:
+
+```bash
+# canonical prod source — should already reflect the change
+curl -s https://app.noctune.ai/legal/privacy-policy.md | grep -i '<phrase from the change>'
+# docs render — lags up to the revalidate window
+curl -s https://docs.noctune.ai/ios/privacy | grep -i '<phrase from the change>'
+```
+
+If the docs render still shows the old text and you can't wait out the hour, force it
+with a Vercel redeploy (dashboard **Redeploy**, or `vercel --prod`): that resets the ISR
+cache and the fresh build re-fetches on first request. There is no on-demand
+`revalidatePath` route in this repo.
+
 ## UI screenshots
 
 Screenshots are generated from a local Noctune Core checkout, converted to WebP, and committed under `public/screenshots/`. The deployed docs use those static assets, so deployment does not need database, Supabase, or browser credentials.
