@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { AppStoreBadge } from './app-store-badge'
 
 const BRAND_URL = 'https://noctune.ai'
 
@@ -55,6 +56,9 @@ export function DocsFooter() {
           <p style={{ fontSize: 14, opacity: 0.7, lineHeight: 1.55, marginTop: 18, maxWidth: 320 }}>
             AI for veterinary medicine.
           </p>
+          <div style={{ marginTop: 20 }}>
+            <AppStoreBadge height={40} />
+          </div>
         </div>
 
         <div style={columnStyle}>
