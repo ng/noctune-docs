@@ -78,6 +78,9 @@ export function DocsFooter() {
           <a href={`${BRAND_URL}/platform`} style={linkStyle}>
             Platform / API
           </a>
+          <a href={`${BRAND_URL}/microphone`} style={linkStyle}>
+            Mic & audio guide
+          </a>
           <a href="/" style={linkStyle}>
             Docs
           </a>
