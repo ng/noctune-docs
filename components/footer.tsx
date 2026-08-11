@@ -47,7 +47,7 @@ export function DocsFooter() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(240px, 1.5fr) repeat(3, minmax(140px, 1fr))',
+          gridTemplateColumns: 'minmax(240px, 1.5fr) repeat(4, minmax(140px, 1fr))',
           gap: '2.5rem',
         }}
       >
@@ -69,9 +69,19 @@ export function DocsFooter() {
           <a href={`${BRAND_URL}/pricing`} style={linkStyle}>
             Pricing
           </a>
+          <a href={`${BRAND_URL}/pay-per-note`} style={linkStyle}>
+            Pay-per-note
+          </a>
+          <a href={`${BRAND_URL}/staff-safety`} style={linkStyle}>
+            Staff safety
+          </a>
           <a href={`${BRAND_URL}/#faq`} style={linkStyle}>
             FAQ
           </a>
+        </div>
+
+        <div style={columnStyle}>
+          <div style={headingStyle}>Resources</div>
           <a href={`${BRAND_URL}/pricing#students`} style={linkStyle}>
             For students
           </a>
