@@ -66,13 +66,13 @@ export function DocsFooter() {
           <a href={`${BRAND_URL}/#features`} style={linkStyle}>
             Features
           </a>
-          <a href={`${BRAND_URL}/#pricing`} style={linkStyle}>
+          <a href={`${BRAND_URL}/pricing`} style={linkStyle}>
             Pricing
           </a>
           <a href={`${BRAND_URL}/#faq`} style={linkStyle}>
             FAQ
           </a>
-          <a href={`${BRAND_URL}/#students`} style={linkStyle}>
+          <a href={`${BRAND_URL}/pricing#students`} style={linkStyle}>
             For students
           </a>
           <a href={`${BRAND_URL}/platform`} style={linkStyle}>
