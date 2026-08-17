@@ -2,6 +2,7 @@ import Image from 'next/image'
 import { AppStoreBadge } from './app-store-badge'
 
 const BRAND_URL = 'https://noctune.ai'
+const APP_URL = 'https://app.noctune.ai'
 
 const linkStyle: React.CSSProperties = {
   color: 'inherit',
@@ -98,10 +99,10 @@ export function DocsFooter() {
 
         <div style={columnStyle}>
           <div style={headingStyle}>Account</div>
-          <a href={`${BRAND_URL}/sign-in`} style={linkStyle}>
+          <a href={`${APP_URL}/sign-in`} style={linkStyle}>
             Sign in
           </a>
-          <a href="/sign-in" style={linkStyle}>
+          <a href={`${APP_URL}/sign-up`} style={linkStyle}>
             Try Noctune free
           </a>
           <a href="mailto:jon@noctune.ai" style={linkStyle}>
