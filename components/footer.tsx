@@ -2,6 +2,7 @@ import Image from 'next/image'
 import { AppStoreBadge } from './app-store-badge'
 
 const BRAND_URL = 'https://noctune.ai'
+const APP_URL = 'https://app.noctune.ai'
 
 const linkStyle: React.CSSProperties = {
   color: 'inherit',
@@ -47,7 +48,7 @@ export function DocsFooter() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(240px, 1.5fr) repeat(3, minmax(140px, 1fr))',
+          gridTemplateColumns: 'minmax(240px, 1.5fr) repeat(4, minmax(140px, 1fr))',
           gap: '2.5rem',
         }}
       >
@@ -69,9 +70,19 @@ export function DocsFooter() {
           <a href={`${BRAND_URL}/pricing`} style={linkStyle}>
             Pricing
           </a>
+          <a href={`${BRAND_URL}/pay-per-note`} style={linkStyle}>
+            Pay-per-note
+          </a>
+          <a href={`${BRAND_URL}/staff-safety`} style={linkStyle}>
+            Staff safety
+          </a>
           <a href={`${BRAND_URL}/#faq`} style={linkStyle}>
             FAQ
           </a>
+        </div>
+
+        <div style={columnStyle}>
+          <div style={headingStyle}>Resources</div>
           <a href={`${BRAND_URL}/pricing#students`} style={linkStyle}>
             For students
           </a>
@@ -88,10 +99,10 @@ export function DocsFooter() {
 
         <div style={columnStyle}>
           <div style={headingStyle}>Account</div>
-          <a href={`${BRAND_URL}/sign-in`} style={linkStyle}>
+          <a href={`${APP_URL}/sign-in`} style={linkStyle}>
             Sign in
           </a>
-          <a href="/sign-in" style={linkStyle}>
+          <a href={`${APP_URL}/sign-up`} style={linkStyle}>
             Try Noctune free
           </a>
           <a href="mailto:jon@noctune.ai" style={linkStyle}>
