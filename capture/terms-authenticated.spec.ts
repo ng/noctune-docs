@@ -20,11 +20,11 @@ test('getting started — legal acceptance gate', async ({ page }) => {
   await setFixedCaptureTime(page)
   await page.goto(terms.route, { waitUntil: 'domcontentloaded' })
 
-  await expect(page.getByRole('heading', { name: 'Owl-most there.' })).toBeVisible()
-  await expect(page.getByRole('heading', { name: 'Terms of Service' })).toBeVisible()
-  await expect(page.getByLabel('I have read and agree to the Terms of Service')).not.toBeChecked()
-  await expect(page.getByLabel('I have read and agree to the Privacy Policy')).not.toBeChecked()
-  await expect(page.getByRole('button', { name: 'Accept & Continue' })).toBeDisabled()
+  await expect(page.getByRole('heading', { name: 'Before you record', level: 1 })).toBeVisible()
+  await expect(page.getByLabel('I consent to recording and AI drafting')).not.toBeChecked()
+  await expect(page.getByLabel('I agree to the Terms of Service')).not.toBeChecked()
+  await expect(page.getByLabel('I agree to the Privacy Policy')).not.toBeChecked()
+  await expect(page.getByRole('button', { name: 'Agree & continue' })).toBeDisabled()
 
   await savePageScreenshot(page, terms)
 })
@@ -32,12 +32,13 @@ test('getting started — legal acceptance gate', async ({ page }) => {
 test('data storage — archived audio with clinical record retained', async ({ page }) => {
   await setFixedCaptureTime(page)
   await page.goto(terms.route, { waitUntil: 'domcontentloaded' })
-  await page.getByLabel('I have read and agree to the Terms of Service').check()
-  await page.getByLabel('I have read and agree to the Privacy Policy').check()
+  await page.getByLabel('I consent to recording and AI drafting').check()
+  await page.getByLabel('I agree to the Terms of Service').check()
+  await page.getByLabel('I agree to the Privacy Policy').check()
 
   await Promise.all([
     page.waitForURL(/\/dashboard(?:[/?#]|$)/),
-    page.getByRole('button', { name: 'Accept & Continue' }).click(),
+    page.getByRole('button', { name: 'Agree & continue' }).click(),
   ])
 
   await page.goto(archivedAudio.route, { waitUntil: 'domcontentloaded' })

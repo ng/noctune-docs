@@ -25,17 +25,16 @@ test('authenticate the documentation capture user', async ({ page }) => {
 
   await setFixedCaptureTime(page)
   await page.goto(signIn.route, { waitUntil: 'networkidle' })
-  await expect(page.getByRole('heading', { name: 'Sign in to Noctune' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Sign in', level: 1 })).toBeVisible()
 
-  await page.getByRole('button', { name: 'Sign in with email instead' }).click()
-  const emailInput = page.getByLabel('Email')
+  const emailInput = page.getByLabel('Work email')
   await expect(emailInput).toBeVisible()
   await emailInput.fill(email)
   await page.getByLabel('Password').fill(password)
 
   await Promise.all([
     page.waitForURL(/\/dashboard(?:[/?#]|$)/),
-    page.getByRole('button', { name: /^sign in$/i }).click(),
+    page.getByRole('button', { name: 'Continue', exact: true }).click(),
   ])
   await expect(page.getByRole('button', { name: 'Start an encounter' })).toBeVisible()
 

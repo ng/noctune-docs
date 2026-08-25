@@ -24,17 +24,18 @@ test('authenticate the documentation legal-gate user', async ({ page }) => {
 
   await setFixedCaptureTime(page)
   await page.goto(signIn.route, { waitUntil: 'networkidle' })
-  await page.getByRole('button', { name: 'Sign in with email instead' }).click()
-  const emailInput = page.getByLabel('Email')
+  await expect(page.getByRole('heading', { name: 'Sign in', level: 1 })).toBeVisible()
+
+  const emailInput = page.getByLabel('Work email')
   await expect(emailInput).toBeVisible()
   await emailInput.fill(email)
   await page.getByLabel('Password').fill(password)
 
   await Promise.all([
     page.waitForURL(/\/accept-terms(?:[/?#]|$)/),
-    page.getByRole('button', { name: /^sign in$/i }).click(),
+    page.getByRole('button', { name: 'Continue', exact: true }).click(),
   ])
-  await expect(page.getByRole('heading', { name: 'Owl-most there.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Before you record', level: 1 })).toBeVisible()
 
   await fs.mkdir(path.dirname(authStatePath), { recursive: true })
   await page.context().storageState({ path: authStatePath })
