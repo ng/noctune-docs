@@ -2,20 +2,14 @@ import Image from 'next/image'
 
 export function Logo() {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-      <Image
-        src="/noctune-logo.png"
-        alt=""
-        width={32}
-        height={32}
-        priority
-        className="noctune-logo"
-        style={{ display: 'block', width: 32, height: 32 }}
-      />
-      <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.15 }}>
-        <span style={{ fontWeight: 700, fontSize: 16 }}>Noctune</span>
-        <span style={{ fontSize: 11, opacity: 0.65 }}>AI for Veterinary Medicine</span>
-      </div>
-    </div>
+    <Image
+      src="/noctune-logo-horizontal.png"
+      alt="Noctune"
+      width={452}
+      height={120}
+      priority
+      className="noctune-logo"
+      style={{ display: 'block', height: 28, width: 'auto' }}
+    />
   )
 }
