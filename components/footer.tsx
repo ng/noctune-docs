@@ -28,17 +28,14 @@ const columnStyle: React.CSSProperties = {
 
 function FooterLogo() {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-      <Image
-        src="/noctune-logo.png"
-        alt=""
-        width={40}
-        height={40}
-        className="noctune-logo"
-        style={{ display: 'block', width: 40, height: 40 }}
-      />
-      <span style={{ fontWeight: 700, fontSize: 22 }}>Noctune</span>
-    </div>
+    <Image
+      src="/noctune-logo-horizontal.png"
+      alt="Noctune"
+      width={452}
+      height={120}
+      className="noctune-logo"
+      style={{ display: 'block', height: 34, width: 'auto' }}
+    />
   )
 }
 
