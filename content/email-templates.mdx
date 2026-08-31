@@ -4,7 +4,9 @@ title: Email Templates
 
 # Email Templates
 
-Email Templates are reusable subjects and messages for onboarding, reminders, post-visit follow-up, and administrative communication. They are separate from [SOAP templates](/templates), which control generated clinical notes.
+Email Templates are reusable subjects and messages for onboarding, reminders, post-visit follow-up, and administrative communication. Use them for delivery or cover messages and reusable client education, such as diet guidance, greetings, and signatures.
+
+Think of an Email Template as reusable message or handout text. Keep internal medical-record structure in a [SOAP Template](/templates), and keep patient-specific home care, medication directions, warnings, follow-up, and recheck instructions in a Discharge Template.
 
 <BrowserFrame
   src="/screenshots/email-templates/library.webp"
@@ -27,6 +29,8 @@ Use **Delete Template** to remove a template you no longer need.
 ## Add merge fields
 
 Type `{` at the cursor to open the searchable field menu, or choose **Placeholder** in the body toolbar. The editor displays a recognized field as a labeled chip.
+
+Email merge fields are different from the human-readable double-brace guidance accepted in SOAP and discharge templates. Email fields are selected from this menu and resolve to patient, sender, practice, or date values when the template is inserted into a message. Double-brace text in a SOAP or discharge template is preserved as guidance for Noctune's note generator instead.
 
 | Group    | Available values               |
 | -------- | ------------------------------ |
