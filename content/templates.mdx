@@ -122,6 +122,31 @@ Avoid example patient names, weights, doses, and test results. They can be mista
 **Weight:** Use the weight stated in the encounter, including its unit; otherwise omit.
 ```
 
+### Set baselines for routine exams (normal by exception)
+
+For wellness or full-physical-exam templates where you examine every system on every
+patient, you can pre-fill a plain baseline such as `WNL` on each exam line:
+
+```markdown
+- **Eyes:** WNL
+- **Ears:** WNL
+- **Heart:** WNL
+```
+
+A baseline is a standing default, not sample data. The generated note keeps the baseline
+when the encounter does not mention that system and replaces it when you dictate a
+finding — "mild dental calculus" replaces `WNL` on the oral line, while the untouched
+lines stay normal.
+
+Use baselines only where silence truly means "examined and normal." On a problem-focused
+template, a system you never examined would still be reported as normal — keep
+descriptive placeholders like `(cardiac auscultation findings)` there instead.
+
+Keep baselines plain: `WNL`, `normal`, `unremarkable`, `NSF`. Do not pre-fill specific
+values such as `T 101.5` or `grade II/VI murmur` — a specific value reads as a real
+measurement even when nothing was measured. The built-in **Wellness Exam** system
+template is a worked example of this pattern.
+
 ## Use a community template
 
 The [Community Template Library](/community) contains published templates from other clinicians. Choose **Duplicate** on a detail page to create your own editable copy; the published original stays unchanged.
