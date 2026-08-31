@@ -72,7 +72,7 @@
     "remark-preset-lint-markdown-style-guide": "6.0.1",
     "remark-preset-lint-recommended": "7.0.1",
     "semantic-release": "^25.0.3",
-    "sharp": "0.35.3",
+    "sharp": "0.35.4",
     "typescript": "npm:@typescript/typescript6@^6.0.2"
   },
   "packageManager": "pnpm@11.22.0"
