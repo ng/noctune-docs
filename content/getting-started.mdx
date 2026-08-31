@@ -6,15 +6,17 @@ title: Getting Started
 
 Use Noctune in a browser to record an appointment, upload existing audio, review the transcript, and finish the clinical note. The iOS app can also capture audio and send the encounter to the same workspace.
 
-<AppStoreBadge />
+<div style={{ marginTop: '1.5rem' }}>
+  <AppStoreBadge />
+</div>
 
 ## 1. Sign up or sign in
 
-Open the sign-in page. You can continue with Google or Apple, or choose **Sign in with email instead** to use an email address and password.
+Open the sign-in page. You can continue with Google or Apple, or enter your work email and password and select **Continue**.
 
 <BrowserFrame
   src="/screenshots/getting-started/sign-in.webp"
-  alt="Noctune sign-in page with Google, Apple, and email sign-in options"
+  alt="Noctune sign-in page with Google, Apple, and work email sign-in options"
   url="app.noctune.ai/sign-in"
 />
 
@@ -22,15 +24,15 @@ If a practice invited you, sign in with the address that received the invitation
 
 ## 2. Accept the terms
 
-The first time you sign in, review the Terms of Service and Privacy Policy. **Accept & Continue** becomes available after you select both acknowledgements. Noctune asks again only when your account has not accepted the current versions.
+The first time you sign in, Noctune shows a **Before you record** step. Review how your recordings are used, the Terms of Service, and the Privacy Policy. **Agree & continue** becomes available after you select all three acknowledgements. Noctune asks again only when your account has not accepted the current versions.
 
 <BrowserFrame
   src="/screenshots/getting-started/accept-terms.webp"
-  alt="Noctune legal acceptance page with the current Terms of Service and two acknowledgement checkboxes"
+  alt="Noctune legal acceptance page with the recording, Terms of Service, and Privacy Policy acknowledgements"
   url="app.noctune.ai/accept-terms"
 />
 
-On iOS, one more step follows the terms. A one-time **How your recordings are used** screen explains that a submitted recording is sent to Deepgram to turn speech into text and to Amazon Web Services (AWS) to draft your note. Choose **Agree & Continue** to reach the app; the web app does not show this screen. See [Data Storage & Retention](/reference/data-storage) for the full path your recording takes.
+On iOS, one more step follows the terms. A one-time **How your recordings are used** screen explains that a submitted recording is sent to Deepgram to turn speech into text and to Amazon Web Services (AWS) to draft your note. Choose **Agree & Continue** to reach the app; on the web, that recording and AI-drafting consent is folded into the **Before you record** step above rather than a separate screen. See [Data Storage & Retention](/reference/data-storage) for the full path your recording takes.
 
 ## 3. Land on the dashboard
 

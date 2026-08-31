@@ -97,7 +97,7 @@ async function selectMochi(page: Page): Promise<void> {
 async function openMochiEncounter(page: Page, route: string): Promise<void> {
   await openProductPage(page, route)
   await expect(page.getByText('Mochi', { exact: true }).first()).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Copy SOAP' })).toBeEnabled()
+  await expect(page.getByRole('button', { name: 'Copy', exact: true })).toBeEnabled()
   await expect(page.getByRole('tab', { name: 'Transcript' })).toBeVisible()
   await expect(page.getByText(/Mochi is here for her appetite recheck/)).toBeVisible()
 }
@@ -349,7 +349,7 @@ test('encounters — SOAP and transcript overview', async ({ page }) => {
 test('encounters — markdown SOAP editor', async ({ page }) => {
   const item = capture('encounters-soap-edit')
   await openMochiEncounter(page, item.route)
-  await page.getByRole('tab', { name: 'Edit' }).click()
+  await page.getByRole('button', { name: 'Edit', exact: true }).click()
   await expect(page.locator('#soap-note-markdown-editor')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Save' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible()
@@ -359,7 +359,7 @@ test('encounters — markdown SOAP editor', async ({ page }) => {
 test('encounters — regenerate template picker', async ({ page }) => {
   const item = capture('encounters-regenerate')
   await openMochiEncounter(page, item.route)
-  await page.getByRole('button', { name: 'Regenerate Note' }).click()
+  await page.getByRole('button', { name: 'Regenerate', exact: true }).click()
   const dialog = page.getByRole('dialog')
   await expect(dialog.getByRole('heading', { name: 'Regenerate Note' })).toBeVisible()
   await expect(
@@ -592,10 +592,12 @@ test('email templates — categorized library and preview', async ({ page }) => 
   const item = capture('email-templates-library')
   await openProductPage(page, item.route)
   await expect(page.getByRole('heading', { name: 'Email Templates' })).toBeVisible()
-  await expect(page.getByText('Recheck reminder', { exact: true }).first()).toBeVisible()
-  await expect(page.getByText("Patient's name", { exact: true }).first()).toBeVisible()
-  await expect(page.getByText(/is due for a recheck/).last()).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Insert into message' })).toBeVisible()
+  await expect(page.getByRole('combobox', { name: 'Search templates...' })).toHaveValue(
+    'Post-op check-in',
+  )
+  await expect(page.getByRole('tab', { name: 'Preview' })).toBeVisible()
+  await expect(page.getByText(/Sample:/)).toBeVisible()
+  await expect(page.getByText(/How is Buddy doing today\?/)).toBeVisible()
   await savePageScreenshot(page, item)
 })
 

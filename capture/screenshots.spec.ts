@@ -13,12 +13,13 @@ if (!signIn) {
 test('getting started — sign-in options', async ({ page }) => {
   await setFixedCaptureTime(page)
   await page.goto(signIn.route, { waitUntil: 'networkidle' })
-  await expect(page.getByRole('heading', { name: 'Sign in to Noctune' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Sign in', level: 1 })).toBeVisible()
 
-  await page.getByRole('button', { name: /sign in with email instead/i }).click()
-  await expect(page.getByLabel('Email')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Continue with Google' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Continue with Apple' })).toBeVisible()
+  await expect(page.getByLabel('Work email')).toBeVisible()
   await expect(page.getByLabel('Password')).toBeVisible()
-  await expect(page.getByRole('button', { name: /^sign in$/i })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Continue', exact: true })).toBeVisible()
 
   await savePageScreenshot(page, signIn)
 })

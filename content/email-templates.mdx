@@ -8,25 +8,25 @@ Email Templates are reusable subjects and messages for onboarding, reminders, po
 
 <BrowserFrame
   src="/screenshots/email-templates/library.webp"
-  alt="Email Templates library with search, categories, favorites, usage sorting, template list, rendered placeholder preview, and message insertion action"
+  alt="Email Templates editor with a template search picker, category and subject fields, a markdown body, and a live preview"
   url="app.noctune.ai/email-library"
 />
 
 ## Find and organize templates
 
-Search template names, subjects, and message text. Filter to **Favorites**, **Onboarding**, **Reminders**, **Post-visit**, or **Admin**, and sort by **Most used**, **Recently used**, or **A–Z**. Select the star to add or remove a favorite.
+Use **Search templates…** at the top to find a template by name. Results are grouped by category — **Onboarding**, **Reminders**, **Post-visit**, **Admin**, or **Uncategorized**. Select the star to mark a template **Favorited**.
 
-Favorites belong to the current user. Usage changes only when a message is sent, so opening a template or abandoning a draft does not affect its ranking.
+Favorites belong to the current user.
 
 ## Create or edit a template
 
-Choose **New template**, then add a name, optional category, subject, and body. The body supports markdown for bold, italics, and bulleted lists. Use **Write** to edit and **Preview** to check the rendered message.
+Choose **New Template**, then set the name, optional **Category**, **Subject**, and **Body**. The body supports markdown for bold, italics, and bulleted lists, and the **Preview** pane shows the rendered message. Noctune flags **Unsaved changes** until you choose **Save Template**.
 
-You can also duplicate an existing template and edit the copy. Noctune warns before discarding unsaved changes.
+Use **Delete Template** to remove a template you no longer need.
 
 ## Add merge fields
 
-Type `{` at the cursor to open the searchable field menu. The editor displays a recognized field as a labeled chip.
+Type `{` at the cursor to open the searchable field menu, or choose **Placeholder** in the body toolbar. The editor displays a recognized field as a labeled chip.
 
 | Group    | Available values               |
 | -------- | ------------------------------ |
@@ -39,7 +39,7 @@ Preview uses example values to show the finished shape. An unrecognized or unres
 
 ## Insert into a message
 
-From the library, choose **Insert into message**. You can also choose **Templates** inside a new message or reply.
+You insert a template from a message rather than from the library. In a new message or reply, choose **Templates** to open the **Insert a template** picker, search by name, and choose **Insert**.
 
 When inserted:
 
