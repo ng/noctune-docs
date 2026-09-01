@@ -143,12 +143,37 @@
     "id": "templates-new-discharge",
     "route": "/templates/discharge",
     "output": "public/screenshots/templates/new-discharge-template.webp",
-    "docs": ["content/setup-guide.mdx"]
+    "docs": ["content/setup-guide.mdx", "content/templates.mdx"]
+  },
+  {
+    "id": "templates-import-paste",
+    "route": "/templates",
+    "output": "public/screenshots/templates/import-paste.webp",
+    "docs": ["content/setup-guide.mdx", "content/templates.mdx"]
+  },
+  {
+    "id": "templates-import-proposals",
+    "route": "/templates",
+    "output": "public/screenshots/templates/import-proposals.webp",
+    "docs": ["content/setup-guide.mdx", "content/templates.mdx"]
+  },
+  {
+    "id": "templates-import-created",
+    "route": "/templates",
+    "output": "public/screenshots/templates/import-created.webp",
+    "docs": ["content/templates.mdx"]
   },
   {
     "id": "templates-review",
     "route": "/templates",
     "output": "public/screenshots/templates/review.webp",
+    "docs": ["content/templates.mdx"]
+  },
+  {
+    "id": "templates-review-single-fix",
+    "route": "/templates",
+    "output": "public/screenshots/templates/review-single-fix.webp",
+    "preserveFocus": true,
     "docs": ["content/templates.mdx"]
   },
   {
