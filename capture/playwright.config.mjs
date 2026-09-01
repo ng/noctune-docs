@@ -58,7 +58,6 @@ const childEnv = {
   NEXT_PUBLIC_APP_ENV: 'development',
   NEXT_PUBLIC_APP_URL: baseURL,
   SUPABASE_REALTIME_ENABLED: 'false',
-  TEMPLATE_IMPORT_SPLIT_ROLLOUT: 'all',
 }
 const authStatePath = path.join(docsRoot, '.capture/auth/user.json')
 const termsAuthStatePath = path.join(docsRoot, '.capture/auth/terms-user.json')
