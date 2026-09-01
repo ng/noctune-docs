@@ -503,7 +503,14 @@ test('templates — custom-template dialog', async ({ page }) => {
   const dialog = page.getByRole('dialog')
   await expect(dialog.getByRole('heading', { name: 'Create a custom template' })).toBeVisible()
   await dialog.getByLabel('Template name').fill('Senior Wellness SOAP')
-  await expect(dialog.getByText(/Start from an existing template/)).toBeVisible()
+  await expect(dialog.getByText(/Where should it start from/)).toBeVisible()
+  await expect(dialog.getByRole('button', { name: /^Copy a template/ })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await expect(dialog.getByRole('button', { name: /^Blank/ })).toBeVisible()
+  await expect(dialog.getByRole('button', { name: /^Import/ })).toBeVisible()
+  await expect(dialog.getByRole('combobox', { name: 'Copy from' })).toHaveValue('General SOAP Note')
   await savePageScreenshot(page, item)
 })
 
@@ -518,9 +525,11 @@ test('templates — custom discharge-template dialog', async ({ page }) => {
   const dialog = page.getByRole('dialog')
   await expect(dialog.getByRole('heading', { name: 'Create a custom template' })).toBeVisible()
   await dialog.getByLabel('Template name').fill('Client Home-Care Instructions')
-  await expect(dialog.getByRole('combobox', { name: 'Base template' })).toHaveValue(
-    'General Discharge',
+  await expect(dialog.getByRole('button', { name: /^Copy a template/ })).toHaveAttribute(
+    'aria-pressed',
+    'true',
   )
+  await expect(dialog.getByRole('combobox', { name: 'Copy from' })).toHaveValue('General Discharge')
   await savePageScreenshot(page, item)
 })
 
@@ -541,11 +550,14 @@ const IMPORT_PASTE = [
   'Home Care Instructions:',
   'Give all medications exactly as labeled. Keep activity light for the next few days and offer small meals.',
   'Please call the clinic if your pet stops eating, seems painful, or is not improving.',
+  '',
+  'Medication Safety:',
+  'Store medications out of reach of children and pets, and never share one pet’s medication with another.',
 ].join('\n')
 
 const IMPORT_PRIMARY_CONTENT = IMPORT_PASTE.split('\n\nHome Care Instructions:')[0]
 const IMPORT_DISCHARGE_CONTENT =
-  'Home Care Instructions:\nGive all medications exactly as labeled. Keep activity light for the next few days and offer small meals.\nPlease call the clinic if your pet stops eating, seems painful, or is not improving.'
+  'Home Care Instructions:\nGive all medications exactly as labeled. Keep activity light for the next few days and offer small meals.\nPlease call the clinic if your pet stops eating, seems painful, or is not improving.\n\nMedication Safety:\nStore medications out of reach of children and pets, and never share one pet’s medication with another.'
 const IMPORT_DISCHARGE_DRAFT_ID = 'd0c50000-0000-4000-8000-000000000402'
 const IMPORT_CREATED_TEMPLATE_ID = 'd0c50000-0000-4000-8000-000000000714'
 
@@ -578,14 +590,24 @@ async function mockTemplateImportAnalyze(page: Page): Promise<void> {
               kind: 'discharge',
               name: 'From My Previous Scribe — Home Care',
               content: IMPORT_DISCHARGE_CONTENT,
-              sourceBlockIds: ['b5'],
+              sourceBlockIds: ['b5', 'b6'],
               confidence: 0.9,
               rationale:
                 "This content is written to the pet's owner, not for your clinical note — it can become a discharge template of its own.",
               warnings: [],
             },
           ],
-          literatureCandidates: [],
+          literatureCandidates: [
+            {
+              id: 'literature-1',
+              title: 'Medication safety at home',
+              content:
+                'Medication Safety:\nStore medications out of reach of children and pets, and never share one pet’s medication with another.',
+              sourceBlockIds: ['b6'],
+              disposition: 'kept_in_discharge',
+              warnings: [],
+            },
+          ],
           unassignedBlocks: [],
           model: { provider: 'docs', model: 'capture', promptVersion: 'docs-capture' },
         },
@@ -640,20 +662,32 @@ async function openImportDialog(page: Page, route: string): Promise<void> {
   const dialog = page.getByRole('dialog')
   await expect(dialog.getByRole('heading', { name: 'Create a custom template' })).toBeVisible()
   await dialog.getByLabel('Template name').fill('From My Previous Scribe')
-  await dialog.getByRole('combobox', { name: 'Base template' }).click()
-  await page.getByRole('option', { name: 'Import existing template' }).click()
+  await dialog.getByRole('button', { name: /^Import/ }).click()
+  await expect(dialog.getByRole('button', { name: 'Import', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
   await dialog.getByLabel('Paste your template').fill(IMPORT_PASTE)
 }
 
-/** Organizes the synthetic paste and waits for its split proposal in Review. */
+/** Organizes the synthetic paste and waits for its split proposal in the import banner. */
 async function openAnalyzedImport(page: Page, route: string): Promise<void> {
   await mockTemplateImportAnalyze(page)
   await openImportDialog(page, route)
   await page.getByRole('dialog').getByRole('button', { name: 'Organize this' }).click()
 
-  await expect(page.getByRole('tab', { name: /Review/ })).toHaveAttribute('aria-selected', 'true')
-  await expect(page.getByText('Also found in this paste · 1')).toBeVisible()
+  await expect(page.getByRole('tab', { name: 'Preview', exact: true })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  )
+  await expect(
+    page.getByText('Imported from pasted text. Nothing is saved until you press Save Template.'),
+  ).toBeVisible()
+  await expect(page.getByRole('button', { name: 'View original paste' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Create discharge template' })).toBeVisible()
+  await expect(
+    page.getByText(/client-education block from your paste stays in this draft/),
+  ).toBeVisible()
 }
 
 test('templates — import existing template paste', async ({ page }) => {
@@ -665,10 +699,12 @@ test('templates — import existing template paste', async ({ page }) => {
   await savePageScreenshot(page, item)
 })
 
-test('templates — import proposals in the Review panel', async ({ page }) => {
+test('templates — organizer suggestion in the import banner', async ({ page }) => {
   const item = capture('templates-import-proposals')
   await openAnalyzedImport(page, item.route)
-  await expect(page.getByRole('link', { name: 'How this works' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Preview', exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Dismiss' })).toBeVisible()
+  await expect(page.getByRole('tab', { name: 'Review', exact: true })).not.toContainText('1')
   await savePageScreenshot(page, item)
 })
 
@@ -680,11 +716,15 @@ test('templates — accepted import proposal receipt', async ({ page }) => {
   await page.getByRole('button', { name: 'Create discharge template' }).click()
   await expect(page.locator('#template-content-editor')).toHaveValue(IMPORT_PRIMARY_CONTENT)
   await expect(page.getByRole('button', { name: 'Create discharge template' })).toBeHidden()
-  await expect(page.getByRole('link', { name: 'open it' })).toHaveAttribute(
+  await expect(page.getByRole('link', { name: 'Open', exact: true })).toHaveAttribute(
     'href',
     `/templates/discharge/${IMPORT_CREATED_TEMPLATE_ID}`,
   )
-  await expect(page.getByRole('button', { name: 'undo', exact: true })).toBeEnabled()
+  await expect(page.getByText('Undo', { exact: true })).toBeEnabled()
+  await page.getByRole('button', { name: /What's in it/ }).click()
+  await expect(page.getByText(/It holds the client-education block from your paste/)).toContainText(
+    'Medication safety at home',
+  )
   await savePageScreenshot(page, item)
 })
 
@@ -957,6 +997,7 @@ test('settings — account identity and encounter preferences', async ({ page })
   await expect(page.getByText('Display name', { exact: true })).toBeVisible()
   await expect(page.getByText('Inbound email', { exact: true })).toBeVisible()
   await expect(page.getByText('Auto-finish on copy or send', { exact: true })).toBeVisible()
+  await expect(page.getByText('Dr. Avery Morgan', { exact: true })).toBeVisible()
   await savePageScreenshot(page, item)
 })
 

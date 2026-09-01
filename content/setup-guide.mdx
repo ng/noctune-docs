@@ -28,7 +28,7 @@ Open **Templates**, stay on **SOAP Templates**, and choose **New Template**. A S
 
 <BrowserFrame
   src="/screenshots/templates/new-template.webp"
-  alt="Create a custom SOAP template dialog with a name and starting-template selection"
+  alt="Create a custom SOAP template dialog with Copy a template, Blank, and Import starting-point tiles"
   url="app.noctune.ai/templates/soap"
 />
 
@@ -42,7 +42,7 @@ Open **Templates**, select **Discharge Templates**, and choose **New Template**.
 
 <BrowserFrame
   src="/screenshots/templates/new-discharge-template.webp"
-  alt="Create a custom discharge template dialog with the Discharge Templates tab selected"
+  alt="Create a custom discharge template dialog with the Discharge Templates tab selected and Copy a template active"
   url="app.noctune.ai/templates/discharge"
 />
 
@@ -54,19 +54,21 @@ See [SOAP templates](/templates#soap-templates) and [Discharge templates](/templ
 
 ## Import an existing template \[#import-an-existing-template]
 
-Already have a template from another scribe or practice system? Open **Templates**, choose **New Template**, and pick **Import existing template**. Paste your template, then choose **Organize this** when guided import is available for your account; otherwise, choose **Create** to open the paste unchanged as one draft.
+Already have a template from another scribe or practice system? Open **Templates**, choose **New Template**, and select the **Import** tile. Name the template, paste the complete source, then choose **Organize this**. The organizer is available to every authenticated user.
 
 <BrowserFrame
   src="/screenshots/templates/import-paste.webp"
-  alt="Create a custom template dialog with Import existing template selected and a pasted template ready to organize"
+  alt="Create a custom template dialog with the Import tile selected and a pasted template ready to organize"
   url="app.noctune.ai/templates/soap"
 />
 
-When guided import is available for your account, Noctune reads the paste's structure. Your full paste opens in the editor unchanged, and anything that belongs in a template of its own — like client-facing discharge content inside a clinical template — appears under **Also found in this paste** in the Review panel. Choose **Create SOAP template** or **Create discharge template** to save that proposed draft and remove its text from the current draft, **Preview** to read it first, or **Dismiss** to keep everything together. The created receipt offers **undo** while you have not edited the current draft since accepting; otherwise, delete the created template from its own tab.
+Noctune reads the paste's structure without rewriting it. Your full paste opens as an unsaved draft with **Preview** still selected. An import banner above the editor keeps **View original paste** available and shows anything that may belong in a template of its own—for example, client-facing discharge content inside a clinical template.
+
+Choose **Preview** to inspect the exact proposed markdown, **Create SOAP template** or **Create discharge template** to save that companion draft and remove its matched source blocks from the current draft, or **Dismiss** to keep everything together. The receipt offers **Open** and **Undo**; Undo remains available only until you edit the current draft after accepting. If the banner flags client-education or unassigned passages, use **View original paste** to identify and preserve anything you need before accepting, then verify both drafts afterward. If analysis fails, the complete paste still opens unchanged so you can organize it manually.
 
 <BrowserFrame
   src="/screenshots/templates/import-proposals.webp"
-  alt="Review panel listing a discharge template found in the pasted content with Create, Preview, and Dismiss choices"
+  alt="Import banner suggesting a discharge template with Create, Preview, and Dismiss choices above the unsaved editor"
   url="app.noctune.ai/templates/soap"
 />
 
