@@ -5,6 +5,7 @@ export default {
     title: 'Get Started',
   },
   'getting-started': 'Sign up & first login',
+  'setup-guide': 'Setup Guide',
   '--daily': {
     type: 'separator',
     title: 'Daily Workflow',

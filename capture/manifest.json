@@ -27,7 +27,7 @@
     "id": "encounters-new-encounter",
     "route": "/dashboard",
     "output": "public/screenshots/encounters/new-encounter/drawer.webp",
-    "docs": ["content/encounters/new-encounter.mdx"]
+    "docs": ["content/encounters/new-encounter.mdx", "content/setup-guide.mdx"]
   },
   {
     "id": "encounters-browser-recording",
@@ -57,7 +57,17 @@
     "id": "encounters-soap-edit",
     "route": "/encounters/d0c50000-0000-4000-8000-000000000201",
     "output": "public/screenshots/encounters/detail/soap-edit.webp",
-    "docs": ["content/encounters/index.mdx", "content/encounters/review-and-edit.mdx"]
+    "docs": [
+      "content/encounters/index.mdx",
+      "content/encounters/review-and-edit.mdx",
+      "content/setup-guide.mdx"
+    ]
+  },
+  {
+    "id": "encounters-fullscreen",
+    "route": "/encounters/d0c50000-0000-4000-8000-000000000201",
+    "output": "public/screenshots/encounters/detail/fullscreen.webp",
+    "docs": ["content/setup-guide.mdx"]
   },
   {
     "id": "encounters-completed",
@@ -69,7 +79,11 @@
     "id": "encounters-send-discharge",
     "route": "/encounters/d0c50000-0000-4000-8000-000000000201",
     "output": "public/screenshots/encounters/detail/send-discharge.webp",
-    "docs": ["content/encounters/index.mdx", "content/encounters/review-and-edit.mdx"]
+    "docs": [
+      "content/encounters/index.mdx",
+      "content/encounters/review-and-edit.mdx",
+      "content/setup-guide.mdx"
+    ]
   },
   {
     "id": "encounters-regenerate",
@@ -123,7 +137,13 @@
     "id": "templates-new",
     "route": "/templates",
     "output": "public/screenshots/templates/new-template.webp",
-    "docs": ["content/templates.mdx"]
+    "docs": ["content/templates.mdx", "content/setup-guide.mdx"]
+  },
+  {
+    "id": "templates-new-discharge",
+    "route": "/templates/discharge",
+    "output": "public/screenshots/templates/new-discharge-template.webp",
+    "docs": ["content/setup-guide.mdx"]
   },
   {
     "id": "templates-review",
@@ -171,7 +191,7 @@
     "id": "messages-inbox",
     "route": "/messages",
     "output": "public/screenshots/messages/inbox.webp",
-    "docs": ["content/messages.mdx"]
+    "docs": ["content/messages.mdx", "content/setup-guide.mdx"]
   },
   {
     "id": "messages-composer",
