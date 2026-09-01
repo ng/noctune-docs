@@ -33,6 +33,30 @@ async function mockSignedAudio(page: Page): Promise<void> {
   })
 }
 
+/** Keeps the capture user's first-run checklist visible without blocking dashboard captures. */
+async function mockAnsweredOnboardingPrompt(page: Page): Promise<void> {
+  await page.route('**/api/v1/me/onboarding', async (route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue()
+      return
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        data: {
+          promptAnsweredAt: '2026-07-15T17:00:00.000Z',
+          checklistHiddenAt: null,
+          dismissedAt: null,
+          completedSteps: [],
+        },
+        ok: true,
+      }),
+    })
+  })
+}
+
 /** Builds a valid one-second silent WAV buffer for mocked audio requests. */
 function silentWave(): Buffer {
   const sampleRate = 8_000
@@ -59,6 +83,7 @@ function silentWave(): Buffer {
 async function openProductPage(page: Page, route: string): Promise<void> {
   await setFixedCaptureTime(page)
   await mockSignedAudio(page)
+  await mockAnsweredOnboardingPrompt(page)
   await page.goto(route, { waitUntil: 'domcontentloaded' })
   await expect(page.getByRole('button', { name: 'New Encounter' })).toBeVisible()
 }
@@ -73,13 +98,13 @@ async function openPopulatedDashboard(page: Page, route: string): Promise<void> 
   await expect(page.getByText('Mochi is eating normally again', { exact: true })).toBeVisible()
   await expect(page.getByText('Your work', { exact: true })).toBeVisible()
   await expect(page.getByText('July 2026', { exact: true })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Start an encounter' })).toBeVisible()
+  await expect(page.getByLabel('Start an encounter')).toBeVisible()
 }
 
 /** Opens the New Encounter drawer from its manifest-defined dashboard route. */
 async function openEncounterDrawer(page: Page, route: string): Promise<void> {
   await openPopulatedDashboard(page, route)
-  await page.getByRole('button', { name: 'Start an encounter' }).click()
+  await page.getByLabel('Start an encounter').click()
   await expect(page.getByText('New encounter', { exact: true })).toBeVisible()
   await expect(page.getByPlaceholder('Search or type a new name...')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Record from web' })).toBeVisible()
@@ -356,6 +381,19 @@ test('encounters — markdown SOAP editor', async ({ page }) => {
   await savePageScreenshot(page, item)
 })
 
+test('encounters — distraction-free full screen', async ({ page }) => {
+  const item = capture('encounters-fullscreen')
+  await openMochiEncounter(page, item.route)
+  await page.getByRole('button', { name: 'Full screen' }).click()
+  await expect(page.getByRole('button', { name: 'Exit full screen' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await expect(page.getByRole('tab', { name: 'SOAP', exact: true })).toBeVisible()
+  await expect(page.getByRole('tab', { name: 'Transcript', exact: true })).toBeHidden()
+  await savePageScreenshot(page, item)
+})
+
 test('encounters — regenerate template picker', async ({ page }) => {
   const item = capture('encounters-regenerate')
   await openMochiEncounter(page, item.route)
@@ -466,6 +504,23 @@ test('templates — custom-template dialog', async ({ page }) => {
   await expect(dialog.getByRole('heading', { name: 'Create a custom template' })).toBeVisible()
   await dialog.getByLabel('Template name').fill('Senior Wellness SOAP')
   await expect(dialog.getByText(/Start from an existing template/)).toBeVisible()
+  await savePageScreenshot(page, item)
+})
+
+test('templates — custom discharge-template dialog', async ({ page }) => {
+  const item = capture('templates-new-discharge')
+  await openProductPage(page, item.route)
+  const dischargeTab = page.getByRole('tab', { name: 'Discharge Templates' })
+  await expect(dischargeTab).toHaveAttribute('aria-selected', 'true')
+  await expect(page.getByPlaceholder('Search templates...')).toHaveValue('General Discharge')
+  await page.waitForLoadState('networkidle')
+  await page.getByRole('button', { name: 'New Template' }).click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog.getByRole('heading', { name: 'Create a custom template' })).toBeVisible()
+  await dialog.getByLabel('Template name').fill('Client Home-Care Instructions')
+  await expect(dialog.getByRole('combobox', { name: 'Base template' })).toHaveValue(
+    'General Discharge',
+  )
   await savePageScreenshot(page, item)
 })
 

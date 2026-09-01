@@ -1,0 +1,109 @@
+---
+title: Setup Guide
+---
+
+# Setup Guide
+
+Set up Noctune's core workflow with these seven essentials. Follow them in order or jump to the feature you need.
+
+**[Open Noctune →](https://app.noctune.ai/dashboard)**
+
+## Record or upload audio \[#record-or-upload]
+
+Choose **New Encounter** in the top bar or **Start an encounter** on the Dashboard. Select the patient and templates, then choose **Record from web** or drop in an existing audio file. Nothing is processed until you submit the queued recording.
+
+<BrowserFrame
+  src="/screenshots/encounters/new-encounter/drawer.webp"
+  alt="New Encounter drawer with patient, SOAP template, discharge template, browser recording, and file upload controls"
+  url="app.noctune.ai/dashboard"
+/>
+
+**[Start an encounter in Noctune →](https://app.noctune.ai/dashboard)**
+
+See [New Encounter](/encounters/new-encounter) for the complete recording and upload workflow, including [supported formats and limits](/reference/supported-formats).
+
+## Create a SOAP template \[#soap-template]
+
+Open **Templates**, stay on **SOAP Templates**, and choose **New Template**. A SOAP template structures the **internal clinical record**: the clinician-facing note that Noctune drafts from the encounter.
+
+<BrowserFrame
+  src="/screenshots/templates/new-template.webp"
+  alt="Create a custom SOAP template dialog with a name and starting-template selection"
+  url="app.noctune.ai/templates/soap"
+/>
+
+**[Create a SOAP template in Noctune →](https://app.noctune.ai/templates/soap?new=1)**
+
+See [Create a custom template](/templates#create-a-custom-template) for editing, saving, quality review, and template-writing guidance.
+
+## Create a discharge template \[#discharge-template]
+
+Open **Templates**, select **Discharge Templates**, and choose **New Template**. A discharge template structures **patient-specific take-home instructions**, such as medication directions, warnings, home care, and recheck timing.
+
+<BrowserFrame
+  src="/screenshots/templates/new-discharge-template.webp"
+  alt="Create a custom discharge template dialog with the Discharge Templates tab selected"
+  url="app.noctune.ai/templates/discharge"
+/>
+
+**[Create a discharge template in Noctune →](https://app.noctune.ai/templates/discharge?new=1)**
+
+Keep reusable education and delivery copy—client literature, greetings, cover messages, and signatures—in an [Email Template](/email-templates). Email Templates are reusable message content; they are neither the internal SOAP record nor the patient-specific generated discharge.
+
+See [SOAP and discharge templates](/templates#soap-and-discharge-templates) for defaults, placeholders, and the full template workflow.
+
+## Send a discharge \[#send-discharge]
+
+Open a ready encounter, review **Discharge Notes**, then choose **Send Email → Send discharge notes**. Add the recipient and send; Noctune never sends a draft automatically.
+
+<BrowserFrame
+  src="/screenshots/encounters/detail/send-discharge.webp"
+  alt="Send Discharge Summary dialog with the patient owner email prepared and Send enabled"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
+
+**[Open encounters in Noctune →](https://app.noctune.ai/encounters)**
+
+See [Copy, email, and complete](/encounters/review-and-edit#copy-email-and-complete) for completion behavior and sending options.
+
+## Go fullscreen \[#fullscreen]
+
+Open any encounter note and choose **Full screen** beside the View/Edit control. The note fills the window and hides the patient header and transcript; press **Esc** to leave. You can also use **⌘⇧F** on macOS or **Ctrl+Shift+F** on Windows.
+
+<BrowserFrame
+  src="/screenshots/encounters/detail/fullscreen.webp"
+  alt="Mochi SOAP note in the distraction-free full-screen encounter view"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
+
+**[Open encounters in Noctune →](https://app.noctune.ai/encounters)**
+
+See [Review & Edit](/encounters/review-and-edit) for the complete note-review workspace.
+
+## Format with Markdown \[#markdown]
+
+Choose **Edit** on a SOAP note or discharge summary. The toolbar above the editor adds headings, bold, italics, lists, and inline code, or you can type Markdown directly. Choose **Save** when the note is ready.
+
+<BrowserFrame
+  src="/screenshots/encounters/detail/soap-edit.webp"
+  alt="Mochi encounter with the SOAP Markdown editor, formatting toolbar, Save, and Cancel controls"
+  url="app.noctune.ai/encounters/d0c50000-0000-4000-8000-000000000201"
+/>
+
+**[Open encounters in Noctune →](https://app.noctune.ai/encounters)**
+
+See [Edit the SOAP note](/encounters/review-and-edit#edit-the-soap-note) for editing and audited save behavior.
+
+## Meet your inbox \[#messages]
+
+Open **Messages** in the sidebar to see client replies, their patient context, and assignment status. Use **New Message** to start a conversation; encounter-linked replies stay connected to the visit.
+
+<BrowserFrame
+  src="/screenshots/messages/inbox.webp"
+  alt="Noctune Messages inbox with client threads, selected Mochi conversation, encounter link, assignment, and reply actions"
+  url="app.noctune.ai/messages"
+/>
+
+**[Open Messages in Noctune →](https://app.noctune.ai/messages)**
+
+See [Messages](/messages) for inbox workflows and [Messaging & Email Relay](/reference/messaging) for delivery and reply routing.
