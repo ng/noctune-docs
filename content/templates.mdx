@@ -44,15 +44,15 @@ One large imported template can be saved as a SOAP or discharge template if it p
 
 ## Create a custom template
 
-First select **SOAP Templates** or **Discharge Templates**; the active tab determines the new template's type. Choose **New Template**, name it, and select one of three starting points:
+First select **SOAP Templates** or **Discharge Templates**; the active tab determines the new template's type. Choose **New Template**, name it, and choose one of the three starting-point tiles:
 
-- Select an existing template to create an editable copy immediately.
-- Select **Blank template** to open an empty, unsaved draft.
-- Select **Import existing template** to open an unsaved draft from text you paste.
+- **Copy a template** creates an editable copy. This is the default, with a Noctune starter preselected; use **Copy from** to choose one of **My Templates** or **Noctune Starters** instead.
+- **Blank** opens an empty, unsaved draft.
+- **Import** lets you paste a template from another scribe or practice system and organize it before saving.
 
 <BrowserFrame
   src="/screenshots/templates/new-template.webp"
-  alt="Create a custom SOAP template dialog with a name and base-template selection"
+  alt="Create a custom SOAP template dialog with Copy a template, Blank, and Import starting-point tiles"
   url="app.noctune.ai/templates/soap"
 />
 
@@ -60,7 +60,7 @@ The discharge workflow uses the same creation dialog, but starts from the active
 
 <BrowserFrame
   src="/screenshots/templates/new-discharge-template.webp"
-  alt="Create a custom discharge template dialog with the Discharge Templates tab selected"
+  alt="Create a custom discharge template dialog with the Discharge Templates tab selected and Copy a template active"
   url="app.noctune.ai/templates/discharge"
 />
 
@@ -68,41 +68,45 @@ After creation, edit the plain markdown. The toolbar supports headings, bold, it
 
 ### Import an existing template \[#import-an-existing-template]
 
-To bring over a template from another scribe or practice system, choose **New Template → Import existing template**. Paste the original text and choose **Organize this** when guided import is available for your account.
+To bring over a template from another scribe or practice system, choose **New Template → Import**. Name the new template, paste the original text, and choose **Organize this**. Noctune always runs the organizer for imported templates; the word count beneath the paste helps confirm that you copied the complete source.
 
 <BrowserFrame
   src="/screenshots/templates/import-paste.webp"
-  alt="Create a custom template dialog with Import existing template selected and a pasted template ready to organize"
+  alt="Create a custom template dialog with the Import tile selected and a pasted template ready to organize"
   url="app.noctune.ai/templates/soap"
 />
 
-Noctune analyzes the paste's structure without rewriting it, then opens the complete original in an unsaved editor draft. If analysis is unavailable, the paste still opens unchanged as one draft so you can organize it manually.
+Noctune analyzes the paste's structure without rewriting it, then opens the complete original in an unsaved editor draft. If analysis fails, the paste still opens unchanged as one draft so you can organize it manually.
 
-### Review an imported template \[#review-an-imported-template]
+### Review organizer suggestions \[#review-an-imported-template]
 
-If Noctune finds content that belongs in another template, the **Review** panel opens with an **Also found in this paste** group. The current editor retains the full paste until you approve a proposal.
+After **Organize this**, the right pane stays on **Preview**. An import banner above the editor identifies the draft as pasted text, keeps **View original paste** available, and reminds you that the current imported template is unsaved. The separate **Review** pane remains dedicated to quality-review text suggestions.
+
+If Noctune finds content that belongs in another template, the banner shows a suggestion with its proposed name and reason. The current editor retains the full paste until you approve that suggestion.
 
 <BrowserFrame
   src="/screenshots/templates/import-proposals.webp"
-  alt="Review panel listing a discharge template found in imported SOAP content with Create, Preview, and Dismiss actions"
+  alt="Import banner above the template editor suggesting a discharge template with Create, Preview, and Dismiss actions while Preview remains selected"
   url="app.noctune.ai/templates/soap"
 />
 
 Review each proposal independently:
 
-- **Preview** shows the exact content proposed for the separate template.
-- **Create SOAP template** or **Create discharge template** saves that proposed draft and removes its source text from the current unsaved draft.
-- **Dismiss** keeps the text in the current draft.
+- **Preview** opens the exact markdown proposed for the separate template without changing either draft.
+- **Create SOAP template** or **Create discharge template** immediately saves only that proposed companion draft, then removes its source blocks from the current unsaved draft when they can be matched safely.
+- **Dismiss** hides the suggestion and keeps all of its text in the current draft.
 
-After creation, the proposal becomes a receipt with **open it** and **undo** actions. Undo deletes the split-off draft and restores its text only while you have not edited the current draft since accepting the proposal. Otherwise, open the created template and delete it there if needed.
+After creation, the banner turns the suggestion into a receipt with **Open** and **Undo** actions. **Open** opens the created draft in a new tab. **Undo** deletes that split-off draft and restores its text only while you have not edited the current draft since accepting the suggestion. Otherwise, Undo is disabled; open the created template and delete it there if needed.
 
 <BrowserFrame
   src="/screenshots/templates/import-created.webp"
-  alt="Imported-template review showing a created discharge-template receipt with open and undo actions and the discharge text removed from the SOAP draft"
+  alt="Import banner showing a created discharge-template receipt with Open, Undo, and an expanded What's in it summary"
   url="app.noctune.ai/templates/soap"
 />
 
-Use **View original paste** to compare the unchanged source at any time before saving. Import proposals create separate drafts; they are not quality-review suggestions and **Fix All** never creates or dismisses them.
+Client-education blocks stay with the proposed discharge content. Before you create that draft, the banner confirms that those blocks remain in the current draft. After creation, expand **What's in it** on the receipt to see a summary. If the banner flags passages that do not clearly match either template, use **View original paste** to identify and preserve anything you need before accepting, then verify both drafts afterward.
+
+Use **View original paste** to compare the unchanged source at any time before the current draft's first save. Saving removes the import banner. Organizer suggestions create separate drafts; they are not quality-review suggestions, do not add to the **Review** tab's count, and **Fix All** never creates or dismisses them.
 
 ### Keep imported placeholders
 
