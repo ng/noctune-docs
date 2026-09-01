@@ -1,7 +1,7 @@
-/* Noctune brand theming on top of Nextra defaults. */
+/* noctune brand theming on top of Nextra defaults. */
 
 :root {
-  /* Noctune teal from noctune-core theme.ts: #2a7f78 */
+  /* noctune teal from noctune-core theme.ts: #2a7f78 */
   --noctune-teal: #2a7f78;
   --noctune-teal-dark: #1a5c57;
   --noctune-teal-darker: #0f3d3a;

@@ -5,7 +5,7 @@ export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
-  description: 'Noctune Terms of Service in a public, support-only presentation.',
+  description: 'noctune Terms of Service in a public, support-only presentation.',
   alternates: {
     canonical: '/ios/terms',
   },

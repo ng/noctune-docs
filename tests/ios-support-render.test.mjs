@@ -32,8 +32,8 @@ const permanentRedirects = new Map([
 ])
 
 const requiredSupportCopy = [
-  ['page heading', /\bNoctune for iOS Support\b/i],
-  ['existing-account description', /\bexisting Noctune (?:service )?accounts?\b/i],
+  ['page heading', /\bnoctune for iOS Support\b/i],
+  ['existing-account description', /\bexisting noctune (?:service )?accounts?\b/i],
   ['sign-in help', /\b(?:sign[- ]in help|signing in|sign in with an existing account)\b/i],
   ['recording help', /\brecording\b/i],
   ['microphone access help', /\bmicrophone (?:access|permission)\b/i],
@@ -106,7 +106,7 @@ test('prerenders an isolated, noncommercial iOS support and legal surface', asyn
     assert.match(supportText, pattern, `Missing required ${description} on ${supportHref}`)
   }
 
-  assert.match(supportText, /\bContact\b.*\b(?:support|Get help from Noctune)\b/i)
+  assert.match(supportText, /\bContact\b.*\b(?:support|Get help from noctune)\b/i)
   assert.match(supportText, new RegExp(`\\b${escapeRegExp(supportEmail)}\\b`, 'i'))
 
   for (const [term, pattern] of prohibitedCommercialCopy) {
@@ -181,7 +181,7 @@ function assertDocsNavigation(document) {
     const navigation = extractElementContentsByClass(document.body, 'aside', className, '/')
     const anchors = extractAnchors(navigation)
     assert.ok(
-      anchors.some(({ href, text }) => href === supportHref && text === 'Noctune for iOS Support'),
+      anchors.some(({ href, text }) => href === supportHref && text === 'noctune for iOS Support'),
       `${navigationName} must expose ${supportHref}`,
     )
 
@@ -258,7 +258,7 @@ async function assertSupportCardStyles() {
 
 function assertClinicalReviewPlacement(main, supportText) {
   const clinicalReview = supportText.indexOf('Clinical review is required')
-  const contact = supportText.indexOf('Get help from Noctune')
+  const contact = supportText.indexOf('Get help from noctune')
 
   assert.ok(clinicalReview >= 0, 'Clinical-review guidance is missing')
   assert.ok(contact >= 0, 'Support contact section is missing')
@@ -289,7 +289,7 @@ function assertSupportCardTreatments(main) {
   assert.match(
     main,
     new RegExp(
-      `<a\\b(?=[^>]*\\bdata-contact-action=["']email["'])(?=[^>]*\\bhref=["']mailto:${escapeRegExp(supportEmail)}\\?subject=Noctune%20for%20iOS%20Support["'])[^>]*>`,
+      `<a\\b(?=[^>]*\\bdata-contact-action=["']email["'])(?=[^>]*\\bhref=["']mailto:${escapeRegExp(supportEmail)}\\?subject=noctune%20for%20iOS%20Support["'])[^>]*>`,
       'i',
     ),
     'Contact card must render the support address as the primary email CTA',
@@ -376,7 +376,7 @@ function assertPrerenderedDocument(route, document) {
   assert.doesNotMatch(renderedBody, /\bnextra-sidebar\b/i, `${route} exposes the docs sidebar`)
   assert.doesNotMatch(
     renderedText,
-    /\bNoctune docs are in preview\b/i,
+    /\bnoctune docs are in preview\b/i,
     `${route} exposes the normal docs banner`,
   )
   assert.doesNotMatch(

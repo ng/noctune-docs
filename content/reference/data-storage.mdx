@@ -8,14 +8,14 @@ An encounter contains several records with different access rules: uploaded audi
 
 ## Where your recording is processed
 
-When you submit a recording, Noctune uses two subprocessors to turn it into a draft note:
+When you submit a recording, noctune uses two subprocessors to turn it into a draft note:
 
 | Step           | Subprocessor              | What it receives                                      |
 | -------------- | ------------------------- | ----------------------------------------------------- |
 | Speech to text | Deepgram                  | The submitted audio, to produce the transcript        |
 | Note drafting  | Amazon Web Services (AWS) | The transcript, to draft the SOAP and discharge notes |
 
-Noctune then stores the audio, transcript, and generated notes in its own systems under the retention rules below. The iOS app asks you to agree to this processing the first time you sign in, on a **How your recordings are used** screen shown after the Terms. Noctune's Privacy Policy is the authoritative statement of how your data is handled.
+noctune then stores the audio, transcript, and generated notes in its own systems under the retention rules below. The iOS app asks you to agree to this processing the first time you sign in, on a **How your recordings are used** screen shown after the Terms. noctune's Privacy Policy is the authoritative statement of how your data is handled.
 
 ## What remains available
 
@@ -45,7 +45,7 @@ Long-term Storage keeps recordings instantly playable beyond the standard window
 
 ## Sentinel preservation
 
-[Noctune Sentinel](/reference/sentinel) bypasses the normal audio gate for an encounter marked for client hostility. Its audio stays available for protective documentation even when the workspace does not have Long-term Storage.
+[noctune Sentinel](/reference/sentinel) bypasses the normal audio gate for an encounter marked for client hostility. Its audio stays available for protective documentation even when the workspace does not have Long-term Storage.
 
 <Diagram
   chart={`
@@ -62,12 +62,12 @@ flowchart TD
 
 ## Browser recording recovery
 
-During a live browser take, Noctune writes recovery chunks to IndexedDB on that device. The local copy lets the recovery prompt offer upload, download, or discard after a crash. Successful upload or explicit discard removes the corresponding local session.
+During a live browser take, noctune writes recovery chunks to IndexedDB on that device. The local copy lets the recovery prompt offer upload, download, or discard after a crash. Successful upload or explicit discard removes the corresponding local session.
 
 If IndexedDB is unavailable, the recording stays in memory and the drawer warns that crash protection is unavailable. Closing the tab can then lose the unprocessed take.
 
 ## Deletion and account policy
 
-Archiving audio is not the same as deleting an encounter: the clinical record remains present. Patient removal is also a soft archive and does not delete existing transcripts or notes. For an account-level export, deletion request, or organization-specific retention requirement, contact Noctune support before changing access to the account.
+Archiving audio is not the same as deleting an encounter: the clinical record remains present. Patient removal is also a soft archive and does not delete existing transcripts or notes. For an account-level export, deletion request, or organization-specific retention requirement, contact noctune support before changing access to the account.
 
 Veterinary records are not generally HIPAA-covered records in the United States, but your organization may have its own legal or contractual retention duties. Follow those duties when deciding what to export or retain.

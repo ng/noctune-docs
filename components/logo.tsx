@@ -4,7 +4,7 @@ export function Logo() {
   return (
     <Image
       src="/noctune-logo-horizontal.png"
-      alt="Noctune"
+      alt="noctune"
       width={452}
       height={120}
       priority

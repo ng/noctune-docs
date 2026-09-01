@@ -3,9 +3,9 @@ import { IOS_SUPPORT_EMAIL } from '../../../../lib/ios-support'
 import styles from './page.module.css'
 
 export const metadata: Metadata = {
-  title: 'Noctune for iOS Support',
+  title: 'noctune for iOS Support',
   description:
-    'Support for existing Noctune users on iPhone and iPad, including recording, uploads, notes, and account deletion.',
+    'Support for existing noctune users on iPhone and iPad, including recording, uploads, notes, and account deletion.',
   alternates: {
     canonical: '/ios/support',
   },
@@ -17,7 +17,7 @@ const helpTopics = [
     title: 'Sign in with an existing account',
     body: (
       <>
-        On the <strong>Sign in to Noctune</strong> screen, use the Apple or Google identity already
+        On the <strong>Sign in to noctune</strong> screen, use the Apple or Google identity already
         connected to your account. For email access, choose{' '}
         <strong>Sign in with email instead</strong>, enter your email and password, then choose{' '}
         <strong>Sign in</strong>. If your credentials are not accepted, check your connection,
@@ -30,12 +30,12 @@ const helpTopics = [
     title: 'Agree to how recordings are used',
     body: (
       <>
-        After you accept the Terms, Noctune shows a one-time{' '}
+        After you accept the Terms, noctune shows a one-time{' '}
         <strong>How your recordings are used</strong> screen before the app opens. It explains that
         a recording you submit is <strong>sent to Deepgram</strong> to turn speech into text and{' '}
         <strong>sent to Amazon Web Services (AWS)</strong> to draft your note, and it links to the{' '}
         <strong>Privacy Policy</strong>. Choose <strong>Agree &amp; Continue</strong> to reach the
-        app, or <strong>Sign out</strong> to leave without agreeing. Noctune remembers the choice on
+        app, or <strong>Sign out</strong> to leave without agreeing. noctune remembers the choice on
         that device, so the screen does not return unless the disclosure changes, you sign in to a
         different account, or you reinstall the app.
       </>
@@ -47,8 +47,8 @@ const helpTopics = [
     body: (
       <>
         Choose the center <strong>Record</strong> tab, select a patient and note templates, then
-        begin recording. The first time, allow Noctune to use the microphone. If access was denied,
-        open iOS <strong>Settings → Privacy &amp; Security → Microphone</strong>, enable Noctune,
+        begin recording. The first time, allow noctune to use the microphone. If access was denied,
+        open iOS <strong>Settings → Privacy &amp; Security → Microphone</strong>, enable noctune,
         return to the app, and try again. Silence calls before a long visit; a call or another audio
         interruption can pause the recording.
       </>
@@ -61,7 +61,7 @@ const helpTopics = [
       <>
         In <strong>Record</strong>, select a patient, choose <strong>Choose From Phone</strong>, and
         pick one or more audio files. Use <strong>Add More Files</strong> when needed, then choose{' '}
-        <strong>Upload</strong>. Keep Noctune open with a stable connection until the app shows{' '}
+        <strong>Upload</strong>. Keep noctune open with a stable connection until the app shows{' '}
         <strong>Uploaded</strong>. If it says <strong>Couldn&apos;t upload</strong>, choose{' '}
         <strong>Retry</strong>.
       </>
@@ -72,9 +72,9 @@ const helpTopics = [
     title: 'Background recording and Live Activity',
     body: (
       <>
-        A recording you begin can continue while Noctune is in the background or the screen is
+        A recording you begin can continue while noctune is in the background or the screen is
         locked. The Live Activity shows elapsed time and the current state; tap it to return to the
-        recording. If an interruption pauses capture, return to Noctune and choose{' '}
+        recording. If an interruption pauses capture, return to noctune and choose{' '}
         <strong>Resume recording</strong>. The Live Activity reports the app&apos;s recording; it
         does not capture audio on its own.
       </>
@@ -114,9 +114,9 @@ export default function IOSSupportPage() {
     <main id="main-content" className={styles.main}>
       <section className={styles.hero} data-support-section="top">
         <div className={styles.eyebrow}>Help on iPhone and iPad</div>
-        <h1>Noctune for iOS Support</h1>
+        <h1>noctune for iOS Support</h1>
         <p className={styles.intro}>
-          Noctune for iOS is a companion for existing Noctune service accounts. Veterinary teams can
+          noctune for iOS is a companion for existing noctune service accounts. Veterinary teams can
           capture appointment audio, send it for processing, and review transcripts and generated
           clinical notes from an iPhone or iPad.
         </p>
@@ -159,7 +159,7 @@ export default function IOSSupportPage() {
       >
         <div className={styles.contactIntro}>
           <div className={styles.sectionLabel}>Contact</div>
-          <h2 id="contact-heading">Get help from Noctune</h2>
+          <h2 id="contact-heading">Get help from noctune</h2>
           <p>
             For help with the iOS app or access to an existing account, include your device model,
             iOS version, app version, and the approximate time of the problem.
@@ -167,7 +167,7 @@ export default function IOSSupportPage() {
         </div>
         <div className={styles.contactAction}>
           <a
-            href={`mailto:${IOS_SUPPORT_EMAIL}?subject=Noctune%20for%20iOS%20Support`}
+            href={`mailto:${IOS_SUPPORT_EMAIL}?subject=noctune%20for%20iOS%20Support`}
             data-contact-action="email"
           >
             <svg
@@ -226,7 +226,7 @@ export default function IOSSupportPage() {
           <h2 id="deletion-heading">Delete your account in the iOS app</h2>
           <p>
             Deletion is permanent and signs you out. The confirmation explains that encounters and
-            clinical records are retained under Noctune&apos;s retention policy.
+            clinical records are retained under noctune&apos;s retention policy.
           </p>
         </div>
         <ol className={styles.steps}>
@@ -243,7 +243,7 @@ export default function IOSSupportPage() {
             keep the account.
           </li>
           <li>
-            After a successful request, Noctune signs you out automatically. If the app says{' '}
+            After a successful request, noctune signs you out automatically. If the app says{' '}
             <strong>Couldn&apos;t delete account</strong>, check your connection, try again, or
             email support.
           </li>

@@ -9,7 +9,7 @@ interface AppStoreBadgeProps {
 }
 
 /**
- * Official “Download on the App Store” badge linked to the Noctune iOS listing.
+ * Official “Download on the App Store” badge linked to the noctune iOS listing.
  *
  * Renders Apple's supplied artwork unmodified and preserves its aspect ratio, as
  * the App Store marketing guidelines require.

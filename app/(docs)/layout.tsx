@@ -8,13 +8,13 @@ import { Logo } from '../../components/logo'
 
 export const metadata: Metadata = {
   title: {
-    default: 'Noctune Docs',
-    template: '%s — Noctune Docs',
+    default: 'noctune Docs',
+    template: '%s — noctune Docs',
   },
-  description: 'User guides and technical reference for Noctune.',
+  description: 'User guides and technical reference for noctune.',
 }
 
-const banner = <Banner storageKey="noctune-docs-launch">Noctune docs are in preview.</Banner>
+const banner = <Banner storageKey="noctune-docs-launch">noctune docs are in preview.</Banner>
 
 const navbar = <Navbar logo={<Logo />} />
 
@@ -35,7 +35,7 @@ export default async function DocsLayout({ children }: { children: React.ReactNo
       editLink=""
       feedback={{
         content: 'Question? Give us feedback',
-        link: 'mailto:jon@noctune.ai?subject=Noctune%20Docs%20Feedback',
+        link: 'mailto:jon@noctune.ai?subject=noctune%20Docs%20Feedback',
       }}
       nextThemes={{ defaultTheme: 'light' }}
     >

@@ -43,7 +43,7 @@ assertCaptureDatabase({
   forbiddenDatabaseUrls: [coreFileEnv.DATABASE_URL, process.env.DATABASE_URL],
 })
 if (!coreEnv.NEXT_PUBLIC_SUPABASE_URL || !coreEnv.SUPABASE_SERVICE_ROLE_KEY) {
-  throw new Error('Noctune Core DEV Supabase configuration is required for authenticated capture')
+  throw new Error('noctune Core DEV Supabase configuration is required for authenticated capture')
 }
 
 const appUrl = requireLoopbackBaseUrl(baseURL)

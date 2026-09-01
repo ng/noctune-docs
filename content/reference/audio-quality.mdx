@@ -4,7 +4,7 @@ title: Audio Quality
 
 # Audio Quality
 
-Noctune's transcription accuracy depends on the audio it receives. This page covers what makes a clean recording and how to avoid the most common problems. The underlying transcription engine (Deepgram) accepts a very wide range of inputs, but a few habits make a noticeable difference.
+noctune's transcription accuracy depends on the audio it receives. This page covers what makes a clean recording and how to avoid the most common problems. The underlying transcription engine (Deepgram) accepts a very wide range of inputs, but a few habits make a noticeable difference.
 
 ## Quick checklist
 
@@ -15,9 +15,9 @@ Noctune's transcription accuracy depends on the audio it receives. This page cov
 
 ## Sample rate
 
-Noctune handles any sample rate Deepgram does — commonly 8000, 16000, 24000, 32000, or 48000 Hz. In practice you don't need to think about this; recording at your device's native rate is correct. **Don't upsample** telephony audio (8 kHz) to 16 kHz — it introduces artifacts that hurt accuracy.
+noctune handles any sample rate Deepgram does — commonly 8000, 16000, 24000, 32000, or 48000 Hz. In practice you don't need to think about this; recording at your device's native rate is correct. **Don't upsample** telephony audio (8 kHz) to 16 kHz — it introduces artifacts that hurt accuracy.
 
-| Source                      | Native rate | Good for Noctune?            |
+| Source                      | Native rate | Good for noctune?            |
 | --------------------------- | ----------- | ---------------------------- |
 | iPhone / Android voice memo | 44.1–48 kHz | Yes                          |
 | Browser `getUserMedia`      | 48 kHz      | Yes                          |
