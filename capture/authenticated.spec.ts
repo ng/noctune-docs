@@ -543,6 +543,12 @@ const IMPORT_PASTE = [
   'Please call the clinic if your pet stops eating, seems painful, or is not improving.',
 ].join('\n')
 
+const IMPORT_PRIMARY_CONTENT = IMPORT_PASTE.split('\n\nHome Care Instructions:')[0]
+const IMPORT_DISCHARGE_CONTENT =
+  'Home Care Instructions:\nGive all medications exactly as labeled. Keep activity light for the next few days and offer small meals.\nPlease call the clinic if your pet stops eating, seems painful, or is not improving.'
+const IMPORT_DISCHARGE_DRAFT_ID = 'd0c50000-0000-4000-8000-000000000402'
+const IMPORT_CREATED_TEMPLATE_ID = 'd0c50000-0000-4000-8000-000000000714'
+
 /** Answers the split analysis with a deterministic discharge proposal. */
 async function mockTemplateImportAnalyze(page: Page): Promise<void> {
   await page.route('**/api/v1/soap-templates/import/analyze', async (route) => {
@@ -561,18 +567,17 @@ async function mockTemplateImportAnalyze(page: Page): Promise<void> {
               draftId: 'd0c50000-0000-4000-8000-000000000401',
               kind: 'soap',
               name: 'From My Previous Scribe — SOAP',
-              content: IMPORT_PASTE.split('\n\nHome Care Instructions:')[0],
+              content: IMPORT_PRIMARY_CONTENT,
               sourceBlockIds: ['b1', 'b2', 'b3', 'b4'],
               confidence: 0.92,
               rationale: null,
               warnings: [],
             },
             {
-              draftId: 'd0c50000-0000-4000-8000-000000000402',
+              draftId: IMPORT_DISCHARGE_DRAFT_ID,
               kind: 'discharge',
               name: 'From My Previous Scribe — Home Care',
-              content:
-                'Home Care Instructions:\nGive all medications exactly as labeled. Keep activity light for the next few days and offer small meals.\nPlease call the clinic if your pet stops eating, seems painful, or is not improving.',
+              content: IMPORT_DISCHARGE_CONTENT,
               sourceBlockIds: ['b5'],
               confidence: 0.9,
               rationale:
@@ -583,6 +588,43 @@ async function mockTemplateImportAnalyze(page: Page): Promise<void> {
           literatureCandidates: [],
           unassignedBlocks: [],
           model: { provider: 'docs', model: 'capture', promptVersion: 'docs-capture' },
+        },
+      }),
+    })
+  })
+}
+
+/** Creates the accepted split-out discharge draft without mutating the capture database. */
+async function mockTemplateImportCreate(page: Page): Promise<void> {
+  await page.route('**/api/v1/soap-templates/import/create', async (route) => {
+    const request = route.request().postDataJSON() as {
+      sourceContent: string
+      artifacts: Array<{ id: string; purpose: string; name: string; content: string }>
+    }
+    expect(request.sourceContent).toBe(IMPORT_PASTE)
+    expect(request.artifacts).toEqual([
+      {
+        id: IMPORT_DISCHARGE_DRAFT_ID,
+        purpose: 'discharge',
+        name: 'From My Previous Scribe — Home Care',
+        content: IMPORT_DISCHARGE_CONTENT,
+      },
+    ])
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        ok: true,
+        data: {
+          templates: [
+            {
+              id: IMPORT_CREATED_TEMPLATE_ID,
+              purpose: 'discharge',
+              name: 'From My Previous Scribe — Home Care',
+              detailUrl: `/templates/discharge/${IMPORT_CREATED_TEMPLATE_ID}`,
+            },
+          ],
         },
       }),
     })
@@ -603,6 +645,17 @@ async function openImportDialog(page: Page, route: string): Promise<void> {
   await dialog.getByLabel('Paste your template').fill(IMPORT_PASTE)
 }
 
+/** Organizes the synthetic paste and waits for its split proposal in Review. */
+async function openAnalyzedImport(page: Page, route: string): Promise<void> {
+  await mockTemplateImportAnalyze(page)
+  await openImportDialog(page, route)
+  await page.getByRole('dialog').getByRole('button', { name: 'Organize this' }).click()
+
+  await expect(page.getByRole('tab', { name: /Review/ })).toHaveAttribute('aria-selected', 'true')
+  await expect(page.getByText('Also found in this paste · 1')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Create discharge template' })).toBeVisible()
+}
+
 test('templates — import existing template paste', async ({ page }) => {
   const item = capture('templates-import-paste')
   await openImportDialog(page, item.route)
@@ -614,19 +667,64 @@ test('templates — import existing template paste', async ({ page }) => {
 
 test('templates — import proposals in the Review panel', async ({ page }) => {
   const item = capture('templates-import-proposals')
-  await mockTemplateImportAnalyze(page)
-  await openImportDialog(page, item.route)
-  await page.getByRole('dialog').getByRole('button', { name: 'Organize this' }).click()
-
-  await expect(page.getByText('Also found in this paste · 1')).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Create discharge template' })).toBeVisible()
+  await openAnalyzedImport(page, item.route)
   await expect(page.getByRole('link', { name: 'How this works' })).toBeVisible()
   await savePageScreenshot(page, item)
 })
 
-test('templates — deterministic quality review', async ({ page }) => {
-  const item = capture('templates-review')
+test('templates — accepted import proposal receipt', async ({ page }) => {
+  const item = capture('templates-import-created')
+  await mockTemplateImportCreate(page)
+  await openAnalyzedImport(page, item.route)
+
+  await page.getByRole('button', { name: 'Create discharge template' }).click()
+  await expect(page.locator('#template-content-editor')).toHaveValue(IMPORT_PRIMARY_CONTENT)
+  await expect(page.getByRole('button', { name: 'Create discharge template' })).toBeHidden()
+  await expect(page.getByRole('link', { name: 'open it' })).toHaveAttribute(
+    'href',
+    `/templates/discharge/${IMPORT_CREATED_TEMPLATE_ID}`,
+  )
+  await expect(page.getByRole('button', { name: 'undo', exact: true })).toBeEnabled()
+  await savePageScreenshot(page, item)
+})
+
+const TEMPLATE_REVIEW_SUGGESTIONS = [
+  {
+    severity: 'warning',
+    category: 'instruction',
+    location: 'Objective',
+    message: 'Make the evidence boundary explicit.',
+    fix: 'Tell the model not to infer findings that were not stated.',
+    original: 'Record only findings and measurements explicitly stated in the encounter.',
+    replacement:
+      'Record only findings and measurements explicitly stated in the encounter; do not infer unstated findings.',
+    occurrence: 1,
+  },
+  {
+    severity: 'info',
+    category: 'best_practice',
+    location: 'Plan',
+    message: 'Call out follow-up timing.',
+    fix: 'Keep follow-up timing tied to what was discussed.',
+    original: 'Capture diagnostics, treatment, preventive recommendations, and follow-up timing.',
+    replacement:
+      'Capture diagnostics, treatment, preventive recommendations, and the follow-up timing discussed during the visit.',
+    occurrence: 1,
+  },
+] as const
+
+/** Returns occurrence-safe review suggestions and a correction of the exact submitted content. */
+async function mockTemplateReview(page: Page): Promise<void> {
   await page.route('**/api/v1/soap-templates/review', async (route) => {
+    const request = route.request().postDataJSON() as { content: string }
+    for (const suggestion of TEMPLATE_REVIEW_SUGGESTIONS) {
+      expect(request.content).toContain(suggestion.original)
+    }
+    const correctedContent = TEMPLATE_REVIEW_SUGGESTIONS.reduce(
+      (content, suggestion) => content.replace(suggestion.original, suggestion.replacement),
+      request.content,
+    )
+
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -636,35 +734,18 @@ test('templates — deterministic quality review', async ({ page }) => {
           score: 8,
           summary:
             'The template has a clear SOAP structure. Two small instruction changes would make the generated note more evidence-focused.',
-          correctedContent: null,
-          suggestions: [
-            {
-              severity: 'warning',
-              category: 'instruction',
-              location: 'Objective',
-              message: 'Make the evidence boundary explicit.',
-              fix: 'Tell the model not to infer findings that were not stated.',
-              original: 'Record only findings and measurements explicitly stated in the encounter.',
-              replacement:
-                'Record only findings and measurements explicitly stated in the encounter; do not infer unstated findings.',
-            },
-            {
-              severity: 'info',
-              category: 'best_practice',
-              location: 'Plan',
-              message: 'Call out follow-up timing.',
-              fix: 'Keep follow-up timing tied to what was discussed.',
-              original:
-                'Capture diagnostics, treatment, preventive recommendations, and follow-up timing.',
-              replacement:
-                'Capture diagnostics, treatment, preventive recommendations, and the follow-up timing discussed during the visit.',
-            },
-          ],
+          correctedContent,
+          suggestions: TEMPLATE_REVIEW_SUGGESTIONS,
         },
       }),
     })
   })
-  await openProductPage(page, item.route)
+}
+
+/** Opens the seeded SOAP template and runs its deterministic quality review. */
+async function openTemplateReview(page: Page, route: string): Promise<void> {
+  await mockTemplateReview(page)
+  await openProductPage(page, route)
   await expect(page.getByText('Northstar Wellness SOAP', { exact: true }).first()).toBeVisible()
   await page.waitForLoadState('networkidle')
   const reviewTab = page.getByRole('tab', { name: 'Review', exact: true })
@@ -674,6 +755,44 @@ test('templates — deterministic quality review', async ({ page }) => {
   await expect(page.getByText('2 suggestions')).toBeVisible()
   await expect(page.getByText(/clear SOAP structure/)).toBeVisible()
   await expect(page.getByText('Objective', { exact: true })).toBeVisible()
+}
+
+test('templates — deterministic quality review', async ({ page }) => {
+  const item = capture('templates-review')
+  await openTemplateReview(page, item.route)
+
+  await expect(page.getByRole('button', { name: 'Fix All' })).toBeEnabled()
+  const locateButtons = page.getByRole('button', { name: 'Locate' })
+  const applyButtons = page.getByRole('button', { name: 'Apply' })
+  await expect(locateButtons).toHaveCount(2)
+  await expect(applyButtons).toHaveCount(2)
+  for (let index = 0; index < 2; index += 1) {
+    await expect(locateButtons.nth(index)).toBeEnabled()
+    await expect(applyButtons.nth(index)).toBeEnabled()
+  }
+  await savePageScreenshot(page, item)
+})
+
+test('templates — apply one review fix and locate the remaining suggestion', async ({ page }) => {
+  const item = capture('templates-review-single-fix')
+  await openTemplateReview(page, item.route)
+
+  await page.getByRole('button', { name: 'Apply' }).first().click()
+  await expect(page.getByText('Fixed', { exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Fix All' })).toBeDisabled()
+  await expect(page.getByRole('button', { name: 'Apply' })).toHaveCount(1)
+
+  await page.getByRole('button', { name: 'Locate' }).click()
+  const editor = page.locator('#template-content-editor')
+  await expect(editor).toBeFocused()
+  await expect
+    .poll(() =>
+      editor.evaluate((element) => {
+        const textarea = element as HTMLTextAreaElement
+        return textarea.value.slice(textarea.selectionStart, textarea.selectionEnd)
+      }),
+    )
+    .toBe(TEMPLATE_REVIEW_SUGGESTIONS[1].original)
   await savePageScreenshot(page, item)
 })
 

@@ -28,6 +28,7 @@ interface CaptureOutput {
   id: string
   output: string
   maxWidth?: number
+  preserveFocus?: boolean
 }
 
 const SCREENSHOT_OPTIONS = {
@@ -41,7 +42,7 @@ const SCREENSHOT_OPTIONS = {
 
 /** Captures, policy-transforms, and writes one deterministic product screenshot. */
 export async function savePageScreenshot(page: Page, capture: CaptureOutput): Promise<void> {
-  await stabilizePageVisuals(page)
+  await stabilizePageVisuals(page, capture.preserveFocus)
   await page.evaluate(async () => {
     await document.fonts.ready
   })
@@ -95,10 +96,10 @@ export async function savePageScreenshot(page: Page, capture: CaptureOutput): Pr
 }
 
 /** Disables visual motion and completes animations before stability polling. */
-async function stabilizePageVisuals(page: Page): Promise<void> {
+async function stabilizePageVisuals(page: Page, preserveFocus = false): Promise<void> {
   await page.addStyleTag({ content: STABLE_CAPTURE_CSS })
-  await page.evaluate(() => {
-    if (document.activeElement instanceof HTMLElement) {
+  await page.evaluate((keepFocus) => {
+    if (!keepFocus && document.activeElement instanceof HTMLElement) {
       document.activeElement.blur()
     }
     for (const animation of document.getAnimations()) {
@@ -108,7 +109,7 @@ async function stabilizePageVisuals(page: Page): Promise<void> {
         animation.cancel()
       }
     }
-  })
+  }, preserveFocus)
 }
 
 /** Polls until two consecutive Playwright PNG captures are byte-identical. */
