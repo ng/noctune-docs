@@ -4,44 +4,44 @@ title: Messaging & Email Relay
 
 # Messaging & Email Relay
 
-Every outbound Noctune message has a reply route. The route determines which address the recipient sees and where a reply arrives.
+Every outbound noctune message has a reply route. The route determines which address the recipient sees and where a reply arrives.
 
 ## Reply routes
 
 | Route                   | Recipient experience                                    | Reply destination                           | Requirement                |
 | ----------------------- | ------------------------------------------------------- | ------------------------------------------- | -------------------------- |
-| **Noctune Nest**        | A Noctune relay identity; personal address stays hidden | Encounter thread or global Messages inbox   | Nest entitlement           |
-| **Noctune (no reply)**  | From `noreply@mail.noctune.ai`; one-way message         | Recipient cannot reply through that message | Available without Nest     |
+| **noctune Nest**        | A noctune relay identity; personal address stays hidden | Encounter thread or global Messages inbox   | Nest entitlement           |
+| **noctune (no reply)**  | From `noreply@mail.noctune.ai`; one-way message         | Recipient cannot reply through that message | Available without Nest     |
 | **Your personal email** | Your personal address is shared                         | Your personal inbox                         | No Nest entitlement needed |
 
 When Nest is active, a new composer starts on the Nest route. Otherwise it starts on no-reply. You can change the route before sending.
 
 <BrowserFrame
   src="/screenshots/messages/composer.webp"
-  alt="Noctune message composer with the reply-route picker open for Nest, no-reply, and personal email"
+  alt="noctune message composer with the reply-route picker open for Nest, no-reply, and personal email"
   url="app.noctune.ai/messages"
 />
 
-## Noctune Nest
+## noctune Nest
 
-Nest is the reply-enabled Noctune inbox. The label adapts to context:
+Nest is the reply-enabled noctune inbox. The label adapts to context:
 
 - In an encounter, **This encounter** keeps replies attached to that clinical record.
 - In a global composer, **The Nest** or the patient's Nest returns replies to Messages.
 
-The recipient never needs a Noctune account. They reply with ordinary email, and Noctune threads the inbound message into [Messages](/messages). Practice teammates can then see the same encounter context and assignment state.
+The recipient never needs a noctune account. They reply with ordinary email, and noctune threads the inbound message into [Messages](/messages). Practice teammates can then see the same encounter context and assignment state.
 
 ## No reply
 
-Use **Noctune (no reply)** for one-way communication. The composer explains that the recipient cannot respond and shows `noreply@mail.noctune.ai`. This route does not create a Nest conversation.
+Use **noctune (no reply)** for one-way communication. The composer explains that the recipient cannot respond and shows `noreply@mail.noctune.ai`. This route does not create a Nest conversation.
 
 ## Personal email
 
-Use **Your personal email** when the reply should leave Noctune and go directly to your mailbox. The selector keeps a warning visible because this shares your address and removes the reply from the team's Noctune workflow.
+Use **Your personal email** when the reply should leave noctune and go directly to your mailbox. The selector keeps a warning visible because this shares your address and removes the reply from the team's noctune workflow.
 
 ## Direct inbound handles
 
-Noctune also provides inbound handles that do not require an earlier outbound message. A personal or practice address under `inbox.noctune.ai` can receive direct mail in Messages. The Account tab shows the current personal handle; paid access can expose handle customization where available.
+noctune also provides inbound handles that do not require an earlier outbound message. A personal or practice address under `inbox.noctune.ai` can receive direct mail in Messages. The Account tab shows the current personal handle; paid access can expose handle customization where available.
 
 This differs from Nest: a handle is a standing inbox identity, while an encounter Nest route is tied to a particular visit.
 

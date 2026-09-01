@@ -1,5 +1,12 @@
 # Repository Agent Instructions
 
+## Wordmark
+
+Use `noctune` with a lowercase n in all authored documentation, including headings,
+metadata, alt text, and accessibility labels. Keep exact upstream UI selectors and
+canonical legal document text unchanged until their source is updated; never rewrite a
+generated screenshot only to change wordmark casing.
+
 ## Product screenshots
 
 Product screenshots are generated assets. Do not hand-edit or re-encode files under
@@ -8,7 +15,7 @@ Product screenshots are generated assets. Do not hand-edit or re-encode files un
 - Treat `capture/image-policy.json` as the source of truth for dimensions, encoding,
   color/metadata rules, and byte budgets.
 - Add or change screenshot states in `capture/manifest.json` and the Playwright capture
-  specs. Put deterministic synthetic product data in the Noctune Core capture seeder.
+  specs. Put deterministic synthetic product data in the noctune Core capture seeder.
 - Never use production/customer data or generative-image tools for product UI screenshots.
 - Keep raster assets in Git LFS. Do not bypass the `.gitattributes` rules or commit
   raster binaries directly to regular Git history.

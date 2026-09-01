@@ -48,10 +48,10 @@ if (!termsUserEmail.endsWith('@test.noctune.local')) {
   throw new Error('DOCS_TERMS_USER_EMAIL must use the reserved @test.noctune.local domain')
 }
 if (!coreEnv.NEXT_PUBLIC_SUPABASE_URL || !coreEnv.SUPABASE_SERVICE_ROLE_KEY) {
-  throw new Error('Noctune Core DEV Supabase configuration is required for authenticated capture')
+  throw new Error('noctune Core DEV Supabase configuration is required for authenticated capture')
 }
 if (!fs.existsSync(path.join(coreDir, 'drizzle.config.ts'))) {
-  throw new Error(`No Noctune Core checkout found at ${coreDir}`)
+  throw new Error(`No noctune Core checkout found at ${coreDir}`)
 }
 
 const coreRevision = await captureOutput('git', ['rev-parse', 'HEAD'], coreDir)
@@ -155,7 +155,7 @@ try {
   fs.rmSync(lockPath, { force: true })
 }
 
-/** Creates or refreshes the detached Noctune Core worktree used for capture. */
+/** Creates or refreshes the detached noctune Core worktree used for capture. */
 async function ensureRuntimeWorktree(revision, runtimeDir, sourceDir) {
   await run('Pruning stale Core worktrees', 'git', ['worktree', 'prune'], sourceDir, process.env)
 

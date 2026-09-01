@@ -82,7 +82,7 @@ test('rejects a match against any effective Core database identity', () => {
           pooledCaptureDatabaseUrl,
         ],
       }),
-    /Refusing to capture against a database configured for Noctune Core or the parent process/,
+    /Refusing to capture against a database configured for noctune Core or the parent process/,
   )
 })
 

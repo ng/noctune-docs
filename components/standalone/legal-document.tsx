@@ -42,7 +42,7 @@ export async function LegalDocument({ id }: { id: LegalDocumentId }) {
   return (
     <main id="main-content" className={styles.main}>
       <a className={styles.backLink} href="/ios/support">
-        <span aria-hidden="true">←</span> Noctune for iOS Support
+        <span aria-hidden="true">←</span> noctune for iOS Support
       </a>
       {document.available ? (
         <>
@@ -52,7 +52,7 @@ export async function LegalDocument({ id }: { id: LegalDocumentId }) {
             </Markdown>
           </article>
           <p className={styles.sourceNote}>
-            This support-only presentation is rendered from Noctune&apos;s current canonical legal
+            This support-only presentation is rendered from noctune&apos;s current canonical legal
             document.
           </p>
         </>

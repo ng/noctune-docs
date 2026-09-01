@@ -4,7 +4,7 @@ import { AppStoreBadge } from '@/components/app-store-badge'
 import { BrowserFrame } from '@/components/browser-frame'
 import { Diagram } from '@/components/diagram'
 
-/** Extends the Nextra MDX component map with Noctune documentation primitives. */
+/** Extends the Nextra MDX component map with noctune documentation primitives. */
 export function useMDXComponents(components?: Readonly<MDXComponents>): MDXComponents {
   return getDocsMDXComponents({
     AppStoreBadge,

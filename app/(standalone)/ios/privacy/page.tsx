@@ -5,7 +5,7 @@ export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'Noctune Privacy Policy in a public, support-only presentation.',
+  description: 'noctune Privacy Policy in a public, support-only presentation.',
   alternates: {
     canonical: '/ios/privacy',
   },
