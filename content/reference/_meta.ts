@@ -5,6 +5,6 @@ export default {
   'browser-support': 'Browser Support',
   messaging: 'Messaging & Email Relay',
   'data-storage': 'Data Storage & Retention',
-  sentinel: 'Noctune Sentinel',
+  sentinel: 'noctune Sentinel',
   api: 'API Reference',
 }

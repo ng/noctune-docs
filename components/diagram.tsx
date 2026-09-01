@@ -1,6 +1,6 @@
 import { Mermaid } from '@theguild/remark-mermaid/mermaid'
 
-// Single source of truth for Noctune-branded mermaid theming. Every diagram
+// Single source of truth for noctune-branded mermaid theming. Every diagram
 // in the docs renders through <Diagram> so the teal/green palette stays
 // consistent and lives in one place. The hex values mirror app/global.css.
 // `theme: base` is forced (rather than mermaid's light/dark auto-swap) so the

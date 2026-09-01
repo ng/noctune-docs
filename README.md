@@ -1,6 +1,6 @@
 # noctune-docs
 
-User guides and (eventually) API reference for Noctune, built with [Nextra 4](https://nextra.site).
+User guides and (eventually) API reference for noctune, built with [Nextra 4](https://nextra.site).
 
 ## Dev
 
@@ -53,7 +53,7 @@ cache and the fresh build re-fetches on first request. There is no on-demand
 
 ## UI screenshots
 
-Screenshots are generated from a local Noctune Core checkout, converted to WebP, and committed under `public/screenshots/`. The deployed docs use those static assets, so deployment does not need database, Supabase, or browser credentials.
+Screenshots are generated from a local noctune Core checkout, converted to WebP, and committed under `public/screenshots/`. The deployed docs use those static assets, so deployment does not need database, Supabase, or browser credentials.
 
 Raster assets (`.webp`, `.png`, `.jpg`, `.jpeg`, `.gif`, and `.avif`) are stored in
 Git LFS. The repository's pre-push hook uploads their LFS objects and runs `pnpm check`
@@ -66,7 +66,7 @@ invalid raster reaches the deployment workspace.
 
 Local capture expects:
 
-- Noctune Core at `../noctune-core` with its DEV Supabase settings in `.env.local`.
+- noctune Core at `../noctune-core` with its DEV Supabase settings in `.env.local`.
 - A disposable Neon database used only for synthetic documentation fixtures,
   with its credential-free fingerprint independently reviewed in
   `capture/database-allowlist.json`.

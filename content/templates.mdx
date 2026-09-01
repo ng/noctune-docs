@@ -4,13 +4,13 @@ title: Templates
 
 # Templates
 
-SOAP and discharge templates tell Noctune how to structure generated notes. The editor keeps markdown instructions on the left and a rendered preview or quality review on the right.
+SOAP and discharge templates tell noctune how to structure generated notes. The editor keeps markdown instructions on the left and a rendered preview or quality review on the right.
 
-Use the tabs at the top to switch template types. System templates are maintained by Noctune and open read-only. Custom templates belong to you and can be edited, saved, set as the default, published, or deleted. The selector groups **My Templates** and **System Templates** and marks defaults and published templates where applicable.
+Use the tabs at the top to switch template types. System templates are maintained by noctune and open read-only. Custom templates belong to you and can be edited, saved, set as the default, published, or deleted. The selector groups **My Templates** and **System Templates** and marks defaults and published templates where applicable.
 
 <BrowserFrame
   src="/screenshots/templates/editor.webp"
-  alt="Noctune SOAP template editor with markdown instructions, live preview, template selector, Publish, Set Default, Delete, and Save controls"
+  alt="noctune SOAP template editor with markdown instructions, live preview, template selector, Publish, Set Default, Delete, and Save controls"
   url="app.noctune.ai/templates"
 />
 
@@ -18,15 +18,15 @@ Use the tabs at the top to switch template types. System templates are maintaine
 
 ## SOAP templates \[#soap-templates]
 
-SOAP templates structure the internal medical record: the clinician-facing note Noctune drafts from an encounter. Put Subjective, Objective, Assessment, Plan, and a concise record of Client Communications here.
+SOAP templates structure the internal medical record: the clinician-facing note noctune drafts from an encounter. Put Subjective, Objective, Assessment, Plan, and a concise record of Client Communications here.
 
-**[Open SOAP Templates in Noctune →](https://app.noctune.ai/templates/soap)**
+**[Open SOAP Templates in noctune →](https://app.noctune.ai/templates/soap)**
 
 ## Discharge templates \[#discharge-templates]
 
-Discharge templates structure the client-facing summary generated from an encounter. Put patient-specific home care, medication directions, warnings, follow-up, and recheck instructions here. Noctune uses this content when you choose **Send Discharge**.
+Discharge templates structure the client-facing summary generated from an encounter. Put patient-specific home care, medication directions, warnings, follow-up, and recheck instructions here. noctune uses this content when you choose **Send Discharge**.
 
-**[Open Discharge Templates in Noctune →](https://app.noctune.ai/templates/discharge)**
+**[Open Discharge Templates in noctune →](https://app.noctune.ai/templates/discharge)**
 
 ## Choose the right place for each job
 
@@ -35,7 +35,7 @@ Think of these as the chart, the take-home plan, and the reusable handout:
 | Use                    | What belongs there                                                                                                                                              |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **SOAP Template**      | The internal medical-record structure: Subjective, Objective, Assessment, Plan, and a concise record of Client Communications.                                  |
-| **Discharge Template** | Personalized home care, medication directions, warnings, follow-up, and recheck instructions. Noctune uses this content when you choose **Send Discharge**.     |
+| **Discharge Template** | Personalized home care, medication directions, warnings, follow-up, and recheck instructions. noctune uses this content when you choose **Send Discharge**.     |
 | **Email Template**     | Reusable delivery or cover messages and client education, such as diet guidance, reminders, greetings, and signatures. See [Email Templates](/email-templates). |
 
 In this workflow, client literature means reusable education rather than a separate template type. Keep it in an Email Template so you can reuse it without adding the same material to every clinical note or discharge summary.
@@ -46,7 +46,7 @@ One large imported template can be saved as a SOAP or discharge template if it p
 
 First select **SOAP Templates** or **Discharge Templates**; the active tab determines the new template's type. Choose **New Template**, name it, and choose one of the three starting-point tiles:
 
-- **Copy a template** creates an editable copy. This is the default, with a Noctune starter preselected; use **Copy from** to choose one of **My Templates** or **Noctune Starters** instead.
+- **Copy a template** creates an editable copy. This is the default, with a noctune starter preselected; use **Copy from** to choose one of **My Templates** or **noctune Starters** instead.
 - **Blank** opens an empty, unsaved draft.
 - **Import** lets you paste a template from another scribe or practice system and organize it before saving.
 
@@ -68,7 +68,7 @@ After creation, edit the plain markdown. The toolbar supports headings, bold, it
 
 ### Import an existing template \[#import-an-existing-template]
 
-To bring over a template from another scribe or practice system, choose **New Template → Import**. Name the new template, paste the original text, and choose **Organize this**. Noctune always runs the organizer for imported templates; the word count beneath the paste helps confirm that you copied the complete source.
+To bring over a template from another scribe or practice system, choose **New Template → Import**. Name the new template, paste the original text, and choose **Organize this**. noctune always runs the organizer for imported templates; the word count beneath the paste helps confirm that you copied the complete source.
 
 <BrowserFrame
   src="/screenshots/templates/import-paste.webp"
@@ -76,13 +76,13 @@ To bring over a template from another scribe or practice system, choose **New Te
   url="app.noctune.ai/templates/soap"
 />
 
-Noctune analyzes the paste's structure without rewriting it, then opens the complete original in an unsaved editor draft. If analysis fails, the paste still opens unchanged as one draft so you can organize it manually.
+noctune analyzes the paste's structure without rewriting it, then opens the complete original in an unsaved editor draft. If analysis fails, the paste still opens unchanged as one draft so you can organize it manually.
 
 ### Review organizer suggestions \[#review-an-imported-template]
 
 After **Organize this**, the right pane stays on **Preview**. An import banner above the editor identifies the draft as pasted text, keeps **View original paste** available, and reminds you that the current imported template is unsaved. The separate **Review** pane remains dedicated to quality-review text suggestions.
 
-If Noctune finds content that belongs in another template, the banner shows a suggestion with its proposed name and reason. The current editor retains the full paste until you approve that suggestion.
+If noctune finds content that belongs in another template, the banner shows a suggestion with its proposed name and reason. The current editor retains the full paste until you approve that suggestion.
 
 <BrowserFrame
   src="/screenshots/templates/import-proposals.webp"
@@ -110,7 +110,7 @@ Use **View original paste** to compare the unchanged source at any time before t
 
 ### Keep imported placeholders
 
-Noctune supports and preserves human-readable double-brace placeholders and instructions such as:
+noctune supports and preserves human-readable double-brace placeholders and instructions such as:
 
 ```text
 {{petname}}
@@ -121,13 +121,13 @@ Noctune supports and preserves human-readable double-brace placeholders and inst
 {{If applicable, explain what changes the client should watch for at home and when to call the hospital.}}
 ```
 
-Noctune's note generator interprets this text as guidance when it drafts a note. You do not need to rename or reformat the double-brace content before saving it.
+noctune's note generator interprets this text as guidance when it drafts a note. You do not need to rename or reformat the double-brace content before saving it.
 
 This guidance is different from the resolved merge fields in [Email Templates](/email-templates). SOAP and discharge placeholders are preserved as instructions for note generation; they are not replaced like patient, practice, or date fields in an email. Executable or unsafe template-engine syntax and prompt-injection attempts may still be rejected.
 
 ## Review template quality
 
-Choose **Save Template** after making changes. A valid custom template saves first, and then Noctune automatically runs a quality review. You can also open **Review** and choose **Review Template** whenever you want a fresh review. The reviewer looks for sample values, missing sections, weak structure, unclear guidance, and clinical prompting best practices.
+Choose **Save Template** after making changes. A valid custom template saves first, and then noctune automatically runs a quality review. You can also open **Review** and choose **Review Template** whenever you want a fresh review. The reviewer looks for sample values, missing sections, weak structure, unclear guidance, and clinical prompting best practices.
 
 If a template cannot be saved, the editor identifies the affected field and gives the specific reason instead of showing only **Validation failed**. Template content has a hard limit of 50,000 characters. If your template is longer, separate the SOAP chart, discharge instructions, and reusable client education or email content.
 
@@ -161,7 +161,7 @@ Choose **Set Default** on the template you want preselected for new encounters. 
 
 ## Publish to the community
 
-Owners of saved custom templates can choose **Publish**. The confirmation explains that every Noctune user will be able to preview, duplicate, and report the template. Add optional notes to tell other clinicians what the template is for.
+Owners of saved custom templates can choose **Publish**. The confirmation explains that every noctune user will be able to preview, duplicate, and report the template. Add optional notes to tell other clinicians what the template is for.
 
 <BrowserFrame
   src="/screenshots/templates/publish.webp"
@@ -207,7 +207,7 @@ This is especially important for vital signs, medication doses, diagnostic resul
 
 ### Prefer markdown headings
 
-Use `##` and `###` headings on their own lines. Models and the Noctune preview interpret them more reliably than all-caps labels or custom delimiters.
+Use `##` and `###` headings on their own lines. Models and the noctune preview interpret them more reliably than all-caps labels or custom delimiters.
 
 ### Put global conventions first
 
@@ -262,7 +262,7 @@ template is a worked example of this pattern.
 1. Read the field-level message and correct the specific issue it identifies.
 2. Confirm that the template does not exceed 50,000 characters.
 3. If it mixes charting, take-home instructions, and reusable education, move each part to the appropriate SOAP, discharge, or Email Template.
-4. Contact Noctune support if a legitimate import is still blocked.
+4. Contact noctune support if a legitimate import is still blocked.
 
 ## Use a community template
 

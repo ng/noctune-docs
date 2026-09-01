@@ -5,7 +5,7 @@ export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'California Privacy Notice',
-  description: 'Noctune California Privacy Notice in a public, support-only presentation.',
+  description: 'noctune California Privacy Notice in a public, support-only presentation.',
   alternates: {
     canonical: '/ios/ca-privacy',
   },

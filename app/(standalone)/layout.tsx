@@ -8,7 +8,7 @@ export default function StandaloneLayout({ children }: { children: ReactNode }) 
     <div className={styles.shell} data-layout="ios-support">
       <header className={styles.header}>
         <div className={styles.headerInner}>
-          <div className={styles.brand} aria-label="Noctune iOS Support">
+          <div className={styles.brand} aria-label="noctune iOS Support">
             <Image
               src="/noctune-logo.png"
               alt=""
@@ -18,7 +18,7 @@ export default function StandaloneLayout({ children }: { children: ReactNode }) 
               className={styles.logo}
             />
             <div>
-              <div className={styles.brandName}>Noctune</div>
+              <div className={styles.brandName}>noctune</div>
               <div className={styles.brandContext}>iOS Support</div>
             </div>
           </div>
@@ -31,8 +31,8 @@ export default function StandaloneLayout({ children }: { children: ReactNode }) 
       <footer className={styles.footer} data-support-section="footer">
         <div className={styles.footerInner}>
           <div>
-            <div className={styles.footerBrand}>Noctune, Inc.</div>
-            <div className={styles.copyright}>© {new Date().getFullYear()} Noctune</div>
+            <div className={styles.footerBrand}>noctune, Inc.</div>
+            <div className={styles.copyright}>© {new Date().getFullYear()} noctune</div>
           </div>
           <nav className={styles.footerLinks} aria-label="iOS support and legal">
             <a href="/ios/support">iOS Support</a>
@@ -40,7 +40,7 @@ export default function StandaloneLayout({ children }: { children: ReactNode }) 
             <a href="/ios/terms">Terms of Service</a>
             <a href="/ios/ca-privacy">California Privacy</a>
             <a href="/ios/do-not-sell">Do Not Sell My Info</a>
-            <a href={`mailto:${IOS_SUPPORT_EMAIL}?subject=Noctune%20for%20iOS%20Support`}>
+            <a href={`mailto:${IOS_SUPPORT_EMAIL}?subject=noctune%20for%20iOS%20Support`}>
               Email Support
             </a>
           </nav>

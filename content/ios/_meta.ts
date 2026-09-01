@@ -1,5 +1,5 @@
 export default {
-  support: 'Noctune for iOS Support',
+  support: 'noctune for iOS Support',
   privacy: { display: 'hidden' },
   terms: { display: 'hidden' },
   'ca-privacy': { display: 'hidden' },

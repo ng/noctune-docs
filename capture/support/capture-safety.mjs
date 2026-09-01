@@ -84,7 +84,7 @@ export function assertCaptureDatabase({
       .some((forbiddenDatabaseUrl) => identity === databaseIdentity(forbiddenDatabaseUrl))
   ) {
     throw new Error(
-      'Refusing to capture against a database configured for Noctune Core or the parent process',
+      'Refusing to capture against a database configured for noctune Core or the parent process',
     )
   }
 

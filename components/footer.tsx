@@ -30,7 +30,7 @@ function FooterLogo() {
   return (
     <Image
       src="/noctune-logo-horizontal.png"
-      alt="Noctune"
+      alt="noctune"
       width={452}
       height={120}
       className="noctune-logo"
@@ -100,7 +100,7 @@ export function DocsFooter() {
             Sign in
           </a>
           <a href={`${APP_URL}/sign-up`} style={linkStyle}>
-            Try Noctune free
+            Try noctune free
           </a>
           <a href="mailto:jon@noctune.ai" style={linkStyle}>
             Email us
@@ -134,7 +134,7 @@ export function DocsFooter() {
           opacity: 0.6,
         }}
       >
-        © {new Date().getFullYear()} Noctune. All rights reserved.
+        © {new Date().getFullYear()} noctune. All rights reserved.
       </div>
     </div>
   )
