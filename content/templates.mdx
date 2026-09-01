@@ -6,20 +6,27 @@ title: Templates
 
 SOAP and discharge templates tell Noctune how to structure generated notes. The editor keeps markdown instructions on the left and a rendered preview or quality review on the right.
 
+Use the tabs at the top to switch template types. System templates are maintained by Noctune and open read-only. Custom templates belong to you and can be edited, saved, set as the default, published, or deleted. The selector groups **My Templates** and **System Templates** and marks defaults and published templates where applicable.
+
 <BrowserFrame
   src="/screenshots/templates/editor.webp"
   alt="Noctune SOAP template editor with markdown instructions, live preview, template selector, Publish, Set Default, Delete, and Save controls"
   url="app.noctune.ai/templates"
 />
 
-## SOAP and discharge templates
+<span id="soap-and-discharge-templates" />
 
-Use the tabs at the top to switch between the two purposes:
+## SOAP templates \[#soap-templates]
 
-- **SOAP Templates** produce the clinical note.
-- **Discharge Templates** produce the client-facing summary.
+SOAP templates structure the internal medical record: the clinician-facing note Noctune drafts from an encounter. Put Subjective, Objective, Assessment, Plan, and a concise record of Client Communications here.
 
-System templates are maintained by Noctune and open read-only. Custom templates belong to you or your workspace and can be edited, saved, set as the default, published, or deleted. The selector labels system, personal, practice, default, and published entries where applicable.
+**[Open SOAP Templates in Noctune →](https://app.noctune.ai/templates/soap)**
+
+## Discharge templates \[#discharge-templates]
+
+Discharge templates structure the client-facing summary generated from an encounter. Put patient-specific home care, medication directions, warnings, follow-up, and recheck instructions here. Noctune uses this content when you choose **Send Discharge**.
+
+**[Open Discharge Templates in Noctune →](https://app.noctune.ai/templates/discharge)**
 
 ## Choose the right place for each job
 
@@ -37,19 +44,69 @@ One large imported template can be saved as a SOAP or discharge template if it p
 
 ## Create a custom template
 
-Choose **New Template**, name it, and select an existing template as the starting point. Noctune creates an editable copy, which is safer and faster than beginning with an empty prompt.
+First select **SOAP Templates** or **Discharge Templates**; the active tab determines the new template's type. Choose **New Template**, name it, and select one of three starting points:
+
+- Select an existing template to create an editable copy immediately.
+- Select **Blank template** to open an empty, unsaved draft.
+- Select **Import existing template** to open an unsaved draft from text you paste.
 
 <BrowserFrame
   src="/screenshots/templates/new-template.webp"
-  alt="Create a custom template dialog with a name and starting-template selection"
-  url="app.noctune.ai/templates"
+  alt="Create a custom SOAP template dialog with a name and base-template selection"
+  url="app.noctune.ai/templates/soap"
+/>
+
+The discharge workflow uses the same creation dialog, but starts from the active **Discharge Templates** tab and offers discharge templates as starting points.
+
+<BrowserFrame
+  src="/screenshots/templates/new-discharge-template.webp"
+  alt="Create a custom discharge template dialog with the Discharge Templates tab selected"
+  url="app.noctune.ai/templates/discharge"
 />
 
 After creation, edit the plain markdown. The toolbar supports headings, bold, italics, bulleted and numbered lists, inline code, undo, and redo. **Preview** shows how those instructions are organized; it does not generate a patient note.
 
-### Paste a template from another system
+### Import an existing template \[#import-an-existing-template]
 
-You can paste an existing template directly into the editor. Noctune supports and preserves human-readable double-brace placeholders and instructions such as:
+To bring over a template from another scribe or practice system, choose **New Template → Import existing template**. Paste the original text and choose **Organize this** when guided import is available for your account.
+
+<BrowserFrame
+  src="/screenshots/templates/import-paste.webp"
+  alt="Create a custom template dialog with Import existing template selected and a pasted template ready to organize"
+  url="app.noctune.ai/templates/soap"
+/>
+
+Noctune analyzes the paste's structure without rewriting it, then opens the complete original in an unsaved editor draft. If analysis is unavailable, the paste still opens unchanged as one draft so you can organize it manually.
+
+### Review an imported template \[#review-an-imported-template]
+
+If Noctune finds content that belongs in another template, the **Review** panel opens with an **Also found in this paste** group. The current editor retains the full paste until you approve a proposal.
+
+<BrowserFrame
+  src="/screenshots/templates/import-proposals.webp"
+  alt="Review panel listing a discharge template found in imported SOAP content with Create, Preview, and Dismiss actions"
+  url="app.noctune.ai/templates/soap"
+/>
+
+Review each proposal independently:
+
+- **Preview** shows the exact content proposed for the separate template.
+- **Create SOAP template** or **Create discharge template** saves that proposed draft and removes its source text from the current unsaved draft.
+- **Dismiss** keeps the text in the current draft.
+
+After creation, the proposal becomes a receipt with **open it** and **undo** actions. Undo deletes the split-off draft and restores its text only while you have not edited the current draft since accepting the proposal. Otherwise, open the created template and delete it there if needed.
+
+<BrowserFrame
+  src="/screenshots/templates/import-created.webp"
+  alt="Imported-template review showing a created discharge-template receipt with open and undo actions and the discharge text removed from the SOAP draft"
+  url="app.noctune.ai/templates/soap"
+/>
+
+Use **View original paste** to compare the unchanged source at any time before saving. Import proposals create separate drafts; they are not quality-review suggestions and **Fix All** never creates or dismisses them.
+
+### Keep imported placeholders
+
+Noctune supports and preserves human-readable double-brace placeholders and instructions such as:
 
 ```text
 {{petname}}
@@ -64,23 +121,35 @@ Noctune's note generator interprets this text as guidance when it drafts a note.
 
 This guidance is different from the resolved merge fields in [Email Templates](/email-templates). SOAP and discharge placeholders are preserved as instructions for note generation; they are not replaced like patient, practice, or date fields in an email. Executable or unsafe template-engine syntax and prompt-injection attempts may still be rejected.
 
-### Save, then review
+## Review template quality
 
-Choose **Save Template** after making changes. A valid custom template saves first, and then Noctune automatically runs a quality review. Review suggestions are optional; apply only the changes that are useful for your workflow. New encounters use the saved content, while existing notes are not rewritten.
+Choose **Save Template** after making changes. A valid custom template saves first, and then Noctune automatically runs a quality review. You can also open **Review** and choose **Review Template** whenever you want a fresh review. The reviewer looks for sample values, missing sections, weak structure, unclear guidance, and clinical prompting best practices.
 
 If a template cannot be saved, the editor identifies the affected field and gives the specific reason instead of showing only **Validation failed**. Template content has a hard limit of 50,000 characters. If your template is longer, separate the SOAP chart, discharge instructions, and reusable client education or email content.
 
-## Review template quality
-
-Open **Review** and choose **Review Template** whenever you want a fresh review. The reviewer looks for sample values, missing sections, weak structure, unclear guidance, and clinical prompting best practices.
-
 <BrowserFrame
   src="/screenshots/templates/review.webp"
-  alt="Template Review tab with two evidence-focused suggestions, locations, proposed replacement text, and Fix controls"
+  alt="Template Review tab with two evidence-focused suggestions and enabled Fix All, Locate, and Apply actions"
   url="app.noctune.ai/templates"
 />
 
-Suggestions are guidance, not a publishing requirement. The reviewer may recommend moving substantial discharge content out of a SOAP template, internal charting out of a discharge template, or evergreen client education into an Email Template. Use **Locate** to find the source text, apply a single replacement, or use **Fix All** when every suggestion still matches the current draft. If you edit after the review, re-run it before applying a batch so the fixes target the intended text.
+Suggestions are guidance, not a publishing requirement. Apply only the changes that are useful for your workflow:
+
+- **Locate** selects and scrolls to the exact source text without changing it.
+- **Apply** replaces that one occurrence and marks the suggestion **Fixed**.
+- **Fix All** applies the complete corrected draft and opens **Preview**. It appears only when the reviewer can return a complete correction and stays enabled only while every suggestion still matches the unchanged reviewed draft.
+
+After you apply one suggestion or edit the draft manually, **Fix All** disables because the editor no longer matches the reviewed snapshot. Apply the remaining suggestions individually or run a fresh review before using a batch fix.
+
+<BrowserFrame
+  src="/screenshots/templates/review-single-fix.webp"
+  alt="Template Review tab after one suggestion is fixed, with a remaining Locate and Apply action and Fix All disabled"
+  url="app.noctune.ai/templates"
+/>
+
+The reviewer may recommend moving substantial discharge content out of a SOAP template, internal charting out of a discharge template, or evergreen client education into an Email Template. These are text recommendations only; use the separate import proposal actions to create another template.
+
+Review the changed preview, then choose **Save Template** again to persist applied fixes. New encounters use the saved content, while existing notes are not rewritten.
 
 ## Set the default
 
