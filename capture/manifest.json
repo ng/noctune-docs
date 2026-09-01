@@ -146,6 +146,18 @@
     "docs": ["content/setup-guide.mdx"]
   },
   {
+    "id": "templates-import-paste",
+    "route": "/templates",
+    "output": "public/screenshots/templates/import-paste.webp",
+    "docs": ["content/setup-guide.mdx"]
+  },
+  {
+    "id": "templates-import-proposals",
+    "route": "/templates",
+    "output": "public/screenshots/templates/import-proposals.webp",
+    "docs": ["content/setup-guide.mdx"]
+  },
+  {
     "id": "templates-review",
     "route": "/templates",
     "output": "public/screenshots/templates/review.webp",
