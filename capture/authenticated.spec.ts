@@ -524,6 +524,106 @@ test('templates — custom discharge-template dialog', async ({ page }) => {
   await savePageScreenshot(page, item)
 })
 
+/** Synthetic combined template — clinical sections plus client-facing home care. */
+const IMPORT_PASTE = [
+  'Subjective:',
+  'Presenting concern and history as the owner reports it, including appetite, energy, and any changes at home.',
+  '',
+  'Objective:',
+  'Physical exam findings, weight, temperature, heart rate, and respiratory rate as measured during the visit.',
+  '',
+  'Assessment:',
+  'Working assessment for each problem discussed during the visit.',
+  '',
+  'Plan:',
+  'Diagnostics, treatments, and medications discussed, with follow-up timing.',
+  '',
+  'Home Care Instructions:',
+  'Give all medications exactly as labeled. Keep activity light for the next few days and offer small meals.',
+  'Please call the clinic if your pet stops eating, seems painful, or is not improving.',
+].join('\n')
+
+/** Answers the split analysis with a deterministic discharge proposal. */
+async function mockTemplateImportAnalyze(page: Page): Promise<void> {
+  await page.route('**/api/v1/soap-templates/import/analyze', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        ok: true,
+        data: {
+          analysisReceipt: 'docs-capture-receipt',
+          sourceHash: 'docs-capture-source-hash',
+          classification: 'combined',
+          confidence: 0.92,
+          artifacts: [
+            {
+              draftId: 'd0c50000-0000-4000-8000-000000000401',
+              kind: 'soap',
+              name: 'From My Previous Scribe — SOAP',
+              content: IMPORT_PASTE.split('\n\nHome Care Instructions:')[0],
+              sourceBlockIds: ['b1', 'b2', 'b3', 'b4'],
+              confidence: 0.92,
+              rationale: null,
+              warnings: [],
+            },
+            {
+              draftId: 'd0c50000-0000-4000-8000-000000000402',
+              kind: 'discharge',
+              name: 'From My Previous Scribe — Home Care',
+              content:
+                'Home Care Instructions:\nGive all medications exactly as labeled. Keep activity light for the next few days and offer small meals.\nPlease call the clinic if your pet stops eating, seems painful, or is not improving.',
+              sourceBlockIds: ['b5'],
+              confidence: 0.9,
+              rationale:
+                "This content is written to the pet's owner, not for your clinical note — it can become a discharge template of its own.",
+              warnings: [],
+            },
+          ],
+          literatureCandidates: [],
+          unassignedBlocks: [],
+          model: { provider: 'docs', model: 'capture', promptVersion: 'docs-capture' },
+        },
+      }),
+    })
+  })
+}
+
+/** Opens the create dialog with the import origin selected and the sample pasted. */
+async function openImportDialog(page: Page, route: string): Promise<void> {
+  await openProductPage(page, route)
+  await expect(page.getByText('Northstar Wellness SOAP', { exact: true }).first()).toBeVisible()
+  await page.waitForLoadState('networkidle')
+  await page.getByRole('button', { name: 'New Template' }).click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog.getByRole('heading', { name: 'Create a custom template' })).toBeVisible()
+  await dialog.getByLabel('Template name').fill('From My Previous Scribe')
+  await dialog.getByRole('combobox', { name: 'Base template' }).click()
+  await page.getByRole('option', { name: 'Import existing template' }).click()
+  await dialog.getByLabel('Paste your template').fill(IMPORT_PASTE)
+}
+
+test('templates — import existing template paste', async ({ page }) => {
+  const item = capture('templates-import-paste')
+  await openImportDialog(page, item.route)
+  const dialog = page.getByRole('dialog')
+  await expect(dialog.getByRole('button', { name: 'Organize this' })).toBeEnabled()
+  await expect(dialog.getByRole('link', { name: 'See how it works' })).toBeVisible()
+  await savePageScreenshot(page, item)
+})
+
+test('templates — import proposals in the Review panel', async ({ page }) => {
+  const item = capture('templates-import-proposals')
+  await mockTemplateImportAnalyze(page)
+  await openImportDialog(page, item.route)
+  await page.getByRole('dialog').getByRole('button', { name: 'Organize this' }).click()
+
+  await expect(page.getByText('Also found in this paste · 1')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Create discharge template' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'How this works' })).toBeVisible()
+  await savePageScreenshot(page, item)
+})
+
 test('templates — deterministic quality review', async ({ page }) => {
   const item = capture('templates-review')
   await page.route('**/api/v1/soap-templates/review', async (route) => {
