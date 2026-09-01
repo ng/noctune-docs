@@ -21,6 +21,20 @@ Use the tabs at the top to switch between the two purposes:
 
 System templates are maintained by Noctune and open read-only. Custom templates belong to you or your workspace and can be edited, saved, set as the default, published, or deleted. The selector labels system, personal, practice, default, and published entries where applicable.
 
+## Choose the right place for each job
+
+Think of these as the chart, the take-home plan, and the reusable handout:
+
+| Use                    | What belongs there                                                                                                                                              |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **SOAP Template**      | The internal medical-record structure: Subjective, Objective, Assessment, Plan, and a concise record of Client Communications.                                  |
+| **Discharge Template** | Personalized home care, medication directions, warnings, follow-up, and recheck instructions. Noctune uses this content when you choose **Send Discharge**.     |
+| **Email Template**     | Reusable delivery or cover messages and client education, such as diet guidance, reminders, greetings, and signatures. See [Email Templates](/email-templates). |
+
+In this workflow, client literature means reusable education rather than a separate template type. Keep it in an Email Template so you can reuse it without adding the same material to every clinical note or discharge summary.
+
+One large imported template can be saved as a SOAP or discharge template if it passes validation and stays within the character limit. Splitting it by purpose usually creates a more automated and maintainable workflow: the encounter generates the chart and patient-specific take-home instructions, while evergreen education remains ready to reuse.
+
 ## Create a custom template
 
 Choose **New Template**, name it, and select an existing template as the starting point. Noctune creates an editable copy, which is safer and faster than beginning with an empty prompt.
@@ -33,11 +47,32 @@ Choose **New Template**, name it, and select an existing template as the startin
 
 After creation, edit the plain markdown. The toolbar supports headings, bold, italics, bulleted and numbered lists, inline code, undo, and redo. **Preview** shows how those instructions are organized; it does not generate a patient note.
 
-Choose **Save Template** after making changes. New encounters use the saved content; existing notes are not rewritten.
+### Paste a template from another system
+
+You can paste an existing template directly into the editor. Noctune supports and preserves human-readable double-brace placeholders and instructions such as:
+
+```text
+{{petname}}
+{{drug name}}
+{{him/her}}
+{{1-year/3-year}}
+{{ }}
+{{If applicable, explain what changes the client should watch for at home and when to call the hospital.}}
+```
+
+Noctune's note generator interprets this text as guidance when it drafts a note. You do not need to rename or reformat the double-brace content before saving it.
+
+This guidance is different from the resolved merge fields in [Email Templates](/email-templates). SOAP and discharge placeholders are preserved as instructions for note generation; they are not replaced like patient, practice, or date fields in an email. Executable or unsafe template-engine syntax and prompt-injection attempts may still be rejected.
+
+### Save, then review
+
+Choose **Save Template** after making changes. A valid custom template saves first, and then Noctune automatically runs a quality review. Review suggestions are optional; apply only the changes that are useful for your workflow. New encounters use the saved content, while existing notes are not rewritten.
+
+If a template cannot be saved, the editor identifies the affected field and gives the specific reason instead of showing only **Validation failed**. Template content has a hard limit of 50,000 characters. If your template is longer, separate the SOAP chart, discharge instructions, and reusable client education or email content.
 
 ## Review template quality
 
-Open **Review** and choose **Review Template**, or save changed content to run the same review gate. The reviewer looks for sample values, missing sections, weak structure, placeholders, unclear instructions, and clinical prompting best practices.
+Open **Review** and choose **Review Template** whenever you want a fresh review. The reviewer looks for sample values, missing sections, weak structure, unclear guidance, and clinical prompting best practices.
 
 <BrowserFrame
   src="/screenshots/templates/review.webp"
@@ -45,7 +80,7 @@ Open **Review** and choose **Review Template**, or save changed content to run t
   url="app.noctune.ai/templates"
 />
 
-Suggestions are guidance, not a publishing requirement. Use **Locate** to find the source text, apply a single replacement, or use **Fix All** when every suggestion still matches the current draft. If you edit after the review, re-run it before applying a batch so the fixes target the intended text.
+Suggestions are guidance, not a publishing requirement. The reviewer may recommend moving substantial discharge content out of a SOAP template, internal charting out of a discharge template, or evergreen client education into an Email Template. Use **Locate** to find the source text, apply a single replacement, or use **Fix All** when every suggestion still matches the current draft. If you edit after the review, re-run it before applying a batch so the fixes target the intended text.
 
 ## Set the default
 
@@ -146,6 +181,15 @@ Keep baselines plain: `WNL`, `normal`, `unremarkable`, `NSF`. Do not pre-fill sp
 values such as `T 101.5` or `grade II/VI murmur` — a specific value reads as a real
 measurement even when nothing was measured. The built-in **Wellness Exam** system
 template is a worked example of this pattern.
+
+## Troubleshooting
+
+### My pasted template will not save
+
+1. Read the field-level message and correct the specific issue it identifies.
+2. Confirm that the template does not exceed 50,000 characters.
+3. If it mixes charting, take-home instructions, and reusable education, move each part to the appropriate SOAP, discharge, or Email Template.
+4. Contact Noctune support if a legitimate import is still blocked.
 
 ## Use a community template
 

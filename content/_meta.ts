@@ -17,14 +17,18 @@ export default {
     title: 'Records',
   },
   patients: 'Patients',
-  templates: 'Templates',
+  '--templates': {
+    type: 'separator',
+    title: 'Templates & Content',
+  },
+  templates: 'SOAP & Discharge Templates',
   'email-templates': 'Email Templates',
+  community: 'Community Templates',
   '--practice': {
     type: 'separator',
     title: 'Practice',
   },
   practice: 'Practice & Team',
-  community: 'Community',
   '--account': {
     type: 'separator',
     title: 'Your Account',

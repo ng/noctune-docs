@@ -39,7 +39,7 @@
   "dependencies": {
     "@theguild/remark-mermaid": "0.3.0",
     "@vercel/analytics": "^2.0.1",
-    "next": "16.2.12",
+    "next": "16.3.3",
     "nextra": "^4.2.17",
     "nextra-theme-docs": "^4.2.17",
     "react": "^19.0.0",
@@ -75,5 +75,5 @@
     "sharp": "0.35.4",
     "typescript": "npm:@typescript/typescript6@^6.0.2"
   },
-  "packageManager": "pnpm@11.22.0"
+  "packageManager": "pnpm@11.24.0"
 }

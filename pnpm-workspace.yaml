@@ -1,2 +1,7 @@
 allowBuilds:
   sharp: true
+
+# Nextra 4.6.1 rejects its layout props with Zod 4.4 and newer.
+# Remove this pin once https://github.com/shuding/nextra/issues/4989 is fixed.
+overrides:
+  zod: 4.3.6
