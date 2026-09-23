@@ -98,3 +98,5 @@ The workflow is intentionally repository-native rather than an agent-specific sk
 Codex reads `AGENTS.md`; `CLAUDE.md` imports the same instructions for Claude Code. The
 scripts and CI remain the authoritative implementation so both tools produce the same
 result.
+
+For fixture locations, synthetic authentication, and reuse in native iPhone/iPad App Store captures, see [Reusing fictional product fixtures](docs/fixture-capture.md).
