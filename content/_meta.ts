@@ -10,6 +10,7 @@ export default {
     type: 'separator',
     title: 'Daily Workflow',
   },
+  'navigation-and-search': 'Navigation & Search',
   dashboard: 'Dashboard',
   encounters: 'Encounters',
   messages: 'Messages',

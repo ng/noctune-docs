@@ -15,7 +15,24 @@
     "id": "dashboard-overview",
     "route": "/dashboard",
     "output": "public/screenshots/dashboard/overview.webp",
-    "docs": ["content/dashboard.mdx", "content/getting-started.mdx"]
+    "docs": [
+      "content/dashboard.mdx",
+      "content/getting-started.mdx",
+      "content/navigation-and-search.mdx"
+    ]
+  },
+  {
+    "id": "navigation-expanded",
+    "route": "/dashboard",
+    "output": "public/screenshots/navigation/expanded.webp",
+    "docs": ["content/navigation-and-search.mdx"]
+  },
+  {
+    "id": "navigation-global-search",
+    "route": "/dashboard",
+    "output": "public/screenshots/navigation/global-search.webp",
+    "preserveFocus": true,
+    "docs": ["content/navigation-and-search.mdx"]
   },
   {
     "id": "encounters-list",

@@ -7,6 +7,8 @@ import { savePageScreenshot } from './support/save-screenshot'
 const IDS = {
   captureUser: 'd0c50000-0000-4000-8000-000000000001',
   mochiEncounter: 'd0c50000-0000-4000-8000-000000000201',
+  mochiPriorEncounter: 'd0c50000-0000-4000-8000-000000000204',
+  mochiOlderEncounter: 'd0c50000-0000-4000-8000-000000000205',
   mochiSoapNote: 'd0c50000-0000-4000-8000-000000000301',
 } as const
 
@@ -52,6 +54,87 @@ async function mockAnsweredOnboardingPrompt(page: Page): Promise<void> {
           completedSteps: [],
         },
         ok: true,
+      }),
+    })
+  })
+}
+
+/** Returns synthetic, fixture-backed global-search results without a live vector index. */
+async function mockGlobalSearch(page: Page): Promise<void> {
+  await page.route('**/api/v1/search?*', async (route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue()
+      return
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        ok: true,
+        data: {
+          patients: [],
+          encounters: [
+            {
+              id: IDS.mochiPriorEncounter,
+              patientId: 'd0c50000-0000-4000-8000-000000000101',
+              patientName: 'Mochi',
+              createdAt: '2026-05-14T17:00:00.000Z',
+              encounterDate: '2026-05-14T17:00:00.000Z',
+              status: 'completed',
+              snippet:
+                'Annual wellness visit. Jamie reports Mochi is active with a stable appetite on the same dry diet.',
+              summary: 'Annual wellness examination with stable weight and mild dental tartar.',
+              score: 0.91,
+            },
+            {
+              id: IDS.mochiOlderEncounter,
+              patientId: 'd0c50000-0000-4000-8000-000000000101',
+              patientName: 'Mochi',
+              createdAt: '2026-03-11T17:00:00.000Z',
+              encounterDate: '2026-03-11T17:00:00.000Z',
+              status: 'completed',
+              snippet:
+                'Healthy young adult cat, overdue for vaccine boosters, with an incomplete preventive-care history.',
+              summary: 'Healthy new-patient examination with preventive care established.',
+              score: 0.86,
+            },
+          ],
+        },
+      }),
+    })
+  })
+}
+
+/** Keeps every recent row fully visible in the expanded-navigation capture. */
+async function mockExpandedNavigationRecents(page: Page): Promise<void> {
+  await page.route('**/api/v1/transcriptions?pageSize=5&status=completed', async (route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue()
+      return
+    }
+
+    const response = await route.fetch()
+    const payload = (await response.json()) as {
+      ok?: boolean
+      data?: {
+        items?: unknown[]
+      }
+    }
+
+    if (!payload.ok || !payload.data?.items) {
+      throw new Error('Could not prepare deterministic recent encounters')
+    }
+
+    await route.fulfill({
+      response,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        ...payload,
+        data: {
+          ...payload.data,
+          items: payload.data.items.slice(0, 4),
+        },
       }),
     })
   })
@@ -304,6 +387,38 @@ async function mockUnreadMessagesCount(page: Page, totalCount: number): Promise<
 test('dashboard — populated overview', async ({ page }) => {
   const item = requireCapture('dashboard-overview')
   await openPopulatedDashboard(page, item.route)
+  await savePageScreenshot(page, item)
+})
+
+test('navigation — expanded global navigation', async ({ page }) => {
+  const item = capture('navigation-expanded')
+  await mockExpandedNavigationRecents(page)
+  await openPopulatedDashboard(page, item.route)
+
+  const sidebar = page.locator('.MuiDrawer-paper').first()
+  await sidebar.getByTestId('ChevronRightIcon').locator('xpath=ancestor::button').click()
+
+  await expect(sidebar).toHaveCSS('width', '260px')
+  await expect(sidebar.getByText('Main Menu', { exact: true })).toBeVisible()
+  await expect(sidebar.getByText('Recent Encounters', { exact: true })).toBeVisible()
+  await expect(sidebar.getByText('Mochi', { exact: true }).first()).toBeVisible()
+  await savePageScreenshot(page, item)
+})
+
+test('navigation — global quick and meaning-based search', async ({ page }) => {
+  const item = capture('navigation-global-search')
+  await mockGlobalSearch(page)
+  await openPopulatedDashboard(page, item.route)
+
+  const search = page.getByPlaceholder('Search encounters, patients, messages')
+  await search.fill('Mochi')
+
+  await expect(page.getByText('Quick matches', { exact: true })).toBeVisible()
+  await expect(page.getByText('Noctune Intelligence', { exact: true })).toBeVisible()
+  await expect(page.getByText(/Annual wellness visit\. Jamie reports Mochi/)).toBeVisible()
+  await expect(
+    page.getByText(/Healthy young adult cat, overdue for vaccine boosters/),
+  ).toBeVisible()
   await savePageScreenshot(page, item)
 })
 

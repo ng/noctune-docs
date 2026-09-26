@@ -20,6 +20,6 @@
     "minPerImageBytes": 10000,
     "maxPerImageBytes": 120000,
     "maxAverageBytes": 65000,
-    "maxTotalBytes": 2300000
+    "maxTotalBytes": 2500000
   }
 }
