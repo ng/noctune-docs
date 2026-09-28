@@ -158,7 +158,7 @@ test('pipeline decodes and caches audio, invalidates changed voices, and preserv
   assert.equal(fs.readFileSync(path.join(output, 'timeline.json'), 'utf8'), before)
 })
 
-test('renderer handles web and iOS inputs and rejects timing and source escapes', async (t) => {
+test('renderer handles web, iOS, and instruction cards and rejects unsafe inputs', async (t) => {
   const { render, sourcePath, validateTimeline } = await import('./render.mjs')
   const { default: sharp } = await import('sharp')
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tutorial-render-test-'))
@@ -189,6 +189,13 @@ test('renderer handles web and iOS inputs and rejects timing and source escapes'
         narration: 'Phone.',
         source: 'ios.png',
       },
+      {
+        id: 'card',
+        platform: 'web',
+        headline: ['Review'],
+        narration: 'Review.',
+        instructionCard: ['Check the draft.'],
+      },
     ],
   }
   registerProvider('render-test', {
@@ -216,6 +223,12 @@ test('renderer handles web and iOS inputs and rejects timing and source escapes'
   fs.symlinkSync(path.join(output, 'walkthrough-landscape.mp4'), path.join(media, 'escape.mp4'))
   assert.throws(() => sourcePath(media, 'escape.mp4'), /symlink escapes/)
   const timeline = JSON.parse(fs.readFileSync(path.join(narration, 'timeline.json')))
+  timeline.scenes[2].source = 'web.png'
+  assert.throws(() => validateTimeline(timeline), /Invalid instruction card/)
+  delete timeline.scenes[2].source
+  timeline.scenes[2].instructionCard = ['x'.repeat(51)]
+  assert.throws(() => validateTimeline(timeline), /Invalid instruction card/)
+  timeline.scenes[2].instructionCard = ['Check the draft.']
   timeline.scenes[1].at += 1
   assert.throws(() => validateTimeline(timeline), /timing/)
 })

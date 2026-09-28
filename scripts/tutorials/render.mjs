@@ -52,7 +52,19 @@ export function validateTimeline(story) {
       scene.headline.some((line) => typeof line !== 'string' || line.length > 36)
     )
       throw Error(`Headline needs 1–3 short lines: ${scene.id}`)
-    if (!scene.source || !scene.audio) throw Error(`Missing media: ${scene.id}`)
+    if (scene.instructionCard !== undefined) {
+      if (
+        scene.source ||
+        !Array.isArray(scene.instructionCard) ||
+        !scene.instructionCard.length ||
+        scene.instructionCard.length > 4 ||
+        scene.instructionCard.some(
+          (line) => typeof line !== 'string' || !line.trim() || line.length > 50,
+        )
+      )
+        throw Error(`Invalid instruction card: ${scene.id}`)
+    } else if (!scene.source) throw Error(`Missing media: ${scene.id}`)
+    if (!scene.audio) throw Error(`Missing audio: ${scene.id}`)
     at += scene.duration
   }
   if (!Number.isFinite(story.duration) || Math.abs(story.duration - at) > 0.001)
@@ -71,10 +83,11 @@ export async function render(timelineDir, output, roots) {
   const inputs = story.scenes.map((scene) => {
     const root = roots[scene.platform]
     if (!root) throw Error(`Missing ${scene.platform} media root`)
-    const source = sourcePath(root, scene.source)
+    const source = scene.instructionCard ? null : sourcePath(root, scene.source)
     const audio = sourcePath(timelineDir, scene.audio)
     const motion = /\.(mp4|mov)$/i.test(source)
-    if (!motion && !/\.(png|webp|jpg|jpeg)$/i.test(source)) throw Error('Unsupported visual format')
+    if (source && !motion && !/\.(png|webp|jpg|jpeg)$/i.test(source))
+      throw Error('Unsupported visual format')
     const start = scene.start ?? 0
     if (!Number.isFinite(start) || start < 0) throw Error('Invalid source start')
     if (motion && Number(probe(source).format.duration) < start + scene.duration)
@@ -109,21 +122,39 @@ export async function render(timelineDir, output, roots) {
             `<rect x="${left + i * 55}" y="860" width="42" height="4" rx="2" fill="${i <= index ? '#11736F' : '#D2E2DC'}"/>`,
         )
         .join('')
-      const frame = phone
-        ? `<rect x="${box.x - 8}" y="${box.y - 8}" width="${box.w + 16}" height="${box.h + 16}" rx="42" fill="#153D38"/>`
-        : `<defs><filter id="browser-shadow" x="-15%" y="-15%" width="130%" height="145%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#153D38" flood-opacity="0.14"/></filter></defs>
+      const frame = scene.instructionCard
+        ? ''
+        : phone
+          ? `<rect x="${box.x - 8}" y="${box.y - 8}" width="${box.w + 16}" height="${box.h + 16}" rx="42" fill="#153D38"/>`
+          : `<defs><filter id="browser-shadow" x="-15%" y="-15%" width="130%" height="145%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#153D38" flood-opacity="0.14"/></filter></defs>
           <rect x="${box.x - 2}" y="${box.y - 54}" width="${box.w + 4}" height="${box.h + 56}" rx="16" fill="#EEF2F1" stroke="#CDD9D5" stroke-width="2" filter="url(#browser-shadow)"/>
           <path d="M${box.x + 27} ${box.y - 36}l-8 8 8 8m20-16 8 8-8 8" fill="none" stroke="#788983" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           <rect x="${box.x + 240}" y="${box.y - 44}" width="${box.w - 480}" height="33" rx="8" fill="#FFFFFF" stroke="#D8E2DE"/>
           <text x="${box.x + box.w / 2}" y="${box.y - 21}" text-anchor="middle" font-size="18" fill="#52655D">app.noctune.ai</text>
           <path d="M${box.x} ${box.y - 1}h${box.w}" stroke="#D5DFDB"/>`
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><rect width="100%" height="100%" fill="#F3F8F2"/><ellipse cx="1680" cy="650" rx="690" ry="880" fill="#CDE7DF"/><g font-family="Arial" fill="#132D2B"><image href="data:image/png;base64,${logo}" x="76" y="56" width="300" height="80" preserveAspectRatio="xMinYMid meet"/><text x="76" y="262" font-size="19" fill="#53716A">${String(index + 1).padStart(2, '0')} / ${phone ? 'iOS' : 'WEB'} WALKTHROUGH</text>${headline}<text x="76" y="820" font-size="20" fill="#4D6963">Your first encounter, step by step.</text>${bars}${frame}<text x="960" y="1050" text-anchor="middle" font-size="19" fill="#4D6963">Fictional demo data · ${motion ? 'Recorded app footage' : 'Static app capture'}${scene.disclosure ? ' · ' + escape(scene.disclosure) : ''}</text></g></svg>`
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><rect width="100%" height="100%" fill="#F3F8F2"/><ellipse cx="1680" cy="650" rx="690" ry="880" fill="#CDE7DF"/><g font-family="Arial" fill="#132D2B"><image href="data:image/png;base64,${logo}" x="76" y="56" width="300" height="80" preserveAspectRatio="xMinYMid meet"/><text x="76" y="262" font-size="19" fill="#53716A">${String(index + 1).padStart(2, '0')} / ${phone ? 'iOS' : 'WEB'} WALKTHROUGH</text>${headline}<text x="76" y="820" font-size="20" fill="#4D6963">Your first encounter, step by step.</text>${bars}${frame}<text x="960" y="1050" text-anchor="middle" font-size="19" fill="#4D6963">Fictional demo data · ${scene.instructionCard ? 'Instruction card' : motion ? 'Recorded app footage' : 'Static app capture'}${scene.disclosure ? ' · ' + escape(scene.disclosure) : ''}</text></g></svg>`
       const card = path.join(work, `${index}-card.png`)
       await sharp(Buffer.from(svg)).png().toFile(card)
       const segment = path.join(work, `${index}.mp4`)
+      let visualSource = source
+      if (scene.instructionCard) {
+        visualSource = path.join(work, `${index}-instructions.png`)
+        const lines = scene.instructionCard
+          .map(
+            (line, i) => `<text x="64" y="${250 + i * 90}" font-size="36">${escape(line)}</text>`,
+          )
+          .join('')
+        await sharp(
+          Buffer.from(
+            `<svg xmlns="http://www.w3.org/2000/svg" width="1248" height="702"><rect width="1248" height="702" rx="24" fill="#FFFFFF"/><g font-family="Arial" fill="#132D2B"><text x="64" y="110" font-size="22" fill="#53716A">WORKFLOW CHECKLIST</text>${lines}</g></svg>`,
+          ),
+        )
+          .png()
+          .toFile(visualSource)
+      }
       const visual = motion
-        ? ['-ss', String(start), '-i', source]
-        : ['-loop', '1', '-framerate', '30', '-i', source]
+        ? ['-ss', String(start), '-i', visualSource]
+        : ['-loop', '1', '-framerate', '30', '-i', visualSource]
       run([
         '-loop',
         '1',

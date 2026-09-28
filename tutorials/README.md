@@ -64,6 +64,11 @@ Each version 1 story contains a title and scenes with a unique slug `id`, `platf
 Optional `start` selects a point in an MP4/MOV. `disclosure` adds a visible note.
 The audition story needs no visual fields because it is audio-only.
 
+For a text-only workflow card, omit `source` and provide `instructionCard`: one to
+four strings of at most 50 characters. These cards have no browser chrome and are
+labeled as instruction cards, so they can hold a scene while a UI capture is blocked.
+Use `disclosure` to explain the capture hold.
+
 Web sources resolve under the renderer's third argument, normally
 `public/screenshots`. iOS sources resolve under its optional fourth argument,
 pointing to the native capture export directory. The same scene schema supports

@@ -72,3 +72,12 @@ promise that option in this overview or imply that every non-Nest send behaves t
 Both video delivery modes are standard: a burned-caption LinkedIn export and a clean
 video with switchable captions for docs. Keep the two exports on the same narration
 and scene timeline.
+
+## Capture hold: completed encounter UI
+
+Do not use the current completed-encounter screen: its UI is temporarily incorrect
+(user review, September 28, 2026). The overview, SOAP editor, and discharge dialog
+captures all expose that state. The draft uses clearly labeled instruction cards
+for review, edit, and discharge instead. Keep the narration and both delivery modes.
+Recapture these scenes only after the UI is corrected; do not retouch the screenshots
+or use the current completed-state images in the recorded tutorials.
