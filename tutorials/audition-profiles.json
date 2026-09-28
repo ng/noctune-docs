@@ -1,0 +1,24 @@
+[
+  {
+    "id": "haley",
+    "speech": { "provider": "deepgram", "model": "flux-haley-en", "voice": "", "instructions": "" }
+  },
+  {
+    "id": "athena",
+    "speech": {
+      "provider": "deepgram",
+      "model": "aura-2-athena-en",
+      "voice": "",
+      "instructions": ""
+    }
+  },
+  {
+    "id": "arcas",
+    "speech": {
+      "provider": "deepgram",
+      "model": "aura-2-arcas-en",
+      "voice": "",
+      "instructions": ""
+    }
+  }
+]

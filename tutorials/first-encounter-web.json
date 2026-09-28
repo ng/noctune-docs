@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "title": "Your first encounter in noctune — web",
+  "scenes": [
+    {
+      "id": "start",
+      "platform": "web",
+      "headline": ["Start an", "encounter."],
+      "source": "encounters/new-encounter/drawer.webp",
+      "narration": "Here's how to take an appointment from recording to client follow-up in noctune. Choose New Encounter and select your patient. noctune includes general SOAP and discharge templates. You can explore community templates or create your own. For this visit, we'll use the general templates."
+    },
+    {
+      "id": "record",
+      "platform": "web",
+      "headline": ["Record or", "upload audio."],
+      "source": "encounters/new-encounter/browser-recording.webp",
+      "narration": "Record the appointment in your browser, or upload an existing audio file. Review the queued recording, then choose Start processing to submit it."
+    },
+    {
+      "id": "process",
+      "platform": "web",
+      "headline": ["Give the draft", "time to prepare."],
+      "source": "encounters/detail/processing.webp",
+      "disclosure": "Processing time omitted",
+      "narration": "noctune transcribes the recording and prepares draft notes. You can leave this screen and return from the Encounters queue when the draft is ready."
+    },
+    {
+      "id": "review",
+      "platform": "web",
+      "headline": ["Review the", "clinical note."],
+      "narration": "Review the clinical note against the transcript and audio. Click a highlighted citation or annotation to jump to the matching audio and transcript. Check the patient details, findings, and plan. The draft is a starting point for your clinical review.",
+      "instructionCard": [
+        "Click a citation: jump to audio and transcript.",
+        "Check patient details, findings, and plan.",
+        "Use the draft as a starting point."
+      ],
+      "disclosure": "Corrected UI capture pending",
+      "instructionTitle": "Your clinical review",
+      "instructionLabels": ["Follow the evidence", "Verify the details", "Use your judgment"],
+      "instructionStyle": "evidence"
+    },
+    {
+      "id": "edit",
+      "platform": "web",
+      "headline": ["Edit, save,", "and complete."],
+      "narration": "Choose Edit to make corrections, then Save. When your review is finished, choose Complete. Saving an edit and completing the encounter are separate steps.",
+      "instructionCard": [
+        "Make corrections to the draft.",
+        "Keep your changes.",
+        "Finish after your clinical review."
+      ],
+      "disclosure": "Corrected UI capture pending",
+      "instructionTitle": "From draft to complete",
+      "instructionLabels": ["Edit", "Save", "Complete"],
+      "instructionStyle": "sequence"
+    },
+    {
+      "id": "send",
+      "platform": "web",
+      "headline": ["Send discharge", "on any account."],
+      "narration": "Review your discharge instructions, then choose Send Email and Send discharge notes. Every account can send them. Without Nest, discharge emails use no reply by default. Confirm the recipient before sending; drafts are never sent automatically.",
+      "instructionCard": [
+        "Review discharge instructions and recipient.",
+        "Every account can send discharge notes.",
+        "Without Nest, no-reply is the default."
+      ],
+      "disclosure": "Corrected UI capture pending",
+      "instructionTitle": "Before you send",
+      "instructionLabels": ["Review the details", "Sending is included", "Know where replies go"]
+    },
+    {
+      "id": "follow-up",
+      "platform": "web",
+      "headline": ["Private replies", "with Nest."],
+      "source": "messages/inbox.webp",
+      "narration": "With noctune Nest, clients can reply through a private relay address. Your personal email stays hidden, and replies return to noctune, linked to the encounter. Open Messages to follow up with the visit in context."
+    }
+  ]
+}

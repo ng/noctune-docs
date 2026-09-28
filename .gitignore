@@ -9,3 +9,8 @@ next-env.d.ts
 .DS_Store
 .serena/
 .capture/
+
+.tutorial-output/
+.speech-cache/
+
+.caption-cache/
