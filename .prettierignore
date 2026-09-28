@@ -9,3 +9,5 @@ next-env.d.ts
 .tutorial-output/
 .speech-cache/
 .codex/worktrees/
+
+.caption-cache/

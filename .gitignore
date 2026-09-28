@@ -12,3 +12,5 @@ next-env.d.ts
 
 .tutorial-output/
 .speech-cache/
+
+.caption-cache/

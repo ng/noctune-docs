@@ -7,7 +7,7 @@
       "platform": "web",
       "headline": ["Start an", "encounter."],
       "source": "encounters/new-encounter/drawer.webp",
-      "narration": "Here's how to take an appointment from recording to client follow-up in noctune. Choose New Encounter, select your patient, and choose the templates for your clinical note and discharge instructions."
+      "narration": "Here's how to take an appointment from recording to client follow-up in noctune. Choose New Encounter and select your patient. noctune includes general SOAP and discharge templates. You can explore community templates or create your own. For this visit, we'll use the general templates."
     },
     {
       "id": "record",

@@ -1,4 +1,5 @@
 import fs from 'node:fs'
+import { createHash } from 'node:crypto'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { execFileSync } from 'node:child_process'
@@ -93,7 +94,7 @@ export async function render(timelineDir, output, roots) {
     const segments = []
     for (const [index, { scene, source, audio, motion, start }] of inputs.entries()) {
       const phone = scene.platform === 'ios'
-      const box = phone ? { x: 1260, y: 64, w: 420, h: 912 } : { x: 610, y: 156, w: 1248, h: 702 }
+      const box = phone ? { x: 1280, y: 64, w: 380, h: 826 } : { x: 610, y: 156, w: 1248, h: 702 }
       const left = 76,
         fontSize = phone ? 60 : 40
       const headline = scene.headline
@@ -105,10 +106,18 @@ export async function render(timelineDir, output, roots) {
       const bars = story.scenes
         .map(
           (_, i) =>
-            `<rect x="${left + i * 55}" y="955" width="42" height="4" rx="2" fill="${i <= index ? '#11736F' : '#D2E2DC'}"/>`,
+            `<rect x="${left + i * 55}" y="860" width="42" height="4" rx="2" fill="${i <= index ? '#11736F' : '#D2E2DC'}"/>`,
         )
         .join('')
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><rect width="100%" height="100%" fill="#F3F8F2"/><ellipse cx="1680" cy="650" rx="690" ry="880" fill="#CDE7DF"/><g font-family="Arial" fill="#132D2B"><image href="data:image/png;base64,${logo}" x="76" y="56" width="300" height="80" preserveAspectRatio="xMinYMid meet"/><text x="76" y="262" font-size="19" fill="#53716A">${String(index + 1).padStart(2, '0')} / ${phone ? 'iOS' : 'WEB'} WALKTHROUGH</text>${headline}<text x="76" y="900" font-size="20" fill="#4D6963">Your first encounter, step by step.</text>${bars}<rect x="${box.x - 8}" y="${box.y - 8}" width="${box.w + 16}" height="${box.h + 16}" rx="${phone ? 42 : 16}" fill="#153D38"/><text x="960" y="1032" text-anchor="middle" font-size="19" fill="#4D6963">Fictional demo data · AI narration · ${motion ? 'Recorded app footage' : 'Static app capture'}${scene.disclosure ? ' · ' + escape(scene.disclosure) : ''}</text></g></svg>`
+      const frame = phone
+        ? `<rect x="${box.x - 8}" y="${box.y - 8}" width="${box.w + 16}" height="${box.h + 16}" rx="42" fill="#153D38"/>`
+        : `<defs><filter id="browser-shadow" x="-15%" y="-15%" width="130%" height="145%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#153D38" flood-opacity="0.14"/></filter></defs>
+          <rect x="${box.x - 2}" y="${box.y - 54}" width="${box.w + 4}" height="${box.h + 56}" rx="16" fill="#EEF2F1" stroke="#CDD9D5" stroke-width="2" filter="url(#browser-shadow)"/>
+          <path d="M${box.x + 27} ${box.y - 36}l-8 8 8 8m20-16 8 8-8 8" fill="none" stroke="#788983" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="${box.x + 240}" y="${box.y - 44}" width="${box.w - 480}" height="33" rx="8" fill="#FFFFFF" stroke="#D8E2DE"/>
+          <text x="${box.x + box.w / 2}" y="${box.y - 21}" text-anchor="middle" font-size="18" fill="#52655D">app.noctune.ai</text>
+          <path d="M${box.x} ${box.y - 1}h${box.w}" stroke="#D5DFDB"/>`
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><rect width="100%" height="100%" fill="#F3F8F2"/><ellipse cx="1680" cy="650" rx="690" ry="880" fill="#CDE7DF"/><g font-family="Arial" fill="#132D2B"><image href="data:image/png;base64,${logo}" x="76" y="56" width="300" height="80" preserveAspectRatio="xMinYMid meet"/><text x="76" y="262" font-size="19" fill="#53716A">${String(index + 1).padStart(2, '0')} / ${phone ? 'iOS' : 'WEB'} WALKTHROUGH</text>${headline}<text x="76" y="820" font-size="20" fill="#4D6963">Your first encounter, step by step.</text>${bars}${frame}<text x="960" y="1050" text-anchor="middle" font-size="19" fill="#4D6963">Fictional demo data · ${motion ? 'Recorded app footage' : 'Static app capture'}${scene.disclosure ? ' · ' + escape(scene.disclosure) : ''}</text></g></svg>`
       const card = path.join(work, `${index}-card.png`)
       await sharp(Buffer.from(svg)).png().toFile(card)
       const segment = path.join(work, `${index}.mp4`)
@@ -195,6 +204,13 @@ export async function render(timelineDir, output, roots) {
           width: 1920,
           height: 1080,
           speech: story.speech,
+          scenes: inputs.map(({ scene, audio }) => ({
+            id: scene.id,
+            audioSha256: createHash('sha256').update(fs.readFileSync(audio)).digest('hex'),
+            narration: scene.narration,
+            at: scene.at,
+            duration: scene.duration,
+          })),
           fullDecodePassed: true,
           visualReviewPassed: false,
           published: false,

@@ -27,6 +27,8 @@
     "test:wordmark": "node --test tests/wordmark-style.test.mjs",
     "tsc": "tsc --noEmit",
     "tutorials:audition": "node scripts/tutorials/audition.mjs",
+    "tutorials:caption-video": "node scripts/tutorials/caption-video.mjs",
+    "tutorials:captions": "node scripts/tutorials/captions.mjs",
     "tutorials:narrate": "node scripts/tutorials/narrate.mjs",
     "tutorials:render": "node scripts/tutorials/render.mjs"
   },

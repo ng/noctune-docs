@@ -90,8 +90,9 @@ No screenshot source files are changed by the tutorial renderer.
 - Cache: sibling `.speech-cache/`, keyed by text, provider, model, voice, and direction.
   Cache hits avoid another paid synthesis call. Delete a specific cached WAV to retry.
 - Scene timings use measured speech duration plus a short pause, rounded to 30 fps.
-- Subtitles are scene-level cues, **not word-aligned**. Shorter caption cues, burned-in
-  captions, 4:5 composition, and fresh motion capture remain follow-up production work.
+- The narration step writes coarse scene-level SRT. Run the separate caption pass below
+  for short timed phrases, WebVTT, and a captioned LinkedIn export. A 4:5 composition
+  and fresh motion capture remain follow-up production work.
 - Generation stages new files and preserves the previous complete output if it fails.
   Run only one process per output directory at a time.
 - The renderer verifies dimensions, codecs, duration, and full decoding. Inspect all
@@ -103,3 +104,37 @@ voice changes, failed-output preservation, mixed-platform rendering, timing, and
 source-path constraints. `pnpm check` includes these tests without calling paid APIs.
 Generated media stays ignored. Publish reviewed videos to a chosen media destination;
 do not check large generated videos into ordinary Git history.
+
+## Captions and browser presentation
+
+Web footage sits in a light browser frame with an address field, rounded outer corners,
+and a soft shadow. iOS footage retains its phone frame. Both layouts reserve space below
+the product UI for a maximum of two caption lines. The horizontal logo remains visible.
+
+```sh
+pnpm tutorials:captions .tutorial-output/first-encounter/narration \
+  .tutorial-output/first-encounter/captions "$TUTORIAL_ENV_FILE"
+pnpm tutorials:caption-video .tutorial-output/first-encounter/video \
+  .tutorial-output/first-encounter/captions .tutorial-output/first-encounter/delivery
+```
+
+The timing pass uses Deepgram Nova-3 on the already-generated WAV files, independently
+of the narration provider. It caches word timings by audio content. Caption text comes
+from the authored script, with hyphenated compounds split into words. Recognition
+corrections are reported in `captions.json`; token-count mismatches, large transcript
+changes, or invalid times stop generation for review. Speech recognition timestamps
+are approximate, so listen and inspect synchronization before publishing.
+
+The timing function can be replaced independently; the delivery renderer consumes
+provider-neutral `captions.json` cues with start/end seconds and text, tied to the
+video's scene/audio hashes. It refuses captions from a different narration version.
+
+Delivery includes a clean MP4 plus SRT/WebVTT for optional closed captions, a second MP4
+with captions burned in for sound-off viewing, and `review.html` with both players.
+The review page embeds its VTT as a Blob so captions can be toggled even when opened
+locally. A docs integration should use the WebVTT file in a standard caption track.
+
+Burning uses transparent image overlays rather than requiring a special subtitle-enabled
+FFmpeg build. Inspect every cue in `qa/captions-contact-sheet.png`; the automated gate
+checks media decoding, timing bounds, line limits, and narration identity, not listening
+quality. Generated `.caption-cache/` folders are local and must not be committed.

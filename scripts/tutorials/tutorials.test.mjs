@@ -219,3 +219,121 @@ test('renderer handles web and iOS inputs and rejects timing and source escapes'
   timeline.scenes[1].at += 1
   assert.throws(() => validateTimeline(timeline), /timing/)
 })
+
+test('captions preserve authored wording, flag recognition corrections, and bound line lengths', async () => {
+  const { scriptWords, cuesFromWords, transcribeDeepgram } = await import('./captions.mjs')
+  const text =
+    'Open Messages to follow up with your client. Encounter-linked replies keep the conversation connected to the visit.'
+  const recognized =
+    'Open Messages to follow-up with your client. EncounterLink replies keep the conversation connected to the visit.'.split(
+      ' ',
+    )
+  const words = recognized.map((word, i) => ({
+    word,
+    punctuated_word: word,
+    start: i * 0.3,
+    end: i * 0.3 + 0.28,
+  }))
+  const aligned = scriptWords(text, words, 10)
+  assert.equal(aligned.corrections.length, 1)
+  assert.ok(aligned.words.some((word) => word.text === 'linked'))
+  const cues = cuesFromWords(aligned.words, 5)
+  assert.ok(
+    cues.every(
+      (cue) =>
+        cue.start >= 5 &&
+        cue.end > cue.start &&
+        cue.text.split('\n').length <= 2 &&
+        cue.text.split('\n').every((line) => line.length <= 42),
+    ),
+  )
+  assert.equal(cues.map((c) => c.text.replaceAll('\n', ' ')).join(' '), text.replaceAll('-', ' '))
+  assert.throws(() => scriptWords('Missing words.', words, 10), /alignment needs review/)
+  assert.throws(
+    () => scriptWords('Wrong.', [{ word: 'Different.', start: 0, end: 1 }], 2),
+    /differs too much/,
+  )
+  await assert.rejects(
+    transcribeDeepgram(
+      Buffer.from('audio'),
+      { DEEPGRAM_API_KEY: 'secret' },
+      async () => new Response('secret', { status: 403 }),
+    ),
+    (error) => !error.message.includes('secret'),
+  )
+})
+
+test('caption delivery rejects stale or overlapping captions and generates clean and burned exports', async (t) => {
+  const { render } = await import('./render.mjs')
+  const { captionVideo, validateCues } = await import('./caption-video.mjs')
+  const { default: sharp } = await import('sharp')
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'caption-test-'))
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }))
+  const media = path.join(root, 'media')
+  fs.mkdirSync(media)
+  await sharp({ create: { width: 1600, height: 900, channels: 3, background: '#fff' } })
+    .png()
+    .toFile(path.join(media, 'web.png'))
+  registerProvider('caption-test', {
+    validate() {},
+    async synthesize() {
+      return { bytes: wav(), extension: 'wav' }
+    },
+  })
+  const story = {
+    version: 1,
+    title: 'Caption fixture',
+    scenes: [
+      {
+        id: 'web',
+        platform: 'web',
+        headline: ['Web fixture'],
+        narration: 'Hello.',
+        source: 'web.png',
+      },
+    ],
+  }
+  const narration = path.join(root, 'narration'),
+    video = path.join(root, 'video'),
+    captionDir = path.join(root, 'captions'),
+    delivery = path.join(root, 'delivery')
+  await narrate(
+    story,
+    { provider: 'caption-test', model: 'test' },
+    {},
+    narration,
+    path.join(root, 'cache'),
+  )
+  await render(narration, video, { web: media })
+  const manifest = JSON.parse(fs.readFileSync(path.join(video, 'manifest.json')))
+  const data = {
+    duration: manifest.duration,
+    scenes: manifest.scenes,
+    cues: [{ start: 0, end: 0.3, text: 'Hello.' }],
+    corrections: [],
+  }
+  assert.throws(() => validateCues({ ...data, scenes: [] }, manifest), /do not match/)
+  assert.throws(
+    () => validateCues({ ...data, cues: [...data.cues, ...data.cues] }, manifest),
+    /overlapping/,
+  )
+  fs.mkdirSync(captionDir)
+  fs.writeFileSync(path.join(captionDir, 'captions.json'), JSON.stringify(data))
+  fs.writeFileSync(
+    path.join(captionDir, 'walkthrough.srt'),
+    '1\n00:00:00,000 --> 00:00:00,300\nHello.\n',
+  )
+  fs.writeFileSync(
+    path.join(captionDir, 'walkthrough.vtt'),
+    'WEBVTT\n\n00:00:00.000 --> 00:00:00.300\nHello.\n',
+  )
+  await captionVideo(video, captionDir, delivery)
+  assert.ok(fs.statSync(path.join(delivery, 'walkthrough-captioned.mp4')).size > 1000)
+  assert.deepEqual(
+    fs.readFileSync(path.join(video, 'walkthrough-landscape.mp4')),
+    fs.readFileSync(path.join(delivery, 'walkthrough-clean.mp4')),
+  )
+  assert.ok(
+    fs.readFileSync(path.join(delivery, 'review.html'), 'utf8').includes("t.kind='captions'"),
+  )
+})
