@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "title": "Your first encounter in noctune — web",
+  "scenes": [
+    {
+      "id": "start",
+      "platform": "web",
+      "headline": ["Start an", "encounter."],
+      "source": "encounters/new-encounter/drawer.webp",
+      "narration": "Here's how to take an appointment from recording to client follow-up in noctune. Choose New Encounter, select your patient, and choose the templates for your clinical note and discharge instructions."
+    },
+    {
+      "id": "record",
+      "platform": "web",
+      "headline": ["Record or", "upload audio."],
+      "source": "encounters/new-encounter/browser-recording.webp",
+      "narration": "Record the appointment in your browser, or upload an existing audio file. Review the queued recording, then choose Process file to submit it."
+    },
+    {
+      "id": "process",
+      "platform": "web",
+      "headline": ["Give the draft", "time to prepare."],
+      "source": "encounters/detail/processing.webp",
+      "disclosure": "Processing time omitted",
+      "narration": "noctune transcribes the recording and prepares draft notes. You can leave this screen and return from the Encounters queue when the draft is ready."
+    },
+    {
+      "id": "review",
+      "platform": "web",
+      "headline": ["Review the", "clinical note."],
+      "source": "encounters/detail/overview.webp",
+      "narration": "Review the clinical note against the transcript and audio. Check the patient details, findings, and plan. The draft is a starting point for your clinical review."
+    },
+    {
+      "id": "edit",
+      "platform": "web",
+      "headline": ["Edit, save,", "and complete."],
+      "source": "encounters/detail/soap-edit.webp",
+      "narration": "Choose Edit to make corrections, then Save. When your review is finished, choose Complete. Saving an edit and completing the encounter are separate steps."
+    },
+    {
+      "id": "send",
+      "platform": "web",
+      "headline": ["Send reviewed", "instructions."],
+      "source": "encounters/detail/send-discharge.webp",
+      "narration": "Review the discharge instructions before sending them. Choose Send Email, then Send discharge notes. Confirm the recipient and send. Drafts are never sent automatically."
+    },
+    {
+      "id": "follow-up",
+      "platform": "web",
+      "headline": ["Keep follow-up", "in context."],
+      "source": "messages/inbox.webp",
+      "narration": "Open Messages to follow up with your client. Encounter-linked replies keep the conversation connected to the visit. That's the workflow: record, review, and follow up."
+    }
+  ]
+}
