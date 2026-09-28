@@ -55,6 +55,9 @@ Actual social posting and public video publication are separate from this buildo
   cues and toggles captions correctly. Full listening review remains pending.
 - Frame-based in-points replace wall-clock trims: the encoded opening is matched
   to the ready UI screenshot, with raw/source timing retained in the manifest.
+  Capture holds the ready UI before acting so the screencast can catch up. A frame
+  audit caught an edit cut that skipped the editor; the replacement take visibly
+  includes Edit, the correction, Save, the saved wording, and header completion.
 - The native harness is in the existing clean sibling worktree
   `.worktrees/ios-asc-capture` (from the workspace root); read its
   `docs/app-store-capture.md`. Dedicated iPhone UUID:

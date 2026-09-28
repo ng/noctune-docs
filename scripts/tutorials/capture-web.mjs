@@ -297,6 +297,9 @@ try {
           timeout: 60000,
         })
       await expect(page.locator('.MuiSkeleton-root')).toHaveCount(0, { timeout: 60000 })
+      // Let the browser screencast flush the ready state before any interaction.
+      // DOM assertions can resolve while the encoded video still shows loading.
+      await wait(3000)
       const readyReference = path.join(stage, `${id}-ready.png`)
       await page.screenshot({ path: readyReference })
       const begin = (performance.now() - started) / 1000
@@ -344,8 +347,9 @@ try {
         await expect(editor).toBeVisible()
         const original = await editor.inputValue()
         if (!original.includes('current diet')) throw Error('Expected original fixture wording')
+        await wait(1000)
         await editor.fill(original.replace('current diet', 'usual diet'))
-        await wait(1200)
+        await wait(2000)
         await page.getByRole('button', { name: 'Save', exact: true }).click()
         await expect(editor).toBeHidden()
         await expect(page.getByText(/Continue the usual diet/)).toBeVisible()
