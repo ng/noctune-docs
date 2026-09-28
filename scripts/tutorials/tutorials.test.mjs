@@ -467,3 +467,52 @@ test('rejected caption timing can retry, and old invalid cache is evicted', asyn
   await captions(narration, output, {}, transcribe)
   assert.equal(calls, 3)
 })
+
+test('media assembly verifies recordings and preserves previous output on a changed checksum', async (t) => {
+  const { prepareMedia } = await import('./prepare-media.mjs')
+  const { createHash } = await import('node:crypto')
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tutorial-assembly-test-'))
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }))
+  const recordings = path.join(root, 'recordings'),
+    screenshots = path.join(root, 'screenshots'),
+    output = path.join(root, 'prepared')
+  fs.mkdirSync(recordings)
+  fs.mkdirSync(screenshots)
+  fs.writeFileSync(path.join(recordings, 'start.mp4'), 'recorded bytes')
+  fs.writeFileSync(path.join(screenshots, 'process.webp'), 'static bytes')
+  const storyFile = path.join(root, 'story.json')
+  fs.writeFileSync(
+    storyFile,
+    JSON.stringify({
+      version: 1,
+      title: 'Assembly',
+      scenes: [
+        { id: 'start', platform: 'web', narration: 'Start.', source: 'absent.webp' },
+        { id: 'process', platform: 'web', narration: 'Wait.', source: 'process.webp' },
+        { id: 'review', platform: 'web', narration: 'Review.', instructionCard: ['Review.'] },
+      ],
+    }),
+  )
+  fs.writeFileSync(
+    path.join(recordings, 'capture-manifest.json'),
+    JSON.stringify({
+      coreCommit: 'fixture',
+      shots: [
+        {
+          id: 'start',
+          file: 'start.mp4',
+          sha256: createHash('sha256').update('recorded bytes').digest('hex'),
+        },
+      ],
+    }),
+  )
+  await prepareMedia(storyFile, recordings, output, screenshots)
+  assert.equal(fs.readFileSync(path.join(output, 'media', 'start.mp4'), 'utf8'), 'recorded bytes')
+  assert.equal(fs.readFileSync(path.join(output, 'media', 'process.webp'), 'utf8'), 'static bytes')
+  const story = JSON.parse(fs.readFileSync(path.join(output, 'story.json')))
+  assert.equal(story.scenes[0].source, 'start.mp4')
+  assert.deepEqual(story.scenes[2].instructionCard, ['Review.'])
+  fs.writeFileSync(path.join(recordings, 'start.mp4'), 'changed')
+  await assert.rejects(prepareMedia(storyFile, recordings, output, screenshots), /checksum changed/)
+  assert.equal(fs.readFileSync(path.join(output, 'media', 'start.mp4'), 'utf8'), 'recorded bytes')
+})

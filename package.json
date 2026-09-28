@@ -29,7 +29,9 @@
     "tutorials:audition": "node scripts/tutorials/audition.mjs",
     "tutorials:caption-video": "node scripts/tutorials/caption-video.mjs",
     "tutorials:captions": "node scripts/tutorials/captions.mjs",
+    "tutorials:capture-web": "node scripts/tutorials/capture-web.mjs",
     "tutorials:narrate": "node scripts/tutorials/narrate.mjs",
+    "tutorials:prepare-media": "node scripts/tutorials/prepare-media.mjs",
     "tutorials:render": "node scripts/tutorials/render.mjs"
   },
   "lint-staged": {

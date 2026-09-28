@@ -151,3 +151,45 @@ Burning uses transparent image overlays rather than requiring a special subtitle
 FFmpeg build. Inspect every cue in `qa/captions-contact-sheet.png`; the automated gate
 checks media decoding, timing bounds, line limits, and narration identity, not listening
 quality. Generated `.caption-cache/` folders are local and must not be committed.
+
+## Record web interactions
+
+Use the primary docs checkout's existing `.env.capture.local` and a clean isolated
+Core worktree at the intended product revision, with dependencies installed. The
+runner validates the existing database allowlist and guard, applies committed Core
+migrations to that disposable database, and refreshes only the reserved development
+auth identity. Existing fictional encounters are preserved; no reseed occurs.
+
+Acquire the shared `noctune-native-capture` coordination lock before starting. The
+runner also holds the docs screenshot lock to avoid a concurrent fixture refresh.
+It uses loopback port 3108, real development authentication, and a synthetic browser
+microphone. No email is sent, and processing services remain in capture-fake mode.
+
+```sh
+pnpm tutorials:capture-web /absolute/path/to/primary/noctune-docs \
+  /absolute/path/to/isolated/noctune-core .tutorial-output/web-interactions
+```
+
+An optional fourth argument selects comma-separated shots (`start`, `record`,
+`follow-up`, or the review-screen checkpoint `review`). Each verified 32-second MP4 includes real UI and a
+reading hold; the output includes raw browser video, poster frames, and a checksum
+manifest. Missing UI states fail the run while preserving previous complete output.
+The developer-only Next.js badge is hidden during recording; product UI is unchanged.
+Review footage before composing it into an episode. The review checkpoint verifies
+the in-note badge correction; it still needs working fixture audio and citation
+interaction before it can replace the approved review card.
+
+To compose verified clips with the current storyboard's held cards and remaining
+static captures, assemble a separate media root first. This checks recording hashes
+and copies source bytes without altering `public/screenshots/`:
+
+```sh
+pnpm tutorials:prepare-media tutorials/first-encounter-web.json \
+  .tutorial-output/web-interactions .tutorial-output/first-encounter-recorded/prepared
+pnpm tutorials:narrate .tutorial-output/first-encounter-recorded/prepared/story.json \
+  .tutorial-output/first-encounter-recorded/narration "$TUTORIAL_ENV_FILE"
+```
+
+Use the prepared `media/` directory as the renderer's web media root, then run the
+caption and dual-delivery commands. The `sources.json` records which scenes use
+recorded versus static media. Instruction cards remain explicit in the story.

@@ -34,6 +34,19 @@ Actual social posting and public video publication are separate from this buildo
   status is not evidence that a review ran. Check again on resume and address
   actionable findings if present. No manual review request has been posted.
 
+## Current recording checkpoint
+
+- PR #74 contains the six review fixes; CI passed at the latest check.
+- Real start, browser recording/pause/resume/stop, and message-reply clips are under
+  `.tutorial-output/web-interactions`. No email was sent or queued audio submitted.
+- Both caption exports rendered under `.tutorial-output/first-encounter-recorded/delivery`;
+  these remain drafts with held instruction cards. Unchanged scenes reuse approved
+  Arcas narration from the original `.speech-cache`.
+- The `review` clip verifies the badge removal but is **not delivery-ready**: its
+  fixture audio is unavailable and it does not yet demonstrate citation navigation.
+- Current queued-recording button says **Process 1 file**; narration uses “submit
+  it for processing” to avoid mismatched labels.
+
 ## Execution order
 
 1. Check PR review threads, CI, current branches, worktrees, and Ygg coordination.
@@ -44,13 +57,14 @@ Actual social posting and public video publication are separate from this buildo
    follow the repository's independent human-confirmation requirement.
 3. Implement deterministic recording of authentic web interactions. Build the first
    encounter around one fictional patient and appointment, including recording or
-   upload, **Start processing**, queue/processing, clinical review, editing/saving,
+   upload, the actual processing button, queue/processing, clinical review, editing/saving,
    completion, discharge, and encounter-linked follow-up. Disclose processing cuts.
-4. Replace eligible stills/cards with verified footage. Hold the completed-encounter
-   shots until the temporarily incorrect UI has been corrected and verified. This
-   includes overview/review, SOAP editing, and discharge-dialog backgrounds. Keep
-   approved cards for those scenes while progressing on unaffected work; never
-   fabricate or retouch replacement product UI.
+4. Replace eligible stills/cards with verified footage. The user clarified that the
+   incorrect UI is the Accepted badge inside the note, not the header completion
+   control. [Core PR #833](https://github.com/ng/noctune-core/pull/833) removes it; local capture verifies
+   it is absent. The same capture exposed an unavailable fixture audio link. Repair
+   fixture audio before recording citation playback; preserve approved cards until
+   those interactions are verified. Never fabricate or retouch product UI.
 5. Record citation/annotation navigation after the correction: click the highlight,
    show the matching transcript jump and audio seek together, then hold briefly.
    Show Discharge Notes before opening the send dialog. Verify reply-route behavior
