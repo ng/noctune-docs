@@ -41,16 +41,16 @@
     {
       "id": "send",
       "platform": "web",
-      "headline": ["Send reviewed", "instructions."],
+      "headline": ["Send discharge", "on any account."],
       "source": "encounters/detail/send-discharge.webp",
-      "narration": "Review the discharge instructions before sending them. Choose Send Email, then Send discharge notes. Confirm the recipient and send. Drafts are never sent automatically."
+      "narration": "Review your discharge instructions, then choose Send Email and Send discharge notes. Every account can send them. Without Nest, discharge emails use no reply by default. Confirm the recipient before sending; drafts are never sent automatically."
     },
     {
       "id": "follow-up",
       "platform": "web",
-      "headline": ["Keep follow-up", "in context."],
+      "headline": ["Private replies", "with Nest."],
       "source": "messages/inbox.webp",
-      "narration": "Open Messages to follow up with your client. Encounter-linked replies keep the conversation connected to the visit. That's the workflow: record, review, and follow up."
+      "narration": "With noctune Nest, clients can reply through a private relay address. Your personal email stays hidden, and replies return to noctune, linked to the encounter. Open Messages to follow up with the visit in context."
     }
   ]
 }

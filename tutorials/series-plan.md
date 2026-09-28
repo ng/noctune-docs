@@ -52,3 +52,23 @@ navigation belong in focused follow-ups rather than lengthening the first video.
 
 Do not display “AI narration” in the video footer. Keep the fictional-data label and
 any applicable processing-time or static-capture disclosures accurate.
+
+## Discharge sending and Nest
+
+The overview must distinguish sending from reply routing: every account can send
+reviewed discharge notes. Without Nest, discharge sending uses no-reply by default.
+Nest adds a private relay address, hides the clinician's personal email, and brings
+encounter-linked replies back into noctune. Explain this at the discharge-to-follow-up
+transition, not only in an upgrade or settings tutorial. In the recorded version,
+show the Discharge Notes tab before the send dialog, then demonstrate the reply-route
+selection and the resulting encounter-linked message.
+
+Use “private relay” in narration. The dedicated messaging tutorial should demonstrate
+Nest, no-reply, and personal-email routes, including the address-visibility tradeoff.
+Verify each route against the specific composer used: the generic messaging docs and
+some discharge handlers differ on personal-email entitlement checks. Do not
+promise that option in this overview or imply that every non-Nest send behaves the same.
+
+Both video delivery modes are standard: a burned-caption LinkedIn export and a clean
+video with switchable captions for docs. Keep the two exports on the same narration
+and scene timeline.
