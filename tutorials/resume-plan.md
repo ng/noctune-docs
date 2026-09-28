@@ -36,16 +36,37 @@ Actual social posting and public video publication are separate from this buildo
 
 ## Current recording checkpoint
 
-- PR #74 contains the six review fixes; CI passed at the latest check.
-- Real start, browser recording/pause/resume/stop, and message-reply clips are under
-  `.tutorial-output/web-interactions`. No email was sent or queued audio submitted.
-- Both caption exports rendered under `.tutorial-output/first-encounter-recorded/delivery`;
-  these remain drafts with held instruction cards. Unchanged scenes reuse approved
-  Arcas narration from the original `.speech-cache`.
-- The `review` clip verifies the badge removal but is **not delivery-ready**: its
-  fixture audio is unavailable and it does not yet demonstrate citation navigation.
-- Current queued-recording button says **Process 1 file**; narration uses “submit
-  it for processing” to avoid mismatched labels.
+- PR #74 contains the six review fixes and the web capture tools. The first local
+  full check passed; GitHub Actions is currently limited by account billing.
+- All seven web scenes have real app footage in `.tutorial-output/web-interactions`.
+  Recording includes pause/resume/stop and **Process 1 file**, using isolated upload
+  API/storage fixtures. Composition explicitly labels the simulated cloud services.
+- The review shot verifies citation highlighting, audio seeking, and transcript
+  navigation together. A reserved tutorial note version adds the weight citation;
+  playback uses Core’s 284-second synthetic WAV fixture with proper range responses.
+- Edit/save/complete and discharge/no-reply preparation are captured. No email is sent.
+  Core PR #833 removes the Accepted badge and fixes saved clinical edits being hidden
+  by original content blocks. Both fixes pass local pre-push checks and visual capture.
+- All held cards can now be replaced with inspected footage via `prepare-media`
+  `review,edit,send`. The approved fallback storyboard remains unchanged.
+- Both exports live under `.tutorial-output/first-encounter-recorded/delivery` and are
+  copied to the primary docs `.capture/tutorials/2026-09-28/first-encounter-recorded/`.
+  Unchanged scenes reuse approved Arcas audio. The clean player loads all 27 English
+  cues and toggles captions correctly. Full listening review remains pending.
+- Frame-based in-points replace wall-clock trims: the encoded opening is matched
+  to the ready UI screenshot, with raw/source timing retained in the manifest.
+- The native harness is in the existing clean sibling worktree
+  `.worktrees/ios-asc-capture` (from the workspace root); read its
+  `docs/app-store-capture.md`. Dedicated iPhone UUID:
+  `53023D75-6CCC-4084-BC77-A4B970C103FB`. Use `--reuse-fixtures` to retain native takes. A fresh ad-hoc signed capture build
+  succeeded at `/tmp/noctune-asc-capture-build/Build/Products/Debug-iphonesimulator/Noctune.app`
+  from Swift commit `ba48f05`; no tracked Swift files changed. Older native review
+  footage includes a keyboard onboarding prompt and needs a fresh take.
+- Native fixture playback still needs working development media. The explicit
+  `noctune-dev` AWS profile reports a missing SSO token; the user has been asked to
+  run `aws sso login --profile noctune-dev`. Verify development account `957396244983`
+  before reading development SSM/media configuration. Preserve the approved disposable
+  docs database and do not reseed the canonical development database.
 
 ## Execution order
 
@@ -62,9 +83,8 @@ Actual social posting and public video publication are separate from this buildo
 4. Replace eligible stills/cards with verified footage. The user clarified that the
    incorrect UI is the Accepted badge inside the note, not the header completion
    control. [Core PR #833](https://github.com/ng/noctune-core/pull/833) removes it; local capture verifies
-   it is absent. The same capture exposed an unavailable fixture audio link. Repair
-   fixture audio before recording citation playback; preserve approved cards until
-   those interactions are verified. Never fabricate or retouch product UI.
+   it is absent. Fixture audio and citation playback are now verified; use the recorded
+   scenes. Never fabricate or retouch product UI.
 5. Record citation/annotation navigation after the correction: click the highlight,
    show the matching transcript jump and audio seek together, then hold briefly.
    Show Discharge Notes before opening the send dialog. Verify reply-route behavior
@@ -109,7 +129,7 @@ cues and captions can be toggled. Preserve source/timing provenance and cache sa
 - [x] Provider-neutral narration, rendering, caption alignment, and dual exports.
 - [x] Approved first web draft and visual direction.
 - [ ] Real web encounter capture and final web episode.
-- [ ] Completed-encounter UI correction verified and held shots recaptured.
+- [x] Completed-encounter UI correction verified and held shots recaptured.
 - [ ] Native iOS end-to-end episode.
 - [ ] Hybrid episode with fixture continuity.
 - [ ] Record and recover episodes.

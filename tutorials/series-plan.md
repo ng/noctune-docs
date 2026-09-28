@@ -73,17 +73,16 @@ Both video delivery modes are standard: a burned-caption LinkedIn export and a c
 video with switchable captions for docs. Keep the two exports on the same narration
 and scene timeline.
 
-## Capture hold: completed encounter UI
+## Completed encounter UI and evidence navigation
 
-Do not use the current completed-encounter screen: its UI is temporarily incorrect
-(user review, September 28, 2026). The overview, SOAP editor, and discharge dialog
-captures all expose that state. The draft uses clearly labeled instruction cards
-for review, edit, and discharge instead. Keep the narration and both delivery modes.
-Recapture these scenes only after the UI is corrected; do not retouch the screenshots
-or use the current completed-state images in the recorded tutorials.
+The user clarified that the unwanted status is the Accepted badge inside the note,
+not the header completion control. Core PR #833 removes that badge and fixes the
+viewer to display saved clinical edits. The corrected review, edit/save/complete,
+and discharge sequences have been captured against the fictional fixtures.
+The approved instruction cards remain available as fallback visuals.
 
-The overview must explain evidence navigation: clicking a highlighted citation or
-annotation jumps to the matching audio and transcript. The temporary review card
-illustrates this connection. After the UI correction, record the actual click and
-show the audio seek and transcript jump together, with a short hold to orient viewers.
-The focused review tutorial can teach annotation details and playback controls.
+The review recording clicks a real citation and verifies the note highlight,
+matching transcript passage, and audio seek together. Playback uses deterministic
+synthetic fixture audio; this does not demonstrate clinical transcription accuracy.
+The focused review tutorial should build on this with annotation details,
+full-screen reading, editing, and playback controls.

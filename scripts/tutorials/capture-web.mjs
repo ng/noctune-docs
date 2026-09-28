@@ -13,18 +13,28 @@ import {
   requireLoopbackBaseUrl,
 } from '../../capture/support/capture-safety.mjs'
 import { withStagedOutput } from './staged-output.mjs'
+import { installUploadFixture } from './web-upload-fixture.mjs'
+import { locateReadyFrame } from './video-timing.mjs'
 
-const [configRootArg, coreArg, outputArg, selected = 'start,record,follow-up'] =
-  process.argv.slice(2)
+const [
+  configRootArg,
+  coreArg,
+  outputArg,
+  selected = 'start,record,process,review,edit,send,follow-up',
+] = process.argv.slice(2)
 if (!configRootArg || !coreArg || !outputArg)
   throw Error(
-    'Usage: capture-web.mjs PRIMARY_DOCS CORE_RUNTIME OUTPUT [start,record,review,follow-up]',
+    'Usage: capture-web.mjs PRIMARY_DOCS CORE_RUNTIME OUTPUT [start,record,process,review,edit,send,follow-up]',
   )
 const configRoot = path.resolve(configRootArg),
   core = path.resolve(coreArg),
   output = path.resolve(outputArg)
 const shots = selected.split(',')
-if (shots.some((id) => !['start', 'record', 'review', 'follow-up'].includes(id)))
+if (
+  shots.some(
+    (id) => !['start', 'record', 'process', 'review', 'edit', 'send', 'follow-up'].includes(id),
+  )
+)
   throw Error('Unknown capture shot')
 const capture = dotenv.parse(fs.readFileSync(path.join(configRoot, '.env.capture.local')))
 const sourceCore = path.resolve(configRoot, capture.CAPTURE_CORE_DIR || '../noctune-core')
@@ -64,7 +74,7 @@ const lock = fs.openSync(lockPath, 'wx', 0o600)
 fs.writeFileSync(lock, String(process.pid))
 const logPath = path.join(captureRoot, 'tutorial-core.log')
 const log = fs.openSync(logPath, 'w', 0o600)
-let server, browser, debugPage
+let server, browser, debugPage, fixtureAudio, citationTime
 try {
   console.log('Applying committed Core migrations to the approved capture database.')
   execFileSync(
@@ -80,6 +90,34 @@ try {
     if (rows.length !== 1) throw Error('Reserved Mochi encounter is missing')
     now = new Date(rows[0].created_at).toISOString()
     env.DOCS_CAPTURE_NOW = now
+    const [note] =
+      await sql`select content_blocks from soap_notes where id = 'd0c50000-0000-4000-8000-000000000301' and transcription_id = 'd0c50000-0000-4000-8000-000000000201'`
+    const [segment] =
+      await sql`select start_time from transcript_segments where transcription_id = 'd0c50000-0000-4000-8000-000000000201' and text like 'Perfect. Let me get her up on the scale%'`
+    if (!note || !segment) throw Error('Expected reserved clinical fixtures are missing')
+    citationTime = Number(segment.start_time)
+    const blocks = note.content_blocks
+    const objective = blocks.find((block) => block.heading === 'Objective')
+    const phrase = 'Weight 4.6 kg (stable from the previous visit)'
+    if (!objective?.content.includes(phrase)) throw Error('Fixture weight finding changed')
+    objective.citations = [
+      { startTime: citationTime, text: phrase, offset: objective.content.indexOf(phrase) },
+    ]
+    // Clinical content blocks are immutable. Create a reserved tutorial version
+    // from the original fictional note rather than rewriting generated content.
+    await sql.begin(async (tx) => {
+      await tx`update soap_notes set is_active = false where transcription_id = 'd0c50000-0000-4000-8000-000000000201' and is_active = true`
+      await tx`insert into soap_notes select (jsonb_populate_record(null::soap_notes, to_jsonb(n) || jsonb_build_object('id', 'd0c50000-0000-4000-8000-000000000309', 'version', 2, 'parent_note_id', n.id, 'is_active', true, 'content_blocks', ${tx.json(blocks)}::jsonb))).* from soap_notes n where n.id = 'd0c50000-0000-4000-8000-000000000301' on conflict (id) do update set is_active = true`
+    })
+    if (shots.some((id) => ['start', 'record', 'process', 'review', 'edit'].includes(id))) {
+      await sql`update soap_notes n set rendered_markdown = original.rendered_markdown, edit_metadata = null, updated_at = original.updated_at from soap_notes original where n.id = 'd0c50000-0000-4000-8000-000000000309' and original.id = 'd0c50000-0000-4000-8000-000000000301'`
+      await sql`update transcriptions set finished_at = null, finished_by = null, finish_method = null where id = 'd0c50000-0000-4000-8000-000000000201'`
+    }
+    requireCore('tsx/cjs')
+    const { buildSyntheticDemoAudio } = requireCore(
+      path.join(core, 'scripts/fixtures/noctune-demo/media.ts'),
+    )
+    fixtureAudio = buildSyntheticDemoAudio(284).bytes
   } finally {
     await sql.end()
   }
@@ -160,9 +198,15 @@ try {
     fs.mkdirSync(raw, { recursive: true })
     const manifestPath = path.join(stage, 'capture-manifest.json')
     const previous = fs.existsSync(manifestPath)
-      ? JSON.parse(fs.readFileSync(manifestPath)).shots
-      : []
-    const records = previous.filter((shot) => !shots.includes(shot.id))
+      ? JSON.parse(fs.readFileSync(manifestPath))
+      : { shots: [] }
+    const records = previous.shots
+      .filter((shot) => !shots.includes(shot.id))
+      .map((shot) => ({
+        ...shot,
+        coreCommit: shot.coreCommit || previous.coreCommit,
+        capturedAt: shot.capturedAt || previous.capturedAt,
+      }))
     for (const id of shots) {
       const context = await browser.newContext({
         ...common,
@@ -173,7 +217,27 @@ try {
       const page = await context.newPage()
       debugPage = page
       const video = page.video()
+      const uploadEvidence = id === 'record' ? await installUploadFixture(page, baseURL) : null
       await page.clock.setFixedTime(new Date(now))
+      await page.route(
+        /\/docs-capture\/d0c50000-0000-4000-8000-000000000201\.m4a(?:\?.*)?$/,
+        async (route) => {
+          const range = /^bytes=(\d+)-(\d*)$/.exec(route.request().headers().range || '')
+          const start = range ? Number(range[1]) : 0
+          const end = range?.[2]
+            ? Math.min(Number(range[2]), fixtureAudio.length - 1)
+            : fixtureAudio.length - 1
+          await route.fulfill({
+            status: range ? 206 : 200,
+            contentType: 'audio/wav',
+            headers: {
+              'accept-ranges': 'bytes',
+              ...(range ? { 'content-range': `bytes ${start}-${end}/${fixtureAudio.length}` } : {}),
+            },
+            body: fixtureAudio.subarray(start, end + 1),
+          })
+        },
+      )
       await page.route('**/api/v1/me/onboarding', async (route) => {
         if (route.request().method() !== 'GET') return route.continue()
         await route.fulfill({
@@ -189,11 +253,13 @@ try {
         })
       })
       await page.goto(
-        id === 'review'
-          ? '/encounters/d0c50000-0000-4000-8000-000000000201'
-          : id === 'follow-up'
-            ? '/messages'
-            : '/dashboard',
+        id === 'process'
+          ? '/encounters/d0c50000-0000-4000-8000-000000000203'
+          : ['review', 'edit', 'send'].includes(id)
+            ? '/encounters/d0c50000-0000-4000-8000-000000000201'
+            : id === 'follow-up'
+              ? '/messages'
+              : '/dashboard',
         {
           waitUntil: 'domcontentloaded',
         },
@@ -212,15 +278,50 @@ try {
         const tip = page.getByRole('button', { name: 'Got it', exact: true })
         if (await tip.isVisible()) await tip.click()
       }
-      if (id === 'review') {
+      if (['review', 'edit', 'send'].includes(id)) {
         await expect(page.getByRole('heading', { name: 'Subjective', exact: true })).toBeVisible({
           timeout: 60000,
         })
         await expect(page.getByText('Accepted', { exact: true })).toHaveCount(0)
+        await expect
+          .poll(() => page.locator('audio').evaluate((audio) => audio.readyState))
+          .toBeGreaterThan(0)
+        await expect.poll(() => page.locator('audio').evaluate((audio) => audio.duration)).toBe(284)
       }
+      if (id === 'process')
+        await expect(
+          page.getByRole('button', { name: 'View Encounters', exact: true }),
+        ).toBeVisible({ timeout: 60000 })
+      if (id === 'start')
+        await expect(page.getByText('Mochi', { exact: true }).first()).toBeVisible({
+          timeout: 60000,
+        })
+      await expect(page.locator('.MuiSkeleton-root')).toHaveCount(0, { timeout: 60000 })
+      const readyReference = path.join(stage, `${id}-ready.png`)
+      await page.screenshot({ path: readyReference })
       const begin = (performance.now() - started) / 1000
       await wait(1000)
       if (id === 'start') await openDrawer(page)
+      if (id === 'process') {
+        await wait(3000)
+        await page.getByRole('button', { name: 'View Encounters', exact: true }).click()
+        await expect(page.getByText('Mochi', { exact: true }).first()).toBeVisible({
+          timeout: 30000,
+        })
+      }
+      if (id === 'review') {
+        await wait(3500)
+        const citation = page.locator('[title$="click to jump"]').first()
+        await citation.hover()
+        await wait(1200)
+        await citation.click()
+        await expect
+          .poll(() => page.locator('audio').evaluate((audio) => audio.currentTime))
+          .toBeGreaterThanOrEqual(citationTime)
+        await expect(page.locator('.ts-active')).toContainText('Weight 4.6 kg')
+        await wait(1500)
+        await page.getByRole('button', { name: 'Pause', exact: true }).click()
+      }
       if (id === 'record') {
         await page.getByRole('button', { name: 'Record from web', exact: true }).click()
         await expect(page.getByRole('button', { name: 'Pause', exact: true })).toBeVisible()
@@ -231,6 +332,48 @@ try {
         await wait(800)
         await page.getByRole('button', { name: 'Stop', exact: true }).click()
         await expect(page.getByRole('button', { name: /Process 1 file/ })).toBeEnabled()
+        await wait(1200)
+        await page.getByRole('button', { name: /Process 1 file/ }).click()
+        await expect(page.getByText('Upload Complete', { exact: true })).toBeVisible({
+          timeout: 30000,
+        })
+      }
+      if (id === 'edit') {
+        await page.getByRole('button', { name: 'Edit', exact: true }).click()
+        const editor = page.locator('#soap-note-markdown-editor')
+        await expect(editor).toBeVisible()
+        const original = await editor.inputValue()
+        if (!original.includes('current diet')) throw Error('Expected original fixture wording')
+        await editor.fill(original.replace('current diet', 'usual diet'))
+        await wait(1200)
+        await page.getByRole('button', { name: 'Save', exact: true }).click()
+        await expect(editor).toBeHidden()
+        await expect(page.getByText(/Continue the usual diet/)).toBeVisible()
+        await page.getByText(/Continue the usual diet/).scrollIntoViewIfNeeded()
+        await wait(1500)
+        await page.getByRole('button', { name: 'Complete', exact: true }).click()
+        await expect(page.getByRole('button', { name: 'Completed', exact: true })).toBeVisible()
+      }
+      if (id === 'send') {
+        await page.getByRole('tab', { name: 'Discharge Notes', exact: true }).click()
+        await wait(3000)
+        await page.getByRole('button', { name: 'Send Email', exact: true }).click()
+        await page.getByRole('menuitem', { name: /Send discharge notes/ }).click()
+        const dialog = page.getByRole('dialog')
+        await expect(
+          dialog.getByRole('heading', { name: 'Send Discharge Summary', exact: true }),
+        ).toBeVisible()
+        const recipient = dialog.getByLabel('To', { exact: true })
+        await recipient.fill('jamie.chen@example.test')
+        await recipient.press('Enter')
+        await expect(dialog.getByText('jamie.chen@example.test', { exact: true })).toBeVisible()
+        await expect(dialog.getByRole('button', { name: 'Send', exact: true })).toBeEnabled()
+        await wait(1500)
+        await dialog.getByRole('button', { name: 'Change', exact: true }).click()
+        await page.getByTestId('from-route-option-noreply').getByRole('radio').check()
+        await expect(dialog.getByTestId('from-route-resting-address')).toHaveText(
+          'noreply@mail.noctune.ai',
+        )
       }
       if (id === 'follow-up') {
         await expect(page.getByTestId('conversation-subject')).toHaveText(
@@ -239,11 +382,28 @@ try {
         const reply = page.getByRole('button', { name: 'Reply', exact: true })
         if (await reply.count()) await reply.first().click()
       }
+      await page.mouse.move(24, 14)
       const duration = 32
       await wait(Math.max(1000, (begin + duration + 1) * 1000 - (performance.now() - started)))
       await page.screenshot({ path: path.join(stage, `${id}-poster.png`) })
       await context.close()
       const rawPath = await video.path()
+      const rawDuration = Number(
+        execFileSync(
+          'ffprobe',
+          [
+            '-v',
+            'error',
+            '-show_entries',
+            'format=duration',
+            '-of',
+            'default=noprint_wrappers=1:nokey=1',
+            rawPath,
+          ],
+          { encoding: 'utf8' },
+        ).trim(),
+      )
+      const { sourceIn, frameDifference } = await locateReadyFrame(rawPath, readyReference)
       const destination = path.join(stage, `${id}.mp4`)
       execFileSync(
         'ffmpeg',
@@ -252,12 +412,14 @@ try {
           'error',
           '-y',
           '-ss',
-          String(begin),
+          String(sourceIn),
           '-i',
           rawPath,
           '-t',
           String(duration),
           '-an',
+          '-vf',
+          'tpad=stop_mode=clone:stop_duration=32',
           '-r',
           '30',
           '-c:v',
@@ -287,7 +449,15 @@ try {
       records.push({
         id,
         file: `${id}.mp4`,
+        raw: path.relative(stage, rawPath),
+        sourceIn,
+        frameDifference,
+        readyReference: path.basename(readyReference),
+        rawDuration,
+        ...(id === 'record' ? { disclosure: 'Demo upload · cloud services simulated' } : {}),
+        ...(['review', 'edit', 'send'].includes(id) ? { disclosure: 'Example draft' } : {}),
         duration,
+        ...(uploadEvidence ? { uploadFixture: uploadEvidence() } : {}),
         capturedAt: new Date().toISOString(),
         coreCommit: execFileSync('git', ['rev-parse', 'HEAD'], {
           cwd: core,
@@ -310,7 +480,9 @@ try {
           viewport: common.viewport,
           fictionalData: true,
           microphone: 'Chromium synthetic audio',
-          processing: 'External pipeline faked; no live clinical generation demonstrated',
+          playback: 'Local deterministic 284-second synthetic WAV fixture; no clinical speech',
+          processing:
+            'Upload API responses and cloud storage simulated; example drafts precomputed',
           shots: records,
         },
         null,
@@ -353,4 +525,7 @@ async function openDrawer(page) {
   await patient.click()
   await page.getByRole('option', { name: /Mochi/ }).click()
   await expect(patient).toHaveValue('Mochi')
+  await expect
+    .poll(() => page.locator('input').evaluateAll((inputs) => inputs.map((input) => input.value)))
+    .toContain('General SOAP Note')
 }

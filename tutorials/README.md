@@ -163,7 +163,9 @@ auth identity. Existing fictional encounters are preserved; no reseed occurs.
 Acquire the shared `noctune-native-capture` coordination lock before starting. The
 runner also holds the docs screenshot lock to avoid a concurrent fixture refresh.
 It uses loopback port 3108, real development authentication, and a synthetic browser
-microphone. No email is sent, and processing services remain in capture-fake mode.
+microphone. No email is sent. The recording shot exercises the real uploader against
+isolated API/storage fixtures and labels the simulated upload in the composition;
+clinical processing uses precomputed examples. No demo audio is uploaded to cloud storage.
 
 ```sh
 pnpm tutorials:capture-web /absolute/path/to/primary/noctune-docs \
@@ -171,13 +173,22 @@ pnpm tutorials:capture-web /absolute/path/to/primary/noctune-docs \
 ```
 
 An optional fourth argument selects comma-separated shots (`start`, `record`,
-`follow-up`, or the review-screen checkpoint `review`). Each verified 32-second MP4 includes real UI and a
+`process`, `review`, `edit`, `send`, or `follow-up`). Each verified 32-second MP4 includes real UI and a
 reading hold; the output includes raw browser video, poster frames, and a checksum
-manifest. Missing UI states fail the run while preserving previous complete output.
+manifest. In-points are matched against a screenshot of the ready UI, so delayed
+browser screencast frames do not expose initial loading skeletons. Raw filenames,
+ready references, match scores, and source in-points remain in the manifest. A
+reading hold may extend the last authentic frame. Missing UI states fail the run
+while preserving previous complete output.
 The developer-only Next.js badge is hidden during recording; product UI is unchanged.
-Review footage before composing it into an episode. The review checkpoint verifies
-the in-note badge correction; it still needs working fixture audio and citation
-interaction before it can replace the approved review card.
+Review footage before composing it into an episode. The runner creates a reserved
+tutorial note version with a citation tied to the existing weight discussion. It
+serves Core’s deterministic 284-second synthetic WAV locally with byte-range support
+to verify real audio seeking and transcript navigation. This is fixture audio, not
+a recording of the fictional consultation. Edit capture resets only the reserved
+tutorial note and encounter completion, saves a wording change through the UI, and
+verifies that the correction appears before completing the encounter. Discharge
+capture prepares the recipient and selects no-reply without sending an email.
 
 To compose verified clips with the current storyboard's held cards and remaining
 static captures, assemble a separate media root first. This checks recording hashes
@@ -185,11 +196,14 @@ and copies source bytes without altering `public/screenshots/`:
 
 ```sh
 pnpm tutorials:prepare-media tutorials/first-encounter-web.json \
-  .tutorial-output/web-interactions .tutorial-output/first-encounter-recorded/prepared
+  .tutorial-output/web-interactions .tutorial-output/first-encounter-recorded/prepared \
+  review,edit,send
 pnpm tutorials:narrate .tutorial-output/first-encounter-recorded/prepared/story.json \
   .tutorial-output/first-encounter-recorded/narration "$TUTORIAL_ENV_FILE"
 ```
 
 Use the prepared `media/` directory as the renderer's web media root, then run the
 caption and dual-delivery commands. The `sources.json` records which scenes use
-recorded versus static media. Instruction cards remain explicit in the story.
+recorded versus static media. The optional final argument explicitly names instruction
+cards to replace with inspected recordings. Missing recordings fail the assembly;
+unlisted cards remain intact. Keep the approved original story as the fallback.

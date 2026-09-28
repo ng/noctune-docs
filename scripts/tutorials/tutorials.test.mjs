@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { execFileSync } from 'node:child_process'
 import { getProvider, registerProvider } from './providers/index.mjs'
 import { narrate, validateStory, fingerprint, timestamp } from './narrate.mjs'
 import { withStagedOutput } from './staged-output.mjs'
@@ -512,7 +513,53 @@ test('media assembly verifies recordings and preserves previous output on a chan
   const story = JSON.parse(fs.readFileSync(path.join(output, 'story.json')))
   assert.equal(story.scenes[0].source, 'start.mp4')
   assert.deepEqual(story.scenes[2].instructionCard, ['Review.'])
+  await assert.rejects(
+    prepareMedia(storyFile, recordings, output, screenshots, ['review']),
+    /Missing instruction card/,
+  )
+  const manifestFile = path.join(recordings, 'capture-manifest.json')
+  const manifest = JSON.parse(fs.readFileSync(manifestFile))
+  fs.writeFileSync(path.join(recordings, 'review.mp4'), 'review footage')
+  manifest.shots.push({
+    id: 'review',
+    file: 'review.mp4',
+    sha256: createHash('sha256').update('review footage').digest('hex'),
+  })
+  fs.writeFileSync(manifestFile, JSON.stringify(manifest))
+  await prepareMedia(storyFile, recordings, output, screenshots, ['review'])
+  const replaced = JSON.parse(fs.readFileSync(path.join(output, 'story.json')))
+  assert.equal(replaced.scenes[2].source, 'review.mp4')
+  assert.equal(replaced.scenes[2].instructionCard, undefined)
   fs.writeFileSync(path.join(recordings, 'start.mp4'), 'changed')
   await assert.rejects(prepareMedia(storyFile, recordings, output, screenshots), /checksum changed/)
   assert.equal(fs.readFileSync(path.join(output, 'media', 'start.mp4'), 'utf8'), 'recorded bytes')
+})
+
+test('capture timing locates encoded ready frames instead of loading footage', async (t) => {
+  const { locateReadyFrame } = await import('./video-timing.mjs')
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tutorial-timing-'))
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }))
+  const video = path.join(root, 'clip.mp4'),
+    reference = path.join(root, 'ready.png')
+  execFileSync('ffmpeg', [
+    '-v',
+    'error',
+    '-f',
+    'lavfi',
+    '-i',
+    'color=blue:s=160x90:d=1:r=30',
+    '-f',
+    'lavfi',
+    '-i',
+    'color=red:s=160x90:d=2:r=30',
+    '-filter_complex',
+    '[0:v][1:v]concat=n=2:v=1:a=0',
+    '-c:v',
+    'libx264',
+    video,
+  ])
+  execFileSync('ffmpeg', ['-v', 'error', '-ss', '1.5', '-i', video, '-frames:v', '1', reference])
+  const matched = await locateReadyFrame(video, reference)
+  assert.ok(matched.sourceIn >= 0.9 && matched.sourceIn <= 1.2)
+  assert.ok(matched.frameDifference < 1)
 })
