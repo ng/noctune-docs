@@ -236,3 +236,34 @@ uploading again. The adopted upload session is confirmed in the disposable datab
 so orphan cleanup cannot delete the fixture. Run either mode before native recording:
 refreshing the reserved login can invalidate an app session already in use.
 The audio is a playback/seek fixture with tone cues, not the spoken transcript.
+
+## Edit native recordings
+
+Keep raw native recordings and their checksum manifest under
+`.tutorial-output/native-interactions`. Mark rejected takes `usable: false`.
+The first iOS storyboard and cut recipe are `first-encounter-ios.json` and
+`first-encounter-ios.cuts.json`. Each cut records its source, in-point, duration,
+and optional final-frame reading hold. The editor verifies approved source hashes
+and cut bounds, normalizes variable frame rates to 30 fps, and preserves provenance.
+It never changes the original recording or product UI.
+
+```sh
+node scripts/tutorials/edit-recordings.mjs .tutorial-output/native-interactions \
+  tutorials/first-encounter-ios.cuts.json .tutorial-output/first-encounter-ios/media
+pnpm tutorials:narrate tutorials/first-encounter-ios.json \
+  .tutorial-output/first-encounter-ios/narration "$TUTORIAL_ENV_FILE"
+pnpm tutorials:render .tutorial-output/first-encounter-ios/narration \
+  .tutorial-output/first-encounter-ios/video public/screenshots \
+  .tutorial-output/first-encounter-ios/media
+pnpm tutorials:captions .tutorial-output/first-encounter-ios/narration \
+  .tutorial-output/first-encounter-ios/captions "$TUTORIAL_ENV_FILE"
+pnpm tutorials:caption-video .tutorial-output/first-encounter-ios/video \
+  .tutorial-output/first-encounter-ios/captions .tutorial-output/first-encounter-ios/delivery
+```
+
+The iOS episode shows supported transcript-row seeking, rather than implying native
+citation behavior matches the web. Completion uses **Mark as complete** without
+sending the prepared email. The processing cut transitions to the existing fictional
+example draft; it does not claim to show the new recording's generated output.
+Inspect action timing and reading holds after narration changes. Caption alignment
+and decode checks do not replace a complete listening review.

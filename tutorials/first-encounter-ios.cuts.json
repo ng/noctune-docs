@@ -1,0 +1,162 @@
+{
+  "version": 1,
+  "scenes": [
+    {
+      "id": "start",
+      "cuts": [
+        {
+          "source": "raw/start-record-20260928.mp4",
+          "start": 6,
+          "duration": 3.5
+        },
+        {
+          "source": "raw/start-record-20260928.mp4",
+          "start": 12.8,
+          "duration": 6.7
+        },
+        {
+          "source": "raw/record-pause-20260928.mp4",
+          "start": 0,
+          "duration": 2.4
+        }
+      ]
+    },
+    {
+      "id": "record",
+      "cuts": [
+        {
+          "source": "raw/record-pause-20260928.mp4",
+          "start": 0,
+          "duration": 4
+        },
+        {
+          "source": "raw/record-pause-20260928.mp4",
+          "start": 16.5,
+          "duration": 2.5
+        },
+        {
+          "source": "raw/record-pause-20260928.mp4",
+          "start": 28,
+          "duration": 3
+        },
+        {
+          "source": "raw/record-pause-20260928.mp4",
+          "start": 36.5,
+          "duration": 2.5
+        }
+      ]
+    },
+    {
+      "id": "process",
+      "cuts": [
+        {
+          "source": "raw/record-pause-20260928.mp4",
+          "start": 39,
+          "duration": 6.3
+        }
+      ]
+    },
+    {
+      "id": "review",
+      "cuts": [
+        {
+          "source": "raw/review-playback-20260928.mp4",
+          "start": 0,
+          "duration": 3
+        },
+        {
+          "source": "raw/review-playback-20260928.mp4",
+          "start": 9,
+          "duration": 4
+        },
+        {
+          "source": "raw/review-playback-20260928.mp4",
+          "start": 17,
+          "duration": 3.5
+        }
+      ]
+    },
+    {
+      "id": "edit",
+      "cuts": [
+        {
+          "source": "raw/edit-save-20260928.mp4",
+          "start": 0,
+          "duration": 2.3
+        },
+        {
+          "source": "raw/edit-save-20260928.mp4",
+          "start": 15,
+          "duration": 6
+        },
+        {
+          "source": "raw/edit-save-20260928.mp4",
+          "start": 26,
+          "duration": 2
+        },
+        {
+          "source": "raw/edit-save-20260928.mp4",
+          "start": 32,
+          "duration": 3.4
+        }
+      ]
+    },
+    {
+      "id": "send",
+      "cuts": [
+        {
+          "source": "raw/discharge-messages-20260928.mp4",
+          "start": 1,
+          "duration": 4
+        },
+        {
+          "source": "raw/discharge-messages-20260928.mp4",
+          "start": 28,
+          "duration": 3
+        },
+        {
+          "source": "raw/discharge-messages-20260928.mp4",
+          "start": 47,
+          "duration": 5
+        }
+      ]
+    },
+    {
+      "id": "complete",
+      "cuts": [
+        {
+          "source": "raw/complete-follow-up-20260928.mp4",
+          "start": 0,
+          "duration": 2.25,
+          "hold": 2
+        },
+        {
+          "source": "raw/complete-follow-up-20260928.mp4",
+          "start": 2.25,
+          "duration": 1,
+          "hold": 2
+        },
+        {
+          "source": "raw/complete-follow-up-20260928.mp4",
+          "start": 3.25,
+          "duration": 3
+        }
+      ]
+    },
+    {
+      "id": "follow-up",
+      "cuts": [
+        {
+          "source": "raw/complete-follow-up-20260928.mp4",
+          "start": 20,
+          "duration": 2.2
+        },
+        {
+          "source": "raw/complete-follow-up-20260928.mp4",
+          "start": 34,
+          "duration": 8.5
+        }
+      ]
+    }
+  ]
+}

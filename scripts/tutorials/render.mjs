@@ -193,6 +193,21 @@ export async function render(timelineDir, output, roots) {
           .png()
           .toFile(visualSource)
       }
+      // Clip the capture to the inner screen; a rounded bezel alone leaves
+      // rectangular video corners protruding over it.
+      const roundedScreen = phone && !scene.instructionCard
+      const mask = path.join(work, `${index}-screen-mask.png`)
+      if (roundedScreen)
+        await sharp(
+          Buffer.from(
+            `<svg xmlns="http://www.w3.org/2000/svg" width="${box.w}" height="${box.h}"><rect width="100%" height="100%" fill="black"/><rect width="100%" height="100%" rx="34" fill="white"/></svg>`,
+          ),
+        )
+          .removeAlpha()
+          .png()
+          .toFile(mask)
+      const clipping = roundedScreen ? '[screen][3:v]alphamerge[rounded];' : ''
+      const overlaySource = roundedScreen ? 'rounded' : 'screen'
       const visual = motion
         ? ['-ss', String(start), '-i', visualSource]
         : ['-loop', '1', '-framerate', '30', '-i', visualSource]
@@ -206,8 +221,9 @@ export async function render(timelineDir, output, roots) {
         ...visual,
         '-i',
         audio,
+        ...(roundedScreen ? ['-loop', '1', '-framerate', '30', '-i', mask] : []),
         '-filter_complex',
-        `[1:v]setpts=PTS-STARTPTS,scale=${box.w}:${box.h}:force_original_aspect_ratio=decrease,pad=${box.w}:${box.h}:(ow-iw)/2:(oh-ih)/2:color=0xF3F8F2,setsar=1[screen];[0:v][screen]overlay=${box.x}:${box.y}:shortest=1,format=yuv420p[v];[2:a]apad,aresample=48000[a]`,
+        `[1:v]setpts=PTS-STARTPTS,scale=${box.w}:${box.h}:force_original_aspect_ratio=decrease,pad=${box.w}:${box.h}:(ow-iw)/2:(oh-ih)/2:color=0xF3F8F2,setsar=1[screen];${clipping}[0:v][${overlaySource}]overlay=${box.x}:${box.y}:shortest=1,format=yuv420p[v];[2:a]apad,aresample=48000[a]`,
         '-map',
         '[v]',
         '-map',

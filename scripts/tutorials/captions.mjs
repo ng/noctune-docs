@@ -81,7 +81,20 @@ export function scriptWords(text, words, speechSeconds) {
   })
   if (corrections.length / script.length > 0.1)
     throw Error('Caption transcription differs too much from script; alignment needs review')
-  return { words: aligned, corrections }
+  // Normalization may split iPhone or a hyphenated word for timing alignment.
+  // Rejoin those pieces so captions retain the exact authored spelling.
+  let position = 0
+  const authored = text
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => {
+      const count = tokens(word).length
+      if (!count) throw Error('Caption token has no spoken word')
+      const first = aligned[position]
+      position += count
+      return { text: word, start: first.start, end: aligned[position - 1].end }
+    })
+  return { words: authored, corrections }
 }
 export function cuesFromWords(words, offset = 0) {
   const cues = []

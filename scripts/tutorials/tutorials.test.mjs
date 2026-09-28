@@ -225,6 +225,29 @@ test('renderer handles web, iOS, and instruction cards and rejects unsafe inputs
   )
   await render(narration, output, { web: media, ios: media })
   const manifest = JSON.parse(fs.readFileSync(path.join(output, 'manifest.json')))
+  const phonePixels = await sharp(path.join(output, 'qa', 'ios.png'))
+    .removeAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+  const pixel = (x, y) => [
+    ...phonePixels.data.subarray(
+      (y * phonePixels.info.width + x) * 3,
+      (y * phonePixels.info.width + x) * 3 + 3,
+    ),
+  ]
+  // All four capture corners reveal the pale background; the screen stays intact.
+  for (const [x, y] of [
+    [1280, 64],
+    [1659, 64],
+    [1280, 889],
+    [1659, 889],
+  ])
+    assert.ok(
+      pixel(x, y).every((v) => v > 150),
+      `Unclipped phone corner at ${x},${y}`,
+    )
+  const center = pixel(1470, 450)
+  assert.ok(center[0] < 35 && center[1] < 50 && center[2] < 70)
   assert.equal(manifest.fullDecodePassed, true)
   assert.equal(manifest.published, false)
   assert.equal(manifest.visualReviewPassed, false)
@@ -289,7 +312,7 @@ test('captions preserve authored wording, flag recognition corrections, and boun
   }))
   const aligned = scriptWords(text, words, 10)
   assert.equal(aligned.corrections.length, 1)
-  assert.ok(aligned.words.some((word) => word.text === 'linked'))
+  assert.ok(aligned.words.some((word) => word.text === 'Encounter-linked'))
   const cues = cuesFromWords(aligned.words, 5)
   assert.ok(
     cues.every(
@@ -300,7 +323,23 @@ test('captions preserve authored wording, flag recognition corrections, and boun
         cue.text.split('\n').every((line) => line.length <= 42),
     ),
   )
-  assert.equal(cues.map((c) => c.text.replaceAll('\n', ' ')).join(' '), text.replaceAll('-', ' '))
+  assert.equal(cues.map((c) => c.text.replaceAll('\n', ' ')).join(' '), text)
+  assert.deepEqual(
+    scriptWords(
+      'iPhone follow-up.',
+      [
+        { word: 'i', start: 0, end: 0.1 },
+        { word: 'Phone', start: 0.1, end: 0.4 },
+        { word: 'follow', start: 0.5, end: 0.7 },
+        { word: 'up.', start: 0.7, end: 0.9 },
+      ],
+      1,
+    ).words,
+    [
+      { text: 'iPhone', start: 0, end: 0.4 },
+      { text: 'follow-up.', start: 0.5, end: 0.9 },
+    ],
+  )
   assert.throws(() => scriptWords('Missing words.', words, 10), /alignment needs review/)
   assert.throws(
     () => scriptWords('Wrong.', [{ word: 'Different.', start: 0, end: 1 }], 2),

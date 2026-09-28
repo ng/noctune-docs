@@ -36,8 +36,8 @@ Actual social posting and public video publication are separate from this buildo
 
 ## Current recording checkpoint
 
-- PR #74 contains the six review fixes and the web capture tools. The first local
-  full check passed; GitHub Actions is currently limited by account billing.
+- PR #74 contains the six review fixes and the web capture tools. Local full checks pass. The latest docs CI and Vercel preview pass as of
+  September 28; the separate Core PR still reports failed CI checks.
 - All seven web scenes have real app footage in `.tutorial-output/web-interactions`.
   Recording includes pause/resume/stop and **Process 1 file**, using isolated upload
   API/storage fixtures. Composition explicitly labels the simulated cloud services.
@@ -74,8 +74,7 @@ Actual social posting and public video publication are separate from this buildo
   Tapping the 1:09 transcript segment started playback at that timestamp, with full
   4:44 duration available. The real native
   upload succeeded; downstream processing remains simulated. A local manifest records
-  device, app/Core commits, dimensions, duration, and hashes. Editing and final
-  composition are still pending.
+  device, app/Core commits, dimensions, duration, and hashes. The iOS composition checkpoint below records the current exports.
 - Native fixture media was hydrated through the normal app upload API, using
   `hydrate-native-audio.mjs`; CloudFront range playback passed. The local audio manifest
   preserves the original fixture media fields. AWS CLI login is no longer required for
@@ -159,3 +158,27 @@ cues and captions can be toggled. Preserve source/timing provenance and cache sa
 Continue independent work when one shot is blocked. Record the exact dependency
 and request only missing information needed to proceed. Do not mark the overall
 goal complete just because the pipeline or the first draft is finished.
+
+## Native composition checkpoint
+
+- The native source manifest now includes successful edit/save, discharge-route,
+  completion-only, and Messages takes. The rejected auth-refresh take remains
+  explicitly unusable. Completion changes the header status without adding a badge
+  inside the note; no email was sent.
+- `first-encounter-ios.json` and its `.cuts.json` recipe compose eight scenes from
+  these original recordings. `edit-recordings.mjs` checks hashes and bounds, keeps
+  source/timing provenance, normalizes frame rates, and supports authentic final-frame
+  reading holds. Regression coverage verifies cut order, holds, and source rejection.
+- The current native narration lasts 99 seconds with 32 English caption cues.
+  Several sentences were clarified after transcription mismatches; caption safeguards
+  remain unchanged. Full listening review is still required, including the recognizer's
+  remaining corrections in the opening and Nest passages.
+- iOS footage is clipped to the rounded inner screen so rectangular capture corners
+  cannot overlap the phone frame. Render tests check all four corners and preserve
+  the center of the screen.
+- Both 99-second iOS exports are rendered under `.tutorial-output/first-encounter-ios`
+  and copied to the primary docs `.capture/tutorials/2026-09-28/first-encounter-ios/`.
+  Critical action frames pass visual inspection, both videos decode, and the clean
+  player loads all 32 cues, toggles captions, and advances playback. Full listening
+  review is pending; these remain review drafts. Hybrid and feature episodes, docs integration,
+  and the final acceptance audit remain outstanding.
