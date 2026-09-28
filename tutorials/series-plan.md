@@ -25,6 +25,9 @@ Source topics: `content/setup-guide.mdx`, `content/encounters/`,
 `content/patients.mdx`, `content/practice.mdx`, and `content/reference/sentinel.mdx`.
 
 The first audio audition uses the same text with three Deepgram voices: Haley
-(Flux), Athena (Aura-2), and Arcas (Aura-2). Narrator selection is pending user review.
-The provisional first web draft uses the configured voice. Voice choice is external
+(Flux), Athena (Aura-2), and Arcas (Aura-2). Arcas is the selected narrator and the default for new tutorials.
+Use the horizontal owl-and-wordmark logo from `public/noctune-logo-horizontal.png`
+in every composition. The next production pass should capture real interactions
+through one fictional appointment, with brief reading holds and disclosed time cuts.
+The first web draft uses static captures; it establishes voice and visual direction. Voice choice is external
 to the storyboard, so a replacement changes timing automatically.

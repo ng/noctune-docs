@@ -38,7 +38,7 @@ TUTORIAL_TTS_MODEL=aura-2-athena-en pnpm tutorials:narrate \
 
 ## Providers
 
-- **Deepgram**: `TUTORIAL_TTS_PROVIDER=deepgram`, `TUTORIAL_TTS_MODEL=flux-haley-en`,
+- **Deepgram**: `TUTORIAL_TTS_PROVIDER=deepgram`, `TUTORIAL_TTS_MODEL=aura-2-arcas-en`,
   and `DEEPGRAM_API_KEY`. Full `flux-*` voice IDs use `/v2/speak`; `aura-*` IDs use
   `/v1/speak`. Separate voice and direction settings are rejected for this adapter.
   Lossless FLAC is normalized locally to WAV, avoiding streaming WAV length headers.

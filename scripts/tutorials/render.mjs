@@ -60,6 +60,13 @@ export function validateTimeline(story) {
 export async function render(timelineDir, output, roots) {
   const story = JSON.parse(fs.readFileSync(path.join(timelineDir, 'timeline.json')))
   validateTimeline(story)
+  // Use the existing horizontal owl + wordmark asset; tint only this render copy.
+  const logo = (
+    await sharp(fileURLToPath(new URL('../../public/noctune-logo-horizontal.png', import.meta.url)))
+      .linear([0, 0, 0], [19, 45, 43])
+      .png()
+      .toBuffer()
+  ).toString('base64')
   const inputs = story.scenes.map((scene) => {
     const root = roots[scene.platform]
     if (!root) throw Error(`Missing ${scene.platform} media root`)
@@ -101,7 +108,7 @@ export async function render(timelineDir, output, roots) {
             `<rect x="${left + i * 55}" y="955" width="42" height="4" rx="2" fill="${i <= index ? '#11736F' : '#D2E2DC'}"/>`,
         )
         .join('')
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><rect width="100%" height="100%" fill="#F3F8F2"/><ellipse cx="1680" cy="650" rx="690" ry="880" fill="#CDE7DF"/><g font-family="Arial" fill="#132D2B"><text x="76" y="116" font-size="48" font-weight="700">noctune</text><text x="76" y="262" font-size="19" fill="#53716A">${String(index + 1).padStart(2, '0')} / ${phone ? 'iOS' : 'WEB'} WALKTHROUGH</text>${headline}<text x="76" y="900" font-size="20" fill="#4D6963">Your first encounter, step by step.</text>${bars}<rect x="${box.x - 8}" y="${box.y - 8}" width="${box.w + 16}" height="${box.h + 16}" rx="${phone ? 42 : 16}" fill="#153D38"/><text x="960" y="1032" text-anchor="middle" font-size="19" fill="#4D6963">Fictional demo data · AI narration · ${motion ? 'Recorded app footage' : 'Static app capture'}${scene.disclosure ? ' · ' + escape(scene.disclosure) : ''}</text></g></svg>`
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><rect width="100%" height="100%" fill="#F3F8F2"/><ellipse cx="1680" cy="650" rx="690" ry="880" fill="#CDE7DF"/><g font-family="Arial" fill="#132D2B"><image href="data:image/png;base64,${logo}" x="76" y="56" width="300" height="80" preserveAspectRatio="xMinYMid meet"/><text x="76" y="262" font-size="19" fill="#53716A">${String(index + 1).padStart(2, '0')} / ${phone ? 'iOS' : 'WEB'} WALKTHROUGH</text>${headline}<text x="76" y="900" font-size="20" fill="#4D6963">Your first encounter, step by step.</text>${bars}<rect x="${box.x - 8}" y="${box.y - 8}" width="${box.w + 16}" height="${box.h + 16}" rx="${phone ? 42 : 16}" fill="#153D38"/><text x="960" y="1032" text-anchor="middle" font-size="19" fill="#4D6963">Fictional demo data · AI narration · ${motion ? 'Recorded app footage' : 'Static app capture'}${scene.disclosure ? ' · ' + escape(scene.disclosure) : ''}</text></g></svg>`
       const card = path.join(work, `${index}-card.png`)
       await sharp(Buffer.from(svg)).png().toFile(card)
       const segment = path.join(work, `${index}.mp4`)

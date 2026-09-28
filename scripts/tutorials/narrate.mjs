@@ -8,7 +8,7 @@ import { withStagedOutput } from './staged-output.mjs'
 
 export function speechConfig(env) {
   const provider = env.TUTORIAL_TTS_PROVIDER || 'deepgram'
-  const model = env.TUTORIAL_TTS_MODEL || (provider === 'deepgram' ? 'flux-haley-en' : '')
+  const model = env.TUTORIAL_TTS_MODEL || (provider === 'deepgram' ? 'aura-2-arcas-en' : '')
   if (!model) throw Error('Set TUTORIAL_TTS_MODEL')
   return {
     provider,
