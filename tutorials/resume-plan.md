@@ -65,11 +65,23 @@ Actual social posting and public video publication are separate from this buildo
   succeeded at `/tmp/noctune-asc-capture-build/Build/Products/Debug-iphonesimulator/Noctune.app`
   from Swift commit `ba48f05`; no tracked Swift files changed. Older native review
   footage includes a keyboard onboarding prompt and needs a fresh take.
-- Native fixture playback still needs working development media. The explicit
-  `noctune-dev` AWS profile reports a missing SSO token; the user has been asked to
-  run `aws sso login --profile noctune-dev`. Verify development account `957396244983`
-  before reading development SSM/media configuration. Preserve the approved disposable
-  docs database and do not reseed the canonical development database.
+- Swift capture commit `b6f3d01` pins the capture-only API to `127.0.0.1:3100`,
+  avoiding an unrelated IPv6 localhost listener. The signed simulator rebuild passed
+  and the fix is pushed. Xcode's current simulator UI is **Device Hub**
+  (`com.apple.dt.Devices`), not the old Simulator app.
+- Native source videos now live in `.tutorial-output/native-interactions/raw`:
+  setup/patient/templates, recording/pause/resume/finish/upload, and transcript playback.
+  Tapping the 1:09 transcript segment started playback at that timestamp, with full
+  4:44 duration available. The real native
+  upload succeeded; downstream processing remains simulated. A local manifest records
+  device, app/Core commits, dimensions, duration, and hashes. Editing and final
+  composition are still pending.
+- Native fixture media was hydrated through the normal app upload API, using
+  `hydrate-native-audio.mjs`; CloudFront range playback passed. The local audio manifest
+  preserves the original fixture media fields. AWS CLI login is no longer required for
+  this path. Native player verification passed. Exclude the explicitly named incomplete
+  edit take: a fixture login refresh invalidated the app session before Save. Always
+  finish hydration/verification before relaunching the native app for recording.
 
 ## Execution order
 

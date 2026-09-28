@@ -207,3 +207,32 @@ caption and dual-delivery commands. The `sources.json` records which scenes use
 recorded versus static media. The optional final argument explicitly names instruction
 cards to replace with inspected recordings. Missing recordings fail the assembly;
 unlisted cards remain intact. Keep the approved original story as the fallback.
+
+## Native capture audio
+
+Use the Swift worktree's `docs/app-store-capture.md` and its guarded fixture server.
+The native capture build and server must both use `http://127.0.0.1:3100`;
+`localhost` may resolve to an unrelated IPv6 listener. Retain `--reuse-fixtures`
+after capturing native takes.
+
+The shared Mochi fixture initially references a placeholder media key. With the
+capture server running, this helper uploads Core's 284-second synthetic tone WAV
+through the normal app API and associates it only with reserved encounter 201:
+
+```sh
+node scripts/tutorials/hydrate-native-audio.mjs /absolute/path/to/primary/noctune-docs \
+  /absolute/path/to/noctune-core-capture-worktree \
+  .tutorial-output/native-interactions/audio-fixture.json
+```
+
+It validates the disposable database and development auth project, refreshes only
+the reserved login, requires the exact development S3 upload destination, and checks
+CloudFront range playback. It does not invoke processing or require AWS CLI login.
+Keep its manifest: it records the original media fields, new object key, checksum,
+and disclosure. An existing manifest prevents accidental repeat uploads. Restart the
+native fixture server and relaunch the app afterward to refresh credentials and caches.
+Append `--verify-existing` to verify and rebind the manifest's existing object without
+uploading again. The adopted upload session is confirmed in the disposable database
+so orphan cleanup cannot delete the fixture. Run either mode before native recording:
+refreshing the reserved login can invalidate an app session already in use.
+The audio is a playback/seek fixture with tone cues, not the spoken transcript.
