@@ -11,9 +11,9 @@ Actual social posting and public video publication are separate from this buildo
 
 ## Starting point
 
-- Work in the existing `feat/tutorial-pipeline` docs worktree at
+- PR #73 is merged into `develop`. Continue on `feat/tutorial-series` in the existing docs worktree at
   `<primary-docs-checkout>/.codex/worktrees/tutorial-pipeline`; preserve other worktrees.
-- Draft PR: [noctune-docs #73](https://github.com/ng/noctune-docs/pull/73).
+- Merged pipeline PR: [noctune-docs #73](https://github.com/ng/noctune-docs/pull/73).
 - Tooling, commands, and provider configuration: [README](README.md).
 - Current storyboard: `tutorials/first-encounter-web.json`.
 - Local review: `<primary-docs-checkout>/.capture/tutorials/2026-09-28/first-encounter-arcas/delivery/review.html`.
@@ -26,6 +26,9 @@ Actual social posting and public video publication are separate from this buildo
   `.env.tutorials.local`; do not expose or commit it.
 - Local full checks and rendered-frame QA passed. Full listening review remains
   outstanding; do not mark it passed based on caption transcription.
+- Full adversarial review found six Minor issues and no merge blockers. The six
+  fixes now have regression coverage on `feat/tutorial-series`; tracking task
+  `noctune-docs-4` precedes the remaining buildout (`noctune-docs-3`).
 - CodeRabbit had no reviews or inline findings at the last check. It explicitly
   skipped automatic review because auto reviews are disabled. A green CodeRabbit
   status is not evidence that a review ran. Check again on resume and address

@@ -121,6 +121,13 @@ export async function render(timelineDir, output, roots) {
   await withStagedOutput(output, async (stage) => {
     const work = path.join(stage, 'work'),
       qa = path.join(stage, 'qa')
+    const previous = path.join(stage, 'manifest.json')
+    if (fs.existsSync(previous)) {
+      for (const scene of JSON.parse(fs.readFileSync(previous)).scenes || []) {
+        if (/^[a-z0-9-]+$/.test(scene.id))
+          fs.rmSync(path.join(qa, `${scene.id}.png`), { force: true })
+      }
+    }
     fs.mkdirSync(work, { recursive: true })
     fs.mkdirSync(qa, { recursive: true })
     const segments = []

@@ -156,6 +156,12 @@ test('pipeline decodes and caches audio, invalidates changed voices, and preserv
     }),
   )
   assert.equal(fs.readFileSync(path.join(output, 'timeline.json'), 'utf8'), before)
+  fs.writeFileSync(path.join(output, 'README.md'), 'Keep my notes')
+  story.scenes[0].id = 'renamed'
+  await narrate(story, config, {}, output, cache)
+  assert.equal(fs.existsSync(path.join(output, 'one.wav')), false)
+  assert.ok(fs.existsSync(path.join(output, 'renamed.wav')))
+  assert.equal(fs.readFileSync(path.join(output, 'README.md'), 'utf8'), 'Keep my notes')
 })
 
 test('renderer handles web, iOS, and instruction cards and rejects unsafe inputs', async (t) => {
@@ -225,6 +231,26 @@ test('renderer handles web, iOS, and instruction cards and rejects unsafe inputs
   assert.throws(() => sourcePath(media, '../elsewhere.png'), /escapes/)
   fs.symlinkSync(path.join(output, 'walkthrough-landscape.mp4'), path.join(media, 'escape.mp4'))
   assert.throws(() => sourcePath(media, 'escape.mp4'), /symlink escapes/)
+  fs.writeFileSync(path.join(output, 'qa', 'notes.md'), 'Keep review notes')
+  const shorter = { ...story, scenes: [story.scenes[0]] }
+  await narrate(
+    shorter,
+    { provider: 'render-test', model: 'test' },
+    {},
+    narration,
+    path.join(root, 'cache'),
+  )
+  await render(narration, output, { web: media })
+  assert.equal(fs.existsSync(path.join(output, 'qa', 'ios.png')), false)
+  assert.equal(fs.existsSync(path.join(output, 'qa', 'card.png')), false)
+  assert.equal(fs.readFileSync(path.join(output, 'qa', 'notes.md'), 'utf8'), 'Keep review notes')
+  await narrate(
+    story,
+    { provider: 'render-test', model: 'test' },
+    {},
+    narration,
+    path.join(root, 'cache'),
+  )
   const timeline = JSON.parse(fs.readFileSync(path.join(narration, 'timeline.json')))
   const cardRows = timeline.scenes[2].instructionCard
   timeline.scenes[2].instructionCard = ['One', 'Two', 'Three', 'Four']
@@ -279,6 +305,27 @@ test('captions preserve authored wording, flag recognition corrections, and boun
     () => scriptWords('Wrong.', [{ word: 'Different.', start: 0, end: 1 }], 2),
     /differs too much/,
   )
+  assert.throws(
+    () => scriptWords('Hello.', [{ word: 'Hello.', start: 1.01, end: 1.05 }], 1),
+    /Invalid caption word timing/,
+  )
+  assert.throws(
+    () => scriptWords('Hello.', [{ word: 'Hello.', start: 1, end: 1.05 }], 1),
+    /Invalid caption word timing/,
+  )
+  assert.equal(
+    scriptWords('Hello.', [{ word: 'Hello.', start: 0.8, end: 1.05 }], 1).words[0].end,
+    1,
+  )
+  await assert.rejects(
+    () =>
+      transcribeDeepgram(
+        Buffer.from('test'),
+        { DEEPGRAM_API_KEY: 'secret' },
+        async () => new Response('secret-echo', { status: 200 }),
+      ),
+    (error) => error.message === 'Caption timing provider returned invalid JSON',
+  )
   await assert.rejects(
     transcribeDeepgram(
       Buffer.from('audio'),
@@ -308,7 +355,7 @@ test('caption delivery rejects stale or overlapping captions and generates clean
   })
   const story = {
     version: 1,
-    title: 'Caption fixture',
+    title: 'iOS <review> fixture',
     scenes: [
       {
         id: 'web',
@@ -345,16 +392,22 @@ test('caption delivery rejects stale or overlapping captions and generates clean
   )
   fs.mkdirSync(captionDir)
   fs.writeFileSync(path.join(captionDir, 'captions.json'), JSON.stringify(data))
-  fs.writeFileSync(
-    path.join(captionDir, 'walkthrough.srt'),
-    '1\n00:00:00,000 --> 00:00:00,300\nHello.\n',
-  )
-  fs.writeFileSync(
-    path.join(captionDir, 'walkthrough.vtt'),
-    'WEBVTT\n\n00:00:00.000 --> 00:00:00.300\nHello.\n',
-  )
+  fs.writeFileSync(path.join(captionDir, 'walkthrough.srt'), 'stale srt')
+  fs.writeFileSync(path.join(captionDir, 'walkthrough.vtt'), 'stale vtt')
   await captionVideo(video, captionDir, delivery)
   assert.ok(fs.statSync(path.join(delivery, 'walkthrough-captioned.mp4')).size > 1000)
+  assert.equal(
+    fs.readFileSync(path.join(delivery, 'walkthrough.srt'), 'utf8'),
+    '1\n00:00:00,000 --> 00:00:00,300\nHello.\n',
+  )
+  assert.equal(
+    fs.readFileSync(path.join(delivery, 'walkthrough.vtt'), 'utf8'),
+    'WEBVTT\n\n00:00:00.000 --> 00:00:00.300\nHello.\n',
+  )
+  const html = fs.readFileSync(path.join(delivery, 'review.html'), 'utf8')
+  assert.ok(html.includes('iOS &lt;review&gt; fixture'))
+  assert.ok(!html.includes('Arcas narration'))
+  assert.ok(!html.includes('Browser frame'))
   assert.deepEqual(
     fs.readFileSync(path.join(video, 'walkthrough-landscape.mp4')),
     fs.readFileSync(path.join(delivery, 'walkthrough-clean.mp4')),
@@ -362,4 +415,55 @@ test('caption delivery rejects stale or overlapping captions and generates clean
   assert.ok(
     fs.readFileSync(path.join(delivery, 'review.html'), 'utf8').includes("t.kind='captions'"),
   )
+})
+
+test('rejected caption timing can retry, and old invalid cache is evicted', async (t) => {
+  const { captions } = await import('./captions.mjs')
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'caption-cache-test-'))
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }))
+  const narration = path.join(root, 'narration'),
+    output = path.join(root, 'captions')
+  fs.mkdirSync(narration)
+  fs.writeFileSync(path.join(narration, 'one.wav'), wav())
+  fs.writeFileSync(
+    path.join(narration, 'timeline.json'),
+    JSON.stringify({
+      version: 1,
+      title: 'Cache',
+      duration: 1.5,
+      scenes: [
+        {
+          id: 'one',
+          platform: 'web',
+          headline: ['Test'],
+          narration: 'Hello.',
+          instructionCard: ['Test'],
+          at: 0,
+          duration: 1.5,
+          speechSeconds: 1,
+          audio: 'one.wav',
+        },
+      ],
+    }),
+  )
+  let calls = 0
+  const transcribe = async () => {
+    calls++
+    return [{ word: calls === 1 ? 'Wrong.' : 'Hello.', start: 0, end: 0.5 }]
+  }
+  await assert.rejects(captions(narration, output, {}, transcribe), /differs too much/)
+  assert.deepEqual(fs.readdirSync(path.join(root, '.caption-cache')), [])
+  await captions(narration, output, {}, transcribe)
+  await captions(narration, output, {}, transcribe)
+  assert.equal(calls, 2)
+  const cached = path.join(
+    root,
+    '.caption-cache',
+    fs.readdirSync(path.join(root, '.caption-cache'))[0],
+  )
+  fs.writeFileSync(cached, JSON.stringify([{ word: 'Wrong.', start: 0, end: 0.5 }]))
+  await assert.rejects(captions(narration, output, {}, transcribe), /entry removed/)
+  assert.equal(fs.existsSync(cached), false)
+  await captions(narration, output, {}, transcribe)
+  assert.equal(calls, 3)
 })

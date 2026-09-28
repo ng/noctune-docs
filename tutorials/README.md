@@ -126,7 +126,10 @@ pnpm tutorials:caption-video .tutorial-output/first-encounter/video \
 ```
 
 The timing pass uses Deepgram Nova-3 on the already-generated WAV files, independently
-of the narration provider. It caches word timings by audio content. Caption text comes
+of the narration provider. It caches word timings by audio content only after alignment and cue validation.
+Rejected existing cache entries are removed with a rerun instruction; rerun the
+caption command to obtain fresh timings. To force a fresh timing pass manually,
+remove the relevant local `.caption-cache/` directory. Caption text comes
 from the authored script, with hyphenated compounds split into words. Recognition
 corrections are reported in `captions.json`; token-count mismatches, large transcript
 changes, or invalid times stop generation for review. Speech recognition timestamps
@@ -135,6 +138,9 @@ are approximate, so listen and inspect synchronization before publishing.
 The timing function can be replaced independently; the delivery renderer consumes
 provider-neutral `captions.json` cues with start/end seconds and text, tied to the
 video's scene/audio hashes. It refuses captions from a different narration version.
+
+Delivery regenerates SRT/WebVTT from the validated `captions.json` cues, so edits
+for delivery should be made in that JSON rather than in sidecar subtitle files.
 
 Delivery includes a clean MP4 plus SRT/WebVTT for optional closed captions, a second MP4
 with captions burned in for sound-off viewing, and `review.html` with both players.
