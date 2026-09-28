@@ -195,6 +195,9 @@ test('renderer handles web, iOS, and instruction cards and rejects unsafe inputs
         headline: ['Review'],
         narration: 'Review.',
         instructionCard: ['Check the draft.'],
+        instructionTitle: 'Review evidence',
+        instructionLabels: ['Follow the citation'],
+        instructionStyle: 'evidence',
       },
     ],
   }
@@ -223,6 +226,16 @@ test('renderer handles web, iOS, and instruction cards and rejects unsafe inputs
   fs.symlinkSync(path.join(output, 'walkthrough-landscape.mp4'), path.join(media, 'escape.mp4'))
   assert.throws(() => sourcePath(media, 'escape.mp4'), /symlink escapes/)
   const timeline = JSON.parse(fs.readFileSync(path.join(narration, 'timeline.json')))
+  const cardRows = timeline.scenes[2].instructionCard
+  timeline.scenes[2].instructionCard = ['One', 'Two', 'Three', 'Four']
+  assert.throws(() => validateTimeline(timeline), /at most three rows/)
+  timeline.scenes[2].instructionCard = cardRows
+  timeline.scenes[2].instructionLabels = []
+  assert.throws(() => validateTimeline(timeline), /Invalid instruction labels/)
+  timeline.scenes[2].instructionLabels = ['Follow the citation']
+  timeline.scenes[2].instructionStyle = 'unknown'
+  assert.throws(() => validateTimeline(timeline), /Invalid instruction style/)
+  timeline.scenes[2].instructionStyle = 'evidence'
   timeline.scenes[2].source = 'web.png'
   assert.throws(() => validateTimeline(timeline), /Invalid instruction card/)
   delete timeline.scenes[2].source

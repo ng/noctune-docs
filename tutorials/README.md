@@ -67,7 +67,9 @@ The audition story needs no visual fields because it is audio-only.
 For a text-only workflow card, omit `source` and provide `instructionCard`: one to
 four strings of at most 50 characters. These cards have no browser chrome and are
 labeled as instruction cards, so they can hold a scene while a UI capture is blocked.
-Use `disclosure` to explain the capture hold.
+Use `disclosure` to explain the capture hold. Optional `instructionTitle` and
+`instructionLabels` add a heading and row labels; `instructionStyle` selects
+`checklist`, `sequence`, or `evidence` (citation-to-audio/transcript navigation).
 
 Web sources resolve under the renderer's third argument, normally
 `public/screenshots`. iOS sources resolve under its optional fourth argument,

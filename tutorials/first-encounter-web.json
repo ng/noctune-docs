@@ -14,7 +14,7 @@
       "platform": "web",
       "headline": ["Record or", "upload audio."],
       "source": "encounters/new-encounter/browser-recording.webp",
-      "narration": "Record the appointment in your browser, or upload an existing audio file. Review the queued recording, then choose Process file to submit it."
+      "narration": "Record the appointment in your browser, or upload an existing audio file. Review the queued recording, then choose Start processing to submit it."
     },
     {
       "id": "process",
@@ -28,13 +28,16 @@
       "id": "review",
       "platform": "web",
       "headline": ["Review the", "clinical note."],
-      "narration": "Review the clinical note against the transcript and audio. Check the patient details, findings, and plan. The draft is a starting point for your clinical review.",
+      "narration": "Review the clinical note against the transcript and audio. Click a highlighted citation or annotation to jump to the matching audio and transcript. Check the patient details, findings, and plan. The draft is a starting point for your clinical review.",
       "instructionCard": [
-        "Compare the note with transcript and audio.",
+        "Click a citation: jump to audio and transcript.",
         "Check patient details, findings, and plan.",
         "Use the draft as a starting point."
       ],
-      "disclosure": "Corrected UI capture pending"
+      "disclosure": "Corrected UI capture pending",
+      "instructionTitle": "Your clinical review",
+      "instructionLabels": ["Follow the evidence", "Verify the details", "Use your judgment"],
+      "instructionStyle": "evidence"
     },
     {
       "id": "edit",
@@ -42,11 +45,14 @@
       "headline": ["Edit, save,", "and complete."],
       "narration": "Choose Edit to make corrections, then Save. When your review is finished, choose Complete. Saving an edit and completing the encounter are separate steps.",
       "instructionCard": [
-        "Edit to make corrections, then save.",
-        "Complete after your clinical review.",
-        "Saving and completing are separate steps."
+        "Make corrections to the draft.",
+        "Keep your changes.",
+        "Finish after your clinical review."
       ],
-      "disclosure": "Corrected UI capture pending"
+      "disclosure": "Corrected UI capture pending",
+      "instructionTitle": "From draft to complete",
+      "instructionLabels": ["Edit", "Save", "Complete"],
+      "instructionStyle": "sequence"
     },
     {
       "id": "send",
@@ -58,7 +64,9 @@
         "Every account can send discharge notes.",
         "Without Nest, no-reply is the default."
       ],
-      "disclosure": "Corrected UI capture pending"
+      "disclosure": "Corrected UI capture pending",
+      "instructionTitle": "Before you send",
+      "instructionLabels": ["Review the details", "Sending is included", "Know where replies go"]
     },
     {
       "id": "follow-up",

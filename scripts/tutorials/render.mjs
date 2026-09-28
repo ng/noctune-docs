@@ -63,6 +63,25 @@ export function validateTimeline(story) {
         )
       )
         throw Error(`Invalid instruction card: ${scene.id}`)
+      if (
+        scene.instructionStyle !== undefined &&
+        !['checklist', 'sequence', 'evidence'].includes(scene.instructionStyle)
+      )
+        throw Error(`Invalid instruction style: ${scene.id}`)
+      if (scene.instructionStyle === 'evidence' && scene.instructionCard.length > 3)
+        throw Error(`Evidence card supports at most three rows: ${scene.id}`)
+      if (
+        scene.instructionTitle !== undefined &&
+        (typeof scene.instructionTitle !== 'string' || scene.instructionTitle.length > 40)
+      )
+        throw Error(`Invalid instruction title: ${scene.id}`)
+      if (
+        scene.instructionLabels !== undefined &&
+        (!Array.isArray(scene.instructionLabels) ||
+          scene.instructionLabels.length !== scene.instructionCard.length ||
+          scene.instructionLabels.some((label) => typeof label !== 'string' || label.length > 30))
+      )
+        throw Error(`Invalid instruction labels: ${scene.id}`)
     } else if (!scene.source) throw Error(`Missing media: ${scene.id}`)
     if (!scene.audio) throw Error(`Missing audio: ${scene.id}`)
     at += scene.duration
@@ -139,14 +158,29 @@ export async function render(timelineDir, output, roots) {
       let visualSource = source
       if (scene.instructionCard) {
         visualSource = path.join(work, `${index}-instructions.png`)
+        const sequence = scene.instructionStyle === 'sequence'
+        const evidence = scene.instructionStyle === 'evidence'
+        const gap = evidence || scene.instructionCard.length > 3 ? 120 : 144
         const lines = scene.instructionCard
-          .map(
-            (line, i) => `<text x="64" y="${250 + i * 90}" font-size="36">${escape(line)}</text>`,
-          )
+          .map((line, i) => {
+            const y = 174 + i * gap
+            const label = scene.instructionLabels?.[i]
+            const icon = sequence
+              ? `<text x="108" y="${y + 63}" text-anchor="middle" font-size="28" font-weight="700" fill="#FFFFFF">${i + 1}</text>`
+              : `<path d="M96 ${y + 55}l8 8 17-19" fill="none" stroke="#11736F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`
+            const connector =
+              sequence && i < scene.instructionCard.length - 1
+                ? `<path d="M108 ${y + 90}v${gap - 92}m-6-6 6 6 6-6" fill="none" stroke="#78AAA0" stroke-width="2.5"/>`
+                : ''
+            return `<rect x="48" y="${y}" width="1152" height="112" rx="18" fill="#F1F7F4"/>${connector}<circle cx="108" cy="${y + 55}" r="28" fill="${sequence ? '#11736F' : '#D8EDE5'}"/>${icon}${label ? `<text x="164" y="${y + 43}" font-size="30" font-weight="700">${escape(label)}</text>` : ''}<text x="164" y="${y + (label ? 80 : 65)}" font-size="30" fill="#4D6963">${escape(line)}</text>`
+          })
           .join('')
+        const evidenceFlow = evidence
+          ? `<g font-size="22" font-weight="700" text-anchor="middle"><rect x="48" y="566" width="330" height="72" rx="16" fill="#FFF1C9"/><text x="213" y="610">Highlighted citation</text><path d="M394 602h64m-8-7 8 7-8 7" fill="none" stroke="#11736F" stroke-width="3"/><rect x="474" y="566" width="330" height="72" rx="16" fill="#D8EDE5"/><text x="639" y="610">Audio seeks</text><text x="850" y="611" font-size="30" fill="#11736F">+</text><rect x="900" y="566" width="300" height="72" rx="16" fill="#D8EDE5"/><text x="1050" y="610">Transcript jumps</text></g>`
+          : ''
         await sharp(
           Buffer.from(
-            `<svg xmlns="http://www.w3.org/2000/svg" width="1248" height="702"><rect width="1248" height="702" rx="24" fill="#FFFFFF"/><g font-family="Arial" fill="#132D2B"><text x="64" y="110" font-size="22" fill="#53716A">WORKFLOW CHECKLIST</text>${lines}</g></svg>`,
+            `<svg xmlns="http://www.w3.org/2000/svg" width="1248" height="702"><rect width="1248" height="702" rx="24" fill="#FFFFFF"/><g font-family="Arial" fill="#132D2B"><rect x="48" y="46" width="36" height="4" rx="2" fill="#11736F"/><text x="98" y="54" font-size="18" letter-spacing="2" fill="#53716A">${sequence ? 'STEP BY STEP' : 'WORKFLOW CHECKLIST'}</text><text x="48" y="121" font-size="44" font-weight="700">${escape(scene.instructionTitle || 'Keep these steps in mind')}</text>${lines}${evidenceFlow}</g></svg>`,
           ),
         )
           .png()

@@ -81,3 +81,9 @@ captures all expose that state. The draft uses clearly labeled instruction cards
 for review, edit, and discharge instead. Keep the narration and both delivery modes.
 Recapture these scenes only after the UI is corrected; do not retouch the screenshots
 or use the current completed-state images in the recorded tutorials.
+
+The overview must explain evidence navigation: clicking a highlighted citation or
+annotation jumps to the matching audio and transcript. The temporary review card
+illustrates this connection. After the UI correction, record the actual click and
+show the audio seek and transcript jump together, with a short hold to orient viewers.
+The focused review tutorial can teach annotation details and playback controls.
