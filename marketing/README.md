@@ -22,7 +22,9 @@ Keep the full image in each corresponding uploader and inspect its actual previe
 The supplied LinkedIn Page-info preview crops the cover to a much shallower center
 strip. Its dedicated layout therefore keeps all foreground artwork within approximately
 y=65–192 of the 256-pixel canvas. Inspect both the full cover and a centered 144-pixel
-crop after changes; do not enlarge device mockups beyond this band.
+crop after changes; do not enlarge device mockups beyond this band. Keep the text
+block at x=320 or farther right so the overlaid LinkedIn Page logo cannot cover
+the subtitle in the full Page view.
 
 ## Regenerate
 
@@ -39,8 +41,8 @@ Run `pnpm check` before committing. Keep raster sources and exports in Git LFS.
 
 ## Design and source rules
 
-- Use the official horizontal logo in listing heroes. Omit it from the LinkedIn
-  cover because the adjacent Page logo already includes the wordmark. The square uses the complete official
+- Omit the repeated horizontal logo from both the VetSoftwareHub hero and LinkedIn
+  cover; the separate listing/Page logo already includes the wordmark. The square uses the complete official
   stacked artwork, including the wordmark. Preserve its proportions, spacing, and
   color; do not reconstruct it from separate owl and text crops.
 - Square artwork is 300 pixels wide and centered on a 400 × 400 canvas, leaving
@@ -51,7 +53,7 @@ Run `pnpm check` before committing. Keep raster sources and exports in Git LFS.
 - The phone sits slightly below the browser with a soft shadow. In the VetSoftwareHub hero,
   all foreground artwork has at least 90 pixels of edge padding; keep important content
   within the listing crop's safe area. Do not assume that crop applies to LinkedIn.
-- Keep the horizontal logo, sage background, and dark brand colors. Use the supplied
+- Keep the sage background and dark brand colors. Use the supplied
   official App Store badge from `public/app-store-badge.svg` without redrawing,
   recoloring, or stretching it.
 - Web review shows the SOAP note, highlighted citation, transcript, and playback.
