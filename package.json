@@ -12,6 +12,7 @@
     "format:check": "prettier --check .",
     "lint:md": "remark 'content/**/*.{md,mdx}' --frail --quiet",
     "lint:md:fix": "remark 'content/**/*.{md,mdx}' --output --quiet",
+    "marketing:render": "node scripts/marketing/render-assets.mjs",
     "prepare": "husky",
     "release": "semantic-release",
     "screenshots:contact-sheet": "node scripts/make-screenshot-contact-sheets.mjs",
