@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "brandSource": "Official noctune Logo System / High Resolution Transparent PNG Files (user supplied)",
+  "web": {
+    "capture": "web-interactions/review-poster.png",
+    "coreCommit": "4e58965d53dace568881fd25a393e864af4fc5ae",
+    "fixture": "Fictional Northstar / Mochi encounter 201; reviewed citation/transcript/playback state"
+  },
+  "ios": {
+    "capture": "native-interactions/raw/record-pause-20260928.mp4",
+    "frameSeconds": 10,
+    "appCommit": "b6f3d01",
+    "fixture": "Fictional Mochi recording; synthetic microphone input"
+  },
+  "sha256": {
+    "logo-horizontal.png": "14739c3abd52cdffd3e9546bc3ee56c426539b37688ae8e813de3e160b3382b5",
+    "logo-stacked-dark.png": "0fb6597e3bdb05aae418038ec67e2c645dbb0587466b7cb84a52cc9ef935f5e7",
+    "logo-stacked-white.png": "f0e8c69d4f850730de6e3fe611e10efc6ffe1c2d789da6710a88a32be073ac75",
+    "web-review.png": "1313aebec48601429317c5787553b5984cb4001635c2972e7c2975d4ff3ee348",
+    "ios-recording.png": "96da28c386b69d2b9386534a3246f15ba30490fe325d74d743570ec4a622d79c"
+  }
+}

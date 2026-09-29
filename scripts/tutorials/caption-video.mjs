@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
 import sharp from 'sharp'
+import { writeSubtitles } from './subtitles.mjs'
 import { withStagedOutput } from './staged-output.mjs'
 
 const run = (args) => execFileSync('ffmpeg', ['-v', 'error', '-y', ...args], { stdio: 'pipe' })
@@ -155,8 +156,8 @@ export async function captionVideo(videoDir, captionDir, output) {
     )
       throw Error('Captioned video failed delivery checks')
     fs.copyFileSync(input, path.join(stage, 'walkthrough-clean.mp4'))
-    for (const name of ['walkthrough.srt', 'walkthrough.vtt', 'captions.json'])
-      fs.copyFileSync(path.join(captionDir, name), path.join(stage, name))
+    writeSubtitles(stage, captions.cues)
+    fs.writeFileSync(path.join(stage, 'captions.json'), JSON.stringify(captions, null, 2) + '\n')
     fs.writeFileSync(
       path.join(stage, 'manifest.json'),
       JSON.stringify(
@@ -201,7 +202,7 @@ export async function captionVideo(videoDir, captionDir, output) {
     ).replaceAll('<', '\\u003c')
     fs.writeFileSync(
       path.join(stage, 'review.html'),
-      `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>noctune walkthrough review</title><style>body{font:18px system-ui;background:#f3f8f2;color:#132d2b;max-width:1280px;margin:32px auto;padding:24px}video{width:100%}p{line-height:1.6}</style><h1>noctune · Your first encounter</h1><p>Arcas narration · Browser frame · Fictional demo data. Static-capture draft for review.</p><h2>LinkedIn: captions always visible</h2><video controls preload="metadata" src="walkthrough-captioned.mp4"></video><h2>Docs: switchable English captions</h2><video id="clean" controls preload="metadata" src="walkthrough-clean.mp4"></video><script>const v=document.getElementById('clean'),t=document.createElement('track');t.kind='captions';t.label='English';t.srclang='en';t.default=true;t.src=URL.createObjectURL(new Blob([${vtt}],{type:'text/vtt'}));v.append(t);for(const video of document.querySelectorAll('video'))video.addEventListener('play',()=>{for(const other of document.querySelectorAll('video'))if(other!==video)other.pause()})</script></html>`,
+      `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${escape(manifest.title)} · review</title><style>body{font:18px system-ui;background:#f3f8f2;color:#132d2b;max-width:1280px;margin:32px auto;padding:24px}video{width:100%}p{line-height:1.6}</style><h1>${escape(manifest.title)}</h1><p>Fictional demo data · Tutorial draft for review.</p><h2>LinkedIn: captions always visible</h2><video controls preload="metadata" src="walkthrough-captioned.mp4"></video><h2>Docs: switchable English captions</h2><video id="clean" controls preload="metadata" src="walkthrough-clean.mp4"></video><script>const v=document.getElementById('clean'),t=document.createElement('track');t.kind='captions';t.label='English';t.srclang='en';t.default=true;t.src=URL.createObjectURL(new Blob([${vtt}],{type:'text/vtt'}));v.append(t);for(const video of document.querySelectorAll('video'))video.addEventListener('play',()=>{for(const other of document.querySelectorAll('video'))if(other!==video)other.pause()})</script></html>`,
     )
     fs.rmSync(work, { recursive: true, force: true })
   })

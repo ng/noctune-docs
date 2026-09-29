@@ -12,6 +12,7 @@
     "format:check": "prettier --check .",
     "lint:md": "remark 'content/**/*.{md,mdx}' --frail --quiet",
     "lint:md:fix": "remark 'content/**/*.{md,mdx}' --output --quiet",
+    "marketing:render": "node scripts/marketing/render-assets.mjs",
     "prepare": "husky",
     "release": "semantic-release",
     "screenshots:contact-sheet": "node scripts/make-screenshot-contact-sheets.mjs",
@@ -29,7 +30,9 @@
     "tutorials:audition": "node scripts/tutorials/audition.mjs",
     "tutorials:caption-video": "node scripts/tutorials/caption-video.mjs",
     "tutorials:captions": "node scripts/tutorials/captions.mjs",
+    "tutorials:capture-web": "node scripts/tutorials/capture-web.mjs",
     "tutorials:narrate": "node scripts/tutorials/narrate.mjs",
+    "tutorials:prepare-media": "node scripts/tutorials/prepare-media.mjs",
     "tutorials:render": "node scripts/tutorials/render.mjs"
   },
   "lint-staged": {

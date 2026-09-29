@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { execFileSync } from 'node:child_process'
 import { getProvider, registerProvider } from './providers/index.mjs'
 import { narrate, validateStory, fingerprint, timestamp } from './narrate.mjs'
 import { withStagedOutput } from './staged-output.mjs'
@@ -156,6 +157,12 @@ test('pipeline decodes and caches audio, invalidates changed voices, and preserv
     }),
   )
   assert.equal(fs.readFileSync(path.join(output, 'timeline.json'), 'utf8'), before)
+  fs.writeFileSync(path.join(output, 'README.md'), 'Keep my notes')
+  story.scenes[0].id = 'renamed'
+  await narrate(story, config, {}, output, cache)
+  assert.equal(fs.existsSync(path.join(output, 'one.wav')), false)
+  assert.ok(fs.existsSync(path.join(output, 'renamed.wav')))
+  assert.equal(fs.readFileSync(path.join(output, 'README.md'), 'utf8'), 'Keep my notes')
 })
 
 test('renderer handles web, iOS, and instruction cards and rejects unsafe inputs', async (t) => {
@@ -218,6 +225,29 @@ test('renderer handles web, iOS, and instruction cards and rejects unsafe inputs
   )
   await render(narration, output, { web: media, ios: media })
   const manifest = JSON.parse(fs.readFileSync(path.join(output, 'manifest.json')))
+  const phonePixels = await sharp(path.join(output, 'qa', 'ios.png'))
+    .removeAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+  const pixel = (x, y) => [
+    ...phonePixels.data.subarray(
+      (y * phonePixels.info.width + x) * 3,
+      (y * phonePixels.info.width + x) * 3 + 3,
+    ),
+  ]
+  // All four capture corners reveal the pale background; the screen stays intact.
+  for (const [x, y] of [
+    [1280, 64],
+    [1659, 64],
+    [1280, 889],
+    [1659, 889],
+  ])
+    assert.ok(
+      pixel(x, y).every((v) => v > 150),
+      `Unclipped phone corner at ${x},${y}`,
+    )
+  const center = pixel(1470, 450)
+  assert.ok(center[0] < 35 && center[1] < 50 && center[2] < 70)
   assert.equal(manifest.fullDecodePassed, true)
   assert.equal(manifest.published, false)
   assert.equal(manifest.visualReviewPassed, false)
@@ -225,6 +255,26 @@ test('renderer handles web, iOS, and instruction cards and rejects unsafe inputs
   assert.throws(() => sourcePath(media, '../elsewhere.png'), /escapes/)
   fs.symlinkSync(path.join(output, 'walkthrough-landscape.mp4'), path.join(media, 'escape.mp4'))
   assert.throws(() => sourcePath(media, 'escape.mp4'), /symlink escapes/)
+  fs.writeFileSync(path.join(output, 'qa', 'notes.md'), 'Keep review notes')
+  const shorter = { ...story, scenes: [story.scenes[0]] }
+  await narrate(
+    shorter,
+    { provider: 'render-test', model: 'test' },
+    {},
+    narration,
+    path.join(root, 'cache'),
+  )
+  await render(narration, output, { web: media })
+  assert.equal(fs.existsSync(path.join(output, 'qa', 'ios.png')), false)
+  assert.equal(fs.existsSync(path.join(output, 'qa', 'card.png')), false)
+  assert.equal(fs.readFileSync(path.join(output, 'qa', 'notes.md'), 'utf8'), 'Keep review notes')
+  await narrate(
+    story,
+    { provider: 'render-test', model: 'test' },
+    {},
+    narration,
+    path.join(root, 'cache'),
+  )
   const timeline = JSON.parse(fs.readFileSync(path.join(narration, 'timeline.json')))
   const cardRows = timeline.scenes[2].instructionCard
   timeline.scenes[2].instructionCard = ['One', 'Two', 'Three', 'Four']
@@ -262,7 +312,7 @@ test('captions preserve authored wording, flag recognition corrections, and boun
   }))
   const aligned = scriptWords(text, words, 10)
   assert.equal(aligned.corrections.length, 1)
-  assert.ok(aligned.words.some((word) => word.text === 'linked'))
+  assert.ok(aligned.words.some((word) => word.text === 'Encounter-linked'))
   const cues = cuesFromWords(aligned.words, 5)
   assert.ok(
     cues.every(
@@ -273,11 +323,48 @@ test('captions preserve authored wording, flag recognition corrections, and boun
         cue.text.split('\n').every((line) => line.length <= 42),
     ),
   )
-  assert.equal(cues.map((c) => c.text.replaceAll('\n', ' ')).join(' '), text.replaceAll('-', ' '))
+  assert.equal(cues.map((c) => c.text.replaceAll('\n', ' ')).join(' '), text)
+  assert.deepEqual(
+    scriptWords(
+      'iPhone follow-up.',
+      [
+        { word: 'i', start: 0, end: 0.1 },
+        { word: 'Phone', start: 0.1, end: 0.4 },
+        { word: 'follow', start: 0.5, end: 0.7 },
+        { word: 'up.', start: 0.7, end: 0.9 },
+      ],
+      1,
+    ).words,
+    [
+      { text: 'iPhone', start: 0, end: 0.4 },
+      { text: 'follow-up.', start: 0.5, end: 0.9 },
+    ],
+  )
   assert.throws(() => scriptWords('Missing words.', words, 10), /alignment needs review/)
   assert.throws(
     () => scriptWords('Wrong.', [{ word: 'Different.', start: 0, end: 1 }], 2),
     /differs too much/,
+  )
+  assert.throws(
+    () => scriptWords('Hello.', [{ word: 'Hello.', start: 1.01, end: 1.05 }], 1),
+    /Invalid caption word timing/,
+  )
+  assert.throws(
+    () => scriptWords('Hello.', [{ word: 'Hello.', start: 1, end: 1.05 }], 1),
+    /Invalid caption word timing/,
+  )
+  assert.equal(
+    scriptWords('Hello.', [{ word: 'Hello.', start: 0.8, end: 1.05 }], 1).words[0].end,
+    1,
+  )
+  await assert.rejects(
+    () =>
+      transcribeDeepgram(
+        Buffer.from('test'),
+        { DEEPGRAM_API_KEY: 'secret' },
+        async () => new Response('secret-echo', { status: 200 }),
+      ),
+    (error) => error.message === 'Caption timing provider returned invalid JSON',
   )
   await assert.rejects(
     transcribeDeepgram(
@@ -308,7 +395,7 @@ test('caption delivery rejects stale or overlapping captions and generates clean
   })
   const story = {
     version: 1,
-    title: 'Caption fixture',
+    title: 'iOS <review> fixture',
     scenes: [
       {
         id: 'web',
@@ -345,16 +432,22 @@ test('caption delivery rejects stale or overlapping captions and generates clean
   )
   fs.mkdirSync(captionDir)
   fs.writeFileSync(path.join(captionDir, 'captions.json'), JSON.stringify(data))
-  fs.writeFileSync(
-    path.join(captionDir, 'walkthrough.srt'),
-    '1\n00:00:00,000 --> 00:00:00,300\nHello.\n',
-  )
-  fs.writeFileSync(
-    path.join(captionDir, 'walkthrough.vtt'),
-    'WEBVTT\n\n00:00:00.000 --> 00:00:00.300\nHello.\n',
-  )
+  fs.writeFileSync(path.join(captionDir, 'walkthrough.srt'), 'stale srt')
+  fs.writeFileSync(path.join(captionDir, 'walkthrough.vtt'), 'stale vtt')
   await captionVideo(video, captionDir, delivery)
   assert.ok(fs.statSync(path.join(delivery, 'walkthrough-captioned.mp4')).size > 1000)
+  assert.equal(
+    fs.readFileSync(path.join(delivery, 'walkthrough.srt'), 'utf8'),
+    '1\n00:00:00,000 --> 00:00:00,300\nHello.\n',
+  )
+  assert.equal(
+    fs.readFileSync(path.join(delivery, 'walkthrough.vtt'), 'utf8'),
+    'WEBVTT\n\n00:00:00.000 --> 00:00:00.300\nHello.\n',
+  )
+  const html = fs.readFileSync(path.join(delivery, 'review.html'), 'utf8')
+  assert.ok(html.includes('iOS &lt;review&gt; fixture'))
+  assert.ok(!html.includes('Arcas narration'))
+  assert.ok(!html.includes('Browser frame'))
   assert.deepEqual(
     fs.readFileSync(path.join(video, 'walkthrough-landscape.mp4')),
     fs.readFileSync(path.join(delivery, 'walkthrough-clean.mp4')),
@@ -362,4 +455,150 @@ test('caption delivery rejects stale or overlapping captions and generates clean
   assert.ok(
     fs.readFileSync(path.join(delivery, 'review.html'), 'utf8').includes("t.kind='captions'"),
   )
+})
+
+test('rejected caption timing can retry, and old invalid cache is evicted', async (t) => {
+  const { captions } = await import('./captions.mjs')
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'caption-cache-test-'))
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }))
+  const narration = path.join(root, 'narration'),
+    output = path.join(root, 'captions')
+  fs.mkdirSync(narration)
+  fs.writeFileSync(path.join(narration, 'one.wav'), wav())
+  fs.writeFileSync(
+    path.join(narration, 'timeline.json'),
+    JSON.stringify({
+      version: 1,
+      title: 'Cache',
+      duration: 1.5,
+      scenes: [
+        {
+          id: 'one',
+          platform: 'web',
+          headline: ['Test'],
+          narration: 'Hello.',
+          instructionCard: ['Test'],
+          at: 0,
+          duration: 1.5,
+          speechSeconds: 1,
+          audio: 'one.wav',
+        },
+      ],
+    }),
+  )
+  let calls = 0
+  const transcribe = async () => {
+    calls++
+    return [{ word: calls === 1 ? 'Wrong.' : 'Hello.', start: 0, end: 0.5 }]
+  }
+  await assert.rejects(captions(narration, output, {}, transcribe), /differs too much/)
+  assert.deepEqual(fs.readdirSync(path.join(root, '.caption-cache')), [])
+  await captions(narration, output, {}, transcribe)
+  await captions(narration, output, {}, transcribe)
+  assert.equal(calls, 2)
+  const cached = path.join(
+    root,
+    '.caption-cache',
+    fs.readdirSync(path.join(root, '.caption-cache'))[0],
+  )
+  fs.writeFileSync(cached, JSON.stringify([{ word: 'Wrong.', start: 0, end: 0.5 }]))
+  await assert.rejects(captions(narration, output, {}, transcribe), /entry removed/)
+  assert.equal(fs.existsSync(cached), false)
+  await captions(narration, output, {}, transcribe)
+  assert.equal(calls, 3)
+})
+
+test('media assembly verifies recordings and preserves previous output on a changed checksum', async (t) => {
+  const { prepareMedia } = await import('./prepare-media.mjs')
+  const { createHash } = await import('node:crypto')
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tutorial-assembly-test-'))
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }))
+  const recordings = path.join(root, 'recordings'),
+    screenshots = path.join(root, 'screenshots'),
+    output = path.join(root, 'prepared')
+  fs.mkdirSync(recordings)
+  fs.mkdirSync(screenshots)
+  fs.writeFileSync(path.join(recordings, 'start.mp4'), 'recorded bytes')
+  fs.writeFileSync(path.join(screenshots, 'process.webp'), 'static bytes')
+  const storyFile = path.join(root, 'story.json')
+  fs.writeFileSync(
+    storyFile,
+    JSON.stringify({
+      version: 1,
+      title: 'Assembly',
+      scenes: [
+        { id: 'start', platform: 'web', narration: 'Start.', source: 'absent.webp' },
+        { id: 'process', platform: 'web', narration: 'Wait.', source: 'process.webp' },
+        { id: 'review', platform: 'web', narration: 'Review.', instructionCard: ['Review.'] },
+      ],
+    }),
+  )
+  fs.writeFileSync(
+    path.join(recordings, 'capture-manifest.json'),
+    JSON.stringify({
+      coreCommit: 'fixture',
+      shots: [
+        {
+          id: 'start',
+          file: 'start.mp4',
+          sha256: createHash('sha256').update('recorded bytes').digest('hex'),
+        },
+      ],
+    }),
+  )
+  await prepareMedia(storyFile, recordings, output, screenshots)
+  assert.equal(fs.readFileSync(path.join(output, 'media', 'start.mp4'), 'utf8'), 'recorded bytes')
+  assert.equal(fs.readFileSync(path.join(output, 'media', 'process.webp'), 'utf8'), 'static bytes')
+  const story = JSON.parse(fs.readFileSync(path.join(output, 'story.json')))
+  assert.equal(story.scenes[0].source, 'start.mp4')
+  assert.deepEqual(story.scenes[2].instructionCard, ['Review.'])
+  await assert.rejects(
+    prepareMedia(storyFile, recordings, output, screenshots, ['review']),
+    /Missing instruction card/,
+  )
+  const manifestFile = path.join(recordings, 'capture-manifest.json')
+  const manifest = JSON.parse(fs.readFileSync(manifestFile))
+  fs.writeFileSync(path.join(recordings, 'review.mp4'), 'review footage')
+  manifest.shots.push({
+    id: 'review',
+    file: 'review.mp4',
+    sha256: createHash('sha256').update('review footage').digest('hex'),
+  })
+  fs.writeFileSync(manifestFile, JSON.stringify(manifest))
+  await prepareMedia(storyFile, recordings, output, screenshots, ['review'])
+  const replaced = JSON.parse(fs.readFileSync(path.join(output, 'story.json')))
+  assert.equal(replaced.scenes[2].source, 'review.mp4')
+  assert.equal(replaced.scenes[2].instructionCard, undefined)
+  fs.writeFileSync(path.join(recordings, 'start.mp4'), 'changed')
+  await assert.rejects(prepareMedia(storyFile, recordings, output, screenshots), /checksum changed/)
+  assert.equal(fs.readFileSync(path.join(output, 'media', 'start.mp4'), 'utf8'), 'recorded bytes')
+})
+
+test('capture timing locates encoded ready frames instead of loading footage', async (t) => {
+  const { locateReadyFrame } = await import('./video-timing.mjs')
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tutorial-timing-'))
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }))
+  const video = path.join(root, 'clip.mp4'),
+    reference = path.join(root, 'ready.png')
+  execFileSync('ffmpeg', [
+    '-v',
+    'error',
+    '-f',
+    'lavfi',
+    '-i',
+    'color=blue:s=160x90:d=1:r=30',
+    '-f',
+    'lavfi',
+    '-i',
+    'color=red:s=160x90:d=2:r=30',
+    '-filter_complex',
+    '[0:v][1:v]concat=n=2:v=1:a=0',
+    '-c:v',
+    'libx264',
+    video,
+  ])
+  execFileSync('ffmpeg', ['-v', 'error', '-ss', '1.5', '-i', video, '-frames:v', '1', reference])
+  const matched = await locateReadyFrame(video, reference)
+  assert.ok(matched.sourceIn >= 0.9 && matched.sourceIn <= 1.2)
+  assert.ok(matched.frameDifference < 1)
 })
