@@ -7,12 +7,13 @@ or social accounts.
 
 ## Upload files
 
-| File in `exports/`                         | Use                                             | Dimensions |
-| ------------------------------------------ | ----------------------------------------------- | ---------- |
-| `noctune-vetsoftwarehub-hero-1200x630.png` | VetSoftwareHub listing hero                     | 1200 × 630 |
-| `noctune-linkedin-cover-1512x256.png`      | LinkedIn Page cover                             | 1512 × 256 |
-| `noctune-linkedin-logo-400x400.png`        | LinkedIn Page logo; dark artwork on pale sage   | 400 × 400  |
-| `noctune-linkedin-logo-white-400x400.png`  | Alternate Page logo; white artwork on dark blue | 400 × 400  |
+| File in `exports/`                             | Use                                              | Dimensions |
+| ---------------------------------------------- | ------------------------------------------------ | ---------- |
+| `noctune-vetsoftwarehub-hero-1200x630.png`     | VetSoftwareHub listing hero                      | 1200 × 630 |
+| `noctune-linkedin-workflow-cover-1512x256.png` | Preferred LinkedIn Page cover; readable workflow | 1512 × 256 |
+| `noctune-linkedin-cover-1512x256.png`          | LinkedIn Page cover                              | 1512 × 256 |
+| `noctune-linkedin-logo-400x400.png`            | LinkedIn Page logo; dark artwork on pale sage    | 400 × 400  |
+| `noctune-linkedin-logo-white-400x400.png`      | Alternate Page logo; white artwork on dark blue  | 400 × 400  |
 
 All exports are PNGs below 3 MB. LinkedIn dimensions follow the user-supplied
 September 28, 2026 specification screenshot. Recheck the destination's current
@@ -68,3 +69,9 @@ See [tutorial tooling](../tutorials/README.md) for capture and video generation.
 The original source SVG templates use asset placeholders; standalone SVGs containing
 embedded raster data are intentionally not checked in. The PNG exports are the files
 to upload.
+
+The workflow cover uses simple instructional icons and large Record → Review → Send
+labels, rather than miniaturized app screens. Keep the detailed product UI in the
+VetSoftwareHub hero and gallery. This is an illustrated workflow, not a product
+screenshot. Both LinkedIn variants preserve the central crop band and Page-logo
+exclusion area.

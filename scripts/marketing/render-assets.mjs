@@ -37,6 +37,7 @@ async function write(name, svg, width, height) {
 for (const [template, name, width, height] of [
   ['hero', 'noctune-vetsoftwarehub-hero-1200x630.png', 1200, 630],
   ['linkedin-cover', 'noctune-linkedin-cover-1512x256.png', 1512, 256],
+  ['linkedin-workflow', 'noctune-linkedin-workflow-cover-1512x256.png', 1512, 256],
 ]) {
   const svg = fs
     .readFileSync(path.join(root, `marketing/templates/${template}.svg`), 'utf8')
