@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "title": "Make templates your own in noctune",
+  "kicker": "TEMPLATES",
+  "tagline": "Notes that match how you work.",
+  "scenes": [
+    {
+      "id": "templates-library",
+      "platform": "web",
+      "headline": ["Two kinds of", "template."],
+      "narration": "This video covers templates. SOAP note templates shape the clinical record. Discharge templates shape what the client takes home. Open Templates to see your own and the ones noctune includes. Switch tabs for discharge templates."
+    },
+    {
+      "id": "community-duplicate",
+      "platform": "web",
+      "headline": ["Start from the", "community."],
+      "narration": "Other clinicians share templates in the community library. Filter by type, and open one to preview it. If it suits your practice, choose Duplicate. The copy is added to your templates, ready for you to adjust and save."
+    },
+    {
+      "id": "template-create",
+      "platform": "web",
+      "headline": ["Create your", "own."],
+      "narration": "To build your own, choose New Template. Copy an existing template, start blank, or import. Name it, choose Create, then edit and save."
+    },
+    {
+      "id": "template-import",
+      "platform": "web",
+      "headline": ["Import what", "you already use."],
+      "narration": "Already have a template in a document? Choose Import, paste it, and choose Organize this. noctune splits it into drafts, and offers client-facing instructions as a discharge template. Reusable client education stays in your text. Nothing is saved until you choose Save Template."
+    },
+    {
+      "id": "email-templates",
+      "platform": "web",
+      "headline": ["Reusable", "client emails."],
+      "narration": "Email Templates hold client education you send often. Choose a template to preview it. Placeholders, like the patient's name, fill in when you send, and the Placeholder button adds more."
+    },
+    {
+      "id": "iphone",
+      "platform": "ios",
+      "headline": ["Pick them", "on iPhone."],
+      "source": "start.mp4",
+      "narration": "Templates you set up on the web are ready on iPhone. Choose them before you start recording."
+    }
+  ]
+}
