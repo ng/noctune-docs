@@ -638,6 +638,32 @@ test('capture timing locates encoded ready frames instead of loading footage', a
   const matched = await locateReadyFrame(video, reference)
   assert.ok(matched.sourceIn >= 0.9 && matched.sourceIn <= 1.2)
   assert.ok(matched.frameDifference < 1)
+  // A loading skeleton can differ from the ready page by only a little text.
+  // The screenshot moment bounds the search so it cannot match the skeleton.
+  const similar = path.join(root, 'similar.mp4'),
+    readyText = path.join(root, 'ready-text.png')
+  execFileSync('ffmpeg', [
+    '-v',
+    'error',
+    '-f',
+    'lavfi',
+    '-i',
+    'color=red:s=160x90:d=3:r=30',
+    '-f',
+    'lavfi',
+    '-i',
+    'color=red:s=160x90:d=3:r=30,drawbox=x=10:y=10:w=2:h=2:color=white:t=fill',
+    '-filter_complex',
+    '[0:v][1:v]concat=n=2:v=1:a=0',
+    '-c:v',
+    'libx264',
+    '-pix_fmt',
+    'yuv444p',
+    similar,
+  ])
+  execFileSync('ffmpeg', ['-v', 'error', '-ss', '5', '-i', similar, '-frames:v', '1', readyText])
+  const bounded = await locateReadyFrame(similar, readyText, { near: 5.5 })
+  assert.ok(bounded.sourceIn >= 3 && bounded.sourceIn <= 5.5, `in-point ${bounded.sourceIn}`)
 })
 
 test('delivery catalog requires explicit review status and a named listener', async () => {

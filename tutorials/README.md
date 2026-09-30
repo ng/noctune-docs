@@ -329,3 +329,26 @@ The call-guidance take shows the in-app **Silence calls** guidance instead.
 `edit-recordings.mjs` converts simulator video to constant 30 fps before trimming. Simulator
 captures write no frames while the screen is static, and seeking the input dropped that time:
 a static Today screen could vanish from a cut.
+
+## Review with confidence (episode 3)
+
+Both platforms make the same transcript-backed correction. The draft says Mochi's weight was
+"stable", but at 1:09 the transcript says it is "up just a touch from Tuesday". Web shots:
+`transcript-seek`, `citation-correct` (typed over the word, then Save), `format-complete`
+(Bold from the toolbar, Save, Complete), and `fullscreen`. Each resets the reserved tutorial
+note first. Native takes: `TranscriptSeek`, `TypeCorrection`, and `MarkComplete`.
+
+Between native takes, restore the note without refreshing the reserved login:
+
+```sh
+node scripts/tutorials/reset-tutorial-note.mjs /absolute/path/to/noctune-docs \
+  /absolute/path/to/noctune-core-capture-worktree
+```
+
+Relaunch the app afterwards to clear its note cache. Web capture refreshes the reserved login,
+which signs the native app out. Finish native takes first, or restart `serve.mjs` and use
+`launch` again afterwards.
+
+The ready-frame search is bounded to the two seconds before the ready screenshot. At 160×90, a
+loading skeleton can score within tolerance of the loaded page. The earlier unbounded search
+started some clips on the skeleton.

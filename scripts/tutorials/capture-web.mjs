@@ -306,7 +306,9 @@ try {
           { encoding: 'utf8' },
         ).trim(),
       )
-      const { sourceIn, frameDifference } = await locateReadyFrame(rawPath, readyReference)
+      const { sourceIn, frameDifference } = await locateReadyFrame(rawPath, readyReference, {
+        near: begin,
+      })
       const destination = path.join(stage, `${id}.mp4`)
       execFileSync(
         'ffmpeg',

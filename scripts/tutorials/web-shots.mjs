@@ -33,6 +33,30 @@ async function noteReady(page) {
 
 const uploadDisclosure = 'Demo upload · cloud services simulated'
 
+// Restore the reserved tutorial note and reopen the encounter before a shot
+// that edits or completes it, so every take starts from the same draft.
+async function resetNote(db) {
+  await db`update soap_notes n set rendered_markdown = original.rendered_markdown, edit_metadata = null, updated_at = original.updated_at from soap_notes original where n.id = 'd0c50000-0000-4000-8000-000000000309' and original.id = 'd0c50000-0000-4000-8000-000000000301'`
+  await db`update transcriptions set finished_at = null, finished_by = null, finish_method = null where id = ${MOCHI}`
+}
+
+// Type a replacement over `find` in the markdown editor, as a person would.
+async function replaceInEditor(page, find, replacement) {
+  const editor = page.locator('#soap-note-markdown-editor')
+  await expect(editor).toBeVisible()
+  const at = (await editor.inputValue()).indexOf(find)
+  if (at < 0) throw Error(`Expected fixture wording: ${find}`)
+  await editor.evaluate(
+    (element, [start, end]) => {
+      element.focus()
+      element.setSelectionRange(start, end)
+    },
+    [at, at + find.length],
+  )
+  await wait(900)
+  await page.keyboard.type(replacement, { delay: 90 })
+}
+
 async function recordFor(page, seconds) {
   await page.getByRole('button', { name: 'Record from web', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Stop', exact: true })).toBeVisible()
@@ -253,6 +277,108 @@ export const shots = {
       await expect(dialog.getByText('Uploaded')).toBeVisible({ timeout: 30000 })
       await wait(2000)
       await dialog.getByRole('button', { name: /Done/ }).click()
+    },
+  },
+  'transcript-seek': {
+    path: encounter(),
+    reset: resetNote,
+    disclosure: 'Example draft · synthetic playback fixture',
+    ready: noteReady,
+    act: async (page) => {
+      await wait(4500)
+      const search = page.getByPlaceholder('Search transcript')
+      await search.click()
+      await search.pressSequentially('scale', { delay: 140 })
+      await wait(2500)
+      const passage = page.getByText(/Let me get her up on the scale/).first()
+      await passage.scrollIntoViewIfNeeded()
+      await passage.click()
+      await expect
+        .poll(() => page.locator('audio').evaluate((audio) => audio.currentTime))
+        .toBeGreaterThan(60)
+      await wait(5000)
+      await page.getByRole('button', { name: 'Pause', exact: true }).click()
+    },
+  },
+  'citation-correct': {
+    path: encounter(),
+    reset: resetNote,
+    duration: 40,
+    disclosure: 'Example draft · synthetic playback fixture',
+    ready: noteReady,
+    act: async (page, ctx) => {
+      await wait(3000)
+      const citation = page.locator('[title$="click to jump"]').first()
+      await citation.hover()
+      await wait(1200)
+      await citation.click()
+      await expect
+        .poll(() => page.locator('audio').evaluate((audio) => audio.currentTime))
+        .toBeGreaterThanOrEqual(ctx.citationTime)
+      await expect(page.locator('.ts-active')).toContainText('Weight 4.6 kg')
+      await expect(page.getByText(/up just a touch from Tuesday/)).toBeInViewport()
+      await wait(5000)
+      await page.getByRole('button', { name: 'Pause', exact: true }).click()
+      await wait(1500)
+      await page.getByRole('button', { name: 'Edit', exact: true }).click()
+      await replaceInEditor(page, 'stable', 'up slightly')
+      await wait(1500)
+      await page.getByRole('button', { name: 'Save', exact: true }).click()
+      await expect(page.locator('#soap-note-markdown-editor')).toBeHidden()
+      await expect(
+        page.getByText(/Weight 4\.6 kg \(up slightly from the previous visit\)/),
+      ).toBeVisible()
+    },
+  },
+  'format-complete': {
+    path: encounter(),
+    reset: resetNote,
+    duration: 36,
+    disclosure: 'Example draft',
+    ready: noteReady,
+    act: async (page) => {
+      await wait(2500)
+      await page.getByRole('button', { name: 'Edit', exact: true }).click()
+      const editor = page.locator('#soap-note-markdown-editor')
+      await expect(editor).toBeVisible()
+      const phrase = 'Early mild dental tartar.'
+      const at = (await editor.inputValue()).indexOf(phrase)
+      if (at < 0) throw Error('Expected fixture assessment wording')
+      await editor.evaluate(
+        (element, [start, end]) => {
+          element.focus()
+          element.setSelectionRange(start, end)
+        },
+        [at, at + phrase.length],
+      )
+      await wait(1800)
+      await page.getByRole('button', { name: /^Bold/ }).click()
+      await expect(editor).toHaveValue(/\*\*Early mild dental tartar\.\*\*/)
+      await wait(3000)
+      await page.getByRole('button', { name: 'Save', exact: true }).click()
+      await expect(editor).toBeHidden()
+      await wait(3500)
+      await page.getByRole('button', { name: 'Complete', exact: true }).click()
+      await expect(page.getByRole('button', { name: 'Completed', exact: true })).toBeVisible()
+    },
+  },
+  fullscreen: {
+    path: encounter(),
+    reset: resetNote,
+    disclosure: 'Example draft',
+    ready: noteReady,
+    act: async (page) => {
+      await wait(1800)
+      await page.getByRole('button', { name: 'Full screen', exact: true }).click()
+      await expect(
+        page.getByRole('button', { name: 'Exit full screen', exact: true }),
+      ).toBeVisible()
+      await wait(1500)
+      await page.mouse.move(700, 500)
+      await page.mouse.wheel(0, 420)
+      await wait(2200)
+      await page.keyboard.press('Escape')
+      await expect(page.getByRole('button', { name: 'Full screen', exact: true })).toBeVisible()
     },
   },
   'follow-up': {

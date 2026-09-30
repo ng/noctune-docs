@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "title": "Review with confidence in noctune — web",
+  "kicker": "REVIEW",
+  "tagline": "Check the draft against the recording.",
+  "scenes": [
+    {
+      "id": "transcript-seek",
+      "platform": "web",
+      "headline": ["Check the", "transcript."],
+      "narration": "This video covers reviewing a draft note: checking it against the recording, correcting it, and finishing your review. The transcript sits beside the note. Search it for a word, then click a passage to play the audio from that moment."
+    },
+    {
+      "id": "citation-correct",
+      "platform": "web",
+      "headline": ["Follow a citation,", "fix what's wrong."],
+      "narration": "Highlighted citations link the note to the recording. Here, the note says Mochi's weight was stable. Click the citation, and the transcript and audio jump to that moment: her weight is actually up a little since Tuesday. Choose Edit, correct the wording, then Save."
+    },
+    {
+      "id": "format-complete",
+      "platform": "web",
+      "headline": ["Format, save,", "then complete."],
+      "narration": "The editor uses Markdown. Select text and use the toolbar for bold, italics, headings, or lists. Saving keeps your changes, but the encounter stays open. When your review is finished, choose Complete."
+    },
+    {
+      "id": "fullscreen",
+      "platform": "web",
+      "headline": ["Read in", "full screen."],
+      "start": 0.5,
+      "narration": "For focused reading and editing, choose Full screen, or press Command, Shift, F. Press Escape to return. The draft is a starting point. Your review is what makes it the record."
+    }
+  ]
+}
