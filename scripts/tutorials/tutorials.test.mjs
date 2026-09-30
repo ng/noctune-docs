@@ -355,6 +355,74 @@ test('captions preserve authored wording, flag recognition corrections, and boun
       { text: 'follow-up.', start: 0.5, end: 0.9 },
     ],
   )
+  assert.deepEqual(
+    scriptWords(
+      'address so replies',
+      [
+        { word: 'address', start: 0, end: 0.6 },
+        { word: 'so', start: 0.45, end: 0.7 },
+        { word: 'replies', start: 0.7, end: 1.1 },
+      ],
+      2,
+    ).words.map((w) => w.start),
+    [0, 0.6, 0.7],
+  )
+  // A short word reported entirely inside the previous word follows it instead.
+  assert.deepEqual(
+    scriptWords(
+      'window and',
+      [
+        { word: 'window', start: 0, end: 0.56 },
+        { word: 'and', start: 0.3, end: 0.53 },
+      ],
+      2,
+    ).words.map((w) => [w.start, +w.end.toFixed(2)]),
+    [
+      [0, 0.56],
+      [0.56, 0.61],
+    ],
+  )
+  assert.throws(
+    () =>
+      scriptWords(
+        'far apart',
+        [
+          { word: 'far', start: 0, end: 1.5 },
+          { word: 'apart', start: 0.5, end: 1.8 },
+        ],
+        2,
+      ),
+    /Invalid caption word timing/,
+  )
+  // A brand heard as two words and a dropped word still align, with timing
+  // interpolated for the missing word; wholesale differences still fail.
+  const heard = 'With Not key Nest, clients reply here. Then read the note.'.split(' ')
+  const merged = scriptWords(
+    'With noctune Nest, clients reply here. Then read the SOAP note.',
+    heard.map((word, i) => ({
+      word,
+      start: i * 0.3 + (i >= 10 ? 0.3 : 0),
+      end: i * 0.3 + 0.25 + (i >= 10 ? 0.3 : 0),
+    })),
+    5,
+  ).words
+  assert.deepEqual(
+    merged.map((w) => w.text),
+    [
+      'With',
+      'noctune',
+      'Nest,',
+      'clients',
+      'reply',
+      'here.',
+      'Then',
+      'read',
+      'the',
+      'SOAP',
+      'note.',
+    ],
+  )
+  assert.ok(merged[9].start >= merged[8].end && merged[9].end <= merged[10].start)
   assert.throws(() => scriptWords('Missing words.', words, 10), /alignment needs review/)
   assert.throws(
     () => scriptWords('Wrong.', [{ word: 'Different.', start: 0, end: 1 }], 2),

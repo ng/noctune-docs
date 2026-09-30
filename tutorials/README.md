@@ -398,3 +398,17 @@ shot resets that assignment first). Narration avoids the dashboard **Mine** filt
 currently mirrors All, and does not claim encounters can be assigned. Assignment exists only for
 message threads. iOS has Today, the workspace switcher, and patient history, but no global
 search, members, or assignment; the iPhone episode says so.
+
+## Sentinel (episode 7)
+
+Narration keeps to `content/reference/sentinel.mdx`. Sentinel flags confrontational client
+behavior in audio the user chose to record, preserves flagged encounters beyond the standard
+retention window, and is a documentation aid, not proof. It does not contact clients,
+authorities, or outside parties. The web **Got it** control only folds the alert on screen and
+does not remove the flag; nothing in the product resolves or dismisses a flag. The web runner
+now serves fixture audio for every reserved encounter (`…02NN`), so Jasper's timestamps seek.
+The closing card is a labelled instruction card summarizing those limits.
+
+Caption timing: recognizer word times sometimes overlap the previous word by a fraction of a
+second. The caption pass clamps overlaps under 0.5 s to the previous word's end. Larger
+overlaps still stop generation for review.

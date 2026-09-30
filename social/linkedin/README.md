@@ -14,7 +14,7 @@ the next person.
 | 4   | [Make templates your own](04-templates.md)               | Web captioned MP4 (iPhone selection)   |
 | 5   | [Discharge and follow-up](05-discharge-and-follow-up.md) | Web and iPhone captioned MP4s          |
 | 6   | [Keep the practice organized](06-practice-organized.md)  | Web and iPhone captioned MP4s          |
-| 7   | [Sentinel](07-sentinel.md)                               | Planned                                |
+| 7   | [Sentinel](07-sentinel.md)                               | Web and iPhone captioned MP4s          |
 
 Each file contains the post, a first comment carrying the docs link, and extra questions for
 replying to commenters. Copy the text inside each code block exactly; line breaks are deliberate.

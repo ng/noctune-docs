@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "title": "Sentinel in noctune — iPhone",
+  "kicker": "SENTINEL",
+  "tagline": "A second look at difficult moments.",
+  "scenes": [
+    {
+      "id": "flagged",
+      "platform": "ios",
+      "headline": ["Review flagged", "encounters."],
+      "source": "flagged.mp4",
+      "disclosure": "Synthetic Sentinel example",
+      "narration": "On iPhone, open Encounters and choose Flagged. A flagged encounter shows a safety alert with the moments Sentinel marked for review. The encounter is preserved, with no action required. Sentinel does not contact clients or anyone outside your practice."
+    }
+  ]
+}
