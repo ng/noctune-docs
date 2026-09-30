@@ -6,15 +6,15 @@ removes, then ask a question they can answer from their own clinic. The goal is 
 not a product announcement: with no existing audience, comments are what put a post in front of
 the next person.
 
-| #   | Post                                                     | Video                                    |
-| --- | -------------------------------------------------------- | ---------------------------------------- |
-| 1   | [Your first encounter](01-first-encounter.md)            | `first-encounter` captioned delivery MP4 |
-| 2   | [Record and recover](02-record-and-recover.md)           | Planned                                  |
-| 3   | [Review with confidence](03-review-with-confidence.md)   | Planned                                  |
-| 4   | [Make templates your own](04-templates.md)               | Planned                                  |
-| 5   | [Discharge and follow-up](05-discharge-and-follow-up.md) | Planned                                  |
-| 6   | [Keep the practice organized](06-practice-organized.md)  | Planned                                  |
-| 7   | [Sentinel](07-sentinel.md)                               | Planned                                  |
+| #   | Post                                                     | Video                                  |
+| --- | -------------------------------------------------------- | -------------------------------------- |
+| 1   | [Your first encounter](01-first-encounter.md)            | Web, iPhone, and hybrid captioned MP4s |
+| 2   | [Record and recover](02-record-and-recover.md)           | Planned                                |
+| 3   | [Review with confidence](03-review-with-confidence.md)   | Planned                                |
+| 4   | [Make templates your own](04-templates.md)               | Planned                                |
+| 5   | [Discharge and follow-up](05-discharge-and-follow-up.md) | Planned                                |
+| 6   | [Keep the practice organized](06-practice-organized.md)  | Planned                                |
+| 7   | [Sentinel](07-sentinel.md)                               | Planned                                |
 
 Each file contains the post, a first comment carrying the docs link, and extra questions for
 replying to commenters. Copy the text inside each code block exactly; line breaks are deliberate.

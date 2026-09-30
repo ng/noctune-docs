@@ -20,6 +20,15 @@ export function speechConfig(env) {
 export function validateStory(story) {
   if (story.version !== 1 || !story.title || !Array.isArray(story.scenes) || !story.scenes.length)
     throw Error('Expected a version 1 story with title and scenes')
+  // Optional series framing shown beside every scene: `kicker` follows the
+  // step/platform label and `tagline` sits under the headline.
+  if (story.kicker !== undefined && !/^[A-Z0-9 &·-]{1,24}$/.test(story.kicker))
+    throw Error('Kicker must be 1–24 uppercase characters')
+  if (
+    story.tagline !== undefined &&
+    (typeof story.tagline !== 'string' || !story.tagline.trim() || story.tagline.length > 60)
+  )
+    throw Error('Tagline must contain 1–60 characters')
   const ids = new Set()
   for (const scene of story.scenes) {
     if (!/^[a-z0-9-]+$/.test(scene.id) || ids.has(scene.id))

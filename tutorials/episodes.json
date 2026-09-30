@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "episodes": [
+    {
+      "id": "first-encounter-web",
+      "series": 1,
+      "title": "Your first encounter \u2014 web",
+      "platform": "web",
+      "story": "tutorials/first-encounter-web.json",
+      "output": ".tutorial-output/first-encounter-recorded",
+      "post": "social/linkedin/01-first-encounter.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
+    },
+    {
+      "id": "first-encounter-ios",
+      "series": 1,
+      "title": "Your first encounter \u2014 iPhone",
+      "platform": "ios",
+      "story": "tutorials/first-encounter-ios.json",
+      "output": ".tutorial-output/first-encounter-ios",
+      "post": "social/linkedin/01-first-encounter.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
+    },
+    {
+      "id": "first-encounter-hybrid",
+      "series": 1,
+      "title": "Your first encounter \u2014 iPhone and web",
+      "platform": "hybrid",
+      "story": "tutorials/first-encounter-hybrid.json",
+      "output": ".tutorial-output/first-encounter-hybrid",
+      "post": "social/linkedin/01-first-encounter.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
+    }
+  ]
+}
