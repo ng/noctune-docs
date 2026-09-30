@@ -151,8 +151,8 @@ cues and captions can be toggled. Preserve source/timing provenance and cache sa
 - [x] Template episodes (web with iPhone selection scene; frames checked; full listen pending).
 - [x] Discharge and follow-up episodes (web and iPhone; frames checked; full listen pending).
 - [x] Organization/navigation episodes (web and iPhone; frames checked; full listen pending).
-- [ ] Sentinel episode(s) for supported platforms.
-- [ ] Docs index/player integration and media delivery plan.
+- [x] Sentinel episode(s) for supported platforms (web and iPhone; frames checked; full listen pending).
+- [x] Local delivery index with player checks (`pnpm tutorials:index`). Public hosting on `marketing-assets.noctune.ai` awaits publication approval.
 - [ ] Full audiovisual QA, caption review, review-feedback resolution, and pushed changes.
 
 Continue independent work when one shot is blocked. Record the exact dependency
