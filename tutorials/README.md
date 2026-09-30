@@ -387,3 +387,14 @@ described as sharing your address. The capture seed grants relay only to the per
 so episode 5 shots add the same reserved practice grant (`…414`) that the native harness uses.
 No shot presses Send. The iPhone episode reuses the verified episode 1 discharge and Messages
 takes.
+
+## Keep the practice organized (episode 6)
+
+Web shots: `dashboard-today` (Unsigned filter, day arrows), `patients-history`, `past-encounters`,
+`global-search` (⌘K, fixture-backed results matching `capture/authenticated.spec.ts`, because the
+disposable database has no vector index), `team-practice` (members, pending invitation, Invite
+member dialog cancelled), and `team-assign` (Unassigned filter, assign to Dr. Riley Patel; the
+shot resets that assignment first). Narration avoids the dashboard **Mine** filter, which
+currently mirrors All, and does not claim encounters can be assigned. Assignment exists only for
+message threads. iOS has Today, the workspace switcher, and patient history, but no global
+search, members, or assignment; the iPhone episode says so.

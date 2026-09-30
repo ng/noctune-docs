@@ -1,6 +1,12 @@
 # 6. Keep the practice organized
 
-Video: planned (`practice-organized`)
+Videos (burned-caption exports from `tutorials/episodes.json`):
+
+- Web: `practice-organized-web` → `walkthrough-captioned.mp4` (about 61 seconds)
+- iPhone: `practice-organized-ios` → `walkthrough-captioned.mp4` (about 18 seconds; Today,
+  workspaces, and patient history only)
+
+The web search scene uses fixture-backed results (labelled on screen).
 
 ## Post
 
@@ -14,7 +20,7 @@ Documentation only helps if the next person can find it. This video covers the p
 → Past visits beside the current note, searchable by terms like a medication or weight
 → Search patients, encounters, and messages from the top bar, down to a drug or symptom
 → An encounter board that opens on today and shows what still needs signing
-→ A practice workspace with roles for vets, techs, and front desk
+→ A practice workspace with roles, invitations, and a shared inbox you can assign
 
 A single appointment is a note. A year of them is a patient's history.
 
