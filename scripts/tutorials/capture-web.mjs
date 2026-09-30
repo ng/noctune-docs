@@ -74,7 +74,12 @@ const lock = fs.openSync(lockPath, 'wx', 0o600)
 fs.writeFileSync(lock, String(process.pid))
 const logPath = path.join(captureRoot, 'tutorial-core.log')
 const log = fs.openSync(logPath, 'w', 0o600)
-let server, browser, debugPage, fixtureAudio, citationTime
+let server,
+  browser,
+  debugPage,
+  fixtureAudio,
+  citationTime,
+  strayEncounters = []
 try {
   console.log('Applying committed Core migrations to the approved capture database.')
   execFileSync(
@@ -113,6 +118,13 @@ try {
       await sql`update soap_notes n set rendered_markdown = original.rendered_markdown, edit_metadata = null, updated_at = original.updated_at from soap_notes original where n.id = 'd0c50000-0000-4000-8000-000000000309' and original.id = 'd0c50000-0000-4000-8000-000000000301'`
       await sql`update transcriptions set finished_at = null, finished_by = null, finish_method = null where id = 'd0c50000-0000-4000-8000-000000000201'`
     }
+    // Native capture uploads leave queued, never-processed encounters on reserved
+    // patients. Remove only those so lists show the reserved fictional visits.
+    strayEncounters = (
+      await sql`delete from transcriptions t where t.id::text not like 'd0c50000-%' and t.patient_id::text like 'd0c50000-%' and t.status = 'queued' and not exists (select 1 from soap_notes n where n.transcription_id = t.id) returning t.id`
+    ).map((row) => row.id)
+    if (strayEncounters.length)
+      console.log(`Removed ${strayEncounters.length} stray queued capture encounters.`)
     requireCore('tsx/cjs')
     const { buildSyntheticDemoAudio } = requireCore(
       path.join(core, 'scripts/fixtures/noctune-demo/media.ts'),
@@ -483,6 +495,7 @@ try {
           }).trim(),
           viewport: common.viewport,
           fictionalData: true,
+          removedStrayEncounters: strayEncounters,
           microphone: 'Chromium synthetic audio',
           playback: 'Local deterministic 284-second synthetic WAV fixture; no clinical speech',
           processing:
