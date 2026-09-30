@@ -584,9 +584,31 @@ test('media assembly verifies recordings and preserves previous output on a chan
   const replaced = JSON.parse(fs.readFileSync(path.join(output, 'story.json')))
   assert.equal(replaced.scenes[2].source, 'review.mp4')
   assert.equal(replaced.scenes[2].instructionCard, undefined)
+  // A later capture root supplies a newer take of the same shot.
+  const retake = path.join(root, 'retake')
+  fs.mkdirSync(retake)
+  fs.writeFileSync(path.join(retake, 'start.mp4'), 'retake bytes')
+  fs.writeFileSync(
+    path.join(retake, 'capture-manifest.json'),
+    JSON.stringify({
+      coreCommit: 'retake',
+      shots: [
+        {
+          id: 'start',
+          file: 'start.mp4',
+          sha256: createHash('sha256').update('retake bytes').digest('hex'),
+        },
+      ],
+    }),
+  )
+  await prepareMedia(storyFile, [recordings, retake], output, screenshots, ['review'])
+  assert.equal(fs.readFileSync(path.join(output, 'media', 'start.mp4'), 'utf8'), 'retake bytes')
+  const combined = JSON.parse(fs.readFileSync(path.join(output, 'sources.json')))
+  assert.equal(combined.find((source) => source.scene === 'start').coreCommit, 'retake')
+  assert.equal(combined.find((source) => source.scene === 'review').coreCommit, 'fixture')
   fs.writeFileSync(path.join(recordings, 'start.mp4'), 'changed')
   await assert.rejects(prepareMedia(storyFile, recordings, output, screenshots), /checksum changed/)
-  assert.equal(fs.readFileSync(path.join(output, 'media', 'start.mp4'), 'utf8'), 'recorded bytes')
+  assert.equal(fs.readFileSync(path.join(output, 'media', 'start.mp4'), 'utf8'), 'retake bytes')
 })
 
 test('capture timing locates encoded ready frames instead of loading footage', async (t) => {
