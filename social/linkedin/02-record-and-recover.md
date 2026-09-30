@@ -1,6 +1,12 @@
 # 2. Record and recover
 
-Video: planned (`record-and-recover`)
+Videos (burned-caption exports from `tutorials/episodes.json`):
+
+- Web: `record-and-recover-web` → `walkthrough-captioned.mp4` (about 66 seconds)
+- iPhone: `record-and-recover-ios` → `walkthrough-captioned.mp4` (about 57 seconds)
+
+Post the web video with the text below. For the iPhone video, swap the bullets for the iPhone
+variant underneath.
 
 ## Post
 
@@ -35,3 +41,12 @@ Recording and upload guide: https://docs.noctune.ai/encounters/new-encounter
 - Do your exam rooms have reliable Wi-Fi, or do you work around dead zones?
 - Do you record the whole appointment or only the history and plan?
 - How do you tell clients you're recording? Any wording that works well?
+
+## iPhone variant bullets
+
+```text
+→ Silence calls before you start: an incoming call can interrupt a recording
+→ Pause and resume when you step out of the room
+→ Let the upload finish in the background while you keep working
+→ If an upload can't finish, the recording stays on the phone until you send it
+```

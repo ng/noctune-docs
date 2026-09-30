@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "scenes": [
+    {
+      "id": "calls",
+      "cuts": [
+        {
+          "source": "raw/call-guidance-20260930.mp4",
+          "start": 6.5,
+          "duration": 10.3,
+          "hold": 3
+        },
+        {
+          "source": "raw/call-guidance-20260930.mp4",
+          "start": 16.8,
+          "duration": 8.5
+        }
+      ]
+    },
+    {
+      "id": "record",
+      "cuts": [
+        {
+          "source": "raw/record-pause-20260928.mp4",
+          "start": 0,
+          "duration": 4
+        },
+        {
+          "source": "raw/record-pause-20260928.mp4",
+          "start": 16.5,
+          "duration": 2.5
+        },
+        {
+          "source": "raw/record-pause-20260928.mp4",
+          "start": 28,
+          "duration": 3
+        },
+        {
+          "source": "raw/record-pause-20260928.mp4",
+          "start": 36.5,
+          "duration": 2.5
+        }
+      ]
+    },
+    {
+      "id": "upload",
+      "cuts": [
+        {
+          "source": "raw/record-pause-20260928.mp4",
+          "start": 39,
+          "duration": 6.3
+        }
+      ]
+    },
+    {
+      "id": "recover",
+      "cuts": [
+        {
+          "source": "raw/recover-upload-20260930.mp4",
+          "start": 5.0,
+          "duration": 7.5
+        },
+        {
+          "source": "raw/recover-upload-20260930.mp4",
+          "start": 15.5,
+          "duration": 9.5
+        }
+      ]
+    }
+  ]
+}
