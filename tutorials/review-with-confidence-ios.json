@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "title": "Review with confidence in noctune — iPhone",
+  "kicker": "REVIEW",
+  "tagline": "Check the draft against the recording.",
+  "scenes": [
+    {
+      "id": "transcript",
+      "platform": "ios",
+      "headline": ["Hear the", "moment again."],
+      "source": "transcript.mp4",
+      "disclosure": "Example draft · synthetic playback fixture",
+      "narration": "This video covers reviewing a draft on iPhone: checking it against the recording, correcting it, and finishing your review. Open the encounter and switch to Transcript. Tap a passage to play the audio from that moment."
+    },
+    {
+      "id": "correct",
+      "platform": "ios",
+      "headline": ["Correct what", "you heard."],
+      "source": "correct.mp4",
+      "disclosure": "Example draft",
+      "narration": "Here, the note says Mochi's weight was stable, but the transcript says it's up a little since Tuesday. Tap Edit and fix the wording. The keyboard bar adds bold, italics, headings, and lists. Use Preview to check the result, then tap Save."
+    },
+    {
+      "id": "complete",
+      "platform": "ios",
+      "headline": ["Complete when", "you're done."],
+      "source": "complete.mp4",
+      "disclosure": "Example draft · nothing sent",
+      "narration": "Saving doesn't complete the encounter. When your review is finished, tap the arrow beside Send and Complete, then choose Mark as complete. Full screen reading is available on the web."
+    }
+  ]
+}

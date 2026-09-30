@@ -10,7 +10,7 @@ the next person.
 | --- | -------------------------------------------------------- | -------------------------------------- |
 | 1   | [Your first encounter](01-first-encounter.md)            | Web, iPhone, and hybrid captioned MP4s |
 | 2   | [Record and recover](02-record-and-recover.md)           | Web and iPhone captioned MP4s          |
-| 3   | [Review with confidence](03-review-with-confidence.md)   | Planned                                |
+| 3   | [Review with confidence](03-review-with-confidence.md)   | Web and iPhone captioned MP4s          |
 | 4   | [Make templates your own](04-templates.md)               | Planned                                |
 | 5   | [Discharge and follow-up](05-discharge-and-follow-up.md) | Planned                                |
 | 6   | [Keep the practice organized](06-practice-organized.md)  | Planned                                |
