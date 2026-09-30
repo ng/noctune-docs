@@ -91,6 +91,19 @@
         "framesChecked": true,
         "listened": false
       }
+    },
+    {
+      "id": "templates",
+      "series": 4,
+      "title": "Make templates your own \u2014 web, with iPhone selection",
+      "platform": "hybrid",
+      "story": "tutorials/templates-web.json",
+      "output": ".tutorial-output/templates",
+      "post": "social/linkedin/04-templates.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
     }
   ]
 }

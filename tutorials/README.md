@@ -352,3 +352,19 @@ which signs the native app out. Finish native takes first, or restart `serve.mjs
 The ready-frame search is bounded to the two seconds before the ready screenshot. At 160×90, a
 loading skeleton can score within tolerance of the loaded page. The earlier unbounded search
 started some clips on the skeleton.
+
+## Make templates your own (episode 4)
+
+Template creation, community duplication, import, and email templates exist only on the web.
+iOS lists and selects SOAP and discharge templates, so the episode ends with one iPhone scene
+reusing the verified `first-encounter-ios` start clip rather than a separate iOS episode.
+`prepare-media` accepts web scenes only: prepare the web scenes, then append the iOS scene to the
+prepared story and render with the iOS media root.
+
+Web shots `templates-library`, `community-duplicate`, `template-create`, `template-import`, and
+`email-templates` first remove templates the reserved user created in earlier takes. The
+development import analyzer calls Bedrock, which needs an AWS SSO login. The shot therefore
+fulfils `/import/analyze` with the split the product proposes for the fictional paste and
+labels it "Import analysis simulated". Saving the resulting draft uses the real API. The email
+shot rewrites the seeded greetings to match Core PR #837, which removes an unregistered
+`{{client.first_name}}` merge field from the capture seed.

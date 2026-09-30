@@ -40,7 +40,90 @@ async function resetNote(db) {
   await db`update transcriptions set finished_at = null, finished_by = null, finish_method = null where id = ${MOCHI}`
 }
 
-// Type a replacement over `find` in the markdown editor, as a person would.
+// Remove templates the reserved capture user created in earlier takes (copies,
+// imports, duplicates). Reserved fixture templates keep their d0c5 IDs.
+async function resetTemplates(db) {
+  await db`delete from soap_templates where id::text not like 'd0c50000-%' and type = 'user' and user_id = (select user_id from soap_templates where id = 'd0c50000-0000-4000-8000-000000000701')`
+}
+
+// Fictional practice material a clinic might already have: SOAP headings,
+// client discharge wording, and reusable home-care education in one paste.
+const importSample = `Dental recheck visit
+
+Subjective: Owner's report of eating, chewing, drooling, and any pawing at the mouth since the cleaning.
+Objective: Weight, gum color, extraction sites, remaining tartar, and pain on oral exam.
+Assessment: Healing of extraction sites and overall oral comfort.
+Plan: Pain relief, diet, and when to schedule the next dental check.
+
+Going home today
+Thank you for bringing {{patient.name}} in. Offer soft food for the next three days and keep chew toys away until the gums have healed.
+Call us if you see bleeding, swelling, refusal to eat, or pawing at the mouth.
+
+Brushing at home
+Brush a little each day with a pet toothpaste. Start with the front teeth, keep sessions short, and reward calm behavior.`
+
+// The development import analyzer runs on Bedrock, which needs an AWS login
+// the capture machine may not have. This fixture returns the split the product
+// proposes for \`importSample\` (SOAP draft + discharge proposal with its
+// client-education block). It never creates templates; the shot is labelled.
+async function installImportFixture(page) {
+  const [soap, discharge] = importSample.split('\n\nGoing home today\n')
+  const dischargeContent = `Going home today\n${discharge}`
+  const education = dischargeContent.slice(dischargeContent.indexOf('Brushing at home'))
+  await page.route('**/api/v1/soap-templates/import/analyze', async (route) => {
+    if (route.request().method() !== 'POST') return route.continue()
+    const body = route.request().postDataJSON()
+    if (body.content !== importSample) throw Error('Unexpected tutorial import content')
+    await wait(2500)
+    await route.fulfill({
+      json: {
+        ok: true,
+        data: {
+          analysisReceipt: 'tutorial-fixture',
+          sourceHash: 'tutorial-fixture',
+          classification: 'combined',
+          confidence: 0.92,
+          artifacts: [
+            {
+              draftId: 'd0c50000-0000-4000-8000-000000000951',
+              kind: 'soap',
+              name: 'Dental recheck',
+              content: soap,
+              sourceBlockIds: ['b1'],
+              confidence: 0.94,
+              rationale: null,
+              warnings: [],
+            },
+            {
+              draftId: 'd0c50000-0000-4000-8000-000000000952',
+              kind: 'discharge',
+              name: 'Dental recheck — going home',
+              content: dischargeContent,
+              sourceBlockIds: ['b2', 'b3'],
+              confidence: 0.9,
+              rationale: 'Client-facing home care instructions belong in a discharge template.',
+              warnings: [],
+            },
+          ],
+          literatureCandidates: [
+            {
+              id: 'b3',
+              title: 'Brushing at home',
+              content: education,
+              sourceBlockIds: ['b3'],
+              disposition: 'kept_in_discharge',
+              warnings: [],
+            },
+          ],
+          unassignedBlocks: [],
+          model: { provider: 'fixture', model: 'tutorial', promptVersion: 'fixture' },
+        },
+      },
+    })
+  })
+}
+
+// Type a replacement over \`find\` in the markdown editor, as a person would.
 async function replaceInEditor(page, find, replacement) {
   const editor = page.locator('#soap-note-markdown-editor')
   await expect(editor).toBeVisible()
@@ -379,6 +462,116 @@ export const shots = {
       await wait(2200)
       await page.keyboard.press('Escape')
       await expect(page.getByRole('button', { name: 'Full screen', exact: true })).toBeVisible()
+    },
+  },
+  'templates-library': {
+    path: '/templates/soap',
+    reset: resetTemplates,
+    ready: (page) =>
+      expect(page.getByRole('tab', { name: 'SOAP Templates' })).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(3000)
+      await page.getByPlaceholder('Search templates...').click()
+      await expect(page.getByText('System Templates', { exact: true })).toBeVisible()
+      await wait(4000)
+      await page.keyboard.press('Escape')
+      await wait(1500)
+      await page.getByRole('tab', { name: 'Discharge Templates' }).click()
+      await wait(2500)
+      await page.getByPlaceholder('Search templates...').click()
+      await wait(3500)
+      await page.keyboard.press('Escape')
+    },
+  },
+  'community-duplicate': {
+    path: '/community/templates',
+    reset: resetTemplates,
+    duration: 36,
+    ready: (page) =>
+      expect(page.getByText('Low-Stress Wellness Exam', { exact: true })).toBeVisible({
+        timeout: 60000,
+      }),
+    act: async (page) => {
+      await wait(3000)
+      await page.getByRole('button', { name: 'Discharge', exact: true }).click()
+      await wait(2500)
+      await page.getByRole('button', { name: 'Open template Clear Home-Care Instructions' }).click()
+      await expect(page.getByRole('button', { name: 'Duplicate', exact: true })).toBeVisible({
+        timeout: 30000,
+      })
+      await wait(4000)
+      await page.getByRole('button', { name: 'Duplicate', exact: true }).click()
+      await page.waitForURL(/\/templates\/discharge\//, { timeout: 30000 })
+      await expect(page.getByRole('button', { name: 'Save Template' })).toBeVisible({
+        timeout: 30000,
+      })
+    },
+  },
+  'template-create': {
+    path: '/templates/soap',
+    reset: resetTemplates,
+    duration: 36,
+    ready: (page) =>
+      expect(page.getByRole('button', { name: 'New Template' })).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(2500)
+      await page.getByRole('button', { name: 'New Template' }).click()
+      const dialog = page.getByRole('dialog')
+      await expect(dialog.getByText('Create a custom template')).toBeVisible()
+      await wait(2500)
+      await dialog.getByRole('button', { name: /Copy a template/ }).click()
+      await wait(1200)
+      const name = dialog.getByLabel('Template name')
+      await name.click()
+      await name.pressSequentially('Northstar dental recheck', { delay: 70 })
+      await wait(1500)
+      await dialog.getByRole('button', { name: 'Create', exact: true }).click()
+      await expect(dialog).toBeHidden({ timeout: 30000 })
+      await expect(page.getByRole('button', { name: 'Save Template' })).toBeVisible()
+    },
+  },
+  'template-import': {
+    path: '/templates/soap',
+    reset: resetTemplates,
+    duration: 45,
+    disclosure: 'Import analysis simulated',
+    setup: (page) => installImportFixture(page),
+    ready: (page) =>
+      expect(page.getByRole('button', { name: 'New Template' })).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(2000)
+      await page.getByRole('button', { name: 'New Template' }).click()
+      const dialog = page.getByRole('dialog')
+      await dialog.getByRole('button', { name: /Import/ }).click()
+      await wait(1000)
+      await dialog.getByLabel('Template name').fill('Dental recheck')
+      const paste = dialog.getByLabel('Paste your template')
+      await paste.click()
+      await paste.fill(importSample)
+      await wait(3500)
+      await dialog.getByRole('button', { name: 'Organize this' }).click()
+      await expect(page.getByText(/Imported from pasted text/)).toBeVisible({ timeout: 90000 })
+      await wait(6000)
+      await page.getByRole('button', { name: 'Save Template' }).click()
+      await expect(page.getByText(/saved/i).first()).toBeVisible({ timeout: 30000 })
+    },
+  },
+  'email-templates': {
+    path: '/email-library',
+    // Match Core PR #837: the seeded greetings used an unregistered merge field.
+    reset: (db) =>
+      db`update email_templates set body = replace(body, 'Hi {{client.first_name}},', 'Hello,'), subject = replace(subject, 'Welcome, {{client.first_name}} — ', 'Welcome to Northstar — ') where id::text like 'd0c50000-%'`,
+    ready: (page) =>
+      expect(page.getByRole('button', { name: 'New Template' })).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(4000)
+      await page.locator('input[value="Post-op check-in"]').click()
+      await wait(2500)
+      await page.getByRole('option', { name: /Recheck reminder/ }).click()
+      await wait(4000)
+      await page.getByRole('button', { name: 'Placeholder' }).click()
+      await wait(3500)
+      await page.keyboard.press('Escape')
     },
   },
   'follow-up': {
