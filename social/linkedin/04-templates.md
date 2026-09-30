@@ -1,6 +1,8 @@
 # 4. Make templates your own
 
-Video: planned (`templates`)
+Video: `templates` → `walkthrough-captioned.mp4` (about 74 seconds). Template management is on the
+web; the last scene shows the same templates being chosen on iPhone, which can select but not
+edit templates. The import scene's analysis step is simulated and labelled on screen.
 
 ## Post
 
@@ -13,7 +15,7 @@ Your note should look like your note. This video covers templates in noctune:
 → SOAP templates for the medical record
 → Discharge templates for the client's take-home plan
 → Community templates shared by other clinicians, which you can duplicate and edit
-→ Import a template you already use from another system
+→ Paste a template you already use, and noctune organizes it into drafts
 → Keep reusable client education, like diet handouts, in email templates instead of repeating it in every note
 
 The split matters: the chart is for the medical record, the discharge is for this pet, and the handout is for every pet like it.
