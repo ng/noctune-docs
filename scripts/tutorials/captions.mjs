@@ -63,9 +63,15 @@ export function scriptWords(text, words, speechSeconds) {
   const corrections = []
   let previousEnd = 0
   const aligned = script.map((word, i) => {
-    const timed = expanded[i]
+    const timed = { ...expanded[i] }
     if (normalize(word) !== normalize(timed.word))
       corrections.push({ index: i, script: word, recognized: timed.word })
+    // Recognizers occasionally start a word a fraction of a second before the
+    // previous one ends. Clamp small overlaps; larger ones still need review.
+    if (timed.start < previousEnd && previousEnd - timed.start < 0.5) {
+      timed.start = previousEnd
+      timed.end = Math.max(timed.end, previousEnd + 0.05)
+    }
     if (
       !Number.isFinite(timed.start) ||
       !Number.isFinite(timed.end) ||

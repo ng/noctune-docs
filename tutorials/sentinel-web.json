@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "title": "Sentinel in noctune — web",
+  "kicker": "SENTINEL",
+  "tagline": "A second look at difficult moments.",
+  "scenes": [
+    {
+      "id": "sentinel",
+      "platform": "web",
+      "headline": ["Why an encounter", "is flagged."],
+      "narration": "This video covers Sentinel. When a recording is processed, Sentinel can flag moments of confrontational client behavior for later review. A flagged encounter shows a safety alert above the note. Click a marked moment to hear it in the original audio, and check it against the transcript. The flagged encounter is preserved beyond the standard retention window. You can fold the alert away on screen. That doesn't remove the flag."
+    },
+    {
+      "id": "sentinel-flagged",
+      "platform": "web",
+      "headline": ["Find flagged", "follow-ups."],
+      "narration": "Open Messages and choose the Flagged filter. It shows client threads linked to flagged encounters, so you can open the visit before you answer."
+    },
+    {
+      "id": "limits",
+      "platform": "web",
+      "headline": ["A documentation", "aid."],
+      "narration": "A flag is a reason to review the recording, not proof of what happened. Sentinel only analyzes audio you chose to record, and it does not contact clients, authorities, or anyone outside your practice. Your team's own safety and escalation policies still apply.",
+      "instructionTitle": "What Sentinel does",
+      "instructionLabels": ["Flags for review", "Preserves the record", "Contacts no one"],
+      "instructionCard": [
+        "Moments to check against the audio.",
+        "Kept beyond the usual retention window.",
+        "Your team decides any next step."
+      ]
+    }
+  ]
+}

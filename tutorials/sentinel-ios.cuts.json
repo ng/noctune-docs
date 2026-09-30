@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "scenes": [
+    {
+      "id": "flagged",
+      "cuts": [
+        { "source": "raw/sentinel-20260930.mp4", "start": 8, "duration": 8 },
+        { "source": "raw/sentinel-20260930.mp4", "start": 17.5, "duration": 10, "hold": 3 }
+      ]
+    }
+  ]
+}
