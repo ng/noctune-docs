@@ -267,3 +267,38 @@ sending the prepared email. The processing cut transitions to the existing ficti
 example draft; it does not claim to show the new recording's generated output.
 Inspect action timing and reading holds after narration changes. Caption alignment
 and decode checks do not replace a complete listening review.
+
+## Hybrid episode and series framing
+
+A story may set `kicker` (uppercase, at most 24 characters, shown after the step and platform)
+and `tagline` (at most 60 characters, under the headline). Both default to the first-encounter
+wording. `first-encounter-hybrid.json` mixes the verified iOS clips with the recorded web shots of
+the same fictional Mochi appointment (September 23, 12:05 PM):
+
+```sh
+pnpm tutorials:narrate tutorials/first-encounter-hybrid.json \
+  .tutorial-output/first-encounter-hybrid/narration "$TUTORIAL_ENV_FILE"
+pnpm tutorials:render .tutorial-output/first-encounter-hybrid/narration \
+  .tutorial-output/first-encounter-hybrid/video \
+  .tutorial-output/first-encounter-recorded/prepared/media \
+  .tutorial-output/first-encounter-ios/media
+```
+
+The web capture runner removes queued, never-processed encounters that native capture uploads
+leave on reserved patients, so lists show only the reserved fictional visits. Removed IDs are
+recorded as `removedStrayEncounters` in the capture manifest.
+
+## Delivery index and review status
+
+`tutorials/episodes.json` lists every episode, its output directory, and its LinkedIn post.
+Each entry records `review.framesChecked` and `review.listened` explicitly. Set `listened` only
+after a person has heard the complete export, and name them in `listenedBy`. Caption alignment,
+transcription, and decode checks never count as a listen.
+
+```sh
+pnpm tutorials:index tutorials/episodes.json /absolute/path/to/noctune-docs/.capture/tutorials/delivery
+```
+
+The index copies both exports, SRT/WebVTT, and `review.html` for each rendered episode. It then
+loads each clean player in Chromium, confirms that every English cue loads and that captions can
+be switched on and off, and writes `player-qa.json`. Nothing is uploaded.

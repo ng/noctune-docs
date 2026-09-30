@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "title": "Your first encounter in noctune — iPhone and web",
+  "kicker": "HYBRID WORKFLOW",
+  "tagline": "One visit, from iPhone to web.",
+  "scenes": [
+    {
+      "id": "start",
+      "platform": "ios",
+      "headline": ["Start on", "your iPhone."],
+      "source": "start.mp4",
+      "narration": "Many clinicians record in the exam room and finish notes at their desk. Here's that workflow for one appointment. On iPhone, tap Record and choose your patient. For this visit, we'll use the general SOAP and discharge templates."
+    },
+    {
+      "id": "record",
+      "platform": "ios",
+      "headline": ["Record the", "appointment."],
+      "source": "record.mp4",
+      "disclosure": "Recording pauses shortened",
+      "narration": "Tap Start Recording. Hold Pause when you need a break, then tap Resume recording to continue. When you're finished, hold Finish and transcribe. You can also choose an existing audio file from your phone."
+    },
+    {
+      "id": "upload",
+      "platform": "ios",
+      "headline": ["Upload from", "the phone."],
+      "source": "process.mp4",
+      "disclosure": "Native upload · processing simulated",
+      "narration": "The recording uploads from your phone. It's safe to leave this screen: the recording stays on the device until the upload is done. noctune emails you when the note is ready, and you can open it on iPhone or on the web."
+    },
+    {
+      "id": "desk",
+      "platform": "web",
+      "headline": ["Pick it up", "on the web."],
+      "source": "process.mp4",
+      "start": 9,
+      "disclosure": "Processing time omitted",
+      "narration": "Back at your desk, open noctune on the web. The same appointment appears in Encounters, and shows Ready when the draft is prepared."
+    },
+    {
+      "id": "review",
+      "platform": "web",
+      "headline": ["Review the", "clinical note."],
+      "source": "review.mp4",
+      "disclosure": "Example draft",
+      "narration": "Review the clinical note against the transcript and audio. Click a highlighted citation or annotation to jump to the matching audio and transcript. Check the patient details, findings, and plan. The draft is a starting point for your clinical review."
+    },
+    {
+      "id": "edit",
+      "platform": "web",
+      "headline": ["Edit, save,", "and complete."],
+      "source": "edit.mp4",
+      "disclosure": "Example draft",
+      "narration": "Choose Edit to make corrections, then Save. When your review is finished, choose Complete. Saving an edit and completing the encounter are separate steps."
+    },
+    {
+      "id": "send",
+      "platform": "web",
+      "headline": ["Send discharge", "on any account."],
+      "source": "send.mp4",
+      "disclosure": "Example draft · unsent",
+      "narration": "Review your discharge instructions, then choose Send Email and Send discharge notes. Every account can send them. Without Nest, discharge emails use no reply by default. Confirm the recipient before sending; drafts are never sent automatically."
+    },
+    {
+      "id": "follow-up",
+      "platform": "web",
+      "headline": ["Private replies", "with Nest."],
+      "source": "follow-up.mp4",
+      "narration": "With noctune Nest, clients can reply through a private relay address. Your personal email stays hidden, and replies return to noctune, linked to the encounter. On iPhone or on the web, the follow-up stays with the visit."
+    }
+  ]
+}
