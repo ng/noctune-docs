@@ -16,8 +16,18 @@ export async function prepareMedia(
 ) {
   const story = JSON.parse(fs.readFileSync(storyFile))
   validateStory(story)
-  const recordings = JSON.parse(fs.readFileSync(path.join(recordingRoot, 'capture-manifest.json')))
-  const byId = new Map(recordings.shots.map((shot) => [shot.id, shot]))
+  // Several capture runs may be combined; a later root replaces an earlier shot.
+  const byId = new Map()
+  for (const root of [recordingRoot].flat()) {
+    const recordings = JSON.parse(fs.readFileSync(path.join(root, 'capture-manifest.json')))
+    for (const shot of recordings.shots)
+      byId.set(shot.id, {
+        ...shot,
+        root,
+        coreCommit: shot.coreCommit || recordings.coreCommit,
+        capturedAt: shot.capturedAt || recordings.capturedAt,
+      })
+  }
   for (const id of replaceCards) {
     if (!story.scenes.some((scene) => scene.id === id && scene.instructionCard) || !byId.has(id))
       throw Error(`Missing instruction card or replacement recording: ${id}`)
@@ -43,7 +53,7 @@ export async function prepareMedia(
       const clip = byId.get(scene.id)
       if (clip?.disclosure) scene.disclosure = clip.disclosure
       const source = clip
-        ? sourcePath(recordingRoot, clip.file)
+        ? sourcePath(clip.root, clip.file)
         : sourcePath(screenshotRoot, scene.source)
       const sha256 = createHash('sha256').update(fs.readFileSync(source)).digest('hex')
       if (clip && sha256 !== clip.sha256) throw Error(`Recording checksum changed: ${scene.id}`)
@@ -55,8 +65,8 @@ export async function prepareMedia(
         kind: clip ? 'recorded' : 'static',
         ...(clip
           ? {
-              coreCommit: clip.coreCommit || recordings.coreCommit,
-              capturedAt: clip.capturedAt || recordings.capturedAt,
+              coreCommit: clip.coreCommit,
+              capturedAt: clip.capturedAt,
             }
           : {}),
       })
@@ -69,10 +79,10 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const [story, recordings, output, replace = ''] = process.argv.slice(2)
   try {
     if (!story || !recordings || !output)
-      throw Error('Usage: prepare-media.mjs STORY RECORDINGS OUTPUT [REPLACE_CARD_IDS]')
+      throw Error('Usage: prepare-media.mjs STORY RECORDINGS[,MORE] OUTPUT [REPLACE_CARD_IDS]')
     await prepareMedia(
       story,
-      recordings,
+      recordings.split(','),
       output,
       fileURLToPath(new URL('../../public/screenshots', import.meta.url)),
       replace ? replace.split(',') : [],

@@ -83,17 +83,14 @@ export async function editRecordings(root, recipe, output) {
     for (const scene of scenes) {
       const file = `${scene.id}.mp4`,
         destination = path.join(stage, file)
-      const inputs = scene.cuts.flatMap((cut) => [
-        '-ss',
-        String(cut.start),
-        '-t',
-        String(cut.duration),
-        '-i',
-        cut.file,
-      ])
+      // Simulator captures are variable-rate and write no frames while the
+      // screen is static. Convert to constant 30 fps from the source's start
+      // before trimming; seeking the input would skip to the next written frame
+      // and drop that static screen time.
+      const inputs = scene.cuts.flatMap((cut) => ['-i', cut.file])
       const filters = scene.cuts.map(
         (cut, i) =>
-          `[${i}:v]setpts=PTS-STARTPTS,fps=30,setsar=1,tpad=stop_mode=clone:stop_duration=${cut.hold},trim=duration=${cut.duration + cut.hold},setpts=PTS-STARTPTS[v${i}]`,
+          `[${i}:v]fps=30,trim=start=${cut.start}:duration=${cut.duration},setpts=PTS-STARTPTS,setsar=1,tpad=stop_mode=clone:stop_duration=${cut.hold},trim=duration=${cut.duration + cut.hold},setpts=PTS-STARTPTS[v${i}]`,
       )
       filters.push(
         scene.cuts.map((_, i) => `[v${i}]`).join('') +

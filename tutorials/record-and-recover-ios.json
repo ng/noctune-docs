@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "title": "Record and recover in noctune — iPhone",
+  "kicker": "RECORD AND RECOVER",
+  "tagline": "Getting the audio in, safely.",
+  "scenes": [
+    {
+      "id": "calls",
+      "platform": "ios",
+      "headline": ["Before you", "record."],
+      "source": "calls.mp4",
+      "narration": "This video covers getting audio in on iPhone, and what to do when something interrupts it. Tap Record and choose your patient. To use audio you already have, tap Choose From Phone. An incoming call can interrupt a recording, so noctune reminds you to silence calls. Tap How for the steps."
+    },
+    {
+      "id": "record",
+      "platform": "ios",
+      "headline": ["Pause and", "resume."],
+      "source": "record.mp4",
+      "disclosure": "Recording pauses shortened",
+      "narration": "Tap Start Recording. Hold Pause when you step out, then tap Resume recording to continue. If a call does interrupt, the take pauses, and the app tries to resume it when the call ends. When you're done, hold Finish and transcribe."
+    },
+    {
+      "id": "upload",
+      "platform": "ios",
+      "headline": ["Upload in", "the background."],
+      "source": "upload.mp4",
+      "disclosure": "Native upload · processing simulated",
+      "narration": "The recording uploads while you keep using the app. It's saved on this device until the upload is done, so it's safe to leave this screen."
+    },
+    {
+      "id": "recover",
+      "platform": "ios",
+      "headline": ["Finish an", "unfinished upload."],
+      "source": "recover.mp4",
+      "disclosure": "Unfinished upload staged for this demo",
+      "narration": "If a recording can't finish uploading, for example because the app closed first, it stays on your iPhone. Next time you open noctune, Today shows On-device recordings. Tap Upload, then Upload now. You can also save a copy, or discard a recording you don't need."
+    }
+  ]
+}

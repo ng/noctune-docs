@@ -302,3 +302,30 @@ pnpm tutorials:index tutorials/episodes.json /absolute/path/to/noctune-docs/.cap
 The index copies both exports, SRT/WebVTT, and `review.html` for each rendered episode. It then
 loads each clean player in Chromium, confirms that every English cue loads and that captions can
 be switched on and off, and writes `player-qa.json`. Nothing is uploaded.
+
+## Record and recover (episode 2)
+
+Web shots live in `scripts/tutorials/web-shots.mjs`. Each entry declares its route, a `ready`
+assertion, the recorded `act`, and optional `setup`, `reset`, `disclosure`, and `duration`.
+Add a shot there rather than branching inside the runner. Episode 2 adds:
+
+- `record-paced`: the first-encounter recording, slowed to match this episode's narration.
+- `upload-file`: a synthetic WAV added through **browse files**, then **Process 1 file**.
+- `upload-retry`: the first storage upload is rejected with HTTP 503. The drawer keeps the take
+  and shows retry guidance; **Process 1 file** uploads it again.
+- `recover`: a tab reload mid-take, **Recover recordings**, a rejected first upload,
+  **Retry upload**, then **Done**.
+
+The failure and retry footage needs Core PR #836: before it, a storage failure left the file
+stuck in `uploading`, so Retry did nothing. `prepare-media` accepts comma-separated capture
+roots, and a later root replaces an earlier shot with the same ID.
+
+Native takes use the capture-only `NoctuneCaptureTakes` UI-test target in the Swift capture
+worktree (`scripts/asc-capture/takes`, driven by `record-take.mjs`). The target attaches to the
+running capture app, so the fixture session is kept. Staged recovery audio is purged by a
+credential handoff, so record the recovery take with `--relaunch`. Never simulate a phone call.
+The call-guidance take shows the in-app **Silence calls** guidance instead.
+
+`edit-recordings.mjs` converts simulator video to constant 30 fps before trimming. Simulator
+captures write no frames while the screen is static, and seeking the input dropped that time:
+a static Today screen could vanish from a cut.

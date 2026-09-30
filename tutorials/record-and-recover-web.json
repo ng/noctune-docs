@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "title": "Record and recover in noctune — web",
+  "kicker": "RECORD AND RECOVER",
+  "tagline": "Getting the audio in, safely.",
+  "scenes": [
+    {
+      "id": "record-paced",
+      "platform": "web",
+      "headline": ["Record in", "your browser."],
+      "narration": "This video covers getting audio into noctune on the web, and what to do when something interrupts it. Choose New Encounter, pick your patient, and select Record from web. Use Pause and Resume as needed, then Stop. The take joins the queue, and Process 1 file sends it for processing."
+    },
+    {
+      "id": "upload-file",
+      "platform": "web",
+      "headline": ["Upload audio", "you already have."],
+      "narration": "Have audio from another device? Drop the file into the recording area, or choose browse files. Most common audio formats work, up to 500 megabytes per file. Then choose Process 1 file."
+    },
+    {
+      "id": "upload-retry",
+      "platform": "web",
+      "headline": ["When an upload", "doesn't finish."],
+      "narration": "If the connection drops during an upload, the take stays in the queue, and noctune tells you the upload didn't finish. Choose Process 1 file again to retry. Nothing needs to be recorded twice."
+    },
+    {
+      "id": "recover",
+      "platform": "web",
+      "headline": ["Recover an", "interrupted take."],
+      "narration": "While you record, noctune keeps a recovery copy in this browser. If the tab closes or reloads mid-recording, open noctune again. Recover recordings lists the take, so you can upload, download, or discard it. If that upload fails too, choose Retry upload. Files you add with browse files aren't kept this way, so leave the tab open until they finish uploading."
+    }
+  ]
+}

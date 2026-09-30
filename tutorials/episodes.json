@@ -39,6 +39,32 @@
         "framesChecked": true,
         "listened": false
       }
+    },
+    {
+      "id": "record-and-recover-web",
+      "series": 2,
+      "title": "Record and recover \u2014 web",
+      "platform": "web",
+      "story": "tutorials/record-and-recover-web.json",
+      "output": ".tutorial-output/record-and-recover-web",
+      "post": "social/linkedin/02-record-and-recover.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
+    },
+    {
+      "id": "record-and-recover-ios",
+      "series": 2,
+      "title": "Record and recover \u2014 iPhone",
+      "platform": "ios",
+      "story": "tutorials/record-and-recover-ios.json",
+      "output": ".tutorial-output/record-and-recover-ios",
+      "post": "social/linkedin/02-record-and-recover.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
     }
   ]
 }

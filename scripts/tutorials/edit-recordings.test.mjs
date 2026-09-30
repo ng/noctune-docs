@@ -95,3 +95,68 @@ test('editor preserves cut order and final hold across frame rates, rejects chan
   await assert.rejects(editRecordings(root, recipe, output), /checksum changed/)
   assert.deepEqual(fs.readFileSync(video), delivered)
 })
+
+test('editor keeps static screen time when a cut starts between variable-rate frames', async (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tutorial-edit-vfr-'))
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }))
+  // Simulator captures emit no frames while the screen is static: red stops
+  // being sampled at 0.2 s and the next frame (blue) arrives at 1.0 s.
+  const file = 'gap.mp4',
+    full = path.join(root, file)
+  execFileSync('ffmpeg', [
+    '-v',
+    'error',
+    '-f',
+    'lavfi',
+    '-i',
+    'color=red:s=160x90:d=1:r=30,format=yuv420p[a];color=blue:s=160x90:d=1:r=30,format=yuv420p[b];[a][b]concat',
+    '-vf',
+    "select='lt(t,0.2)+gte(t,1)'",
+    '-fps_mode',
+    'vfr',
+    '-c:v',
+    'libx264',
+    full,
+  ])
+  fs.writeFileSync(
+    path.join(root, 'manifest.json'),
+    JSON.stringify({
+      clips: [
+        {
+          file,
+          usable: true,
+          sha256: createHash('sha256').update(fs.readFileSync(full)).digest('hex'),
+        },
+      ],
+    }),
+  )
+  const output = path.join(root, 'edited')
+  await editRecordings(
+    root,
+    {
+      version: 1,
+      scenes: [{ id: 'gap', duration: 1, cuts: [{ source: file, start: 0.5, duration: 1 }] }],
+    },
+    output,
+  )
+  const pixel = (at) =>
+    execFileSync('ffmpeg', [
+      '-v',
+      'error',
+      '-ss',
+      String(at),
+      '-i',
+      path.join(output, 'gap.mp4'),
+      '-frames:v',
+      '1',
+      '-vf',
+      'scale=1:1',
+      '-pix_fmt',
+      'rgb24',
+      '-f',
+      'rawvideo',
+      '-',
+    ])
+  assert.ok(pixel(0.2)[0] > 200, 'static red screen time was dropped')
+  assert.ok(pixel(0.8)[2] > 200)
+})
