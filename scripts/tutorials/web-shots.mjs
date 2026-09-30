@@ -142,6 +142,49 @@ async function tourRoutes(page, scope, finalRoute) {
   await wait(2500)
 }
 
+// Full search uses a vector index the disposable capture database lacks. Serve
+// the same fixture-backed results as the docs screenshot capture
+// (capture/authenticated.spec.ts), for Mochi's two earlier visits.
+async function installSearchFixture(page) {
+  await page.route('**/api/v1/search?*', async (route) => {
+    if (route.request().method() !== 'GET') return route.continue()
+    await route.fulfill({
+      json: {
+        ok: true,
+        data: {
+          patients: [],
+          encounters: [
+            {
+              id: 'd0c50000-0000-4000-8000-000000000204',
+              patientId: 'd0c50000-0000-4000-8000-000000000101',
+              patientName: 'Mochi',
+              createdAt: '2026-05-14T17:00:00.000Z',
+              encounterDate: '2026-05-14T17:00:00.000Z',
+              status: 'completed',
+              snippet:
+                'Annual wellness visit. Jamie reports Mochi is active with a stable appetite on the same dry diet.',
+              summary: 'Annual wellness examination with stable weight and mild dental tartar.',
+              score: 0.91,
+            },
+            {
+              id: 'd0c50000-0000-4000-8000-000000000205',
+              patientId: 'd0c50000-0000-4000-8000-000000000101',
+              patientName: 'Mochi',
+              createdAt: '2026-03-11T17:00:00.000Z',
+              encounterDate: '2026-03-11T17:00:00.000Z',
+              status: 'completed',
+              snippet:
+                'Healthy young adult cat, overdue for vaccine boosters, with an incomplete preventive-care history.',
+              summary: 'Healthy new-patient examination with preventive care established.',
+              score: 0.86,
+            },
+          ],
+        },
+      },
+    })
+  })
+}
+
 // Type a replacement over \`find\` in the markdown editor, as a person would.
 async function replaceInEditor(page, find, replacement) {
   const editor = page.locator('#soap-note-markdown-editor')
@@ -675,6 +718,115 @@ export const shots = {
         { delay: 35 },
       )
       await wait(2500)
+    },
+  },
+  'patients-history': {
+    path: '/patients',
+    duration: 36,
+    ready: (page) =>
+      expect(page.getByPlaceholder('Search patients...')).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(3000)
+      await page.getByRole('button', { name: 'Recent', exact: true }).click()
+      await wait(2000)
+      await page.getByPlaceholder('Search patients...').pressSequentially('Mochi', { delay: 120 })
+      await wait(2000)
+      await page.getByRole('button', { name: 'View patient Mochi' }).first().click()
+      await expect(page.getByText('Encounter History')).toBeVisible({ timeout: 30000 })
+      await wait(2500)
+      await page.getByText('Encounter History').scrollIntoViewIfNeeded()
+      await wait(4000)
+    },
+  },
+  'past-encounters': {
+    path: encounter(),
+    ready: noteReady,
+    act: async (page) => {
+      await wait(2500)
+      await page.getByRole('tab', { name: /Past Encounters/ }).click()
+      await wait(3500)
+      const search = page.getByPlaceholder('e.g. bloodwork, medications, weight')
+      await search.click()
+      await search.pressSequentially('weight', { delay: 140 })
+      await wait(5000)
+    },
+  },
+  'dashboard-today': {
+    path: '/dashboard',
+    ready: (page) =>
+      expect(page.getByText('Your work', { exact: true })).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(4000)
+      await page.getByText('Unsigned', { exact: true }).click()
+      await wait(3500)
+      await page.getByText('All', { exact: true }).first().click()
+      await wait(2000)
+      await page.getByRole('button', { name: 'Previous day' }).click()
+      await wait(3000)
+      await page.getByRole('button', { name: 'Next day' }).click()
+    },
+  },
+  'global-search': {
+    path: '/dashboard',
+    disclosure: 'Search results simulated',
+    setup: (page) => installSearchFixture(page),
+    ready: (page) =>
+      expect(page.getByText('Your work', { exact: true })).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(2500)
+      await page.keyboard.press('Meta+k')
+      await wait(1500)
+      await page.keyboard.type('weight', { delay: 150 })
+      await expect(page.getByText(/Mochi · May 14, 2026/)).toBeVisible({ timeout: 30000 })
+      await wait(4500)
+      await page.getByText(/Mochi · May 14, 2026/).click()
+      await expect(page.getByRole('heading', { name: 'Subjective', exact: true })).toBeVisible({
+        timeout: 60000,
+      })
+      await wait(3000)
+    },
+  },
+  'team-practice': {
+    path: '/practice',
+    duration: 36,
+    ready: (page) =>
+      expect(page.getByText('Active members', { exact: true })).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(4000)
+      await page.getByText('Pending invitations').scrollIntoViewIfNeeded()
+      await wait(2500)
+      await page.getByRole('button', { name: 'Invite member' }).click()
+      const dialog = page.getByRole('dialog')
+      await expect(dialog.getByText('Invite a member')).toBeVisible()
+      await dialog.getByLabel('Email address').pressSequentially('sam.rivera@example.test', {
+        delay: 50,
+      })
+      await wait(3500)
+      await dialog.getByRole('button', { name: 'Cancel' }).click()
+      await wait(1500)
+    },
+  },
+  'team-assign': {
+    path: '/messages',
+    reset: (db) =>
+      db`update encounter_messages set assigned_to_user_id = null, assigned_at = null where id = 'd0c50000-0000-4000-8000-000000000501'`,
+    ready: async (page) => {
+      await expect(page.getByTestId('conversation-subject')).toBeVisible({ timeout: 60000 })
+      // The inbox-address tip appears shortly after load; dismiss it before recording.
+      const tip = page.getByRole('button', { name: 'Got it', exact: true })
+      await tip.waitFor({ timeout: 8000 }).catch(() => {})
+      if (await tip.isVisible()) await tip.click()
+      await expect(tip).toBeHidden()
+    },
+    act: async (page) => {
+      await wait(3000)
+      await page.getByRole('button', { name: 'Unassigned', exact: true }).click()
+      await wait(2500)
+      await page.getByTestId('inbox-row-assign-button').first().click()
+      await wait(1500)
+      await page.getByRole('menuitem', { name: /Riley Patel/ }).click()
+      await expect(page.getByTestId('inbox-row-assignee-chip').first()).toBeVisible()
+      await wait(3000)
     },
   },
   'follow-up': {

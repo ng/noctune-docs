@@ -13,7 +13,7 @@ the next person.
 | 3   | [Review with confidence](03-review-with-confidence.md)   | Web and iPhone captioned MP4s          |
 | 4   | [Make templates your own](04-templates.md)               | Web captioned MP4 (iPhone selection)   |
 | 5   | [Discharge and follow-up](05-discharge-and-follow-up.md) | Web and iPhone captioned MP4s          |
-| 6   | [Keep the practice organized](06-practice-organized.md)  | Planned                                |
+| 6   | [Keep the practice organized](06-practice-organized.md)  | Web and iPhone captioned MP4s          |
 | 7   | [Sentinel](07-sentinel.md)                               | Planned                                |
 
 Each file contains the post, a first comment carrying the docs link, and extra questions for

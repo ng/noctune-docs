@@ -130,6 +130,32 @@
         "framesChecked": true,
         "listened": false
       }
+    },
+    {
+      "id": "practice-organized-web",
+      "series": 6,
+      "title": "Keep the practice organized \u2014 web",
+      "platform": "web",
+      "story": "tutorials/practice-organized-web.json",
+      "output": ".tutorial-output/practice-organized-web",
+      "post": "social/linkedin/06-practice-organized.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
+    },
+    {
+      "id": "practice-organized-ios",
+      "series": 6,
+      "title": "Keep the practice organized \u2014 iPhone",
+      "platform": "ios",
+      "story": "tutorials/practice-organized-ios.json",
+      "output": ".tutorial-output/practice-organized-ios",
+      "post": "social/linkedin/06-practice-organized.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
     }
   ]
 }
