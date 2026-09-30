@@ -1,6 +1,12 @@
 # 5. Discharge and follow-up
 
-Video: planned (`discharge-and-follow-up`)
+Videos (burned-caption exports from `tutorials/episodes.json`):
+
+- Web: `discharge-follow-up-web` → `walkthrough-captioned.mp4` (about 61 seconds)
+- iPhone: `discharge-follow-up-ios` → `walkthrough-captioned.mp4` (about 35 seconds)
+
+Nothing is sent in either video. The web video shows the route picker in both the discharge
+dialog and the encounter message composer, then a reply drafted in Messages.
 
 ## Post
 
