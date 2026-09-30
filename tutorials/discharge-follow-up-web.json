@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "title": "Discharge and follow-up in noctune — web",
+  "kicker": "FOLLOW-UP",
+  "tagline": "From discharge to the client's reply.",
+  "scenes": [
+    {
+      "id": "discharge-routes",
+      "platform": "web",
+      "headline": ["Review, then", "choose the route."],
+      "narration": "This video covers discharge and follow-up. Start on the Discharge Notes tab and read what the client will receive. Then choose Send Email, and Send discharge notes. Add the client's email. Next, choose how replies work. Every account can send with no-reply: a one-way email the client can't answer. With noctune Nest, a private relay address sends it instead. The client never sees your own address, and replies come back to noctune. Nothing is sent until you choose Send."
+    },
+    {
+      "id": "encounter-message",
+      "platform": "web",
+      "headline": ["Message from", "the encounter."],
+      "narration": "To follow up later, choose Send Email, then Send message. Choose Templates to insert a saved email, like a recheck reminder. The same route choice appears here. With Nest, the reply address belongs to this encounter, so the conversation stays with the visit. You can also send from your personal email, which shows the client your address."
+    },
+    {
+      "id": "inbox",
+      "platform": "web",
+      "headline": ["Replies land", "in Messages."],
+      "narration": "Client replies arrive in Messages, linked to the patient and the encounter. Open the thread, jump to the encounter if you need the note, and choose Reply to answer in the same conversation."
+    }
+  ]
+}

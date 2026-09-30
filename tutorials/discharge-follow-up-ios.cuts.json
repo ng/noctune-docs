@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "scenes": [
+    {
+      "id": "discharge",
+      "cuts": [{ "source": "raw/discharge-messages-20260928.mp4", "start": 7.5, "duration": 9 }]
+    },
+    {
+      "id": "routes",
+      "cuts": [
+        { "source": "raw/discharge-messages-20260928.mp4", "start": 31, "duration": 5 },
+        { "source": "raw/discharge-messages-20260928.mp4", "start": 40, "duration": 14 },
+        { "source": "raw/discharge-messages-20260928.mp4", "start": 57, "duration": 3 }
+      ]
+    },
+    {
+      "id": "messages",
+      "cuts": [
+        { "source": "raw/complete-follow-up-20260928.mp4", "start": 20, "duration": 2.2 },
+        { "source": "raw/complete-follow-up-20260928.mp4", "start": 34, "duration": 8.5 }
+      ]
+    }
+  ]
+}
