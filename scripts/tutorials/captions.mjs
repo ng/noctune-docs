@@ -45,6 +45,59 @@ const tokens = (text) =>
     .replaceAll('-', ' ')
     .split(/\s+/)
     .filter(Boolean)
+// When the recognizer splits or merges a word (a brand name heard as two words,
+// "Here is" heard as "Here's"), map each script word to a recognized word by
+// edit distance. Unmatched script words take time from their neighbours. Give up
+// (return null) when more than 10% of script words have no counterpart.
+export function alignByEditDistance(script, recognized) {
+  const a = script.map(normalize),
+    b = recognized.map((w) => normalize(w.word))
+  const rows = a.length + 1,
+    cols = b.length + 1
+  const cost = Array.from({ length: rows }, (_, i) =>
+    Array.from({ length: cols }, (_, j) => (i === 0 ? j : j === 0 ? i : 0)),
+  )
+  for (let i = 1; i < rows; i++)
+    for (let j = 1; j < cols; j++)
+      cost[i][j] = Math.min(
+        cost[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1),
+        cost[i - 1][j] + 1,
+        cost[i][j - 1] + 1,
+      )
+  const match = new Array(a.length).fill(null)
+  let i = a.length,
+    j = b.length
+  while (i > 0 && j > 0) {
+    if (cost[i][j] === cost[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)) {
+      match[i - 1] = j - 1
+      i--
+      j--
+    } else if (cost[i][j] === cost[i - 1][j] + 1) i--
+    else j--
+  }
+  const unmatched = match.filter((m) => m === null).length
+  if (unmatched > Math.max(1, Math.floor(a.length * 0.1))) return null
+  const result = match.map((m) => (m === null ? null : { ...recognized[m] }))
+  for (let k = 0; k < result.length; k++) {
+    if (result[k]) continue
+    let end = k
+    while (end < result.length && !result[end]) end++
+    const from = k > 0 ? result[k - 1].end : (result[end]?.start ?? 0)
+    const to = end < result.length ? result[end].start : from + 0.3 * (end - k)
+    // Interpolated words last at least 0.05 s; the overlap clamp in
+    // scriptWords then moves the following word along.
+    const step = Math.max(0.05, (to - from) / (end - k))
+    for (let n = k; n < end; n++)
+      result[n] = {
+        word: script[n],
+        start: from + step * (n - k),
+        end: from + step * (n - k + 1),
+      }
+    k = end - 1
+  }
+  return result
+}
+
 // Keep authored text. Require one-to-one word timing and report recognition corrections.
 export function scriptWords(text, words, speechSeconds) {
   const script = tokens(text)
@@ -56,10 +109,20 @@ export function scriptWords(text, words, speechSeconds) {
       end: word.start + ((word.end - word.start) * (i + 1)) / parts.length,
     }))
   })
-  if (script.length !== expanded.length)
-    throw Error(
-      `Caption alignment needs review: script has ${script.length} words, transcription has ${expanded.length}`,
-    )
+  // Also realign equal-length transcripts whose words are shifted (one word
+  // inserted and another dropped) rather than simply misheard.
+  const directMismatches =
+    script.length === expanded.length
+      ? script.filter((word, i) => normalize(word) !== normalize(expanded[i].word)).length
+      : Infinity
+  if (directMismatches / script.length > 0.1) {
+    const realigned = alignByEditDistance(script, expanded)
+    if (!realigned)
+      throw Error(
+        `Caption alignment needs review: script has ${script.length} words, transcription has ${expanded.length}`,
+      )
+    expanded.splice(0, expanded.length, ...realigned)
+  }
   const corrections = []
   let previousEnd = 0
   const aligned = script.map((word, i) => {
