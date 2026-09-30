@@ -149,7 +149,7 @@ cues and captions can be toggled. Preserve source/timing provenance and cache sa
 - [x] Record and recover episodes (web and iPhone; frames checked; full listen pending).
 - [x] Review with confidence episodes (web and iPhone; frames checked; full listen pending).
 - [x] Template episodes (web with iPhone selection scene; frames checked; full listen pending).
-- [ ] Discharge and follow-up episodes.
+- [x] Discharge and follow-up episodes (web and iPhone; frames checked; full listen pending).
 - [ ] Organization/navigation episodes.
 - [ ] Sentinel episode(s) for supported platforms.
 - [ ] Docs index/player integration and media delivery plan.

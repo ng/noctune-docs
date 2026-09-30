@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "title": "Discharge and follow-up in noctune — iPhone",
+  "kicker": "FOLLOW-UP",
+  "tagline": "From discharge to the client's reply.",
+  "scenes": [
+    {
+      "id": "discharge",
+      "platform": "ios",
+      "headline": ["Read the", "discharge notes."],
+      "source": "discharge.mp4",
+      "disclosure": "Example draft",
+      "narration": "This video covers discharge and follow-up on iPhone. Open the Discharge tab and read what the client will receive before you send anything."
+    },
+    {
+      "id": "routes",
+      "platform": "ios",
+      "headline": ["Choose how", "replies work."],
+      "source": "routes.mp4",
+      "disclosure": "Unsent example",
+      "narration": "Tap the send button to start an email, then tap the sender to choose a route. Every account can send a one-way email that the client can't reply to. With Nest, you can send through a private relay address. Replies then come back to the encounter. Nest also lets you send from your personal email. Here we cancel, so nothing is sent."
+    },
+    {
+      "id": "messages",
+      "platform": "ios",
+      "headline": ["Follow up in", "Messages."],
+      "source": "messages.mp4",
+      "narration": "Replies sent through Nest appear in the encounter's Messages tab, so the conversation stays with the visit."
+    }
+  ]
+}
