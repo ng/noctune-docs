@@ -4,6 +4,7 @@ import { Banner } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import 'nextra-theme-docs/style.css'
 import { DocsFooter } from '../../components/footer'
+import { LINKEDIN_URL, LinkedInIcon } from '../../components/linkedin-icon'
 import { Logo } from '../../components/logo'
 
 export const metadata: Metadata = {
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
 
 const banner = <Banner storageKey="noctune-docs-launch">noctune docs are in preview.</Banner>
 
-const navbar = <Navbar logo={<Logo />} />
+const navbar = <Navbar logo={<Logo />} chatLink={LINKEDIN_URL} chatIcon={<LinkedInIcon />} />
 
 const footer = (
   <Footer>
