@@ -91,6 +91,21 @@ test('invalid scenes and missing keys fail before requests', () => {
     () => validateStory({ version: 1, title: 'Test', scenes: [scene, scene] }),
     /unique/,
   )
+  assert.throws(
+    () => validateStory({ version: 1, title: 'Test', kicker: 'lowercase', scenes: [scene] }),
+    /Kicker/,
+  )
+  assert.throws(
+    () => validateStory({ version: 1, title: 'Test', tagline: 'x'.repeat(61), scenes: [scene] }),
+    /Tagline/,
+  )
+  validateStory({
+    version: 1,
+    title: 'Test',
+    kicker: 'HYBRID WORKFLOW',
+    tagline: 'One visit, from iPhone to web.',
+    scenes: [scene],
+  })
   assert.notEqual(
     fingerprint({ voice: 'one', text: 'a' }),
     fingerprint({ voice: 'two', text: 'a' }),
@@ -601,4 +616,37 @@ test('capture timing locates encoded ready frames instead of loading footage', a
   const matched = await locateReadyFrame(video, reference)
   assert.ok(matched.sourceIn >= 0.9 && matched.sourceIn <= 1.2)
   assert.ok(matched.frameDifference < 1)
+})
+
+test('delivery catalog requires explicit review status and a named listener', async () => {
+  const { validateCatalog } = await import('./delivery-index.mjs')
+  const episode = {
+    id: 'first-encounter-web',
+    series: 1,
+    title: 'Web',
+    platform: 'web',
+    story: 'tutorials/first-encounter-web.json',
+    output: '.tutorial-output/first-encounter-recorded',
+    post: 'social/linkedin/01-first-encounter.md',
+    review: { framesChecked: true, listened: false },
+  }
+  validateCatalog({ version: 1, episodes: [episode] })
+  assert.throws(
+    () =>
+      validateCatalog({ version: 1, episodes: [{ ...episode, review: { framesChecked: true } }] }),
+    /explicitly/,
+  )
+  assert.throws(
+    () =>
+      validateCatalog({
+        version: 1,
+        episodes: [{ ...episode, review: { framesChecked: true, listened: true } }],
+      }),
+    /listenedBy/,
+  )
+  assert.throws(() => validateCatalog({ version: 1, episodes: [episode, episode] }), /unique/)
+  const catalog = JSON.parse(
+    fs.readFileSync(new URL('../../tutorials/episodes.json', import.meta.url)),
+  )
+  validateCatalog(catalog)
 })

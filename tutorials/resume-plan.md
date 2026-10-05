@@ -145,7 +145,7 @@ cues and captions can be toggled. Preserve source/timing provenance and cache sa
 - [ ] Real web encounter capture and final web episode.
 - [x] Completed-encounter UI correction verified and held shots recaptured.
 - [ ] Native iOS end-to-end episode.
-- [ ] Hybrid episode with fixture continuity.
+- [x] Hybrid episode with fixture continuity (frames checked; full listen pending).
 - [ ] Record and recover episodes.
 - [ ] Review with confidence episodes.
 - [ ] Template episodes.
@@ -182,3 +182,17 @@ goal complete just because the pipeline or the first draft is finished.
   player loads all 32 cues, toggles captions, and advances playback. Full listening
   review is pending; these remain review drafts. Hybrid and feature episodes, docs integration,
   and the final acceptance audit remain outstanding.
+
+## Series checkpoint (September 30)
+
+- The tutorial Deepgram key in `.env.tutorials.local` returns 401. Narration and caption timing
+  use the Core development key through the ignored `.env.tutorials.core.local`, as approved on
+  September 29. Rotate the tutorials key before handing this off to anyone else.
+- Web shots were recaptured into `.tutorial-output/web-interactions-v2` after the runner started
+  removing stray queued encounters. Episode 1 web and hybrid exports use this footage.
+- `tutorials/episodes.json` drives the local delivery index at the primary checkout's
+  `.capture/tutorials/delivery/index.html`. No episode has had a full listening review yet.
+- Hosting: `marketing-assets.noctune.ai` (noctune-marketing asset publisher) can host the
+  approved exports. Uploading makes them public, so it waits for explicit publication approval.
+  The `noctune-prod` AWS SSO session also needs to be renewed.
+- Each episode ships as its own PR, stacked on the previous one until #74 merges.

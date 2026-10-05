@@ -73,7 +73,7 @@
       "platform": "web",
       "headline": ["Private replies", "with Nest."],
       "source": "messages/inbox.webp",
-      "narration": "With noctune Nest, clients can reply through a private relay address. Your personal email stays hidden, and replies return to noctune, linked to the encounter. Open Messages to follow up with the visit in context."
+      "narration": "With noctune Nest, clients can reply through a private relay address. Your personal email stays hidden, and client replies come back to noctune, linked to the encounter. Open Messages to follow up with the visit in context."
     }
   ]
 }
