@@ -1,9 +1,9 @@
 import Image from 'next/image'
 import { AppStoreBadge } from './app-store-badge'
-import { LINKEDIN_URL } from './linkedin-icon'
 
 const BRAND_URL = 'https://noctune.ai'
 const APP_URL = 'https://app.noctune.ai'
+const LINKEDIN_URL = 'https://www.linkedin.com/company/noctune-ai'
 
 const linkStyle: React.CSSProperties = {
   color: 'inherit',
