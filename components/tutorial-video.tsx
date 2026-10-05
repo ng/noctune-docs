@@ -49,7 +49,12 @@ export function TutorialList() {
   const ids = Object.keys(videos).sort(
     (a, b) => videos[a].series - videos[b].series || a.localeCompare(b),
   )
-  if (!ids.length) return <p>Video tutorials are on the way.</p>
+  if (!ids.length)
+    return (
+      <p style={{ marginTop: '1.5rem' }}>
+        Recording, review, templates, follow-up, and Sentinel walkthroughs are coming soon.
+      </p>
+    )
   return (
     <>
       {ids.map((id) => (

@@ -435,7 +435,7 @@ Rendered MP4s never enter Git or LFS.
 
 `<TutorialVideo id="..." />` renders nothing for an unpublished episode, so pages
 can reference episodes still awaiting review. `<TutorialList />` on
-`content/tutorials.mdx` shows every published episode; the page stays out of the
-sidebar until at least one is published. Objects are content-addressed and immutable,
+`content/tutorials.mdx` shows every published episode and is always listed under
+Get Started. Objects are content-addressed and immutable,
 so a re-render gets a new URL and no invalidation is needed. The publisher role
 cannot delete objects.
