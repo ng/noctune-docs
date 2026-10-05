@@ -1,6 +1,11 @@
 # 7. Sentinel
 
-Video: planned (`sentinel`)
+Videos (burned-caption exports from `tutorials/episodes.json`):
+
+- Web: `sentinel-web` → `walkthrough-captioned.mp4` (about 49 seconds)
+- iPhone: `sentinel-ios` → `walkthrough-captioned.mp4` (about 15 seconds)
+
+Both use the synthetic Jasper example, labelled on screen.
 
 ## Post
 
@@ -13,7 +18,7 @@ Hostile client interactions are a real part of this job, and they're hard to doc
 noctune Sentinel is a documentation aid for those moments:
 
 → It reviews appointments you already chose to record, and never turns on a microphone itself
-→ It flags confrontational language or explicit refusal of recommended care
+→ It flags confrontational client behavior for later review
 → Timestamped markers jump to the exact moment in the transcript and audio
 → The audio for a flagged visit is kept beyond the standard retention window
 

@@ -185,6 +185,16 @@ async function installSearchFixture(page) {
   })
 }
 
+// The inbox-address tip appears shortly after Messages loads; dismiss it
+// before the ready reference so it never shows in a take.
+async function dismissInboxTip(page) {
+  await expect(page.getByTestId('conversation-subject')).toBeVisible({ timeout: 60000 })
+  const tip = page.getByRole('button', { name: 'Got it', exact: true })
+  await tip.waitFor({ timeout: 8000 }).catch(() => {})
+  if (await tip.isVisible()) await tip.click()
+  await expect(tip).toBeHidden()
+}
+
 // Type a replacement over \`find\` in the markdown editor, as a person would.
 async function replaceInEditor(page, find, replacement) {
   const editor = page.locator('#soap-note-markdown-editor')
@@ -810,14 +820,7 @@ export const shots = {
     path: '/messages',
     reset: (db) =>
       db`update encounter_messages set assigned_to_user_id = null, assigned_at = null where id = 'd0c50000-0000-4000-8000-000000000501'`,
-    ready: async (page) => {
-      await expect(page.getByTestId('conversation-subject')).toBeVisible({ timeout: 60000 })
-      // The inbox-address tip appears shortly after load; dismiss it before recording.
-      const tip = page.getByRole('button', { name: 'Got it', exact: true })
-      await tip.waitFor({ timeout: 8000 }).catch(() => {})
-      if (await tip.isVisible()) await tip.click()
-      await expect(tip).toBeHidden()
-    },
+    ready: dismissInboxTip,
     act: async (page) => {
       await wait(3000)
       await page.getByRole('button', { name: 'Unassigned', exact: true }).click()
@@ -826,6 +829,42 @@ export const shots = {
       await wait(1500)
       await page.getByRole('menuitem', { name: /Riley Patel/ }).click()
       await expect(page.getByTestId('inbox-row-assignee-chip').first()).toBeVisible()
+      await wait(3000)
+    },
+  },
+  sentinel: {
+    path: encounter('d0c50000-0000-4000-8000-000000000202'),
+    duration: 40,
+    disclosure: 'Synthetic Sentinel example · fixture audio',
+    ready: (page) =>
+      expect(page.getByText(/Sentinel — Safety Alert/)).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(6000)
+      const row = page.getByRole('button', { name: /^Seek to / }).first()
+      await row.hover()
+      await wait(1500)
+      await row.click()
+      await expect
+        .poll(() => page.locator('audio').evaluate((audio) => audio.currentTime))
+        .toBeGreaterThan(0)
+      await wait(5000)
+      await page.getByRole('button', { name: 'Pause', exact: true }).click()
+      await wait(2500)
+      await page.getByRole('button', { name: 'Got it', exact: true }).click()
+      await wait(4000)
+    },
+  },
+  'sentinel-flagged': {
+    path: '/messages',
+    ready: dismissInboxTip,
+    act: async (page) => {
+      await wait(3000)
+      await page.getByRole('button', { name: 'Flagged', exact: true }).click()
+      await wait(4000)
+      await expect(page.getByTestId('conversation-subject')).toContainText('activity restriction')
+      await wait(3000)
+      await page.getByTestId('panel-open-encounter').click()
+      await expect(page.getByText(/Sentinel — Safety Alert/)).toBeVisible({ timeout: 60000 })
       await wait(3000)
     },
   },

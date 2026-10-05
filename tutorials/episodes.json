@@ -156,6 +156,32 @@
         "framesChecked": true,
         "listened": false
       }
+    },
+    {
+      "id": "sentinel-web",
+      "series": 7,
+      "title": "Sentinel \u2014 web",
+      "platform": "web",
+      "story": "tutorials/sentinel-web.json",
+      "output": ".tutorial-output/sentinel-web",
+      "post": "social/linkedin/07-sentinel.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
+    },
+    {
+      "id": "sentinel-ios",
+      "series": 7,
+      "title": "Sentinel \u2014 iPhone",
+      "platform": "ios",
+      "story": "tutorials/sentinel-ios.json",
+      "output": ".tutorial-output/sentinel-ios",
+      "post": "social/linkedin/07-sentinel.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
     }
   ]
 }
