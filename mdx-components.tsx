@@ -3,6 +3,7 @@ import { useMDXComponents as getDocsMDXComponents } from 'nextra-theme-docs'
 import { AppStoreBadge } from '@/components/app-store-badge'
 import { BrowserFrame } from '@/components/browser-frame'
 import { Diagram } from '@/components/diagram'
+import { IntroFilm } from '@/components/intro-film'
 import { Logo } from '@/components/logo'
 import { TutorialList, TutorialVideo } from '@/components/tutorial-video'
 
@@ -12,6 +13,7 @@ export function useMDXComponents(components?: Readonly<MDXComponents>): MDXCompo
     AppStoreBadge,
     BrowserFrame,
     Diagram,
+    IntroFilm,
     Logo,
     TutorialList,
     TutorialVideo,
