@@ -3,6 +3,7 @@ import { useMDXComponents as getDocsMDXComponents } from 'nextra-theme-docs'
 import { AppStoreBadge } from '@/components/app-store-badge'
 import { BrowserFrame } from '@/components/browser-frame'
 import { Diagram } from '@/components/diagram'
+import { Logo } from '@/components/logo'
 import { TutorialList, TutorialVideo } from '@/components/tutorial-video'
 
 /** Extends the Nextra MDX component map with noctune documentation primitives. */
@@ -11,6 +12,7 @@ export function useMDXComponents(components?: Readonly<MDXComponents>): MDXCompo
     AppStoreBadge,
     BrowserFrame,
     Diagram,
+    Logo,
     TutorialList,
     TutorialVideo,
     ...components,
