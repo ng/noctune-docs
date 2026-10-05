@@ -104,6 +104,32 @@
         "framesChecked": true,
         "listened": false
       }
+    },
+    {
+      "id": "discharge-follow-up-web",
+      "series": 5,
+      "title": "Discharge and follow-up \u2014 web",
+      "platform": "web",
+      "story": "tutorials/discharge-follow-up-web.json",
+      "output": ".tutorial-output/discharge-follow-up-web",
+      "post": "social/linkedin/05-discharge-and-follow-up.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
+    },
+    {
+      "id": "discharge-follow-up-ios",
+      "series": 5,
+      "title": "Discharge and follow-up \u2014 iPhone",
+      "platform": "ios",
+      "story": "tutorials/discharge-follow-up-ios.json",
+      "output": ".tutorial-output/discharge-follow-up-ios",
+      "post": "social/linkedin/05-discharge-and-follow-up.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
     }
   ]
 }

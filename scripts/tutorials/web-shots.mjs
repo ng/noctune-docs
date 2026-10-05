@@ -123,6 +123,25 @@ async function installImportFixture(page) {
   })
 }
 
+// Relay (Nest) belongs to the practice wallet in production. The shared seed
+// grants it only to the personal wallet, so grant the reserved practice
+// fixture the same way the native harness does (stage-draft.mjs, ID …414).
+async function grantPracticeRelay(db) {
+  await db`insert into entitlements (id, billing_account_id, feature, source, granted_at) select 'd0c50000-0000-4000-8000-000000000414', id, 'relay', 'admin', now() from billing_accounts where practice_id = 'd0c50000-0000-4000-8000-000000000601' on conflict (id) do nothing`
+}
+
+// Open the from-route picker and pause on each route so viewers can read it.
+async function tourRoutes(page, scope, finalRoute) {
+  await scope.getByTestId('from-route-change').click()
+  await expect(page.getByTestId('from-route-options')).toBeVisible()
+  for (const route of ['nest', 'noreply', 'vet']) {
+    await page.getByTestId(`from-route-option-${route}`).hover()
+    await wait(2200)
+  }
+  await page.getByTestId(`from-route-option-${finalRoute}`).getByRole('radio').check()
+  await wait(2500)
+}
+
 // Type a replacement over \`find\` in the markdown editor, as a person would.
 async function replaceInEditor(page, find, replacement) {
   const editor = page.locator('#soap-note-markdown-editor')
@@ -572,6 +591,90 @@ export const shots = {
       await page.getByRole('button', { name: 'Placeholder' }).click()
       await wait(3500)
       await page.keyboard.press('Escape')
+    },
+  },
+  'discharge-routes': {
+    path: encounter(),
+    duration: 44,
+    disclosure: 'Example draft · nothing sent',
+    reset: async (db) => {
+      await grantPracticeRelay(db)
+      await resetNote(db)
+    },
+    ready: noteReady,
+    act: async (page) => {
+      await wait(2000)
+      await page.getByRole('tab', { name: 'Discharge Notes', exact: true }).click()
+      await wait(3000)
+      await page.mouse.move(700, 520)
+      await page.mouse.wheel(0, 360)
+      await wait(3000)
+      await page.getByRole('button', { name: 'Send Email', exact: true }).click()
+      await wait(1000)
+      await page.getByRole('menuitem', { name: /Send discharge notes/ }).click()
+      const dialog = page.getByRole('dialog')
+      await expect(
+        dialog.getByRole('heading', { name: 'Send Discharge Summary', exact: true }),
+      ).toBeVisible()
+      await wait(1500)
+      const recipient = dialog.getByLabel('To', { exact: true })
+      await recipient.pressSequentially('jamie.chen@example.test', { delay: 45 })
+      await recipient.press('Enter')
+      await wait(2000)
+      await tourRoutes(page, dialog, 'nest')
+    },
+  },
+  'encounter-message': {
+    path: encounter(),
+    duration: 40,
+    disclosure: 'Example draft · nothing sent',
+    reset: grantPracticeRelay,
+    ready: noteReady,
+    act: async (page) => {
+      await wait(2000)
+      await page.getByRole('button', { name: 'Send Email', exact: true }).click()
+      await wait(800)
+      await page.getByRole('menuitem', { name: /Send message/ }).click()
+      await expect(page.getByLabel('Subject')).toBeVisible({ timeout: 30000 })
+      await wait(1500)
+      const to = page.getByLabel('To', { exact: true })
+      await to.pressSequentially('jamie.chen@example.test', { delay: 45 })
+      await to.press('Enter')
+      await wait(1500)
+      await page.getByTestId('composer-full').getByRole('button', { name: 'Templates' }).click()
+      await expect(page.getByText('Insert a template')).toBeVisible()
+      await wait(2000)
+      await page.getByText('Recheck reminder').first().click()
+      await wait(3500)
+      await tourRoutes(page, page, 'nest')
+    },
+  },
+  inbox: {
+    path: '/messages',
+    duration: 36,
+    disclosure: 'Nothing sent',
+    reset: grantPracticeRelay,
+    ready: async (page) => {
+      await expect(page.getByTestId('conversation-subject')).toHaveText(
+        'Mochi is eating normally again',
+        { timeout: 60000 },
+      )
+      const tip = page.getByRole('button', { name: 'Got it', exact: true })
+      if (await tip.isVisible()) await tip.click()
+    },
+    act: async (page) => {
+      await wait(3500)
+      await page.getByTestId('conversation-encounter-chip').hover()
+      await wait(3000)
+      await page.getByRole('button', { name: 'Reply', exact: true }).first().click()
+      await expect(page.getByText(/Replying to/)).toBeVisible({ timeout: 30000 })
+      await wait(3000)
+      await page.getByRole('dialog').locator('[contenteditable="true"]').first().click()
+      await page.keyboard.type(
+        'Great to hear! Keep her on her usual food and let us know if anything changes.',
+        { delay: 35 },
+      )
+      await wait(2500)
     },
   },
   'follow-up': {

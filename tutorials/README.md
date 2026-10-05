@@ -368,3 +368,22 @@ fulfils `/import/analyze` with the split the product proposes for the fictional 
 labels it "Import analysis simulated". Saving the resulting draft uses the real API. The email
 shot rewrites the seeded greetings to match Core PR #837, which removes an unregistered
 `{{client.first_name}}` merge field from the capture seed.
+
+## Discharge and follow-up (episode 5)
+
+Reply routes were checked against each composer in Core `develop`:
+
+| Composer                                            | Nest                                     | No-reply                         | Personal email                                                     |
+| --------------------------------------------------- | ---------------------------------------- | -------------------------------- | ------------------------------------------------------------------ |
+| Web discharge dialog (`send-discharge`)             | Relay on the personal wallet             | Always; the default without Nest | Server requires relay, but the dialog still offers it without Nest |
+| Web encounter composer (`encounters/[id]/messages`) | Relay on the encounter's practice        | Always                           | Not gated                                                          |
+| Web global New message (`messages/send`)            | Relay on the active practice             | Always                           | Not gated                                                          |
+| iOS discharge composer                              | Only when relay is active                | Always                           | Only when relay is active                                          |
+| iOS reply composer                                  | When relay is active and an alias exists | Otherwise ("Send one-way")       | Not offered                                                        |
+
+Narration only promises what holds in every composer shown. Every account can send one-way
+no-reply email. Nest adds the private relay and brings replies back to noctune. Personal email is
+described as sharing your address. The capture seed grants relay only to the personal wallet,
+so episode 5 shots add the same reserved practice grant (`…414`) that the native harness uses.
+No shot presses Send. The iPhone episode reuses the verified episode 1 discharge and Messages
+takes.
