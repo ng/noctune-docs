@@ -1,0 +1,72 @@
+WEBVTT
+
+00:00:00.240 --> 00:00:02.720
+This video covers getting
+audio into noctune on the
+
+00:00:02.720 --> 00:00:05.510
+web, and what to do when
+something interrupts it.
+
+00:00:05.680 --> 00:00:09.910
+Choose New Encounter, pick your
+patient, and select Record from web.
+
+00:00:10.000 --> 00:00:12.550
+Use Pause and Resume as needed, then Stop.
+
+00:00:12.995 --> 00:00:16.825
+The take joins the queue, and Process
+1 file sends it for processing.
+
+00:00:17.673 --> 00:00:19.663
+Have audio from another device?
+
+00:00:19.833 --> 00:00:23.823
+Drop the file into the recording
+area, or choose browse files.
+
+00:00:24.073 --> 00:00:28.463
+Most common audio formats work,
+up to 500 megabytes per file.
+
+00:00:28.793 --> 00:00:30.543
+Then choose Process 1 file.
+
+00:00:31.173 --> 00:00:34.133
+If the connection drops during
+an upload, the take stays in
+
+00:00:34.133 --> 00:00:37.323
+the queue, and noctune tells
+you the upload didn't finish.
+
+00:00:37.653 --> 00:00:40.203
+Choose Process 1 file again to retry.
+
+00:00:40.453 --> 00:00:42.283
+Nothing needs to be recorded twice.
+
+00:00:43.007 --> 00:00:46.997
+While you record, noctune keeps
+a recovery copy in this browser.
+
+00:00:47.087 --> 00:00:51.237
+If the tab closes or reloads
+mid-recording, open noctune again.
+
+00:00:51.407 --> 00:00:55.717
+Recover recordings lists the take, so
+you can upload, download, or discard it.
+
+00:00:55.982 --> 00:00:59.492
+If that upload fails
+too, choose Retry upload.
+
+00:00:59.902 --> 00:01:02.702
+Files you add with browse
+files aren't kept this way,
+
+00:01:02.702 --> 00:01:05.012
+so leave the tab open until
+they finish uploading.
