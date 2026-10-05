@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "title": "noctune narrator audition",
+  "scenes": [
+    {
+      "id": "audition",
+      "platform": "web",
+      "narration": "Let's walk through your first encounter in noctune. Start by choosing a patient and recording the appointment. When your draft is ready, review the clinical note against the transcript. Make any corrections, then prepare the discharge instructions for your client."
+    }
+  ]
+}

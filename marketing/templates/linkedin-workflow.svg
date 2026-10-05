@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1512" height="256">
+<defs><filter id="shadow" x="-10%" y="-20%" width="120%" height="150%"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#153D38" flood-opacity="0.07"/></filter></defs>
+<rect width="1512" height="256" fill="#F3F8F2"/><ellipse cx="1430" cy="165" rx="480" ry="430" fill="#D5EAE3"/>
+<g fill="#FFFFFF" stroke="#D3E2DC" filter="url(#shadow)"><rect x="320" y="77" width="250" height="102" rx="14"/><rect x="630" y="77" width="250" height="102" rx="14"/><rect x="940" y="77" width="265" height="102" rx="14"/></g>
+<g stroke="#267F79" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<rect x="342" y="99" width="31" height="55" rx="6"/><path d="M352 106h11m-14 20v7m6-14v21m6-17v13m6-8v4m-14 15h10"/>
+<path d="M654 104h24l10 10v38h-34zM678 104v12h10m-26 12h17m-17 9h17m-17 9h10"/>
+<path d="m965 127 43-21-13 43-12-17-18-5zm18 5 25-26"/>
+<path d="M587 128h25m-8-7 8 7-8 7M897 128h25m-8-7 8 7-8 7"/>
+</g>
+<g font-family="Arial,Helvetica,sans-serif" fill="#1D4052" font-size="29" font-weight="700"><text x="392" y="119">Record</text><text x="710" y="119">Review</text><text x="1026" y="119">Send</text></g>
+<g font-family="Arial,Helvetica,sans-serif" fill="#53716A" font-size="17"><text x="393" y="147">On iPhone</text><text x="711" y="147">On web</text><text x="1027" y="147">Discharge notes</text></g>
+<image href="{{BADGE}}" x="1260" y="107" width="125.647" height="42"/>
+</svg>

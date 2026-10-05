@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "title": "Your first encounter in noctune — iOS",
+  "scenes": [
+    {
+      "id": "start",
+      "platform": "ios",
+      "headline": ["Choose a patient", "and templates."],
+      "source": "start.mp4",
+      "narration": "On iPhone, tap Record and choose your patient. Check the SOAP and discharge templates before you begin. noctune includes general templates, with community and custom templates available for other workflows. For this visit, we'll use the general templates."
+    },
+    {
+      "id": "record",
+      "platform": "ios",
+      "headline": ["Record the", "appointment."],
+      "source": "record.mp4",
+      "disclosure": "Recording pauses shortened",
+      "narration": "Tap Start Recording. Hold Pause when you need a break, then tap Resume recording to continue. When you're finished, hold Finish and transcribe. You can also choose an existing audio file from your phone."
+    },
+    {
+      "id": "process",
+      "platform": "ios",
+      "headline": ["Upload, then", "review the draft."],
+      "source": "process.mp4",
+      "disclosure": "Example draft · processing time omitted",
+      "narration": "Once uploaded, your recording is processed into draft notes. Processing continues after you leave the screen. Here's Mochi's example draft."
+    },
+    {
+      "id": "review",
+      "platform": "ios",
+      "headline": ["Review against", "the transcript."],
+      "source": "review.mp4",
+      "disclosure": "Synthetic playback fixture",
+      "narration": "Read the SOAP note and check the patient details, findings, and plan. Open Transcript and tap a passage to jump to that point in the audio. The draft is a starting point for your clinical review."
+    },
+    {
+      "id": "edit",
+      "platform": "ios",
+      "headline": ["Correct, preview,", "and save."],
+      "source": "edit.mp4",
+      "disclosure": "Editing pauses shortened",
+      "narration": "Tap Edit and make any corrections. Here, we're updating a phrase in the plan. Preview shows how the finished note will read. Then tap Save and check your change. Saving does not complete the encounter."
+    },
+    {
+      "id": "send",
+      "platform": "ios",
+      "headline": ["Review discharge", "before sending."],
+      "source": "send.mp4",
+      "disclosure": "Unsent example",
+      "narration": "Review the Discharge tab, then open the email composer. Every account can send discharge notes. Without Nest, no reply is the default. Check the recipient and reply address before sending. This example stays unsent."
+    },
+    {
+      "id": "complete",
+      "platform": "ios",
+      "headline": ["Complete after", "your review."],
+      "source": "complete.mp4",
+      "narration": "To complete the encounter without sending an email, tap the arrow beside the email button. Choose Mark as complete. Do this only after your review is finished."
+    },
+    {
+      "id": "follow-up",
+      "platform": "ios",
+      "headline": ["Keep follow-up", "with the visit."],
+      "source": "follow-up.mp4",
+      "narration": "With noctune Nest, clients reply through a private relay address. Your personal email stays hidden, and replies stay linked to the encounter. Open Messages to follow up with the visit in context."
+    }
+  ]
+}

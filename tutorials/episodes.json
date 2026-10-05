@@ -1,0 +1,201 @@
+{
+  "version": 1,
+  "episodes": [
+    {
+      "id": "first-encounter-web",
+      "series": 1,
+      "title": "Your first encounter \u2014 web",
+      "platform": "web",
+      "story": "tutorials/first-encounter-web.json",
+      "output": ".tutorial-output/first-encounter-recorded",
+      "post": "social/linkedin/01-first-encounter.md",
+      "review": {
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
+      }
+    },
+    {
+      "id": "first-encounter-ios",
+      "series": 1,
+      "title": "Your first encounter \u2014 iPhone",
+      "platform": "ios",
+      "story": "tutorials/first-encounter-ios.json",
+      "output": ".tutorial-output/first-encounter-ios",
+      "post": "social/linkedin/01-first-encounter.md",
+      "review": {
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
+      }
+    },
+    {
+      "id": "first-encounter-hybrid",
+      "series": 1,
+      "title": "Your first encounter \u2014 iPhone and web",
+      "platform": "hybrid",
+      "story": "tutorials/first-encounter-hybrid.json",
+      "output": ".tutorial-output/first-encounter-hybrid",
+      "post": "social/linkedin/01-first-encounter.md",
+      "review": {
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
+      }
+    },
+    {
+      "id": "record-and-recover-web",
+      "series": 2,
+      "title": "Record and recover \u2014 web",
+      "platform": "web",
+      "story": "tutorials/record-and-recover-web.json",
+      "output": ".tutorial-output/record-and-recover-web",
+      "post": "social/linkedin/02-record-and-recover.md",
+      "review": {
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
+      }
+    },
+    {
+      "id": "record-and-recover-ios",
+      "series": 2,
+      "title": "Record and recover \u2014 iPhone",
+      "platform": "ios",
+      "story": "tutorials/record-and-recover-ios.json",
+      "output": ".tutorial-output/record-and-recover-ios",
+      "post": "social/linkedin/02-record-and-recover.md",
+      "review": {
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
+      }
+    },
+    {
+      "id": "review-with-confidence-web",
+      "series": 3,
+      "title": "Review with confidence \u2014 web",
+      "platform": "web",
+      "story": "tutorials/review-with-confidence-web.json",
+      "output": ".tutorial-output/review-with-confidence-web",
+      "post": "social/linkedin/03-review-with-confidence.md",
+      "review": {
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
+      }
+    },
+    {
+      "id": "review-with-confidence-ios",
+      "series": 3,
+      "title": "Review with confidence \u2014 iPhone",
+      "platform": "ios",
+      "story": "tutorials/review-with-confidence-ios.json",
+      "output": ".tutorial-output/review-with-confidence-ios",
+      "post": "social/linkedin/03-review-with-confidence.md",
+      "review": {
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
+      }
+    },
+    {
+      "id": "templates",
+      "series": 4,
+      "title": "Make templates your own \u2014 web, with iPhone selection",
+      "platform": "hybrid",
+      "story": "tutorials/templates-web.json",
+      "output": ".tutorial-output/templates",
+      "post": "social/linkedin/04-templates.md",
+      "review": {
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
+      }
+    },
+    {
+      "id": "discharge-follow-up-web",
+      "series": 5,
+      "title": "Discharge and follow-up \u2014 web",
+      "platform": "web",
+      "story": "tutorials/discharge-follow-up-web.json",
+      "output": ".tutorial-output/discharge-follow-up-web",
+      "post": "social/linkedin/05-discharge-and-follow-up.md",
+      "review": {
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
+      }
+    },
+    {
+      "id": "discharge-follow-up-ios",
+      "series": 5,
+      "title": "Discharge and follow-up \u2014 iPhone",
+      "platform": "ios",
+      "story": "tutorials/discharge-follow-up-ios.json",
+      "output": ".tutorial-output/discharge-follow-up-ios",
+      "post": "social/linkedin/05-discharge-and-follow-up.md",
+      "review": {
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
+      }
+    },
+    {
+      "id": "practice-organized-web",
+      "series": 6,
+      "title": "Keep the practice organized \u2014 web",
+      "platform": "web",
+      "story": "tutorials/practice-organized-web.json",
+      "output": ".tutorial-output/practice-organized-web",
+      "post": "social/linkedin/06-practice-organized.md",
+      "review": {
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
+      }
+    },
+    {
+      "id": "practice-organized-ios",
+      "series": 6,
+      "title": "Keep the practice organized \u2014 iPhone",
+      "platform": "ios",
+      "story": "tutorials/practice-organized-ios.json",
+      "output": ".tutorial-output/practice-organized-ios",
+      "post": "social/linkedin/06-practice-organized.md",
+      "review": {
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
+      }
+    },
+    {
+      "id": "sentinel-web",
+      "series": 7,
+      "title": "Sentinel \u2014 web",
+      "platform": "web",
+      "story": "tutorials/sentinel-web.json",
+      "output": ".tutorial-output/sentinel-web",
+      "post": "social/linkedin/07-sentinel.md",
+      "review": {
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
+      }
+    },
+    {
+      "id": "sentinel-ios",
+      "series": 7,
+      "title": "Sentinel \u2014 iPhone",
+      "platform": "ios",
+      "story": "tutorials/sentinel-ios.json",
+      "output": ".tutorial-output/sentinel-ios",
+      "post": "social/linkedin/07-sentinel.md",
+      "review": {
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
+      }
+    }
+  ]
+}

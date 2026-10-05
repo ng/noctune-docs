@@ -1,0 +1,441 @@
+# Narrated tutorials
+
+Tutorials live with the written guides and consume authentic web/iOS captures.
+Speech adapters are independent of storyboards and video rendering. Nothing here
+runs during the website build or publishes videos.
+
+## Local setup
+
+Requires Node 24, FFmpeg/ffprobe, and the docs dependencies (`pnpm install`).
+Create `.env.tutorials.local` in your primary **noctune-docs** checkout using
+`scripts/tutorials/.env.example`. It is Git-ignored. Set `DEEPGRAM_API_KEY` locally;
+never put credentials in storyboards, command arguments, or committed files.
+
+```sh
+# Run from the docs checkout/worktree containing these scripts.
+# Set this to your PRIMARY docs checkout when working in a Git worktree.
+export TUTORIAL_ENV_FILE=/absolute/path/to/noctune-docs/.env.tutorials.local
+
+pnpm tutorials:audition tutorials/audition-profiles.json \
+  .tutorial-output/auditions "$TUTORIAL_ENV_FILE"
+
+pnpm tutorials:narrate tutorials/voice-audition.json \
+  .tutorial-output/audition "$TUTORIAL_ENV_FILE"
+
+pnpm tutorials:narrate tutorials/first-encounter-web.json \
+  .tutorial-output/first-encounter/narration "$TUTORIAL_ENV_FILE"
+pnpm tutorials:render .tutorial-output/first-encounter/narration \
+  .tutorial-output/first-encounter/video public/screenshots
+```
+
+An explicitly exported environment variable overrides its environment-file value.
+To audition another Deepgram voice without modifying the file:
+
+```sh
+TUTORIAL_TTS_MODEL=aura-2-athena-en pnpm tutorials:narrate \
+  tutorials/voice-audition.json .tutorial-output/athena "$TUTORIAL_ENV_FILE"
+```
+
+## Providers
+
+- **Deepgram**: `TUTORIAL_TTS_PROVIDER=deepgram`, `TUTORIAL_TTS_MODEL=aura-2-arcas-en`,
+  and `DEEPGRAM_API_KEY`. Full `flux-*` voice IDs use `/v2/speak`; `aura-*` IDs use
+  `/v1/speak`. Separate voice and direction settings are rejected for this adapter.
+  Lossless FLAC is normalized locally to WAV, avoiding streaming WAV length headers.
+- **OpenAI**: `TUTORIAL_TTS_PROVIDER=openai`,
+  `TUTORIAL_TTS_MODEL=gpt-4o-mini-tts`, `TUTORIAL_TTS_VOICE=cedar`, and
+  `OPENAI_API_KEY`. Optional `TUTORIAL_TTS_INSTRUCTIONS` controls delivery.
+  The adapter has request-contract tests; it has not been exercised with a live key.
+- **Other providers**: add an adapter to `scripts/tutorials/providers/` and register
+  it in `providers/index.mjs`. Implement `validate(config, env)` and
+  `synthesize({ text, config, env })`, returning `{ bytes, extension }` for WAV,
+  MP3, FLAC, or Ogg. Keep endpoint-specific fields, authentication, and capability
+  validation inside the adapter. The common pipeline does not assume one vendor's
+  API format. A model served by an existing adapter can be selected through the env;
+  a new vendor needs an adapter, not a change to the renderer.
+
+Reference contracts: [Deepgram batch](https://developers.deepgram.com/docs/flux-tts/batch)
+and [OpenAI speech](https://developers.openai.com/api/docs/guides/text-to-speech).
+
+## Stories and captures
+
+Each version 1 story contains a title and scenes with a unique slug `id`, `platform`
+(`web` or `ios`), short `headline` lines, `narration`, and relative `source` path.
+Optional `start` selects a point in an MP4/MOV. `disclosure` adds a visible note.
+The audition story needs no visual fields because it is audio-only.
+
+For a text-only workflow card, omit `source` and provide `instructionCard`: one to
+four strings of at most 50 characters. These cards have no browser chrome and are
+labeled as instruction cards, so they can hold a scene while a UI capture is blocked.
+Use `disclosure` to explain the capture hold. Optional `instructionTitle` and
+`instructionLabels` add a heading and row labels; `instructionStyle` selects
+`checklist`, `sequence`, or `evidence` (citation-to-audio/transcript navigation).
+
+Web sources resolve under the renderer's third argument, normally
+`public/screenshots`. iOS sources resolve under its optional fourth argument,
+pointing to the native capture export directory. The same scene schema supports
+web-only, iOS-only, and mixed tutorials. Do not stretch a short clip, invent taps,
+or substitute generated product screens. Insufficient motion footage fails the
+render rather than freezing without disclosure. Stills are labeled on screen.
+
+The initial web storyboard follows `content/encounters/index.mdx` and
+`content/setup-guide.mdx`. Existing screenshots illustrate separate fixture states;
+the initial draft is not a continuous recording of one appointment. Before a final
+step-by-step release, capture the same synthetic appointment through every state,
+including the queue and completion actions, and review labels against the current UI.
+A hybrid cut also needs iOS and web fixtures aligned to the same appointment.
+
+Keep fixture seeding in Core's `scripts/seed-docs-capture.ts`, orchestrated by the
+existing docs capture runner. Reuse the database allowlist and authentication guards;
+do not point capture tooling at a production or ordinary development database.
+No screenshot source files are changed by the tutorial renderer.
+
+## Outputs and checks
+
+- Narration: normalized WAV per scene, `timeline.json`, and `narration.srt`.
+- Rendering: 1920×1080 H.264/AAC MP4, SRT, manifest, and scene review PNGs/contact sheet.
+- Cache: sibling `.speech-cache/`, keyed by text, provider, model, voice, and direction.
+  Cache hits avoid another paid synthesis call. Delete a specific cached WAV to retry.
+- Scene timings use measured speech duration plus a short pause, rounded to 30 fps.
+- The narration step writes coarse scene-level SRT. Run the separate caption pass below
+  for short timed phrases, WebVTT, and a captioned LinkedIn export. A 4:5 composition
+  and fresh motion capture remain follow-up production work.
+- Generation stages new files and preserves the previous complete output if it fails.
+  Run only one process per output directory at a time.
+- The renderer verifies dimensions, codecs, duration, and full decoding. Inspect all
+  QA frames and watch/listen to the full video before publishing. Automatic media
+  checks do not establish pronunciation, clinical accuracy, or visual quality.
+
+`pnpm test:tutorials` covers provider routing, secret-safe failures, cache reuse,
+voice changes, failed-output preservation, mixed-platform rendering, timing, and
+source-path constraints. `pnpm check` includes these tests without calling paid APIs.
+Generated media stays ignored. Publish reviewed videos to a chosen media destination;
+do not check large generated videos into ordinary Git history.
+
+## Captions and browser presentation
+
+Web footage sits in a light browser frame with an address field, rounded outer corners,
+and a soft shadow. iOS footage retains its phone frame. Both layouts reserve space below
+the product UI for a maximum of two caption lines. The horizontal logo remains visible.
+
+```sh
+pnpm tutorials:captions .tutorial-output/first-encounter/narration \
+  .tutorial-output/first-encounter/captions "$TUTORIAL_ENV_FILE"
+pnpm tutorials:caption-video .tutorial-output/first-encounter/video \
+  .tutorial-output/first-encounter/captions .tutorial-output/first-encounter/delivery
+```
+
+The timing pass uses Deepgram Nova-3 on the already-generated WAV files, independently
+of the narration provider. It caches word timings by audio content only after alignment and cue validation.
+Rejected existing cache entries are removed with a rerun instruction; rerun the
+caption command to obtain fresh timings. To force a fresh timing pass manually,
+remove the relevant local `.caption-cache/` directory. Caption text comes
+from the authored script, with hyphenated compounds split into words. Recognition
+corrections are reported in `captions.json`; token-count mismatches, large transcript
+changes, or invalid times stop generation for review. Speech recognition timestamps
+are approximate, so listen and inspect synchronization before publishing.
+
+The timing function can be replaced independently; the delivery renderer consumes
+provider-neutral `captions.json` cues with start/end seconds and text, tied to the
+video's scene/audio hashes. It refuses captions from a different narration version.
+
+Delivery regenerates SRT/WebVTT from the validated `captions.json` cues, so edits
+for delivery should be made in that JSON rather than in sidecar subtitle files.
+
+Delivery includes a clean MP4 plus SRT/WebVTT for optional closed captions, a second MP4
+with captions burned in for sound-off viewing, and `review.html` with both players.
+The review page embeds its VTT as a Blob so captions can be toggled even when opened
+locally. A docs integration should use the WebVTT file in a standard caption track.
+
+Burning uses transparent image overlays rather than requiring a special subtitle-enabled
+FFmpeg build. Inspect every cue in `qa/captions-contact-sheet.png`; the automated gate
+checks media decoding, timing bounds, line limits, and narration identity, not listening
+quality. Generated `.caption-cache/` folders are local and must not be committed.
+
+## Record web interactions
+
+Use the primary docs checkout's existing `.env.capture.local` and a clean isolated
+Core worktree at the intended product revision, with dependencies installed. The
+runner validates the existing database allowlist and guard, applies committed Core
+migrations to that disposable database, and refreshes only the reserved development
+auth identity. Existing fictional encounters are preserved; no reseed occurs.
+
+Acquire the shared `noctune-native-capture` coordination lock before starting. The
+runner also holds the docs screenshot lock to avoid a concurrent fixture refresh.
+It uses loopback port 3108, real development authentication, and a synthetic browser
+microphone. No email is sent. The recording shot exercises the real uploader against
+isolated API/storage fixtures and labels the simulated upload in the composition;
+clinical processing uses precomputed examples. No demo audio is uploaded to cloud storage.
+
+```sh
+pnpm tutorials:capture-web /absolute/path/to/primary/noctune-docs \
+  /absolute/path/to/isolated/noctune-core .tutorial-output/web-interactions
+```
+
+An optional fourth argument selects comma-separated shots (`start`, `record`,
+`process`, `review`, `edit`, `send`, or `follow-up`). Each verified 32-second MP4 includes real UI and a
+reading hold; the output includes raw browser video, poster frames, and a checksum
+manifest. In-points are matched against a screenshot of the ready UI, so delayed
+browser screencast frames do not expose initial loading skeletons. Raw filenames,
+ready references, match scores, and source in-points remain in the manifest. A
+reading hold may extend the last authentic frame. Missing UI states fail the run
+while preserving previous complete output.
+The developer-only Next.js badge is hidden during recording; product UI is unchanged.
+Review footage before composing it into an episode. The runner creates a reserved
+tutorial note version with a citation tied to the existing weight discussion. It
+serves Core’s deterministic 284-second synthetic WAV locally with byte-range support
+to verify real audio seeking and transcript navigation. This is fixture audio, not
+a recording of the fictional consultation. Edit capture resets only the reserved
+tutorial note and encounter completion, saves a wording change through the UI, and
+verifies that the correction appears before completing the encounter. Discharge
+capture prepares the recipient and selects no-reply without sending an email.
+
+To compose verified clips with the current storyboard's held cards and remaining
+static captures, assemble a separate media root first. This checks recording hashes
+and copies source bytes without altering `public/screenshots/`:
+
+```sh
+pnpm tutorials:prepare-media tutorials/first-encounter-web.json \
+  .tutorial-output/web-interactions .tutorial-output/first-encounter-recorded/prepared \
+  review,edit,send
+pnpm tutorials:narrate .tutorial-output/first-encounter-recorded/prepared/story.json \
+  .tutorial-output/first-encounter-recorded/narration "$TUTORIAL_ENV_FILE"
+```
+
+Use the prepared `media/` directory as the renderer's web media root, then run the
+caption and dual-delivery commands. The `sources.json` records which scenes use
+recorded versus static media. The optional final argument explicitly names instruction
+cards to replace with inspected recordings. Missing recordings fail the assembly;
+unlisted cards remain intact. Keep the approved original story as the fallback.
+
+## Native capture audio
+
+Use the Swift worktree's `docs/app-store-capture.md` and its guarded fixture server.
+The native capture build and server must both use `http://127.0.0.1:3100`;
+`localhost` may resolve to an unrelated IPv6 listener. Retain `--reuse-fixtures`
+after capturing native takes.
+
+The shared Mochi fixture initially references a placeholder media key. With the
+capture server running, this helper uploads Core's 284-second synthetic tone WAV
+through the normal app API and associates it only with reserved encounter 201:
+
+```sh
+node scripts/tutorials/hydrate-native-audio.mjs /absolute/path/to/primary/noctune-docs \
+  /absolute/path/to/noctune-core-capture-worktree \
+  .tutorial-output/native-interactions/audio-fixture.json
+```
+
+It validates the disposable database and development auth project, refreshes only
+the reserved login, requires the exact development S3 upload destination, and checks
+CloudFront range playback. It does not invoke processing or require AWS CLI login.
+Keep its manifest: it records the original media fields, new object key, checksum,
+and disclosure. An existing manifest prevents accidental repeat uploads. Restart the
+native fixture server and relaunch the app afterward to refresh credentials and caches.
+Append `--verify-existing` to verify and rebind the manifest's existing object without
+uploading again. The adopted upload session is confirmed in the disposable database
+so orphan cleanup cannot delete the fixture. Run either mode before native recording:
+refreshing the reserved login can invalidate an app session already in use.
+The audio is a playback/seek fixture with tone cues, not the spoken transcript.
+
+## Edit native recordings
+
+Keep raw native recordings and their checksum manifest under
+`.tutorial-output/native-interactions`. Mark rejected takes `usable: false`.
+The first iOS storyboard and cut recipe are `first-encounter-ios.json` and
+`first-encounter-ios.cuts.json`. Each cut records its source, in-point, duration,
+and optional final-frame reading hold. The editor verifies approved source hashes
+and cut bounds, normalizes variable frame rates to 30 fps, and preserves provenance.
+It never changes the original recording or product UI.
+
+```sh
+node scripts/tutorials/edit-recordings.mjs .tutorial-output/native-interactions \
+  tutorials/first-encounter-ios.cuts.json .tutorial-output/first-encounter-ios/media
+pnpm tutorials:narrate tutorials/first-encounter-ios.json \
+  .tutorial-output/first-encounter-ios/narration "$TUTORIAL_ENV_FILE"
+pnpm tutorials:render .tutorial-output/first-encounter-ios/narration \
+  .tutorial-output/first-encounter-ios/video public/screenshots \
+  .tutorial-output/first-encounter-ios/media
+pnpm tutorials:captions .tutorial-output/first-encounter-ios/narration \
+  .tutorial-output/first-encounter-ios/captions "$TUTORIAL_ENV_FILE"
+pnpm tutorials:caption-video .tutorial-output/first-encounter-ios/video \
+  .tutorial-output/first-encounter-ios/captions .tutorial-output/first-encounter-ios/delivery
+```
+
+The iOS episode shows supported transcript-row seeking, rather than implying native
+citation behavior matches the web. Completion uses **Mark as complete** without
+sending the prepared email. The processing cut transitions to the existing fictional
+example draft; it does not claim to show the new recording's generated output.
+Inspect action timing and reading holds after narration changes. Caption alignment
+and decode checks do not replace a complete listening review.
+
+## Hybrid episode and series framing
+
+A story may set `kicker` (uppercase, at most 24 characters, shown after the step and platform)
+and `tagline` (at most 60 characters, under the headline). Both default to the first-encounter
+wording. `first-encounter-hybrid.json` mixes the verified iOS clips with the recorded web shots of
+the same fictional Mochi appointment (September 23, 12:05 PM):
+
+```sh
+pnpm tutorials:narrate tutorials/first-encounter-hybrid.json \
+  .tutorial-output/first-encounter-hybrid/narration "$TUTORIAL_ENV_FILE"
+pnpm tutorials:render .tutorial-output/first-encounter-hybrid/narration \
+  .tutorial-output/first-encounter-hybrid/video \
+  .tutorial-output/first-encounter-recorded/prepared/media \
+  .tutorial-output/first-encounter-ios/media
+```
+
+The web capture runner removes queued, never-processed encounters that native capture uploads
+leave on reserved patients, so lists show only the reserved fictional visits. Removed IDs are
+recorded as `removedStrayEncounters` in the capture manifest.
+
+## Delivery index and review status
+
+`tutorials/episodes.json` lists every episode, its output directory, and its LinkedIn post.
+Each entry records `review.framesChecked` and `review.listened` explicitly. Set `listened` only
+after a person has heard the complete export, and name them in `listenedBy`. Caption alignment,
+transcription, and decode checks never count as a listen.
+
+```sh
+pnpm tutorials:index tutorials/episodes.json /absolute/path/to/noctune-docs/.capture/tutorials/delivery
+```
+
+The index copies both exports, SRT/WebVTT, and `review.html` for each rendered episode. It then
+loads each clean player in Chromium, confirms that every English cue loads and that captions can
+be switched on and off, and writes `player-qa.json`. Nothing is uploaded.
+
+## Record and recover (episode 2)
+
+Web shots live in `scripts/tutorials/web-shots.mjs`. Each entry declares its route, a `ready`
+assertion, the recorded `act`, and optional `setup`, `reset`, `disclosure`, and `duration`.
+Add a shot there rather than branching inside the runner. Episode 2 adds:
+
+- `record-paced`: the first-encounter recording, slowed to match this episode's narration.
+- `upload-file`: a synthetic WAV added through **browse files**, then **Process 1 file**.
+- `upload-retry`: the first storage upload is rejected with HTTP 503. The drawer keeps the take
+  and shows retry guidance; **Process 1 file** uploads it again.
+- `recover`: a tab reload mid-take, **Recover recordings**, a rejected first upload,
+  **Retry upload**, then **Done**.
+
+The failure and retry footage needs Core PR #836: before it, a storage failure left the file
+stuck in `uploading`, so Retry did nothing. `prepare-media` accepts comma-separated capture
+roots, and a later root replaces an earlier shot with the same ID.
+
+Native takes use the capture-only `NoctuneCaptureTakes` UI-test target in the Swift capture
+worktree (`scripts/asc-capture/takes`, driven by `record-take.mjs`). The target attaches to the
+running capture app, so the fixture session is kept. Staged recovery audio is purged by a
+credential handoff, so record the recovery take with `--relaunch`. Never simulate a phone call.
+The call-guidance take shows the in-app **Silence calls** guidance instead.
+
+`edit-recordings.mjs` converts simulator video to constant 30 fps before trimming. Simulator
+captures write no frames while the screen is static, and seeking the input dropped that time:
+a static Today screen could vanish from a cut.
+
+## Review with confidence (episode 3)
+
+Both platforms make the same transcript-backed correction. The draft says Mochi's weight was
+"stable", but at 1:09 the transcript says it is "up just a touch from Tuesday". Web shots:
+`transcript-seek`, `citation-correct` (typed over the word, then Save), `format-complete`
+(Bold from the toolbar, Save, Complete), and `fullscreen`. Each resets the reserved tutorial
+note first. Native takes: `TranscriptSeek`, `TypeCorrection`, and `MarkComplete`.
+
+Between native takes, restore the note without refreshing the reserved login:
+
+```sh
+node scripts/tutorials/reset-tutorial-note.mjs /absolute/path/to/noctune-docs \
+  /absolute/path/to/noctune-core-capture-worktree
+```
+
+Relaunch the app afterwards to clear its note cache. Web capture refreshes the reserved login,
+which signs the native app out. Finish native takes first, or restart `serve.mjs` and use
+`launch` again afterwards.
+
+The ready-frame search is bounded to the two seconds before the ready screenshot. At 160×90, a
+loading skeleton can score within tolerance of the loaded page. The earlier unbounded search
+started some clips on the skeleton.
+
+## Make templates your own (episode 4)
+
+Template creation, community duplication, import, and email templates exist only on the web.
+iOS lists and selects SOAP and discharge templates, so the episode ends with one iPhone scene
+reusing the verified `first-encounter-ios` start clip rather than a separate iOS episode.
+`prepare-media` accepts web scenes only: prepare the web scenes, then append the iOS scene to the
+prepared story and render with the iOS media root.
+
+Web shots `templates-library`, `community-duplicate`, `template-create`, `template-import`, and
+`email-templates` first remove templates the reserved user created in earlier takes. The
+development import analyzer calls Bedrock, which needs an AWS SSO login. The shot therefore
+fulfils `/import/analyze` with the split the product proposes for the fictional paste and
+labels it "Import analysis simulated". Saving the resulting draft uses the real API. The email
+shot rewrites the seeded greetings to match Core PR #837, which removes an unregistered
+`{{client.first_name}}` merge field from the capture seed.
+
+## Discharge and follow-up (episode 5)
+
+Reply routes were checked against each composer in Core `develop`:
+
+| Composer                                            | Nest                                     | No-reply                         | Personal email                                                     |
+| --------------------------------------------------- | ---------------------------------------- | -------------------------------- | ------------------------------------------------------------------ |
+| Web discharge dialog (`send-discharge`)             | Relay on the personal wallet             | Always; the default without Nest | Server requires relay, but the dialog still offers it without Nest |
+| Web encounter composer (`encounters/[id]/messages`) | Relay on the encounter's practice        | Always                           | Not gated                                                          |
+| Web global New message (`messages/send`)            | Relay on the active practice             | Always                           | Not gated                                                          |
+| iOS discharge composer                              | Only when relay is active                | Always                           | Only when relay is active                                          |
+| iOS reply composer                                  | When relay is active and an alias exists | Otherwise ("Send one-way")       | Not offered                                                        |
+
+Narration only promises what holds in every composer shown. Every account can send one-way
+no-reply email. Nest adds the private relay and brings replies back to noctune. Personal email is
+described as sharing your address. The capture seed grants relay only to the personal wallet,
+so episode 5 shots add the same reserved practice grant (`…414`) that the native harness uses.
+No shot presses Send. The iPhone episode reuses the verified episode 1 discharge and Messages
+takes.
+
+## Keep the practice organized (episode 6)
+
+Web shots: `dashboard-today` (Unsigned filter, day arrows), `patients-history`, `past-encounters`,
+`global-search` (⌘K, fixture-backed results matching `capture/authenticated.spec.ts`, because the
+disposable database has no vector index), `team-practice` (members, pending invitation, Invite
+member dialog cancelled), and `team-assign` (Unassigned filter, assign to Dr. Riley Patel; the
+shot resets that assignment first). Narration avoids the dashboard **Mine** filter, which
+currently mirrors All, and does not claim encounters can be assigned. Assignment exists only for
+message threads. iOS has Today, the workspace switcher, and patient history, but no global
+search, members, or assignment; the iPhone episode says so.
+
+## Sentinel (episode 7)
+
+Narration keeps to `content/reference/sentinel.mdx`. Sentinel flags confrontational client
+behavior in audio the user chose to record, preserves flagged encounters beyond the standard
+retention window, and is a documentation aid, not proof. It does not contact clients,
+authorities, or outside parties. The web **Got it** control only folds the alert on screen and
+does not remove the flag; nothing in the product resolves or dismisses a flag. The web runner
+now serves fixture audio for every reserved encounter (`…02NN`), so Jasper's timestamps seek.
+The closing card is a labelled instruction card summarizing those limits.
+
+Caption timing: recognizer word times sometimes overlap the previous word by a fraction of a
+second. The caption pass clamps overlaps under 0.5 s to the previous word's end. Larger
+overlaps still stop generation for review.
+
+## Publishing to the docs
+
+Reviewed videos are served from `https://docs-media.noctune.ai`, a dedicated S3
+bucket and CloudFront distribution owned by `noctune-terraform` (`docs_media.tf`).
+Rendered MP4s never enter Git or LFS.
+
+1. Watch and listen to the full export. In `tutorials/episodes.json`, set
+   `review.framesChecked` and `review.listened` to `true` and `review.listenedBy`
+   to your name. Nothing else marks an episode publishable.
+2. Rebuild the delivery index (`pnpm tutorials:index`) so `.capture/tutorials/delivery`
+   holds the reviewed files.
+3. `pnpm tutorials:publish` prints a dry run. With AWS credentials for the prod
+   account (or the `tutorial-publishing` GitHub environment role) and
+   `MEDIA_BUCKET` from `./tools/tf prod output docs_media`, run
+   `pnpm tutorials:publish --write`. It uploads each approved clean MP4 and a poster
+   frame under `assets/<sha256>/`, verifies the stored checksum and the CDN bytes,
+   copies the WebVTT captions to `public/tutorials/`, and updates
+   `tutorials/published.json`.
+4. Commit `tutorials/published.json` and `public/tutorials/`.
+
+`<TutorialVideo id="..." />` renders nothing for an unpublished episode, so pages
+can reference episodes still awaiting review. `<TutorialList />` on
+`content/tutorials.mdx` shows every published episode and is always listed under
+Get Started. Objects are content-addressed and immutable,
+so a re-render gets a new URL and no invalidation is needed. The publisher role
+cannot delete objects.

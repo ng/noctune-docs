@@ -6,12 +6,13 @@
     "assets:verify": "node scripts/verify-raster-assets.mjs",
     "build": "pnpm assets:verify && next build",
     "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
-    "check": "pnpm format:check && pnpm lint:md && pnpm test:wordmark && pnpm test:assets && pnpm test:capture-safety && pnpm test:ios-line-markers && pnpm screenshots:verify && pnpm tsc && pnpm build && pnpm test:ios-support",
+    "check": "pnpm format:check && pnpm lint:md && pnpm test:wordmark && pnpm test:tutorials && pnpm test:assets && pnpm test:capture-safety && pnpm test:ios-line-markers && pnpm screenshots:verify && pnpm tsc && pnpm build && pnpm test:ios-support",
     "dev": "next dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint:md": "remark 'content/**/*.{md,mdx}' --frail --quiet",
     "lint:md:fix": "remark 'content/**/*.{md,mdx}' --output --quiet",
+    "marketing:render": "node scripts/marketing/render-assets.mjs",
     "prepare": "husky",
     "release": "semantic-release",
     "screenshots:contact-sheet": "node scripts/make-screenshot-contact-sheets.mjs",
@@ -23,8 +24,18 @@
     "test:capture-safety": "node --test capture/support/capture-safety.test.mjs",
     "test:ios-line-markers": "node --experimental-strip-types --test tests/ios-line-markers.test.mjs",
     "test:ios-support": "node --test tests/ios-support-render.test.mjs",
+    "test:tutorials": "node --test scripts/tutorials/*.test.mjs",
     "test:wordmark": "node --test tests/wordmark-style.test.mjs",
-    "tsc": "tsc --noEmit"
+    "tsc": "tsc --noEmit",
+    "tutorials:audition": "node scripts/tutorials/audition.mjs",
+    "tutorials:caption-video": "node scripts/tutorials/caption-video.mjs",
+    "tutorials:captions": "node scripts/tutorials/captions.mjs",
+    "tutorials:capture-web": "node scripts/tutorials/capture-web.mjs",
+    "tutorials:index": "node scripts/tutorials/delivery-index.mjs",
+    "tutorials:narrate": "node scripts/tutorials/narrate.mjs",
+    "tutorials:prepare-media": "node scripts/tutorials/prepare-media.mjs",
+    "tutorials:publish": "node scripts/tutorials/publish.mjs",
+    "tutorials:render": "node scripts/tutorials/render.mjs"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
@@ -40,7 +51,7 @@
   "dependencies": {
     "@theguild/remark-mermaid": "0.3.0",
     "@vercel/analytics": "^2.0.1",
-    "next": "16.3.3",
+    "next": "16.3.6",
     "nextra": "^4.2.17",
     "nextra-theme-docs": "^4.2.17",
     "react": "^19.0.0",
@@ -49,7 +60,7 @@
     "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
-    "@playwright/test": "1.62.1",
+    "@playwright/test": "1.63.0",
     "@semantic-release/changelog": "^7.0.0",
     "@semantic-release/git": "^11.0.0",
     "@semantic-release/github": "^12.0.6",
@@ -58,7 +69,7 @@
     "@types/react-dom": "^19.0.0",
     "@typescript/native": "npm:typescript@^7.0.2",
     "conventional-changelog-conventionalcommits": "^10.0.0",
-    "dotenv": "17.4.2",
+    "dotenv": "18.0.4",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.0",
     "pagefind": "^1.5.2",
@@ -69,12 +80,12 @@
     "remark-lint": "10.0.1",
     "remark-lint-no-dead-urls": "2.0.1",
     "remark-mdx": "3.1.1",
-    "remark-mdx-frontmatter": "^5.2.0",
+    "remark-mdx-frontmatter": "^6.0.0",
     "remark-preset-lint-markdown-style-guide": "6.0.1",
     "remark-preset-lint-recommended": "7.0.1",
     "semantic-release": "^25.0.3",
     "sharp": "0.35.4",
     "typescript": "npm:@typescript/typescript6@^6.0.2"
   },
-  "packageManager": "pnpm@11.24.0"
+  "packageManager": "pnpm@12.6.0"
 }

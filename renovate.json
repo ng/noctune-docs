@@ -129,6 +129,11 @@
       "matchUpdateTypes": ["minor"],
       "commitMessagePrefix": "chore(deps):",
       "commitMessageAction": "Update {{packageName}}"
+    },
+    {
+      "description": "Zod is pinned in pnpm-workspace.yaml because Nextra 4.6.1 rejects its layout props with Zod 4.4+. Remove this rule with the pin once https://github.com/shuding/nextra/issues/4989 is fixed.",
+      "matchPackageNames": ["zod"],
+      "allowedVersions": "<4.4.0"
     }
   ]
 }

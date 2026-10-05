@@ -5,3 +5,9 @@ pnpm-lock.yaml
 *.tsbuildinfo
 next-env.d.ts
 .serena/
+
+.tutorial-output/
+.speech-cache/
+.codex/worktrees/
+
+.caption-cache/

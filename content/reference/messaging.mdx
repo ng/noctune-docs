@@ -2,17 +2,17 @@
 title: Messaging & Email Relay
 ---
 
-# Messaging & Email Relay
+# How client replies are routed back to you
 
 Every outbound noctune message has a reply route. The route determines which address the recipient sees and where a reply arrives.
 
 ## Reply routes
 
-| Route                   | Recipient experience                                    | Reply destination                           | Requirement                |
-| ----------------------- | ------------------------------------------------------- | ------------------------------------------- | -------------------------- |
-| **noctune Nest**        | A noctune relay identity; personal address stays hidden | Encounter thread or global Messages inbox   | Nest entitlement           |
-| **noctune (no reply)**  | From `noreply@mail.noctune.ai`; one-way message         | Recipient cannot reply through that message | Available without Nest     |
-| **Your personal email** | Your personal address is shared                         | Your personal inbox                         | No Nest entitlement needed |
+| Route                   | Recipient experience                                    | Reply destination                           | Requirement                     |
+| ----------------------- | ------------------------------------------------------- | ------------------------------------------- | ------------------------------- |
+| **noctune Nest**        | A noctune relay identity; personal address stays hidden | Encounter thread or global Messages inbox   | Nest entitlement                |
+| **noctune (no reply)**  | From `noreply@mail.noctune.ai`; one-way message         | Recipient cannot reply through that message | Available without Nest          |
+| **Your personal email** | Your personal address is shared                         | Your personal inbox                         | Messages: none. Discharge: Nest |
 
 When Nest is active, a new composer starts on the Nest route. Otherwise it starts on no-reply. You can change the route before sending.
 
@@ -57,4 +57,4 @@ The domains separate one-way sending, reply routing, and standing inbound mail.
 
 ## Entitlement changes
 
-If Nest is unavailable in the active billing workspace, the composer hides or disables that route and uses no-reply instead. Personal email remains a separate choice. Existing messages stay visible in the inbox even when the current workspace cannot start a new Nest send.
+If Nest is unavailable in the active billing workspace, the composer hides or disables that route and uses no-reply instead. In the message composers, personal email remains a separate choice. Sending discharge notes from your personal email requires Nest. Existing messages stay visible in the inbox even when the current workspace cannot start a new Nest send.

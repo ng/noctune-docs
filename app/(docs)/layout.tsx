@@ -3,7 +3,7 @@ import { Footer, Layout, Navbar } from 'nextra-theme-docs'
 import { Banner } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import 'nextra-theme-docs/style.css'
-import { DocsFooter } from '../../components/footer'
+import { DocsFooter, footerClassName } from '../../components/footer'
 import { Logo } from '../../components/logo'
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ const banner = <Banner storageKey="noctune-docs-launch">noctune docs are in prev
 const navbar = <Navbar logo={<Logo />} />
 
 const footer = (
-  <Footer>
+  <Footer className={footerClassName}>
     <DocsFooter />
   </Footer>
 )

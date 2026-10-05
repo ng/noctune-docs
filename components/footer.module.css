@@ -1,0 +1,108 @@
+/* Mirrors the marketing site's SiteFooter (noctune-marketing). */
+footer.footer {
+  max-width: none;
+  margin: 0;
+  padding: 64px max(env(safe-area-inset-right), 1.5rem) 32px max(env(safe-area-inset-left), 1.5rem);
+  background: #212121;
+  color: #bdbdbd;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 4fr repeat(4, 2fr);
+  gap: 40px;
+  margin-bottom: 48px;
+}
+
+.tagline {
+  max-width: 280px;
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.43;
+  color: #9e9e9e;
+}
+
+.heading {
+  display: block;
+  margin-bottom: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 2.66;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.link {
+  font-size: 14px;
+  line-height: 1.43;
+  color: #9e9e9e;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.link:hover {
+  color: #fff;
+}
+
+.bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 32px;
+  border-top: 1px solid #424242;
+  font-size: 12px;
+  color: #9e9e9e;
+}
+
+.icons {
+  display: flex;
+  gap: 8px;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: #424242;
+  color: #9e9e9e;
+  transition: all 0.2s;
+}
+
+.icon:hover {
+  background: #616161;
+  color: #fff;
+}
+
+@media (max-width: 899px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .brand {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 599px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

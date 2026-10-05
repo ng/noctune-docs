@@ -6,10 +6,12 @@ export default {
   },
   'getting-started': 'Sign up & first login',
   'setup-guide': 'Setup Guide',
+  tutorials: 'Video Tutorials',
   '--daily': {
     type: 'separator',
     title: 'Daily Workflow',
   },
+  'navigation-and-search': 'Navigation & Search',
   dashboard: 'Dashboard',
   encounters: 'Encounters',
   messages: 'Messages',
