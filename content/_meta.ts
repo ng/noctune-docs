@@ -1,5 +1,3 @@
-import published from '../tutorials/published.json'
-
 export default {
   index: 'Introduction',
   '--start': {
@@ -8,11 +6,7 @@ export default {
   },
   'getting-started': 'Sign up & first login',
   'setup-guide': 'Setup Guide',
-  // Hidden until at least one tutorial has been listened to and published.
-  tutorials: {
-    title: 'Video Tutorials',
-    display: Object.keys(published.videos).length ? 'normal' : 'hidden',
-  },
+  tutorials: 'Video Tutorials',
   '--daily': {
     type: 'separator',
     title: 'Daily Workflow',
