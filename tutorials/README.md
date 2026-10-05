@@ -412,3 +412,30 @@ The closing card is a labelled instruction card summarizing those limits.
 Caption timing: recognizer word times sometimes overlap the previous word by a fraction of a
 second. The caption pass clamps overlaps under 0.5 s to the previous word's end. Larger
 overlaps still stop generation for review.
+
+## Publishing to the docs
+
+Reviewed videos are served from `https://docs-media.noctune.ai`, a dedicated S3
+bucket and CloudFront distribution owned by `noctune-terraform` (`docs_media.tf`).
+Rendered MP4s never enter Git or LFS.
+
+1. Watch and listen to the full export. In `tutorials/episodes.json`, set
+   `review.framesChecked` and `review.listened` to `true` and `review.listenedBy`
+   to your name. Nothing else marks an episode publishable.
+2. Rebuild the delivery index (`pnpm tutorials:index`) so `.capture/tutorials/delivery`
+   holds the reviewed files.
+3. `pnpm tutorials:publish` prints a dry run. With AWS credentials for the prod
+   account (or the `tutorial-publishing` GitHub environment role) and
+   `MEDIA_BUCKET` from `./tools/tf prod output docs_media`, run
+   `pnpm tutorials:publish --write`. It uploads each approved clean MP4 and a poster
+   frame under `assets/<sha256>/`, verifies the stored checksum and the CDN bytes,
+   copies the WebVTT captions to `public/tutorials/`, and updates
+   `tutorials/published.json`.
+4. Commit `tutorials/published.json` and `public/tutorials/`.
+
+`<TutorialVideo id="..." />` renders nothing for an unpublished episode, so pages
+can reference episodes still awaiting review. `<TutorialList />` on
+`content/tutorials.mdx` shows every published episode; the page stays out of the
+sidebar until at least one is published. Objects are content-addressed and immutable,
+so a re-render gets a new URL and no invalidation is needed. The publisher role
+cannot delete objects.
