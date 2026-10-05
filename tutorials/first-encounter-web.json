@@ -14,7 +14,7 @@
       "platform": "web",
       "headline": ["Record or", "upload audio."],
       "source": "encounters/new-encounter/browser-recording.webp",
-      "narration": "Record the appointment in your browser, or upload an existing audio file. Review the queued recording, then choose Start processing to submit it."
+      "narration": "Record the appointment in your browser, or upload an existing audio file. Review the queued recording, then submit it for processing."
     },
     {
       "id": "process",

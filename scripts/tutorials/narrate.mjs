@@ -61,6 +61,13 @@ export async function narrate(story, config, env, output, cache) {
   adapter.validate(config, env)
   fs.mkdirSync(cache, { recursive: true })
   await withStagedOutput(output, async (stage) => {
+    const previous = path.join(stage, 'timeline.json')
+    if (fs.existsSync(previous)) {
+      for (const scene of JSON.parse(fs.readFileSync(previous)).scenes || []) {
+        if (/^[a-z0-9-]+\.wav$/.test(scene.audio))
+          fs.rmSync(path.join(stage, scene.audio), { force: true })
+      }
+    }
     let at = 0
     const scenes = []
     for (const scene of story.scenes) {

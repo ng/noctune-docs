@@ -1,8 +1,8 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { createHash } from 'node:crypto'
-import { timestamp } from './narrate.mjs'
+import { createHash, randomUUID } from 'node:crypto'
+import { writeSubtitles } from './subtitles.mjs'
 import { sourcePath, validateTimeline } from './render.mjs'
 import { withStagedOutput } from './staged-output.mjs'
 
@@ -23,8 +23,13 @@ export async function transcribeDeepgram(bytes, env, fetchImpl = fetch) {
     throw Error('Caption timing request failed or timed out')
   }
   if (!response.ok) throw Error(`Caption timing provider returned HTTP ${response.status}`)
-  const data = await response.json()
-  const words = data.results?.channels?.[0]?.alternatives?.[0]?.words
+  let data
+  try {
+    data = await response.json()
+  } catch {
+    throw Error('Caption timing provider returned invalid JSON')
+  }
+  const words = data?.results?.channels?.[0]?.alternatives?.[0]?.words
   if (!Array.isArray(words) || !words.length)
     throw Error('Caption timing provider returned no words')
   return words
@@ -65,6 +70,7 @@ export function scriptWords(text, words, speechSeconds) {
       !Number.isFinite(timed.start) ||
       !Number.isFinite(timed.end) ||
       timed.start < 0 ||
+      timed.start >= speechSeconds ||
       timed.start < previousEnd - 0.01 ||
       timed.end <= timed.start ||
       timed.end > speechSeconds + 0.1
@@ -75,7 +81,20 @@ export function scriptWords(text, words, speechSeconds) {
   })
   if (corrections.length / script.length > 0.1)
     throw Error('Caption transcription differs too much from script; alignment needs review')
-  return { words: aligned, corrections }
+  // Normalization may split iPhone or a hyphenated word for timing alignment.
+  // Rejoin those pieces so captions retain the exact authored spelling.
+  let position = 0
+  const authored = text
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => {
+      const count = tokens(word).length
+      if (!count) throw Error('Caption token has no spoken word')
+      const first = aligned[position]
+      position += count
+      return { text: word, start: first.start, end: aligned[position - 1].end }
+    })
+  return { words: authored, corrections }
 }
 export function cuesFromWords(words, offset = 0) {
   const cues = []
@@ -143,24 +162,35 @@ export async function captions(timelineDir, output, env, transcribe = transcribe
     const bytes = fs.readFileSync(sourcePath(timelineDir, scene.audio))
     const key = createHash('sha256').update('deepgram-nova3-noctune-v1').update(bytes).digest('hex')
     const cached = path.join(cache, `${key}.json`)
-    let words
-    if (fs.existsSync(cached)) words = JSON.parse(fs.readFileSync(cached))
-    else {
-      words = await transcribe(bytes, env)
-      fs.writeFileSync(cached, JSON.stringify(words))
-    }
-    let aligned
+    const fromCache = fs.existsSync(cached)
+    let aligned, sceneCues, words
     try {
+      words = fromCache ? JSON.parse(fs.readFileSync(cached)) : await transcribe(bytes, env)
       aligned = scriptWords(scene.narration, words, scene.speechSeconds)
-    } catch (error) {
-      throw Error(`${scene.id}: ${error.message}`)
-    }
-    cues.push(
-      ...cuesFromWords(aligned.words, scene.at).map((cue) => ({
+      sceneCues = cuesFromWords(aligned.words, scene.at).map((cue) => ({
         ...cue,
         end: Math.min(cue.end, scene.at + scene.duration),
-      })),
-    )
+      }))
+    } catch (error) {
+      if (fromCache) {
+        fs.rmSync(cached, { force: true })
+        throw Error(
+          `${scene.id}: cached caption timing rejected; entry removed. Rerun caption timing.`,
+        )
+      }
+      throw Error(`${scene.id}: ${error.message}`)
+    }
+    // Rejected results must not make the next attempt reuse the same failure.
+    if (!fromCache) {
+      const temporary = `${cached}.${randomUUID()}.tmp`
+      try {
+        fs.writeFileSync(temporary, JSON.stringify(words))
+        fs.renameSync(temporary, cached)
+      } finally {
+        fs.rmSync(temporary, { force: true })
+      }
+    }
+    cues.push(...sceneCues)
     corrections.push(...aligned.corrections.map((c) => ({ scene: scene.id, ...c })))
     scenes.push({
       id: scene.id,
@@ -186,24 +216,7 @@ export async function captions(timelineDir, output, env, transcribe = transcribe
         2,
       ) + '\n',
     )
-    fs.writeFileSync(
-      path.join(stage, 'walkthrough.srt'),
-      cues
-        .map(
-          (cue, i) => `${i + 1}\n${timestamp(cue.start)} --> ${timestamp(cue.end)}\n${cue.text}\n`,
-        )
-        .join('\n'),
-    )
-    fs.writeFileSync(
-      path.join(stage, 'walkthrough.vtt'),
-      'WEBVTT\n\n' +
-        cues
-          .map(
-            (cue) =>
-              `${timestamp(cue.start).replace(',', '.')} --> ${timestamp(cue.end).replace(',', '.')}\n${cue.text}\n`,
-          )
-          .join('\n'),
-    )
+    writeSubtitles(stage, cues)
   })
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

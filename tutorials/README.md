@@ -126,7 +126,10 @@ pnpm tutorials:caption-video .tutorial-output/first-encounter/video \
 ```
 
 The timing pass uses Deepgram Nova-3 on the already-generated WAV files, independently
-of the narration provider. It caches word timings by audio content. Caption text comes
+of the narration provider. It caches word timings by audio content only after alignment and cue validation.
+Rejected existing cache entries are removed with a rerun instruction; rerun the
+caption command to obtain fresh timings. To force a fresh timing pass manually,
+remove the relevant local `.caption-cache/` directory. Caption text comes
 from the authored script, with hyphenated compounds split into words. Recognition
 corrections are reported in `captions.json`; token-count mismatches, large transcript
 changes, or invalid times stop generation for review. Speech recognition timestamps
@@ -135,6 +138,9 @@ are approximate, so listen and inspect synchronization before publishing.
 The timing function can be replaced independently; the delivery renderer consumes
 provider-neutral `captions.json` cues with start/end seconds and text, tied to the
 video's scene/audio hashes. It refuses captions from a different narration version.
+
+Delivery regenerates SRT/WebVTT from the validated `captions.json` cues, so edits
+for delivery should be made in that JSON rather than in sidecar subtitle files.
 
 Delivery includes a clean MP4 plus SRT/WebVTT for optional closed captions, a second MP4
 with captions burned in for sound-off viewing, and `review.html` with both players.
@@ -145,3 +151,119 @@ Burning uses transparent image overlays rather than requiring a special subtitle
 FFmpeg build. Inspect every cue in `qa/captions-contact-sheet.png`; the automated gate
 checks media decoding, timing bounds, line limits, and narration identity, not listening
 quality. Generated `.caption-cache/` folders are local and must not be committed.
+
+## Record web interactions
+
+Use the primary docs checkout's existing `.env.capture.local` and a clean isolated
+Core worktree at the intended product revision, with dependencies installed. The
+runner validates the existing database allowlist and guard, applies committed Core
+migrations to that disposable database, and refreshes only the reserved development
+auth identity. Existing fictional encounters are preserved; no reseed occurs.
+
+Acquire the shared `noctune-native-capture` coordination lock before starting. The
+runner also holds the docs screenshot lock to avoid a concurrent fixture refresh.
+It uses loopback port 3108, real development authentication, and a synthetic browser
+microphone. No email is sent. The recording shot exercises the real uploader against
+isolated API/storage fixtures and labels the simulated upload in the composition;
+clinical processing uses precomputed examples. No demo audio is uploaded to cloud storage.
+
+```sh
+pnpm tutorials:capture-web /absolute/path/to/primary/noctune-docs \
+  /absolute/path/to/isolated/noctune-core .tutorial-output/web-interactions
+```
+
+An optional fourth argument selects comma-separated shots (`start`, `record`,
+`process`, `review`, `edit`, `send`, or `follow-up`). Each verified 32-second MP4 includes real UI and a
+reading hold; the output includes raw browser video, poster frames, and a checksum
+manifest. In-points are matched against a screenshot of the ready UI, so delayed
+browser screencast frames do not expose initial loading skeletons. Raw filenames,
+ready references, match scores, and source in-points remain in the manifest. A
+reading hold may extend the last authentic frame. Missing UI states fail the run
+while preserving previous complete output.
+The developer-only Next.js badge is hidden during recording; product UI is unchanged.
+Review footage before composing it into an episode. The runner creates a reserved
+tutorial note version with a citation tied to the existing weight discussion. It
+serves Core’s deterministic 284-second synthetic WAV locally with byte-range support
+to verify real audio seeking and transcript navigation. This is fixture audio, not
+a recording of the fictional consultation. Edit capture resets only the reserved
+tutorial note and encounter completion, saves a wording change through the UI, and
+verifies that the correction appears before completing the encounter. Discharge
+capture prepares the recipient and selects no-reply without sending an email.
+
+To compose verified clips with the current storyboard's held cards and remaining
+static captures, assemble a separate media root first. This checks recording hashes
+and copies source bytes without altering `public/screenshots/`:
+
+```sh
+pnpm tutorials:prepare-media tutorials/first-encounter-web.json \
+  .tutorial-output/web-interactions .tutorial-output/first-encounter-recorded/prepared \
+  review,edit,send
+pnpm tutorials:narrate .tutorial-output/first-encounter-recorded/prepared/story.json \
+  .tutorial-output/first-encounter-recorded/narration "$TUTORIAL_ENV_FILE"
+```
+
+Use the prepared `media/` directory as the renderer's web media root, then run the
+caption and dual-delivery commands. The `sources.json` records which scenes use
+recorded versus static media. The optional final argument explicitly names instruction
+cards to replace with inspected recordings. Missing recordings fail the assembly;
+unlisted cards remain intact. Keep the approved original story as the fallback.
+
+## Native capture audio
+
+Use the Swift worktree's `docs/app-store-capture.md` and its guarded fixture server.
+The native capture build and server must both use `http://127.0.0.1:3100`;
+`localhost` may resolve to an unrelated IPv6 listener. Retain `--reuse-fixtures`
+after capturing native takes.
+
+The shared Mochi fixture initially references a placeholder media key. With the
+capture server running, this helper uploads Core's 284-second synthetic tone WAV
+through the normal app API and associates it only with reserved encounter 201:
+
+```sh
+node scripts/tutorials/hydrate-native-audio.mjs /absolute/path/to/primary/noctune-docs \
+  /absolute/path/to/noctune-core-capture-worktree \
+  .tutorial-output/native-interactions/audio-fixture.json
+```
+
+It validates the disposable database and development auth project, refreshes only
+the reserved login, requires the exact development S3 upload destination, and checks
+CloudFront range playback. It does not invoke processing or require AWS CLI login.
+Keep its manifest: it records the original media fields, new object key, checksum,
+and disclosure. An existing manifest prevents accidental repeat uploads. Restart the
+native fixture server and relaunch the app afterward to refresh credentials and caches.
+Append `--verify-existing` to verify and rebind the manifest's existing object without
+uploading again. The adopted upload session is confirmed in the disposable database
+so orphan cleanup cannot delete the fixture. Run either mode before native recording:
+refreshing the reserved login can invalidate an app session already in use.
+The audio is a playback/seek fixture with tone cues, not the spoken transcript.
+
+## Edit native recordings
+
+Keep raw native recordings and their checksum manifest under
+`.tutorial-output/native-interactions`. Mark rejected takes `usable: false`.
+The first iOS storyboard and cut recipe are `first-encounter-ios.json` and
+`first-encounter-ios.cuts.json`. Each cut records its source, in-point, duration,
+and optional final-frame reading hold. The editor verifies approved source hashes
+and cut bounds, normalizes variable frame rates to 30 fps, and preserves provenance.
+It never changes the original recording or product UI.
+
+```sh
+node scripts/tutorials/edit-recordings.mjs .tutorial-output/native-interactions \
+  tutorials/first-encounter-ios.cuts.json .tutorial-output/first-encounter-ios/media
+pnpm tutorials:narrate tutorials/first-encounter-ios.json \
+  .tutorial-output/first-encounter-ios/narration "$TUTORIAL_ENV_FILE"
+pnpm tutorials:render .tutorial-output/first-encounter-ios/narration \
+  .tutorial-output/first-encounter-ios/video public/screenshots \
+  .tutorial-output/first-encounter-ios/media
+pnpm tutorials:captions .tutorial-output/first-encounter-ios/narration \
+  .tutorial-output/first-encounter-ios/captions "$TUTORIAL_ENV_FILE"
+pnpm tutorials:caption-video .tutorial-output/first-encounter-ios/video \
+  .tutorial-output/first-encounter-ios/captions .tutorial-output/first-encounter-ios/delivery
+```
+
+The iOS episode shows supported transcript-row seeking, rather than implying native
+citation behavior matches the web. Completion uses **Mark as complete** without
+sending the prepared email. The processing cut transitions to the existing fictional
+example draft; it does not claim to show the new recording's generated output.
+Inspect action timing and reading holds after narration changes. Caption alignment
+and decode checks do not replace a complete listening review.
