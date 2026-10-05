@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "scenes": [
+    {
+      "id": "today",
+      "cuts": [{ "source": "raw/today-workspace-20260930.mp4", "start": 6, "duration": 9.5 }]
+    },
+    {
+      "id": "patients",
+      "cuts": [
+        { "source": "raw/patients-history-20260930.mp4", "start": 11, "duration": 8.4, "hold": 2 }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "title": "Keep the practice organized in noctune \u2014 web",
+  "kicker": "ORGANIZED",
+  "tagline": "Find any visit, and share the work.",
+  "scenes": [
+    {
+      "id": "dashboard-today",
+      "platform": "web",
+      "headline": ["Start with", "today."],
+      "narration": "This video covers finding your way around a busy practice. The dashboard shows today's encounters. Filter to Unsigned to see notes that still need your review, and step through the days with the arrows."
+    },
+    {
+      "id": "patients-history",
+      "platform": "web",
+      "headline": ["Every patient,", "every visit."],
+      "narration": "Patients lists everyone in the practice. Filter to Recent, or search by name. Open a patient to see their trends and Encounter History, with every past visit one click away.",
+      "start": 5
+    },
+    {
+      "id": "past-encounters",
+      "platform": "web",
+      "headline": ["History beside", "the note."],
+      "narration": "While you review an encounter, open Past Encounters to check earlier visits, and the note stays open. Search those visits for a finding, such as the patient's weight."
+    },
+    {
+      "id": "global-search",
+      "platform": "web",
+      "headline": ["Search", "everything."],
+      "narration": "Press Command K to search encounters, patients, and messages at once. Type a symptom or a detail, and pick the visit you need."
+    },
+    {
+      "id": "team-practice",
+      "platform": "web",
+      "headline": ["Bring in", "your team."],
+      "narration": "On the Practice page, owners and admins see active members and their roles, and pending invitations. Choose Invite member, enter an email, and pick a role."
+    },
+    {
+      "id": "team-assign",
+      "platform": "web",
+      "headline": ["Share the", "follow-up."],
+      "narration": "In a practice, client messages land in a shared inbox. Filter to Unassigned, then assign a thread to a teammate, so everyone knows who's answering."
+    }
+  ]
+}
