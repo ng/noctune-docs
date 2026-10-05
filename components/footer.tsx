@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { AppStoreBadge } from './app-store-badge'
+import { LINKEDIN_URL } from './linkedin-icon'
 
 const BRAND_URL = 'https://noctune.ai'
 const APP_URL = 'https://app.noctune.ai'
@@ -104,6 +105,9 @@ export function DocsFooter() {
           </a>
           <a href="mailto:jon@noctune.ai" style={linkStyle}>
             Email us
+          </a>
+          <a href={LINKEDIN_URL} style={linkStyle}>
+            LinkedIn
           </a>
         </div>
 
