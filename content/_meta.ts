@@ -6,7 +6,10 @@ export default {
   },
   'getting-started': 'Sign up & first login',
   'setup-guide': 'Setup Guide',
-  tutorials: 'Video Tutorials',
+  tutorials: {
+    title: 'Video Tutorials',
+    theme: { collapsed: false },
+  },
   '--daily': {
     type: 'separator',
     title: 'Daily Workflow',

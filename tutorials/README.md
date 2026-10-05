@@ -434,8 +434,8 @@ Rendered MP4s never enter Git or LFS.
 4. Commit `tutorials/published.json` and `public/tutorials/`.
 
 `<TutorialVideo id="..." />` renders nothing for an unpublished episode, so pages
-can reference episodes still awaiting review. `<TutorialList />` on
-`content/tutorials.mdx` shows every published episode and is always listed under
-Get Started. Objects are content-addressed and immutable,
+can reference episodes still awaiting review. `content/tutorials/` has one page per topic (web, iPhone, and hybrid
+versions together), shown as an expanded Video Tutorials group under Get Started.
+Add a new episode to its topic page with `<TutorialVideo id="..." caption={false} />`. Objects are content-addressed and immutable,
 so a re-render gets a new URL and no invalidation is needed. The publisher role
 cannot delete objects.
