@@ -65,6 +65,32 @@
         "framesChecked": true,
         "listened": false
       }
+    },
+    {
+      "id": "review-with-confidence-web",
+      "series": 3,
+      "title": "Review with confidence \u2014 web",
+      "platform": "web",
+      "story": "tutorials/review-with-confidence-web.json",
+      "output": ".tutorial-output/review-with-confidence-web",
+      "post": "social/linkedin/03-review-with-confidence.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
+    },
+    {
+      "id": "review-with-confidence-ios",
+      "series": 3,
+      "title": "Review with confidence \u2014 iPhone",
+      "platform": "ios",
+      "story": "tutorials/review-with-confidence-ios.json",
+      "output": ".tutorial-output/review-with-confidence-ios",
+      "post": "social/linkedin/03-review-with-confidence.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
     }
   ]
 }

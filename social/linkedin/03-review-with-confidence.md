@@ -1,6 +1,13 @@
 # 3. Review with confidence
 
-Video: planned (`review-with-confidence`)
+Videos (burned-caption exports from `tutorials/episodes.json`):
+
+- Web: `review-with-confidence-web` → `walkthrough-captioned.mp4` (about 55 seconds)
+- iPhone: `review-with-confidence-ios` → `walkthrough-captioned.mp4` (about 39 seconds)
+
+Both videos correct the same fictional detail: the draft called Mochi's weight stable, and the
+transcript says it was up a little. The iPhone video has no full screen step; drop that bullet
+when posting it.
 
 ## Post
 
@@ -10,9 +17,9 @@ That question is why you shouldn't sign an AI-drafted note without the recording
 
 Reviewing is the step that makes a draft safe to use. This video shows how we built for it:
 
-→ The SOAP note on one side, the speaker-labeled transcript on the other
-→ Click a citation and the audio jumps to that exact moment
-→ Correct a detail, save it, and keep the edit history
+→ The SOAP note beside the speaker-labeled transcript, with search
+→ Click a citation and the transcript and audio jump to that exact moment
+→ Correct a detail in the editor and save it
 → Full screen when you want to read the note without distractions
 → Complete only when you're done, as a separate step from saving
 

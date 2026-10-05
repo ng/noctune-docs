@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "scenes": [
+    {
+      "id": "transcript",
+      "cuts": [
+        { "source": "raw/transcript-seek-20260930.mp4", "start": 5.5, "duration": 3, "hold": 3 },
+        { "source": "raw/transcript-seek-20260930.mp4", "start": 10.5, "duration": 2 },
+        { "source": "raw/transcript-seek-20260930.mp4", "start": 15.3, "duration": 4.5 }
+      ]
+    },
+    {
+      "id": "correct",
+      "cuts": [
+        { "source": "raw/type-correction-20260930.mp4", "start": 8.5, "duration": 2.5, "hold": 3 },
+        { "source": "raw/type-correction-20260930.mp4", "start": 11, "duration": 8 },
+        { "source": "raw/type-correction-20260930.mp4", "start": 21.5, "duration": 1 },
+        { "source": "raw/type-correction-20260930.mp4", "start": 25.5, "duration": 1.1 }
+      ]
+    },
+    {
+      "id": "complete",
+      "cuts": [{ "source": "raw/mark-complete-20260930.mp4", "start": 8, "duration": 8.8 }]
+    }
+  ]
+}
