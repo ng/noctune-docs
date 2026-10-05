@@ -34,6 +34,7 @@
     "tutorials:index": "node scripts/tutorials/delivery-index.mjs",
     "tutorials:narrate": "node scripts/tutorials/narrate.mjs",
     "tutorials:prepare-media": "node scripts/tutorials/prepare-media.mjs",
+    "tutorials:publish": "node scripts/tutorials/publish.mjs",
     "tutorials:render": "node scripts/tutorials/render.mjs"
   },
   "lint-staged": {
