@@ -9,7 +9,7 @@ the next person.
 | #   | Post                                                     | Video                                  |
 | --- | -------------------------------------------------------- | -------------------------------------- |
 | 1   | [Your first encounter](01-first-encounter.md)            | Web, iPhone, and hybrid captioned MP4s |
-| 2   | [Record and recover](02-record-and-recover.md)           | Planned                                |
+| 2   | [Record and recover](02-record-and-recover.md)           | Web and iPhone captioned MP4s          |
 | 3   | [Review with confidence](03-review-with-confidence.md)   | Planned                                |
 | 4   | [Make templates your own](04-templates.md)               | Planned                                |
 | 5   | [Discharge and follow-up](05-discharge-and-follow-up.md) | Planned                                |

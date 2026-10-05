@@ -2,9 +2,11 @@ import { setTimeout as wait } from 'node:timers/promises'
 
 // Exercise the real browser uploader without putting demo bytes in cloud storage.
 // Only this isolated page receives the reserved, explicitly disclosed API fixtures.
-export async function installUploadFixture(page, baseURL) {
+// `failFirstUpload` rejects the first storage PUT to demonstrate the retry path.
+export async function installUploadFixture(page, baseURL, { failFirstUpload = false } = {}) {
   let group,
     confirmedGroup,
+    failedUploads = 0,
     receivedBytes = 0
   await page.route('**/api/v1/uploads/presigned-url', async (route) => {
     const body = route.request().postDataJSON()
@@ -36,6 +38,11 @@ export async function installUploadFixture(page, baseURL) {
     if (route.request().method() !== 'PUT' || !receivedBytes)
       throw Error('Missing recorded demo bytes')
     await wait(700)
+    if (failFirstUpload && !failedUploads) {
+      failedUploads++
+      receivedBytes = 0
+      return route.fulfill({ status: 503, body: '' })
+    }
     await route.fulfill({ status: 200, body: '' })
   })
   await page.route('**/api/v1/uploads/confirm-group', async (route) => {
@@ -60,5 +67,5 @@ export async function installUploadFixture(page, baseURL) {
       },
     })
   })
-  return () => ({ receivedBytes, confirmedGroup })
+  return () => ({ receivedBytes, confirmedGroup, failedUploads })
 }

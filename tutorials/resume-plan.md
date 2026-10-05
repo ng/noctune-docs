@@ -146,7 +146,7 @@ cues and captions can be toggled. Preserve source/timing provenance and cache sa
 - [x] Completed-encounter UI correction verified and held shots recaptured.
 - [ ] Native iOS end-to-end episode.
 - [x] Hybrid episode with fixture continuity (frames checked; full listen pending).
-- [ ] Record and recover episodes.
+- [x] Record and recover episodes (web and iPhone; frames checked; full listen pending).
 - [ ] Review with confidence episodes.
 - [ ] Template episodes.
 - [ ] Discharge and follow-up episodes.
