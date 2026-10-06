@@ -21,7 +21,7 @@ const videos: Record<string, PublishedVideo> = published.videos
  * Renders nothing until `pnpm tutorials:publish --write` records the episode,
  * so pages can reference episodes that are still awaiting a full listen.
  */
-export function TutorialVideo({ id }: { id: string }) {
+export function TutorialVideo({ id, caption = true }: { id: string; caption?: boolean }) {
   const video = videos[id]
   if (!video) return null
   return (
@@ -39,27 +39,7 @@ export function TutorialVideo({ id }: { id: string }) {
         <source src={video.url} type="video/mp4" />
         <track kind="captions" src={video.captions} srcLang="en" label="English" default />
       </video>
-      <figcaption className={styles.caption}>{video.title}</figcaption>
+      {caption && <figcaption className={styles.caption}>{video.title}</figcaption>}
     </figure>
-  )
-}
-
-/** Every published tutorial, in series order. */
-export function TutorialList() {
-  const ids = Object.keys(videos).sort(
-    (a, b) => videos[a].series - videos[b].series || a.localeCompare(b),
-  )
-  if (!ids.length)
-    return (
-      <p style={{ marginTop: '1.5rem' }}>
-        Recording, review, templates, follow-up, and Sentinel walkthroughs are coming soon.
-      </p>
-    )
-  return (
-    <>
-      {ids.map((id) => (
-        <TutorialVideo key={id} id={id} />
-      ))}
-    </>
   )
 }

@@ -5,7 +5,7 @@ import { BrowserFrame } from '@/components/browser-frame'
 import { Diagram } from '@/components/diagram'
 import { IntroFilm } from '@/components/intro-film'
 import { Logo } from '@/components/logo'
-import { TutorialList, TutorialVideo } from '@/components/tutorial-video'
+import { TutorialVideo } from '@/components/tutorial-video'
 
 /** Extends the Nextra MDX component map with noctune documentation primitives. */
 export function useMDXComponents(components?: Readonly<MDXComponents>): MDXComponents {
@@ -15,7 +15,6 @@ export function useMDXComponents(components?: Readonly<MDXComponents>): MDXCompo
     Diagram,
     IntroFilm,
     Logo,
-    TutorialList,
     TutorialVideo,
     ...components,
   })
