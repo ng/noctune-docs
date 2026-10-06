@@ -145,6 +145,23 @@ test('prerenders an isolated, noncommercial iOS support and legal surface', asyn
       `${supportHref} must expose ${href} only once, in its footer`,
     )
   }
+  for (const id of [
+    'record-and-recover-ios',
+    'review-with-confidence-ios',
+    'practice-organized-ios',
+    'sentinel-ios',
+  ])
+    assert.match(
+      supportMain,
+      new RegExp(`/${id}\\.mp4`),
+      `${supportHref} must embed the ${id} walkthrough`,
+    )
+  for (const id of ['first-encounter-ios', 'discharge-follow-up-ios'])
+    assert.doesNotMatch(
+      supportMain,
+      new RegExp(`/${id}\\.mp4`),
+      `${supportHref} must not embed ${id} (mentions a paid add-on)`,
+    )
   assertClinicalReviewPlacement(supportMain, supportText)
   assertSupportCardTreatments(supportMain)
   assert.ok(
