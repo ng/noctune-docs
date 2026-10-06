@@ -428,3 +428,7 @@
     font-size: 14.5px;
   }
 }
+
+.videoSection {
+  scroll-margin-top: 96px;
+}

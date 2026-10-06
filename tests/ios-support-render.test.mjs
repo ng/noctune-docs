@@ -145,22 +145,27 @@ test('prerenders an isolated, noncommercial iOS support and legal surface', asyn
       `${supportHref} must expose ${href} only once, in its footer`,
     )
   }
-  for (const id of [
-    'record-and-recover-ios',
-    'review-with-confidence-ios',
-    'practice-organized-ios',
-    'sentinel-ios',
-  ])
+  for (const id of ['record-and-recover-ios', 'review-with-confidence-ios', 'sentinel-ios'])
     assert.match(
       supportMain,
       new RegExp(`/${id}\\.mp4`),
       `${supportHref} must embed the ${id} walkthrough`,
     )
-  for (const id of ['first-encounter-ios', 'discharge-follow-up-ios'])
+  for (const id of ['first-encounter-ios', 'discharge-follow-up-ios', 'practice-organized-ios'])
     assert.doesNotMatch(
       supportMain,
       new RegExp(`/${id}\\.mp4`),
-      `${supportHref} must not embed ${id} (mentions a paid add-on)`,
+      `${supportHref} must not embed ${id} (paid add-on or practice-team content)`,
+    )
+  for (const section of [
+    'video-record-and-recover',
+    'video-review-with-confidence',
+    'video-sentinel',
+  ])
+    assert.match(
+      supportMain,
+      new RegExp(`id="${section}"`),
+      `${supportHref} must keep the #${section} anchor`,
     )
   assertClinicalReviewPlacement(supportMain, supportText)
   assertSupportCardTreatments(supportMain)
