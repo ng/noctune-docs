@@ -12,13 +12,13 @@ export const metadata: Metadata = {
   },
 }
 
-// iPhone episodes whose narration stays within this page's noncommercial scope.
-// first-encounter-ios and discharge-follow-up-ios mention a paid add-on, so they stay on the main docs.
+// iPhone episodes for every user whose narration stays within this page's noncommercial scope.
+// first-encounter-ios and discharge-follow-up-ios mention a paid add-on, and practice-organized-ios
+// is for practice teams, so those stay on the main docs. Section ids are linked from the docs sidebar.
 const IOS_SUPPORT_VIDEOS = [
-  'record-and-recover-ios',
-  'review-with-confidence-ios',
-  'practice-organized-ios',
-  'sentinel-ios',
+  { id: 'record-and-recover-ios', section: 'video-record-and-recover' },
+  { id: 'review-with-confidence-ios', section: 'video-review-with-confidence' },
+  { id: 'sentinel-ios', section: 'video-sentinel' },
 ]
 
 const helpTopics = [
@@ -238,8 +238,10 @@ export default function IOSSupportPage() {
             on by default.
           </p>
         </div>
-        {IOS_SUPPORT_VIDEOS.map((id) => (
-          <TutorialVideo key={id} id={id} />
+        {IOS_SUPPORT_VIDEOS.map(({ id, section }) => (
+          <div key={id} id={section} className={styles.videoSection}>
+            <TutorialVideo id={id} />
+          </div>
         ))}
       </section>
 
