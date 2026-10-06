@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { TutorialVideo } from '../../../../components/tutorial-video'
 import { IOS_SUPPORT_EMAIL } from '../../../../lib/ios-support'
 import styles from './page.module.css'
 
@@ -10,6 +11,15 @@ export const metadata: Metadata = {
     canonical: '/ios/support',
   },
 }
+
+// iPhone episodes whose narration stays within this page's noncommercial scope.
+// first-encounter-ios and discharge-follow-up-ios mention a paid add-on, so they stay on the main docs.
+const IOS_SUPPORT_VIDEOS = [
+  'record-and-recover-ios',
+  'review-with-confidence-ios',
+  'practice-organized-ios',
+  'sentinel-ios',
+]
 
 const helpTopics = [
   {
@@ -213,6 +223,24 @@ export default function IOSSupportPage() {
             </section>
           ))}
         </div>
+      </section>
+
+      <section
+        className={styles.help}
+        aria-labelledby="videos-heading"
+        data-support-section="videos"
+      >
+        <div className={styles.sectionHeading}>
+          <div className={styles.sectionLabel}>Watch on iPhone</div>
+          <h2 id="videos-heading">Video walkthroughs</h2>
+          <p>
+            Short narrated videos recorded in the iOS app with fictional demo patients. Captions are
+            on by default.
+          </p>
+        </div>
+        {IOS_SUPPORT_VIDEOS.map((id) => (
+          <TutorialVideo key={id} id={id} />
+        ))}
       </section>
 
       <section
