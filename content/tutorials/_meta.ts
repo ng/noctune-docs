@@ -1,5 +1,6 @@
 export default {
   index: 'Overview',
+  'getting-started': 'Getting started',
   'first-encounter': 'Your first encounter',
   'record-and-recover': 'Record and recover',
   'review-with-confidence': 'Review with confidence',

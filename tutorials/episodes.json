@@ -196,6 +196,19 @@
         "listened": true,
         "listenedBy": "Jonathan Ng"
       }
+    },
+    {
+      "id": "getting-started-web",
+      "series": 8,
+      "title": "Getting started \u2014 web",
+      "platform": "web",
+      "story": "tutorials/getting-started-web.json",
+      "output": ".tutorial-output/getting-started-web",
+      "post": "social/linkedin/08-getting-started.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
     }
   ]
 }

@@ -413,6 +413,21 @@ Caption timing: recognizer word times sometimes overlap the previous word by a f
 second. The caption pass clamps overlaps under 0.5 s to the previous word's end. Larger
 overlaps still stop generation for review.
 
+## Getting started (episode 8)
+
+The episode follows Core's first-run flow (web onboarding, Core #811/#816) and starts on the
+dashboard after sign-in, because sign-up and first sign-in need a new account. The runner serves
+dismissed onboarding state, so `welcome` reopens the real **Set up noctune?** prompt with Core's
+`?onboarding=1` support override (labelled "welcome prompt reopened"). `setup-note`,
+`setup-discharge`, and `setup-handoff` walk the `/setup` wizard in `ready` and record one step
+each; the hand-off opens the New Encounter drawer with the chosen templates, picks Mochi, and stops
+before recording. `account-basics` only hovers Settings › Account. `practice-invite` fills the
+**Invite member** dialog with a Technician role and cancels it. `next-steps` serves onboarding
+state for a new account (labelled) so the dashboard's **Finish setting up** checklist shows. The
+wizard saves template defaults and answers the prompt, so every shot first clears the reserved
+user's default templates and prompt answer; record the shots in storyboard order. The cut is web
+only: no native onboarding takes exist.
+
 ## Publishing to the docs
 
 Reviewed videos are served from `https://docs-media.noctune.ai`, a dedicated S3
