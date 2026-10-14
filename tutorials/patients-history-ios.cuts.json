@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "scenes": [
+    {
+      "id": "iphone",
+      "cuts": [
+        { "source": "raw/patients-history-20260930.mp4", "start": 11, "duration": 8.4, "hold": 2 }
+      ]
+    }
+  ]
+}
