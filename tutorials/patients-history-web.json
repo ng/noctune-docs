@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "title": "Patients and history in noctune",
+  "kicker": "HISTORY",
+  "tagline": "The whole history, one tap away.",
+  "scenes": [
+    {
+      "id": "patients-find",
+      "platform": "web",
+      "headline": ["Find the", "patient."],
+      "start": 2.5,
+      "narration": "This video covers a patient's history. Patients lists everyone in your practice, and how many visits each one has had. Search by pet or owner name. Typing Jamie finds Mochi. Open a patient to see their profile."
+    },
+    {
+      "id": "patient-profile",
+      "platform": "web",
+      "headline": ["Every visit,", "one page."],
+      "narration": "The profile shows vitals trends from each visit, then Encounter History. Every visit shows its time, length, a short summary, and a status. Ready means a draft is waiting for your review. Completed means it's finished. Click a visit to open it."
+    },
+    {
+      "id": "history-compare",
+      "platform": "web",
+      "headline": ["What did we", "do last time?"],
+      "narration": "While you review today's note, open Past Encounters. Each earlier visit has a short summary, and Open shows it in a new tab. Expand a visit to read its full note beside today's. Here, the wellness exam shows her weight then, and the vaccines she was given."
+    },
+    {
+      "id": "search-patient",
+      "platform": "web",
+      "headline": ["Jump to any", "patient."],
+      "start": 2.5,
+      "narration": "From any page, press Command K and type a pet or owner name. Quick matches appear as you type. Choose the patient to land on their profile."
+    },
+    {
+      "id": "patient-archive",
+      "platform": "web",
+      "headline": ["Tidy the list,", "keep the record."],
+      "start": 2.5,
+      "narration": "To tidy the list, remove a patient you no longer see. noctune archives the patient instead of deleting anything. They leave the patient list, and their transcripts and notes are not affected."
+    },
+    {
+      "id": "iphone",
+      "platform": "ios",
+      "headline": ["History on", "iPhone."],
+      "source": "iphone.mp4",
+      "narration": "On iPhone, search Patients by name and tap one to see every visit, newest first. Global search and archiving are on the web."
+    }
+  ]
+}

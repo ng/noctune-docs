@@ -298,6 +298,17 @@ async function tourCards(page, names) {
   }
 }
 
+const MOCHI_PATIENT = 'd0c50000-0000-4000-8000-000000000101'
+const THEO = 'd0c50000-0000-4000-8000-000000000106'
+
+// Theo is the reserved patient with no visits. The archive shot removes him
+// through the UI, then puts the row back exactly as it was.
+async function restoreTheo(db, modifiedAt) {
+  if (modifiedAt)
+    await db`update patients set archived = false, archived_at = null, modified_at = ${modifiedAt} where id = ${THEO}`
+  else await db`update patients set archived = false, archived_at = null where id = ${THEO}`
+}
+
 async function recordFor(page, seconds) {
   await page.getByRole('button', { name: 'Record from web', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Stop', exact: true })).toBeVisible()
@@ -1192,6 +1203,168 @@ export const shots = {
       await point(page.getByRole('button', { name: 'Archived', exact: true }))
       await expect(row).toBeVisible()
       await wait(3500)
+    },
+  },
+  'patients-find': {
+    path: '/patients',
+    ready: (page) =>
+      expect(page.getByRole('button', { name: 'View patient Theo' })).toBeVisible({
+        timeout: 60000,
+      }),
+    act: async (page) => {
+      await wait(4500)
+      const search = page.getByPlaceholder('Search patients...')
+      await search.hover()
+      await wait(400)
+      await search.click()
+      await wait(1100)
+      await search.pressSequentially('Jamie', { delay: 90 })
+      const mochi = page.getByRole('button', { name: 'View patient Mochi' })
+      await expect(page.getByRole('button', { name: /^View patient / })).toHaveCount(1)
+      await wait(2500)
+      await mochi.hover()
+      await wait(400)
+      await mochi.click()
+      await expect(page.getByText('Encounter History', { exact: true })).toBeVisible({
+        timeout: 30000,
+      })
+      await wait(3000)
+    },
+  },
+  'patient-profile': {
+    path: `/patients/${MOCHI_PATIENT}`,
+    reset: resetNote,
+    ready: (page) =>
+      expect(page.getByText('Encounter History', { exact: true })).toBeVisible({
+        timeout: 60000,
+      }),
+    act: async (page) => {
+      await wait(3500)
+      // Today's visit is the Ready one; earlier visits are Completed.
+      const today = page.getByRole('button', { name: /^View encounter from / }).filter({
+        hasText: 'Ready',
+      })
+      await expect(today).toHaveCount(1)
+      await page.mouse.move(700, 600)
+      for (let step = 0; step < 16; step++) {
+        const bottom = await today.evaluate((row) => row.getBoundingClientRect().bottom)
+        if (bottom < 860) break
+        await page.mouse.wheel(0, 90)
+        await wait(70)
+      }
+      await expect(today).toBeInViewport()
+      await expect(page.getByText('Completed', { exact: true }).first()).toBeInViewport()
+      await wait(6500)
+      await today.hover()
+      await wait(500)
+      await today.click()
+      await expect(page.getByRole('heading', { name: 'Subjective', exact: true })).toBeVisible({
+        timeout: 60000,
+      })
+      await wait(2500)
+    },
+  },
+  'history-compare': {
+    path: encounter(),
+    reset: resetNote,
+    disclosure: 'Example draft',
+    ready: noteReady,
+    act: async (page) => {
+      await wait(2500)
+      const tab = page.getByRole('tab', { name: /Past Encounters/ })
+      await tab.hover()
+      await wait(400)
+      await tab.click()
+      const wellness = page.getByText(/^Encounter · /).first()
+      await expect(wellness).toBeVisible({ timeout: 30000 })
+      await expect(
+        page.getByText('Annual wellness examination with stable weight and mild dental tartar.'),
+      ).toBeVisible()
+      await wait(2000)
+      await page.getByRole('button', { name: 'Open', exact: true }).first().hover()
+      await wait(1500)
+      await wellness.hover()
+      await wait(400)
+      await wellness.click()
+      const weight = page.getByText(/Weight 4\.5 kg \(unchanged from last year\)/)
+      await expect(weight).toBeVisible()
+      await wait(1500)
+      await page.mouse.move(1280, 620)
+      for (let step = 0; step < 4; step++) {
+        await page.mouse.wheel(0, 70)
+        await wait(80)
+      }
+      await expect(weight).toBeInViewport()
+      await wait(2500)
+      const vaccines = page.getByText(/Rabies and FVRCP boosters administered today/)
+      for (let step = 0; step < 12; step++) {
+        const bottom = await vaccines.evaluate((line) => line.getBoundingClientRect().bottom)
+        if (bottom < 780) break
+        await page.mouse.wheel(0, 70)
+        await wait(80)
+      }
+      await expect(vaccines).toBeInViewport()
+      await wait(3500)
+    },
+  },
+  'search-patient': {
+    path: encounter(),
+    disclosure: 'Example draft',
+    ready: noteReady,
+    act: async (page) => {
+      await wait(2000)
+      await page.keyboard.press('Meta+k')
+      await wait(1200)
+      await page.keyboard.type('Jamie', { delay: 90 })
+      const patient = page.getByRole('option').filter({ hasText: 'Jamie Chen' }).filter({
+        hasText: 'Mochi',
+      })
+      await expect(patient.first()).toBeVisible({ timeout: 30000 })
+      await wait(3000)
+      await patient.first().hover()
+      await wait(400)
+      await patient.first().click()
+      await page.waitForURL(new RegExp(`/patients/${MOCHI_PATIENT}`), { timeout: 30000 })
+      await expect(page.getByText('Encounter History', { exact: true })).toBeVisible({
+        timeout: 30000,
+      })
+      await wait(2500)
+    },
+  },
+  'patient-archive': {
+    path: '/patients',
+    reset: (db) => restoreTheo(db),
+    ready: (page) =>
+      expect(page.getByRole('button', { name: 'View patient Theo' })).toBeVisible({
+        timeout: 60000,
+      }),
+    act: async (page, ctx) => {
+      const [{ modified_at: modifiedAt }] =
+        await ctx.db`select modified_at from patients where id = ${THEO}`
+      try {
+        await wait(2500)
+        const theo = page.getByRole('button', { name: 'View patient Theo' })
+        await theo.hover()
+        await wait(400)
+        const remove = theo.getByRole('button', { name: 'Delete' })
+        await remove.hover()
+        await wait(500)
+        await remove.click()
+        const dialog = page.getByRole('dialog')
+        await expect(dialog.getByText('Remove Patient').first()).toBeVisible()
+        await wait(4000)
+        const confirm = dialog.getByRole('button', { name: 'Remove Patient', exact: true })
+        await confirm.hover()
+        await wait(400)
+        await confirm.click()
+        await expect(page.getByText('Theo removed', { exact: true })).toBeVisible({
+          timeout: 30000,
+        })
+        await expect(theo).toHaveCount(0)
+        await wait(3500)
+      } finally {
+        await restoreTheo(ctx.db, modifiedAt)
+      }
     },
   },
   sentinel: {

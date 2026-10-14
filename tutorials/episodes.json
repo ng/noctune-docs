@@ -235,6 +235,19 @@
         "framesChecked": true,
         "listened": false
       }
+    },
+    {
+      "id": "patients-history-web",
+      "series": 11,
+      "title": "Patients and history — web, with iPhone history",
+      "platform": "hybrid",
+      "story": "tutorials/patients-history-web.json",
+      "output": ".tutorial-output/patients-history-web",
+      "post": "social/linkedin/11-patients-history.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
     }
   ]
 }

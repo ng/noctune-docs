@@ -9,4 +9,5 @@ export default {
   messages: 'Messages',
   'email-templates': 'Email templates',
   sentinel: 'Sentinel',
+  'patients-history': 'Patients and history',
 }

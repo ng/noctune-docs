@@ -478,6 +478,30 @@ inserts its chip on a line of its own, so the take avoids it until Core fixes th
 scene is a labelled instruction card summarizing where placeholders fill from and the send-time
 check. Email templates are web-only, so there is no iPhone cut.
 
+## Patients and history (episode 11)
+
+Web shots: `patients-find` (owner-name search for Jamie, open Mochi), `patient-profile` (scroll to
+Encounter History, open today's Ready visit beside the Completed ones), `history-compare` (Past
+Encounters, hover **Open**, expand the earlier wellness visit to its weight and vaccines),
+`search-patient` (⌘K, type Jamie, choose the Mochi quick match), and `patient-archive` (remove
+Theo, the reserved patient with no visits). Profile and compare shots reset the reserved tutorial
+note so today's visit reads Ready. The archive shot archives Theo through the real API, then
+restores `archived`, `archived_at`, and `modified_at` from the values it read first; its `reset`
+also un-archives Theo if an earlier take stopped midway. Global search is live: patient quick
+matches come from the ordinary patient list, so no search fixture is needed. Past Encounters
+search is not shown because it needs the knowledge base the capture database lacks. The closing
+iPhone scene re-cuts the verified episode 6 `patients-history` take
+(`patients-history-ios.cuts.json`); iOS has no global search, owner search, Past Encounters panel,
+or patient removal, and the narration says so. Core's profile header **Last Visit** shows the
+oldest visit and Encounter History lists oldest first, so the narration avoids both.
+
+Native hydration rebinds Mochi's encounter to the reserved user's `uploads/…/standard/*.wav` key.
+Its bytes are Core's 284-second synthetic WAV (same SHA-256 as the hydration manifest), and its
+signed CloudFront URL had stopped loading in the web runner. The runner now serves that key from
+the same local fixture as the `docs-capture/` keys. Opening an encounter from the profile takes
+several seconds in the capture server even with the route compiled, so `patient-profile` ends on
+about 1.7 seconds of the encounter loading before the next scene opens it.
+
 ## Publishing to the docs
 
 Reviewed videos are served from `https://docs-media.noctune.ai`, a dedicated S3
