@@ -222,6 +222,19 @@
         "framesChecked": true,
         "listened": false
       }
+    },
+    {
+      "id": "email-templates-web",
+      "series": 10,
+      "title": "Email templates — web",
+      "platform": "web",
+      "story": "tutorials/email-templates-web.json",
+      "output": ".tutorial-output/email-templates-web",
+      "post": "social/linkedin/10-email-templates.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
     }
   ]
 }
