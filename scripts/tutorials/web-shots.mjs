@@ -959,7 +959,7 @@ export const shots = {
     reset: resetFirstRun,
     ready: (page) => openSetup(page, 1),
     act: async (page) => {
-      await wait(4500)
+      await wait(3000)
       await tourCards(page, ['General Discharge', 'Post-Surgical Discharge', 'Nothing for now'])
       await page.getByRole('button', { name: /^General Discharge/ }).hover()
       await wait(400)

@@ -8,14 +8,14 @@
       "id": "welcome",
       "platform": "web",
       "headline": ["Your first", "day."],
-      "narration": "This video covers your first day with noctune. After you sign in and accept the terms, the dashboard offers a quick setup. Choose I'll just record, and it waits for you as a checklist. Here, choose Set up now.",
+      "narration": "This video covers your first day with noctune. After you sign in and accept the terms, the dashboard offers a quick setup. Choose I'll just record, and it waits as a checklist. Here, choose Set up now.",
       "disclosure": "Starts after sign-in · welcome prompt reopened"
     },
     {
       "id": "setup-note",
       "platform": "web",
       "headline": ["How your notes", "come out."],
-      "narration": "First, pick the structure your notes are drafted into, such as a general SOAP note, emergency triage, a dental procedure, or a wellness exam. You can switch on any encounter, and edit it later under Templates."
+      "narration": "First, pick the structure your notes are drafted into: general SOAP, emergency triage, dental, or wellness. You can switch on any encounter, and edit it later under Templates."
     },
     {
       "id": "setup-discharge",
@@ -39,13 +39,13 @@
       "id": "practice-invite",
       "platform": "web",
       "headline": ["Invite", "your team."],
-      "narration": "Working with a team? Practice shows your clinic, its plan and seats, and who's already a member. Owners and admins choose Invite member, add an email, and pick a role. We'll cancel, so no invitation is sent."
+      "narration": "Working with a team? Practice shows your clinic, its plan, and its members. Owners and admins choose Invite member, add an email, and pick a role. We'll cancel, so nothing is sent."
     },
     {
       "id": "next-steps",
       "platform": "web",
       "headline": ["Where to", "go next."],
-      "narration": "Back on the dashboard, Finish setting up lists what comes next: your first recording, your own templates, a discharge, and your inbox. Each step links to the setup guide, and each has its own video in this series."
+      "narration": "Back on the dashboard, Finish setting up lists what comes next: your first recording, your own templates, a discharge, and your inbox. Each step links to its section of the setup guide."
     }
   ]
 }
