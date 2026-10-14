@@ -4,7 +4,7 @@
     {
       "id": "first-encounter-web",
       "series": 1,
-      "title": "Your first encounter \u2014 web",
+      "title": "Your first encounter — web",
       "platform": "web",
       "story": "tutorials/first-encounter-web.json",
       "output": ".tutorial-output/first-encounter-recorded",
@@ -18,7 +18,7 @@
     {
       "id": "first-encounter-ios",
       "series": 1,
-      "title": "Your first encounter \u2014 iPhone",
+      "title": "Your first encounter — iPhone",
       "platform": "ios",
       "story": "tutorials/first-encounter-ios.json",
       "output": ".tutorial-output/first-encounter-ios",
@@ -32,7 +32,7 @@
     {
       "id": "first-encounter-hybrid",
       "series": 1,
-      "title": "Your first encounter \u2014 iPhone and web",
+      "title": "Your first encounter — iPhone and web",
       "platform": "hybrid",
       "story": "tutorials/first-encounter-hybrid.json",
       "output": ".tutorial-output/first-encounter-hybrid",
@@ -46,7 +46,7 @@
     {
       "id": "record-and-recover-web",
       "series": 2,
-      "title": "Record and recover \u2014 web",
+      "title": "Record and recover — web",
       "platform": "web",
       "story": "tutorials/record-and-recover-web.json",
       "output": ".tutorial-output/record-and-recover-web",
@@ -60,7 +60,7 @@
     {
       "id": "record-and-recover-ios",
       "series": 2,
-      "title": "Record and recover \u2014 iPhone",
+      "title": "Record and recover — iPhone",
       "platform": "ios",
       "story": "tutorials/record-and-recover-ios.json",
       "output": ".tutorial-output/record-and-recover-ios",
@@ -74,7 +74,7 @@
     {
       "id": "review-with-confidence-web",
       "series": 3,
-      "title": "Review with confidence \u2014 web",
+      "title": "Review with confidence — web",
       "platform": "web",
       "story": "tutorials/review-with-confidence-web.json",
       "output": ".tutorial-output/review-with-confidence-web",
@@ -88,7 +88,7 @@
     {
       "id": "review-with-confidence-ios",
       "series": 3,
-      "title": "Review with confidence \u2014 iPhone",
+      "title": "Review with confidence — iPhone",
       "platform": "ios",
       "story": "tutorials/review-with-confidence-ios.json",
       "output": ".tutorial-output/review-with-confidence-ios",
@@ -102,7 +102,7 @@
     {
       "id": "templates",
       "series": 4,
-      "title": "Make templates your own \u2014 web, with iPhone selection",
+      "title": "Make templates your own — web, with iPhone selection",
       "platform": "hybrid",
       "story": "tutorials/templates-web.json",
       "output": ".tutorial-output/templates",
@@ -116,7 +116,7 @@
     {
       "id": "discharge-follow-up-web",
       "series": 5,
-      "title": "Discharge and follow-up \u2014 web",
+      "title": "Discharge and follow-up — web",
       "platform": "web",
       "story": "tutorials/discharge-follow-up-web.json",
       "output": ".tutorial-output/discharge-follow-up-web",
@@ -130,7 +130,7 @@
     {
       "id": "discharge-follow-up-ios",
       "series": 5,
-      "title": "Discharge and follow-up \u2014 iPhone",
+      "title": "Discharge and follow-up — iPhone",
       "platform": "ios",
       "story": "tutorials/discharge-follow-up-ios.json",
       "output": ".tutorial-output/discharge-follow-up-ios",
@@ -144,7 +144,7 @@
     {
       "id": "practice-organized-web",
       "series": 6,
-      "title": "Keep the practice organized \u2014 web",
+      "title": "Keep the practice organized — web",
       "platform": "web",
       "story": "tutorials/practice-organized-web.json",
       "output": ".tutorial-output/practice-organized-web",
@@ -158,7 +158,7 @@
     {
       "id": "practice-organized-ios",
       "series": 6,
-      "title": "Keep the practice organized \u2014 iPhone",
+      "title": "Keep the practice organized — iPhone",
       "platform": "ios",
       "story": "tutorials/practice-organized-ios.json",
       "output": ".tutorial-output/practice-organized-ios",
@@ -172,7 +172,7 @@
     {
       "id": "sentinel-web",
       "series": 7,
-      "title": "Sentinel \u2014 web",
+      "title": "Sentinel — web",
       "platform": "web",
       "story": "tutorials/sentinel-web.json",
       "output": ".tutorial-output/sentinel-web",
@@ -186,7 +186,7 @@
     {
       "id": "sentinel-ios",
       "series": 7,
-      "title": "Sentinel \u2014 iPhone",
+      "title": "Sentinel — iPhone",
       "platform": "ios",
       "story": "tutorials/sentinel-ios.json",
       "output": ".tutorial-output/sentinel-ios",
@@ -195,6 +195,58 @@
         "framesChecked": true,
         "listened": true,
         "listenedBy": "Jonathan Ng"
+      }
+    },
+    {
+      "id": "getting-started-web",
+      "series": 8,
+      "title": "Getting started — web",
+      "platform": "web",
+      "story": "tutorials/getting-started-web.json",
+      "output": ".tutorial-output/getting-started-web",
+      "post": "social/linkedin/08-getting-started.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
+    },
+    {
+      "id": "messages-web",
+      "series": 9,
+      "title": "Messages — web",
+      "platform": "web",
+      "story": "tutorials/messages-web.json",
+      "output": ".tutorial-output/messages-web",
+      "post": "social/linkedin/09-messages.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
+    },
+    {
+      "id": "email-templates-web",
+      "series": 10,
+      "title": "Email templates — web",
+      "platform": "web",
+      "story": "tutorials/email-templates-web.json",
+      "output": ".tutorial-output/email-templates-web",
+      "post": "social/linkedin/10-email-templates.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
+      }
+    },
+    {
+      "id": "patients-history-web",
+      "series": 11,
+      "title": "Patients and history — web, with iPhone history",
+      "platform": "hybrid",
+      "story": "tutorials/patients-history-web.json",
+      "output": ".tutorial-output/patients-history-web",
+      "post": "social/linkedin/11-patients-history.md",
+      "review": {
+        "framesChecked": true,
+        "listened": false
       }
     }
   ]

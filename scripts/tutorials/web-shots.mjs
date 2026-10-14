@@ -6,6 +6,7 @@ import { expect } from '@playwright/test'
 import { installUploadFixture } from './web-upload-fixture.mjs'
 
 export const MOCHI = 'd0c50000-0000-4000-8000-000000000201'
+const MOCHI_REPLY = 'd0c50000-0000-4000-8000-000000000501'
 const encounter = (id = MOCHI) => `/encounters/${id}`
 
 export async function openDrawer(page) {
@@ -44,6 +45,38 @@ async function resetNote(db) {
 // imports, duplicates). Reserved fixture templates keep their d0c5 IDs.
 async function resetTemplates(db) {
   await db`delete from soap_templates where id::text not like 'd0c50000-%' and type = 'user' and user_id = (select user_id from soap_templates where id = 'd0c50000-0000-4000-8000-000000000701')`
+}
+
+const emailTemplate = (n) => `d0c50000-0000-4000-8000-00000000080${n}`
+const postOpBody =
+  'Hello,\n\nHow is {{patient.name}} doing today? Please reply with an update on comfort, appetite, and the incision. Contact us promptly for redness, discharge, or worsening pain.'
+// The guidance the email-edit shot types and saves; email-insert starts from it.
+const postOpAddition = 'Offer soft meals for three days. Questions? Call us at '
+const postOpEdited = `${postOpBody}\n\n${postOpAddition}{{practice.phone}}.`
+
+// Restore the seeded email templates with Core PR #837's registered merge
+// fields (the seed's greetings use an unregistered `{{client.first_name}}`),
+// optionally starting the post-op template from the saved edit.
+async function resetEmailTemplates(db, postOp = postOpBody) {
+  for (const [id, subject, body] of [
+    [
+      emailTemplate(1),
+      'Welcome to Northstar — care information for {{patient.name}}',
+      'Hello,\n\nWelcome to Northstar Veterinary Clinic. We’re glad to care for {{patient.name}}. Reply here whenever you have a follow-up question.\n\n— Dr. Avery Morgan',
+    ],
+    [
+      emailTemplate(2),
+      '{{patient.name}} is due for a recheck',
+      'Hello,\n\nThis is a reminder to schedule {{patient.name}}’s recommended recheck. Call us or reply to this message if you need help finding a time.',
+    ],
+    [emailTemplate(3), 'How is {{patient.name}} recovering?', postOp],
+    [
+      emailTemplate(4),
+      'Requested records for {{patient.name}}',
+      'Hello,\n\nThe requested records for {{patient.name}} are ready. Let us know if another hospital needs them sent directly.',
+    ],
+  ])
+    await db`update email_templates set subject = ${subject}, body = ${body} where id = ${id}`
 }
 
 // Fictional practice material a clinic might already have: SOAP headings,
@@ -195,6 +228,20 @@ async function dismissInboxTip(page) {
   await expect(tip).toBeHidden()
 }
 
+// Restore the reserved Mochi and Jasper threads to their seeded state: unread,
+// unassigned, and in the live inbox. Messages shots read, assign, and archive them.
+async function resetInbox(db) {
+  await db`update encounter_messages set read_at = null where id in ('d0c50000-0000-4000-8000-000000000501', 'd0c50000-0000-4000-8000-000000000502')`
+  await db`update encounter_messages set archived_at = null, assigned_to_user_id = null, assigned_at = null where id in ('d0c50000-0000-4000-8000-000000000501', 'd0c50000-0000-4000-8000-000000000502')`
+}
+
+// Hover before clicking so viewers see where the pointer is going.
+async function point(locator, ms = 400) {
+  await locator.hover()
+  await wait(ms)
+  await locator.click()
+}
+
 // Type a replacement over \`find\` in the markdown editor, as a person would.
 async function replaceInEditor(page, find, replacement) {
   const editor = page.locator('#soap-note-markdown-editor')
@@ -210,6 +257,56 @@ async function replaceInEditor(page, find, replacement) {
   )
   await wait(900)
   await page.keyboard.type(replacement, { delay: 90 })
+}
+
+// The reserved user has no stored template defaults and has never answered the
+// welcome prompt. The setup wizard saves both, so restore them before each take;
+// other episodes' drawers keep resolving the system defaults.
+async function resetFirstRun(db) {
+  await db`update users set default_soap_template_id = null, default_discharge_template_id = null, onboarding_prompt_answered_at = null where id = (select user_id from soap_templates where id = 'd0c50000-0000-4000-8000-000000000701')`
+}
+
+// The runner serves dismissed onboarding state, so reopen the real first-visit
+// prompt with Core's `?onboarding=1` support override, then walk the /setup
+// wizard to `step` (0 note template, 1 discharge template, 2 hand-off).
+async function openSetup(page, step) {
+  await page.goto('/dashboard?onboarding=1', { waitUntil: 'domcontentloaded' })
+  await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' })
+  await expect(page.getByRole('dialog', { name: 'Set up noctune?' })).toBeVisible({
+    timeout: 60000,
+  })
+  if (step === undefined) return
+  await page.getByRole('button', { name: 'Set up now', exact: true }).click()
+  const headings = [
+    'How should your notes come out?',
+    'What should the client get afterwards?',
+    'Record your next visit.',
+  ]
+  await expect(page.getByRole('heading', { name: headings[0] })).toBeVisible({ timeout: 60000 })
+  for (let at = 1; at <= step; at++) {
+    await expect(page.getByRole('button', { name: 'Continue', exact: true })).toBeEnabled()
+    await page.getByRole('button', { name: 'Continue', exact: true }).click()
+    await expect(page.getByRole('heading', { name: headings[at] })).toBeVisible()
+  }
+}
+
+// Hover each wizard card in turn so viewers can read the choices.
+async function tourCards(page, names) {
+  for (const name of names) {
+    await page.getByRole('button', { name: new RegExp(`^${name}`) }).hover()
+    await wait(1400)
+  }
+}
+
+const MOCHI_PATIENT = 'd0c50000-0000-4000-8000-000000000101'
+const THEO = 'd0c50000-0000-4000-8000-000000000106'
+
+// Theo is the reserved patient with no visits. The archive shot removes him
+// through the UI, then puts the row back exactly as it was.
+async function restoreTheo(db, modifiedAt) {
+  if (modifiedAt)
+    await db`update patients set archived = false, archived_at = null, modified_at = ${modifiedAt} where id = ${THEO}`
+  else await db`update patients set archived = false, archived_at = null where id = ${THEO}`
 }
 
 async function recordFor(page, seconds) {
@@ -630,9 +727,7 @@ export const shots = {
   },
   'email-templates': {
     path: '/email-library',
-    // Match Core PR #837: the seeded greetings used an unregistered merge field.
-    reset: (db) =>
-      db`update email_templates set body = replace(body, 'Hi {{client.first_name}},', 'Hello,'), subject = replace(subject, 'Welcome, {{client.first_name}} — ', 'Welcome to Northstar — ') where id::text like 'd0c50000-%'`,
+    reset: (db) => resetEmailTemplates(db),
     ready: (page) =>
       expect(page.getByRole('button', { name: 'New Template' })).toBeVisible({ timeout: 60000 }),
     act: async (page) => {
@@ -644,6 +739,162 @@ export const shots = {
       await page.getByRole('button', { name: 'Placeholder' }).click()
       await wait(3500)
       await page.keyboard.press('Escape')
+    },
+  },
+  // Email templates (episode 10): browse, edit and save, insert on an
+  // encounter, and late fill from the To recipient. Nothing is sent.
+  'email-library': {
+    path: `/email-library?template=${emailTemplate(2)}`,
+    reset: (db) => resetEmailTemplates(db),
+    ready: (page) =>
+      expect(page.locator('input[value="Recheck reminder"]')).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(2000)
+      const search = page.locator('input[value="Recheck reminder"]')
+      await search.hover()
+      await wait(400)
+      await search.click()
+      await expect(page.getByRole('option', { name: /Post-op check-in/ })).toBeVisible()
+      await wait(4500)
+      await page.keyboard.press('ControlOrMeta+a')
+      await page.keyboard.type('post', { delay: 120 })
+      await wait(1500)
+      const option = page.getByRole('option', { name: /Post-op check-in/ })
+      await option.hover()
+      await wait(400)
+      await option.click()
+      await expect(page.getByRole('textbox', { name: 'Body' })).toContainText('How is')
+      await page.mouse.move(1200, 640, { steps: 8 })
+      await wait(3000)
+    },
+  },
+  'email-edit': {
+    path: `/email-library?template=${emailTemplate(3)}`,
+    reset: (db) => resetEmailTemplates(db),
+    ready: (page) =>
+      expect(page.getByRole('textbox', { name: 'Body' })).toContainText('worsening pain', {
+        timeout: 60000,
+      }),
+    act: async (page) => {
+      await wait(500)
+      const body = page.getByRole('textbox', { name: 'Body' })
+      await body.getByText(/worsening pain/).hover()
+      await wait(400)
+      await body.evaluate((element) => {
+        element.focus()
+        const range = document.createRange()
+        range.selectNodeContents(element)
+        range.collapse(false)
+        getSelection().removeAllRanges()
+        getSelection().addRange(range)
+      })
+      // Shift+Enter keeps the new lines in the editor root; Enter wraps them
+      // in a block that the inserted chip lands outside of.
+      await page.keyboard.press('Shift+Enter')
+      await page.keyboard.press('Shift+Enter')
+      await page.keyboard.type(postOpAddition, { delay: 90 })
+      await page.keyboard.type('{phone', { delay: 140 })
+      await wait(1500)
+      await page.keyboard.press('Enter')
+      await page.keyboard.type('.', { delay: 90 })
+      await expect(page.getByText(/Call us at \(555\) 010-2233\./)).toBeVisible()
+      await wait(3500)
+      const save = page.getByRole('button', { name: 'Save Template' })
+      await save.hover()
+      await wait(400)
+      await save.click()
+      await expect(page.getByText('Unsaved changes', { exact: true })).toBeHidden({
+        timeout: 30000,
+      })
+      await expect(save).toBeDisabled()
+      await wait(2500)
+    },
+  },
+  'email-insert': {
+    path: encounter(),
+    disclosure: 'Example draft · nothing sent',
+    reset: async (db) => {
+      await grantPracticeRelay(db)
+      await resetEmailTemplates(db, postOpEdited)
+    },
+    ready: noteReady,
+    act: async (page) => {
+      await wait(600)
+      const sendEmail = page.getByRole('button', { name: 'Send Email', exact: true })
+      await sendEmail.hover()
+      await wait(400)
+      await sendEmail.click()
+      await wait(700)
+      const sendMessage = page.getByRole('menuitem', { name: /Send message/ })
+      await sendMessage.hover()
+      await wait(300)
+      await sendMessage.click()
+      await expect(page.getByLabel('Subject')).toBeVisible({ timeout: 30000 })
+      await wait(800)
+      const composer = page.getByTestId('composer-full')
+      const templates = composer.getByRole('button', { name: 'Templates' })
+      await templates.hover()
+      await wait(400)
+      await templates.click()
+      await expect(page.getByText('Insert a template')).toBeVisible()
+      await expect(page.getByTestId('template-picker-loading')).toHaveCount(0)
+      await wait(1200)
+      const postOp = page.getByRole('button', { name: /^Post-op check-in/ })
+      await postOp.hover()
+      await wait(400)
+      await postOp.click()
+      await expect(page.getByLabel('Subject')).toHaveValue('How is Mochi recovering?')
+      const message = composer.getByRole('textbox', { name: 'Message' })
+      await expect(message).toContainText('Call us at (555) 010-0200.')
+      await wait(1200)
+      await message.hover()
+      await page.mouse.wheel(0, 240)
+      await expect.poll(() => message.evaluate((element) => element.scrollTop)).toBeGreaterThan(0)
+      await wait(3500)
+    },
+  },
+  'email-recipient': {
+    path: '/dashboard',
+    disclosure: 'Nothing sent',
+    reset: async (db) => {
+      await grantPracticeRelay(db)
+      await resetEmailTemplates(db)
+    },
+    ready: (page) =>
+      expect(page.getByText('Your work', { exact: true })).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(500)
+      const newMessage = page.getByRole('button', { name: 'New Message', exact: true })
+      await newMessage.hover()
+      await wait(400)
+      await newMessage.click()
+      const dialog = page.getByRole('dialog')
+      await expect(dialog.getByText('New message', { exact: true })).toBeVisible()
+      await wait(900)
+      const templates = dialog.getByRole('button', { name: 'Templates' })
+      await templates.hover()
+      await wait(400)
+      await templates.click()
+      await expect(page.getByText('Insert a template')).toBeVisible()
+      await expect(page.getByTestId('template-picker-loading')).toHaveCount(0)
+      await wait(1200)
+      const recheck = page.getByRole('button', { name: /^Recheck reminder/ })
+      await recheck.hover()
+      await wait(400)
+      await recheck.click()
+      await expect(
+        dialog.getByText(/This placeholder fills from the recipient in To/),
+      ).toBeVisible()
+      await wait(2500)
+      const to = dialog.getByLabel('To', { exact: true })
+      await to.click()
+      await to.pressSequentially('jamie.chen@example.test', { delay: 55 })
+      await to.press('Enter')
+      await expect(dialog.getByLabel('Subject')).toHaveValue('Mochi is due for a recheck', {
+        timeout: 15000,
+      })
+      await expect(dialog.getByText(/fills from the recipient in To/)).toBeHidden()
+      await wait(4000)
     },
   },
   'discharge-routes': {
@@ -832,6 +1083,290 @@ export const shots = {
       await wait(3000)
     },
   },
+  'messages-triage': {
+    path: '/messages',
+    reset: resetInbox,
+    ready: async (page) => {
+      await dismissInboxTip(page)
+      await expect(page.getByTestId('conversation-subject')).toHaveText(
+        'Mochi is eating normally again',
+      )
+    },
+    act: async (page) => {
+      await wait(5500)
+      await point(page.getByRole('button', { name: 'Unread', exact: true }))
+      await expect(page.getByTestId(`inbox-row-${MOCHI_REPLY}`)).toHaveCount(0)
+      await wait(2500)
+      await page.getByRole('button', { name: 'All', exact: true }).click()
+      await wait(600)
+      await point(page.getByRole('button', { name: 'Flagged', exact: true }))
+      await expect(page.getByTestId('conversation-subject')).toContainText('activity restriction')
+      await wait(2800)
+      await point(page.getByRole('button', { name: 'All', exact: true }))
+      await expect(page.getByTestId(`inbox-row-${MOCHI_REPLY}`)).toBeVisible()
+      await wait(3000)
+    },
+  },
+  'messages-open-encounter': {
+    path: '/messages',
+    reset: resetInbox,
+    disclosure: 'Example draft',
+    ready: async (page) => {
+      await dismissInboxTip(page)
+      await expect(page.getByTestId('conversation-subject')).toHaveText(
+        'Mochi is eating normally again',
+      )
+    },
+    act: async (page) => {
+      await wait(2000)
+      // The row's centre is its Assign button; select the thread by its name.
+      await point(page.getByTestId(`inbox-row-${MOCHI_REPLY}`).getByText('Mochi', { exact: true }))
+      await wait(2500)
+      await page.getByTestId('conversation-encounter-chip').hover()
+      await wait(1500)
+      await point(page.getByTestId('panel-open-encounter'), 500)
+      await page.waitForURL(/\/encounters\/d0c50000-0000-4000-8000-000000000201\?tab=messages/, {
+        timeout: 30000,
+      })
+      await expect(page.getByRole('heading', { name: 'Subjective', exact: true })).toBeVisible({
+        timeout: 60000,
+      })
+      await expect(page.getByText('Mochi is eating normally again').first()).toBeVisible()
+      await expect.poll(() => page.locator('audio').evaluate((audio) => audio.duration)).toBe(284)
+      await wait(3500)
+    },
+  },
+  // Compose only: prepare the reply, insert a template, select no-reply. No Send.
+  'messages-encounter-reply': {
+    path: `${encounter()}?tab=messages`,
+    reset: async (db) => {
+      await grantPracticeRelay(db)
+      await resetInbox(db)
+    },
+    disclosure: 'Example draft · nothing sent',
+    ready: async (page) => {
+      await expect(page.getByRole('heading', { name: 'Subjective', exact: true })).toBeVisible({
+        timeout: 60000,
+      })
+      await expect(page.getByRole('button', { name: 'Reply', exact: true }).last()).toBeVisible({
+        timeout: 60000,
+      })
+      await expect.poll(() => page.locator('audio').evaluate((audio) => audio.duration)).toBe(284)
+    },
+    act: async (page) => {
+      await wait(1500)
+      await point(page.getByRole('button', { name: 'Reply', exact: true }).last())
+      const composer = page.getByTestId('composer-full')
+      await expect(composer).toContainText('jamie.chen@example.test', { timeout: 30000 })
+      await wait(3500)
+      await point(composer.getByRole('button', { name: 'Templates' }))
+      await expect(page.getByText('Insert a template')).toBeVisible()
+      await wait(1800)
+      await point(page.getByText('Recheck reminder').first())
+      await expect(composer).toContainText(/schedule Mochi.s recommended recheck/)
+      await wait(4000)
+      await point(composer.getByTestId('from-route-change'))
+      await expect(page.getByTestId('from-route-options')).toBeVisible()
+      await wait(1200)
+      await page.getByTestId('from-route-option-noreply').hover()
+      await wait(400)
+      await page.getByTestId('from-route-option-noreply').getByRole('radio').check()
+      await expect(composer.getByTestId('from-route-identity-address')).toHaveText(
+        'noreply@mail.noctune.ai',
+      )
+      await wait(3000)
+    },
+  },
+  'messages-assign-archive': {
+    path: '/messages',
+    reset: resetInbox,
+    ready: async (page) => {
+      await dismissInboxTip(page)
+      await expect(page.getByTestId('conversation-subject')).toHaveText(
+        'Mochi is eating normally again',
+      )
+    },
+    act: async (page) => {
+      const row = page.getByTestId(`inbox-row-${MOCHI_REPLY}`)
+      await wait(2000)
+      await point(row.getByTestId('inbox-row-assign-button'))
+      await expect(page.getByRole('menu')).toHaveCount(1)
+      await wait(1200)
+      await point(page.getByRole('menuitem', { name: /Riley Patel/ }))
+      await expect(row.getByTestId('inbox-row-assignee-chip')).toBeVisible()
+      await wait(2500)
+      await point(page.getByTestId('conversation-overflow'))
+      await wait(900)
+      await point(page.getByTestId('panel-archive'))
+      await expect(row).toHaveCount(0)
+      await wait(2000)
+      await point(page.getByRole('button', { name: 'Archived', exact: true }))
+      await expect(row).toBeVisible()
+      await wait(3500)
+    },
+  },
+  'patients-find': {
+    path: '/patients',
+    ready: (page) =>
+      expect(page.getByRole('button', { name: 'View patient Theo' })).toBeVisible({
+        timeout: 60000,
+      }),
+    act: async (page) => {
+      await wait(4500)
+      const search = page.getByPlaceholder('Search patients...')
+      await search.hover()
+      await wait(400)
+      await search.click()
+      await wait(1100)
+      await search.pressSequentially('Jamie', { delay: 90 })
+      const mochi = page.getByRole('button', { name: 'View patient Mochi' })
+      await expect(page.getByRole('button', { name: /^View patient / })).toHaveCount(1)
+      await wait(2500)
+      await mochi.hover()
+      await wait(400)
+      await mochi.click()
+      await expect(page.getByText('Encounter History', { exact: true })).toBeVisible({
+        timeout: 30000,
+      })
+      await wait(3000)
+    },
+  },
+  'patient-profile': {
+    path: `/patients/${MOCHI_PATIENT}`,
+    reset: resetNote,
+    ready: (page) =>
+      expect(page.getByText('Encounter History', { exact: true })).toBeVisible({
+        timeout: 60000,
+      }),
+    act: async (page) => {
+      await wait(3500)
+      // Today's visit is the Ready one; earlier visits are Completed.
+      const today = page.getByRole('button', { name: /^View encounter from / }).filter({
+        hasText: 'Ready',
+      })
+      await expect(today).toHaveCount(1)
+      await page.mouse.move(700, 600)
+      for (let step = 0; step < 16; step++) {
+        const bottom = await today.evaluate((row) => row.getBoundingClientRect().bottom)
+        if (bottom < 860) break
+        await page.mouse.wheel(0, 90)
+        await wait(70)
+      }
+      await expect(today).toBeInViewport()
+      await expect(page.getByText('Completed', { exact: true }).first()).toBeInViewport()
+      await wait(6500)
+      await today.hover()
+      await wait(500)
+      await today.click()
+      await expect(page.getByRole('heading', { name: 'Subjective', exact: true })).toBeVisible({
+        timeout: 60000,
+      })
+      await wait(2500)
+    },
+  },
+  'history-compare': {
+    path: encounter(),
+    reset: resetNote,
+    disclosure: 'Example draft',
+    ready: noteReady,
+    act: async (page) => {
+      await wait(2500)
+      const tab = page.getByRole('tab', { name: /Past Encounters/ })
+      await tab.hover()
+      await wait(400)
+      await tab.click()
+      const wellness = page.getByText(/^Encounter · /).first()
+      await expect(wellness).toBeVisible({ timeout: 30000 })
+      await expect(
+        page.getByText('Annual wellness examination with stable weight and mild dental tartar.'),
+      ).toBeVisible()
+      await wait(2000)
+      await page.getByRole('button', { name: 'Open', exact: true }).first().hover()
+      await wait(1500)
+      await wellness.hover()
+      await wait(400)
+      await wellness.click()
+      const weight = page.getByText(/Weight 4\.5 kg \(unchanged from last year\)/)
+      await expect(weight).toBeVisible()
+      await wait(1500)
+      await page.mouse.move(1280, 620)
+      for (let step = 0; step < 4; step++) {
+        await page.mouse.wheel(0, 70)
+        await wait(80)
+      }
+      await expect(weight).toBeInViewport()
+      await wait(2500)
+      const vaccines = page.getByText(/Rabies and FVRCP boosters administered today/)
+      for (let step = 0; step < 12; step++) {
+        const bottom = await vaccines.evaluate((line) => line.getBoundingClientRect().bottom)
+        if (bottom < 780) break
+        await page.mouse.wheel(0, 70)
+        await wait(80)
+      }
+      await expect(vaccines).toBeInViewport()
+      await wait(3500)
+    },
+  },
+  'search-patient': {
+    path: encounter(),
+    disclosure: 'Example draft',
+    ready: noteReady,
+    act: async (page) => {
+      await wait(2000)
+      await page.keyboard.press('Meta+k')
+      await wait(1200)
+      await page.keyboard.type('Jamie', { delay: 90 })
+      const patient = page.getByRole('option').filter({ hasText: 'Jamie Chen' }).filter({
+        hasText: 'Mochi',
+      })
+      await expect(patient.first()).toBeVisible({ timeout: 30000 })
+      await wait(3000)
+      await patient.first().hover()
+      await wait(400)
+      await patient.first().click()
+      await page.waitForURL(new RegExp(`/patients/${MOCHI_PATIENT}`), { timeout: 30000 })
+      await expect(page.getByText('Encounter History', { exact: true })).toBeVisible({
+        timeout: 30000,
+      })
+      await wait(2500)
+    },
+  },
+  'patient-archive': {
+    path: '/patients',
+    reset: (db) => restoreTheo(db),
+    ready: (page) =>
+      expect(page.getByRole('button', { name: 'View patient Theo' })).toBeVisible({
+        timeout: 60000,
+      }),
+    act: async (page, ctx) => {
+      const [{ modified_at: modifiedAt }] =
+        await ctx.db`select modified_at from patients where id = ${THEO}`
+      try {
+        await wait(2500)
+        const theo = page.getByRole('button', { name: 'View patient Theo' })
+        await theo.hover()
+        await wait(400)
+        const remove = theo.getByRole('button', { name: 'Delete' })
+        await remove.hover()
+        await wait(500)
+        await remove.click()
+        const dialog = page.getByRole('dialog')
+        await expect(dialog.getByText('Remove Patient').first()).toBeVisible()
+        await wait(4000)
+        const confirm = dialog.getByRole('button', { name: 'Remove Patient', exact: true })
+        await confirm.hover()
+        await wait(400)
+        await confirm.click()
+        await expect(page.getByText('Theo removed', { exact: true })).toBeVisible({
+          timeout: 30000,
+        })
+        await expect(theo).toHaveCount(0)
+        await wait(3500)
+      } finally {
+        await restoreTheo(ctx.db, modifiedAt)
+      }
+    },
+  },
   sentinel: {
     path: encounter('d0c50000-0000-4000-8000-000000000202'),
     duration: 40,
@@ -866,6 +1401,203 @@ export const shots = {
       await page.getByTestId('panel-open-encounter').click()
       await expect(page.getByText(/Sentinel — Safety Alert/)).toBeVisible({ timeout: 60000 })
       await wait(3000)
+    },
+  },
+  welcome: {
+    path: '/dashboard',
+    reset: resetFirstRun,
+    disclosure: 'Starts after sign-in · welcome prompt reopened',
+    ready: (page) => openSetup(page),
+    act: async (page) => {
+      await wait(5000)
+      await page.getByRole('button', { name: 'I’ll just record', exact: true }).hover()
+      await wait(3500)
+      await page.getByRole('button', { name: 'Set up now', exact: true }).hover()
+      await wait(1500)
+      await page.getByRole('button', { name: 'Set up now', exact: true }).click()
+      await expect(
+        page.getByRole('heading', { name: 'How should your notes come out?' }),
+      ).toBeVisible({ timeout: 30000 })
+      await wait(2500)
+    },
+  },
+  'setup-note': {
+    path: '/dashboard',
+    reset: resetFirstRun,
+    ready: (page) => openSetup(page, 0),
+    act: async (page) => {
+      await wait(2500)
+      await tourCards(page, [
+        'General SOAP Note',
+        'Emergency Triage',
+        'Dental Procedure',
+        'Wellness Exam',
+      ])
+      await page.getByRole('button', { name: /^General SOAP Note/ }).hover()
+      await wait(400)
+      await page.getByRole('button', { name: /^General SOAP Note/ }).click()
+      await expect(page.getByRole('button', { name: /^General SOAP Note/ })).toHaveAttribute(
+        'aria-pressed',
+        'true',
+      )
+      await wait(2000)
+      await page.getByRole('button', { name: 'Continue', exact: true }).hover()
+      await wait(400)
+      await page.getByRole('button', { name: 'Continue', exact: true }).click()
+      await expect(
+        page.getByRole('heading', { name: 'What should the client get afterwards?' }),
+      ).toBeVisible()
+      await wait(2000)
+    },
+  },
+  'setup-discharge': {
+    path: '/dashboard',
+    reset: resetFirstRun,
+    ready: (page) => openSetup(page, 1),
+    act: async (page) => {
+      await wait(3000)
+      await tourCards(page, ['General Discharge', 'Post-Surgical Discharge', 'Nothing for now'])
+      await page.getByRole('button', { name: /^General Discharge/ }).hover()
+      await wait(400)
+      await page.getByRole('button', { name: /^General Discharge/ }).click()
+      await expect(page.getByRole('button', { name: /^General Discharge/ })).toHaveAttribute(
+        'aria-pressed',
+        'true',
+      )
+      await wait(1200)
+      await page.getByRole('button', { name: 'Continue', exact: true }).hover()
+      await wait(400)
+      await page.getByRole('button', { name: 'Continue', exact: true }).click()
+      await expect(page.getByRole('heading', { name: 'Record your next visit.' })).toBeVisible()
+      await wait(2500)
+    },
+  },
+  // Stops before recording; the first-encounter episode continues from here.
+  'setup-handoff': {
+    path: '/dashboard',
+    reset: resetFirstRun,
+    ready: (page) => openSetup(page, 2),
+    act: async (page) => {
+      await wait(500)
+      await page.getByRole('button', { name: 'Start an encounter', exact: true }).hover()
+      await wait(400)
+      await page.getByRole('button', { name: 'Start an encounter', exact: true }).click()
+      const patient = page.getByPlaceholder('Search or type a new name...')
+      await expect(patient).toBeVisible({ timeout: 30000 })
+      await expect
+        .poll(() =>
+          page.locator('input').evaluateAll((inputs) => inputs.map((input) => input.value)),
+        )
+        .toEqual(expect.arrayContaining(['General SOAP Note', 'General Discharge']))
+      await wait(500)
+      await patient.hover()
+      await wait(400)
+      await patient.click()
+      await wait(600)
+      await page.getByRole('option', { name: /Mochi/ }).click()
+      await expect(patient).toHaveValue('Mochi')
+      await wait(1500)
+      await page.getByRole('button', { name: 'Record from web', exact: true }).hover()
+      await wait(3000)
+    },
+  },
+  'account-basics': {
+    path: '/settings?tab=account',
+    reset: resetFirstRun,
+    ready: (page) =>
+      expect(page.getByText('Display name', { exact: true })).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(1000)
+      await page.locator('input[value="Dr. Avery Morgan"]').hover()
+      await wait(3500)
+      await page
+        .getByText(/@inbox\.noctune\./)
+        .first()
+        .hover()
+      await wait(2500)
+      await page.getByText('Auto-finish on copy or send', { exact: true }).hover()
+      await wait(4500)
+    },
+  },
+  // Fills the invitation and cancels it; nothing is sent.
+  'practice-invite': {
+    path: '/practice',
+    reset: resetFirstRun,
+    disclosure: 'Nothing sent',
+    // Wait for member and invitation rows; the panels load after their headings.
+    ready: async (page) => {
+      await expect(page.getByText('Active members', { exact: true })).toBeVisible({
+        timeout: 60000,
+      })
+      await expect(page.getByText('Jordan Kim', { exact: true })).toBeVisible({ timeout: 60000 })
+      await expect(page.getByText('taylor.nguyen@example.test')).toBeVisible({ timeout: 60000 })
+    },
+    act: async (page) => {
+      await wait(2500)
+      await page.getByRole('button', { name: 'Invite member' }).hover()
+      await wait(400)
+      await page.getByRole('button', { name: 'Invite member' }).click()
+      const dialog = page.getByRole('dialog')
+      await expect(dialog.getByText('Invite a member')).toBeVisible()
+      await dialog.getByLabel('Email address').pressSequentially('sam.rivera@example.test', {
+        delay: 90,
+      })
+      await wait(600)
+      await dialog.getByRole('combobox').hover()
+      await wait(400)
+      await dialog.getByRole('combobox').click()
+      await wait(900)
+      await page.getByRole('option', { name: 'Technician', exact: true }).click()
+      await expect(dialog.getByRole('combobox')).toHaveText('Technician')
+      await wait(1000)
+      await dialog.getByRole('button', { name: 'Cancel' }).hover()
+      await wait(500)
+      await dialog.getByRole('button', { name: 'Cancel' }).click()
+      await expect(dialog).toBeHidden()
+      await wait(2000)
+    },
+  },
+  // Serves onboarding state for a new account so the dashboard checklist shows.
+  'next-steps': {
+    path: '/dashboard',
+    reset: resetFirstRun,
+    disclosure: 'Checklist shown as for a new account',
+    ready: async (page, ctx) => {
+      await page.unroute('**/api/v1/me/onboarding')
+      await page.route('**/api/v1/me/onboarding', async (route) => {
+        if (route.request().method() !== 'GET') return route.continue()
+        await route.fulfill({
+          json: {
+            ok: true,
+            data: {
+              promptAnsweredAt: ctx.now,
+              checklistHiddenAt: null,
+              dismissedAt: null,
+              completedSteps: [],
+            },
+          },
+        })
+      })
+      await page.reload({ waitUntil: 'domcontentloaded' })
+      await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' })
+      await expect(page.getByText('Finish setting up', { exact: true })).toBeVisible({
+        timeout: 60000,
+      })
+    },
+    act: async (page) => {
+      await wait(3000)
+      for (const step of [
+        'Record or upload audio',
+        'Create a SOAP template',
+        'Send a discharge',
+        'Meet your inbox',
+      ]) {
+        // Titles carry a visually hidden "Not started: " prefix.
+        await page.getByText(new RegExp(`${step}$`)).hover()
+        await wait(1300)
+      }
+      await page.getByRole('link', { name: /^Docs for Record or upload audio/ }).hover()
+      await wait(3500)
     },
   },
   'follow-up': {

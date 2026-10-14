@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "title": "Getting started with noctune — web",
+  "kicker": "GETTING STARTED",
+  "tagline": "Set up once. Then just record.",
+  "scenes": [
+    {
+      "id": "welcome",
+      "platform": "web",
+      "headline": ["Your first", "day."],
+      "narration": "This video covers your first day with noctune. After you sign in and accept the terms, the dashboard offers a quick setup. Choose I'll just record, and it waits as a checklist. Here, choose Set up now.",
+      "disclosure": "Starts after sign-in · welcome prompt reopened"
+    },
+    {
+      "id": "setup-note",
+      "platform": "web",
+      "headline": ["How your notes", "come out."],
+      "narration": "First, pick the structure your notes are drafted into: general SOAP, emergency triage, dental, or wellness. You can switch on any encounter, and edit it later under Templates."
+    },
+    {
+      "id": "setup-discharge",
+      "platform": "web",
+      "headline": ["What the client", "gets afterwards."],
+      "narration": "Next, what the client gets after the visit. noctune drafts it from the same recording, and nothing goes out until you review and send it. Pick a discharge template, or Nothing for now."
+    },
+    {
+      "id": "setup-handoff",
+      "platform": "web",
+      "headline": ["Then just", "record."],
+      "narration": "That's it. Start an encounter opens the New Encounter drawer with your templates already selected. Pick the patient, then record or drop in audio. The first encounter video picks up from here."
+    },
+    {
+      "id": "account-basics",
+      "platform": "web",
+      "headline": ["Your name,", "your inbox."],
+      "narration": "In Settings, Account sets the name clients see on your messages and signed notes. It shows your noctune inbox address, and Auto-finish decides whether copying a note or sending a discharge completes the encounter."
+    },
+    {
+      "id": "practice-invite",
+      "platform": "web",
+      "headline": ["Invite", "your team."],
+      "narration": "Working with a team? Practice shows your clinic, its plan, and its members. Owners and admins choose Invite member, add an email, and pick a role. We'll cancel, so nothing is sent."
+    },
+    {
+      "id": "next-steps",
+      "platform": "web",
+      "headline": ["Where to", "go next."],
+      "narration": "Back on the dashboard, Finish setting up lists what comes next: your first recording, your own templates, a discharge, and your inbox. Each step links to its section of the setup guide."
+    }
+  ]
+}

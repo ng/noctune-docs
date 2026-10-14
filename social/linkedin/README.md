@@ -15,6 +15,10 @@ the next person.
 | 5   | [Discharge and follow-up](05-discharge-and-follow-up.md) | Web and iPhone captioned MP4s          |
 | 6   | [Keep the practice organized](06-practice-organized.md)  | Web and iPhone captioned MP4s          |
 | 7   | [Sentinel](07-sentinel.md)                               | Web and iPhone captioned MP4s          |
+| 8   | [Getting started](08-getting-started.md)                 | Web captioned MP4                      |
+| 9   | [Messages](09-messages.md)                               | Web captioned MP4                      |
+| 10  | [Email templates](10-email-templates.md)                 | Web captioned MP4                      |
+| 11  | [Patients and history](11-patients-history.md)           | Web captioned MP4 (iPhone history)     |
 
 Each file contains the post, a first comment carrying the docs link, and extra questions for
 replying to commenters. Copy the text inside each code block exactly; line breaks are deliberate.

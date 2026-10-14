@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "title": "Email templates in noctune — web",
+  "kicker": "EMAIL TEMPLATES",
+  "tagline": "Write the client email once.",
+  "scenes": [
+    {
+      "id": "email-library",
+      "platform": "web",
+      "headline": ["The emails you", "send every week."],
+      "narration": "This video covers email templates. Email Templates hold the client messages you send again and again, like a recheck reminder or a post-op check-in. Search the library, grouped by category, and choose a template to open it."
+    },
+    {
+      "id": "email-edit",
+      "platform": "web",
+      "headline": ["Write the diet", "handout once."],
+      "narration": "Click into the body, and add the guidance you'd otherwise retype after every surgery. Type a brace to add a field, such as the practice phone. It appears as a labeled chip, and the preview fills it in with a sample patient. Choose Save Template, and it's ready for the next client."
+    },
+    {
+      "id": "email-insert",
+      "platform": "web",
+      "headline": ["Use it on", "the visit."],
+      "narration": "On an encounter, choose Send Email, then Send message. Choose Templates, and pick the post-op check-in. noctune fills in Mochi's name and the practice phone. Read it over before you send."
+    },
+    {
+      "id": "email-recipient",
+      "platform": "web",
+      "headline": ["Placeholders fill", "from the recipient."],
+      "narration": "From New Message in the top bar, insert a template before you choose a recipient. The patient's name waits as a placeholder, and noctune tells you why. Add the owner's email in To. noctune matches it to the patient record, and fills in the name in both the subject and the message."
+    },
+    {
+      "id": "what-fills-in",
+      "platform": "web",
+      "headline": ["Nothing goes out", "half-filled."],
+      "narration": "Patient details come from the encounter, or from the owner's email in To. Your name, your practice details, and the date come from your workspace. If anything is still unfilled, noctune lists it before sending, so you can fix it, or choose Send anyway.",
+      "instructionTitle": "Where placeholders fill from",
+      "instructionLabels": ["Patient", "You and practice", "Anything left"],
+      "instructionCard": [
+        "The encounter, or the owner's email in To.",
+        "Your active workspace.",
+        "Listed before you send."
+      ]
+    }
+  ]
+}

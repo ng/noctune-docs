@@ -413,6 +413,95 @@ Caption timing: recognizer word times sometimes overlap the previous word by a f
 second. The caption pass clamps overlaps under 0.5 s to the previous word's end. Larger
 overlaps still stop generation for review.
 
+## Getting started (episode 8)
+
+The episode follows Core's first-run flow (web onboarding, Core #811/#816) and starts on the
+dashboard after sign-in, because sign-up and first sign-in need a new account. The runner serves
+dismissed onboarding state, so `welcome` reopens the real **Set up noctune?** prompt with Core's
+`?onboarding=1` support override (labelled "welcome prompt reopened"). `setup-note`,
+`setup-discharge`, and `setup-handoff` walk the `/setup` wizard in `ready` and record one step
+each; the hand-off opens the New Encounter drawer with the chosen templates, picks Mochi, and stops
+before recording. `account-basics` only hovers Settings › Account. `practice-invite` fills the
+**Invite member** dialog with a Technician role and cancels it. `next-steps` serves onboarding
+state for a new account (labelled) so the dashboard's **Finish setting up** checklist shows. The
+wizard saves template defaults and answers the prompt, so every shot first clears the reserved
+user's default templates and prompt answer; record the shots in storyboard order. The cut is web
+only: no native onboarding takes exist.
+
+## Messages (episode 9)
+
+Web only. iOS Messages lists Inbound, Sent, and All mail and labels flagged threads, but has no
+Unread or Flagged filters, assignment, or Archive. Thread states were checked against Core
+`MessagesInbox`, `InboxToolbar`, and the encounter message PATCH route: opening a thread marks it
+read, **Archive** (More actions, or `e`) is the "done" state, and assignment is owner/admin-only
+on message threads in a practice. Web shots: `messages-triage` (Unread, Flagged, All),
+`messages-open-encounter` (open the Mochi reply, **See Mochi's encounter**),
+`messages-encounter-reply` (Reply on the encounter's Messages tab, **Templates** → Recheck
+reminder, no-reply selected, never sent), and `messages-assign-archive` (assign to Dr. Riley
+Patel, Archive, Archived filter). Each resets the reserved Mochi and Jasper threads (`…501`,
+`…502`) to their seeded state: unread, unassigned, not archived. The reply shot also adds the
+practice relay grant (`…414`). Opening the inbox auto-selects and reads the Mochi thread, so
+Unread shows Jasper only. Record `messages-assign-archive` first and the encounter page shots
+before `messages-open-encounter`, so the final reset leaves Mochi in the live inbox and the
+encounter route is compiled before the navigation is filmed. Story `start` in-points skip each
+take's idle opening so actions land on their narration.
+
+Native audio hydration had rebound Mochi to a development upload that now returns HTTP 403, so
+the player raised "Audio link expired" on Mochi's encounter. The runner now serves the same
+deterministic 284-second synthetic WAV for uploads under the reserved user, as it already does
+for `docs-capture/…02NN`. Encounter shots assert the 284-second duration before acting:
+
+```sh
+pnpm tutorials:capture-web /absolute/path/to/noctune-docs /absolute/path/to/noctune-core \
+  .tutorial-output/web-ep9 \
+  messages-assign-archive,messages-triage,messages-encounter-reply,messages-open-encounter
+```
+
+## Email templates (episode 10)
+
+Web shots: `email-library` (open the picker, filter to the post-op check-in), `email-edit` (type
+guidance at the end of the body, type `{phone` and press Enter for the Practice phone field,
+check the preview, **Save Template**), `email-insert` (Mochi's encounter, **Send Email → Send
+message → Templates**, insert the post-op check-in), and `email-recipient` (top-bar **New
+Message**, insert the recheck reminder with no recipient, then add `jamie.chen@example.test` so
+the patient's name fills in). Each shot first runs `resetEmailTemplates`, which restores the four
+seeded templates with Core PR #837's registered fields (that PR is still open; the seed's
+greetings use the unregistered `{{client.first_name}}`). `email-insert` starts from the post-op
+body that `email-edit` saves, so the shots can be retaken in any order. Capture them as
+`email-edit,email-insert,email-library,email-recipient` so the shared database ends with the
+seeded bodies. The library preview uses Core's built-in sample (Buddy · Lakeside Vet). On the
+encounter, patient fields resolve from the encounter's patient; in New Message they resolve from
+the owner email in To. No shot presses Send.
+
+The edit shot uses the `{` field menu. After text typed on a new line, the **Placeholder** button
+inserts its chip on a line of its own, so the take avoids it until Core fixes that. The closing
+scene is a labelled instruction card summarizing where placeholders fill from and the send-time
+check. Email templates are web-only, so there is no iPhone cut.
+
+## Patients and history (episode 11)
+
+Web shots: `patients-find` (owner-name search for Jamie, open Mochi), `patient-profile` (scroll to
+Encounter History, open today's Ready visit beside the Completed ones), `history-compare` (Past
+Encounters, hover **Open**, expand the earlier wellness visit to its weight and vaccines),
+`search-patient` (⌘K, type Jamie, choose the Mochi quick match), and `patient-archive` (remove
+Theo, the reserved patient with no visits). Profile and compare shots reset the reserved tutorial
+note so today's visit reads Ready. The archive shot archives Theo through the real API, then
+restores `archived`, `archived_at`, and `modified_at` from the values it read first; its `reset`
+also un-archives Theo if an earlier take stopped midway. Global search is live: patient quick
+matches come from the ordinary patient list, so no search fixture is needed. Past Encounters
+search is not shown because it needs the knowledge base the capture database lacks. The closing
+iPhone scene re-cuts the verified episode 6 `patients-history` take
+(`patients-history-ios.cuts.json`); iOS has no global search, owner search, Past Encounters panel,
+or patient removal, and the narration says so. Core's profile header **Last Visit** shows the
+oldest visit and Encounter History lists oldest first, so the narration avoids both.
+
+Native hydration rebinds Mochi's encounter to the reserved user's `uploads/…/standard/*.wav` key.
+Its bytes are Core's 284-second synthetic WAV (same SHA-256 as the hydration manifest), and its
+signed CloudFront URL had stopped loading in the web runner. The runner now serves that key from
+the same local fixture as the `docs-capture/` keys. Opening an encounter from the profile takes
+several seconds in the capture server even with the route compiled, so `patient-profile` ends on
+about 1.7 seconds of the encounter loading before the next scene opens it.
+
 ## Publishing to the docs
 
 Reviewed videos are served from `https://docs-media.noctune.ai`, a dedicated S3
