@@ -6,6 +6,7 @@ import { expect } from '@playwright/test'
 import { installUploadFixture } from './web-upload-fixture.mjs'
 
 export const MOCHI = 'd0c50000-0000-4000-8000-000000000201'
+const MOCHI_REPLY = 'd0c50000-0000-4000-8000-000000000501'
 const encounter = (id = MOCHI) => `/encounters/${id}`
 
 export async function openDrawer(page) {
@@ -193,6 +194,20 @@ async function dismissInboxTip(page) {
   await tip.waitFor({ timeout: 8000 }).catch(() => {})
   if (await tip.isVisible()) await tip.click()
   await expect(tip).toBeHidden()
+}
+
+// Restore the reserved Mochi and Jasper threads to their seeded state: unread,
+// unassigned, and in the live inbox. Messages shots read, assign, and archive them.
+async function resetInbox(db) {
+  await db`update encounter_messages set read_at = null where id in ('d0c50000-0000-4000-8000-000000000501', 'd0c50000-0000-4000-8000-000000000502')`
+  await db`update encounter_messages set archived_at = null, assigned_to_user_id = null, assigned_at = null where id in ('d0c50000-0000-4000-8000-000000000501', 'd0c50000-0000-4000-8000-000000000502')`
+}
+
+// Hover before clicking so viewers see where the pointer is going.
+async function point(locator, ms = 400) {
+  await locator.hover()
+  await wait(ms)
+  await locator.click()
 }
 
 // Type a replacement over \`find\` in the markdown editor, as a person would.
@@ -869,6 +884,128 @@ export const shots = {
       await page.getByRole('menuitem', { name: /Riley Patel/ }).click()
       await expect(page.getByTestId('inbox-row-assignee-chip').first()).toBeVisible()
       await wait(3000)
+    },
+  },
+  'messages-triage': {
+    path: '/messages',
+    reset: resetInbox,
+    ready: async (page) => {
+      await dismissInboxTip(page)
+      await expect(page.getByTestId('conversation-subject')).toHaveText(
+        'Mochi is eating normally again',
+      )
+    },
+    act: async (page) => {
+      await wait(5500)
+      await point(page.getByRole('button', { name: 'Unread', exact: true }))
+      await expect(page.getByTestId(`inbox-row-${MOCHI_REPLY}`)).toHaveCount(0)
+      await wait(2500)
+      await page.getByRole('button', { name: 'All', exact: true }).click()
+      await wait(600)
+      await point(page.getByRole('button', { name: 'Flagged', exact: true }))
+      await expect(page.getByTestId('conversation-subject')).toContainText('activity restriction')
+      await wait(2800)
+      await point(page.getByRole('button', { name: 'All', exact: true }))
+      await expect(page.getByTestId(`inbox-row-${MOCHI_REPLY}`)).toBeVisible()
+      await wait(3000)
+    },
+  },
+  'messages-open-encounter': {
+    path: '/messages',
+    reset: resetInbox,
+    disclosure: 'Example draft',
+    ready: async (page) => {
+      await dismissInboxTip(page)
+      await expect(page.getByTestId('conversation-subject')).toHaveText(
+        'Mochi is eating normally again',
+      )
+    },
+    act: async (page) => {
+      await wait(2000)
+      // The row's centre is its Assign button; select the thread by its name.
+      await point(page.getByTestId(`inbox-row-${MOCHI_REPLY}`).getByText('Mochi', { exact: true }))
+      await wait(2500)
+      await page.getByTestId('conversation-encounter-chip').hover()
+      await wait(1500)
+      await point(page.getByTestId('panel-open-encounter'), 500)
+      await page.waitForURL(/\/encounters\/d0c50000-0000-4000-8000-000000000201\?tab=messages/, {
+        timeout: 30000,
+      })
+      await expect(page.getByRole('heading', { name: 'Subjective', exact: true })).toBeVisible({
+        timeout: 60000,
+      })
+      await expect(page.getByText('Mochi is eating normally again').first()).toBeVisible()
+      await expect.poll(() => page.locator('audio').evaluate((audio) => audio.duration)).toBe(284)
+      await wait(3500)
+    },
+  },
+  // Compose only: prepare the reply, insert a template, select no-reply. No Send.
+  'messages-encounter-reply': {
+    path: `${encounter()}?tab=messages`,
+    reset: async (db) => {
+      await grantPracticeRelay(db)
+      await resetInbox(db)
+    },
+    disclosure: 'Example draft · nothing sent',
+    ready: async (page) => {
+      await expect(page.getByRole('heading', { name: 'Subjective', exact: true })).toBeVisible({
+        timeout: 60000,
+      })
+      await expect(page.getByRole('button', { name: 'Reply', exact: true }).last()).toBeVisible({
+        timeout: 60000,
+      })
+      await expect.poll(() => page.locator('audio').evaluate((audio) => audio.duration)).toBe(284)
+    },
+    act: async (page) => {
+      await wait(1500)
+      await point(page.getByRole('button', { name: 'Reply', exact: true }).last())
+      const composer = page.getByTestId('composer-full')
+      await expect(composer).toContainText('jamie.chen@example.test', { timeout: 30000 })
+      await wait(3500)
+      await point(composer.getByRole('button', { name: 'Templates' }))
+      await expect(page.getByText('Insert a template')).toBeVisible()
+      await wait(1800)
+      await point(page.getByText('Recheck reminder').first())
+      await expect(composer).toContainText(/schedule Mochi.s recommended recheck/)
+      await wait(4000)
+      await point(composer.getByTestId('from-route-change'))
+      await expect(page.getByTestId('from-route-options')).toBeVisible()
+      await wait(1200)
+      await page.getByTestId('from-route-option-noreply').hover()
+      await wait(400)
+      await page.getByTestId('from-route-option-noreply').getByRole('radio').check()
+      await expect(composer.getByTestId('from-route-identity-address')).toHaveText(
+        'noreply@mail.noctune.ai',
+      )
+      await wait(3000)
+    },
+  },
+  'messages-assign-archive': {
+    path: '/messages',
+    reset: resetInbox,
+    ready: async (page) => {
+      await dismissInboxTip(page)
+      await expect(page.getByTestId('conversation-subject')).toHaveText(
+        'Mochi is eating normally again',
+      )
+    },
+    act: async (page) => {
+      const row = page.getByTestId(`inbox-row-${MOCHI_REPLY}`)
+      await wait(2000)
+      await point(row.getByTestId('inbox-row-assign-button'))
+      await expect(page.getByRole('menu')).toHaveCount(1)
+      await wait(1200)
+      await point(page.getByRole('menuitem', { name: /Riley Patel/ }))
+      await expect(row.getByTestId('inbox-row-assignee-chip')).toBeVisible()
+      await wait(2500)
+      await point(page.getByTestId('conversation-overflow'))
+      await wait(900)
+      await point(page.getByTestId('panel-archive'))
+      await expect(row).toHaveCount(0)
+      await wait(2000)
+      await point(page.getByRole('button', { name: 'Archived', exact: true }))
+      await expect(row).toBeVisible()
+      await wait(3500)
     },
   },
   sentinel: {

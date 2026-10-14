@@ -237,8 +237,10 @@ try {
       if (shot.reset) await shot.reset(db, ctx)
       const evidence = shot.setup ? await shot.setup(page, ctx) : null
       await page.clock.setFixedTime(new Date(now))
+      // hydrate-native-audio rebinds Mochi to an upload of this same synthetic
+      // WAV under the reserved user; the development bucket later expires it.
       await page.route(
-        /\/docs-capture\/d0c50000-0000-4000-8000-0000000002\d\d\.m4a(?:\?.*)?$/,
+        /\/(?:docs-capture\/d0c50000-0000-4000-8000-0000000002\d\d\.m4a|uploads\/d0c50000-0000-4000-8000-000000000091\/standard\/[0-9a-f-]+\.wav)(?:\?.*)?$/,
         async (route) => {
           const range = /^bytes=(\d+)-(\d*)$/.exec(route.request().headers().range || '')
           const start = range ? Number(range[1]) : 0
