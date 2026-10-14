@@ -7,5 +7,6 @@ export default {
   templates: 'Make templates your own',
   'discharge-follow-up': 'Discharge and follow-up',
   messages: 'Messages',
+  'email-templates': 'Email templates',
   sentinel: 'Sentinel',
 }

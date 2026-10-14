@@ -457,6 +457,27 @@ pnpm tutorials:capture-web /absolute/path/to/noctune-docs /absolute/path/to/noct
   messages-assign-archive,messages-triage,messages-encounter-reply,messages-open-encounter
 ```
 
+## Email templates (episode 10)
+
+Web shots: `email-library` (open the picker, filter to the post-op check-in), `email-edit` (type
+guidance at the end of the body, type `{phone` and press Enter for the Practice phone field,
+check the preview, **Save Template**), `email-insert` (Mochi's encounter, **Send Email → Send
+message → Templates**, insert the post-op check-in), and `email-recipient` (top-bar **New
+Message**, insert the recheck reminder with no recipient, then add `jamie.chen@example.test` so
+the patient's name fills in). Each shot first runs `resetEmailTemplates`, which restores the four
+seeded templates with Core PR #837's registered fields (that PR is still open; the seed's
+greetings use the unregistered `{{client.first_name}}`). `email-insert` starts from the post-op
+body that `email-edit` saves, so the shots can be retaken in any order. Capture them as
+`email-edit,email-insert,email-library,email-recipient` so the shared database ends with the
+seeded bodies. The library preview uses Core's built-in sample (Buddy · Lakeside Vet). On the
+encounter, patient fields resolve from the encounter's patient; in New Message they resolve from
+the owner email in To. No shot presses Send.
+
+The edit shot uses the `{` field menu. After text typed on a new line, the **Placeholder** button
+inserts its chip on a line of its own, so the take avoids it until Core fixes that. The closing
+scene is a labelled instruction card summarizing where placeholders fill from and the send-time
+check. Email templates are web-only, so there is no iPhone cut.
+
 ## Publishing to the docs
 
 Reviewed videos are served from `https://docs-media.noctune.ai`, a dedicated S3

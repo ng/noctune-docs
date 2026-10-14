@@ -47,6 +47,38 @@ async function resetTemplates(db) {
   await db`delete from soap_templates where id::text not like 'd0c50000-%' and type = 'user' and user_id = (select user_id from soap_templates where id = 'd0c50000-0000-4000-8000-000000000701')`
 }
 
+const emailTemplate = (n) => `d0c50000-0000-4000-8000-00000000080${n}`
+const postOpBody =
+  'Hello,\n\nHow is {{patient.name}} doing today? Please reply with an update on comfort, appetite, and the incision. Contact us promptly for redness, discharge, or worsening pain.'
+// The guidance the email-edit shot types and saves; email-insert starts from it.
+const postOpAddition = 'Offer soft meals for three days. Questions? Call us at '
+const postOpEdited = `${postOpBody}\n\n${postOpAddition}{{practice.phone}}.`
+
+// Restore the seeded email templates with Core PR #837's registered merge
+// fields (the seed's greetings use an unregistered `{{client.first_name}}`),
+// optionally starting the post-op template from the saved edit.
+async function resetEmailTemplates(db, postOp = postOpBody) {
+  for (const [id, subject, body] of [
+    [
+      emailTemplate(1),
+      'Welcome to Northstar — care information for {{patient.name}}',
+      'Hello,\n\nWelcome to Northstar Veterinary Clinic. We’re glad to care for {{patient.name}}. Reply here whenever you have a follow-up question.\n\n— Dr. Avery Morgan',
+    ],
+    [
+      emailTemplate(2),
+      '{{patient.name}} is due for a recheck',
+      'Hello,\n\nThis is a reminder to schedule {{patient.name}}’s recommended recheck. Call us or reply to this message if you need help finding a time.',
+    ],
+    [emailTemplate(3), 'How is {{patient.name}} recovering?', postOp],
+    [
+      emailTemplate(4),
+      'Requested records for {{patient.name}}',
+      'Hello,\n\nThe requested records for {{patient.name}} are ready. Let us know if another hospital needs them sent directly.',
+    ],
+  ])
+    await db`update email_templates set subject = ${subject}, body = ${body} where id = ${id}`
+}
+
 // Fictional practice material a clinic might already have: SOAP headings,
 // client discharge wording, and reusable home-care education in one paste.
 const importSample = `Dental recheck visit
@@ -684,9 +716,7 @@ export const shots = {
   },
   'email-templates': {
     path: '/email-library',
-    // Match Core PR #837: the seeded greetings used an unregistered merge field.
-    reset: (db) =>
-      db`update email_templates set body = replace(body, 'Hi {{client.first_name}},', 'Hello,'), subject = replace(subject, 'Welcome, {{client.first_name}} — ', 'Welcome to Northstar — ') where id::text like 'd0c50000-%'`,
+    reset: (db) => resetEmailTemplates(db),
     ready: (page) =>
       expect(page.getByRole('button', { name: 'New Template' })).toBeVisible({ timeout: 60000 }),
     act: async (page) => {
@@ -698,6 +728,162 @@ export const shots = {
       await page.getByRole('button', { name: 'Placeholder' }).click()
       await wait(3500)
       await page.keyboard.press('Escape')
+    },
+  },
+  // Email templates (episode 10): browse, edit and save, insert on an
+  // encounter, and late fill from the To recipient. Nothing is sent.
+  'email-library': {
+    path: `/email-library?template=${emailTemplate(2)}`,
+    reset: (db) => resetEmailTemplates(db),
+    ready: (page) =>
+      expect(page.locator('input[value="Recheck reminder"]')).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(2000)
+      const search = page.locator('input[value="Recheck reminder"]')
+      await search.hover()
+      await wait(400)
+      await search.click()
+      await expect(page.getByRole('option', { name: /Post-op check-in/ })).toBeVisible()
+      await wait(4500)
+      await page.keyboard.press('ControlOrMeta+a')
+      await page.keyboard.type('post', { delay: 120 })
+      await wait(1500)
+      const option = page.getByRole('option', { name: /Post-op check-in/ })
+      await option.hover()
+      await wait(400)
+      await option.click()
+      await expect(page.getByRole('textbox', { name: 'Body' })).toContainText('How is')
+      await page.mouse.move(1200, 640, { steps: 8 })
+      await wait(3000)
+    },
+  },
+  'email-edit': {
+    path: `/email-library?template=${emailTemplate(3)}`,
+    reset: (db) => resetEmailTemplates(db),
+    ready: (page) =>
+      expect(page.getByRole('textbox', { name: 'Body' })).toContainText('worsening pain', {
+        timeout: 60000,
+      }),
+    act: async (page) => {
+      await wait(500)
+      const body = page.getByRole('textbox', { name: 'Body' })
+      await body.getByText(/worsening pain/).hover()
+      await wait(400)
+      await body.evaluate((element) => {
+        element.focus()
+        const range = document.createRange()
+        range.selectNodeContents(element)
+        range.collapse(false)
+        getSelection().removeAllRanges()
+        getSelection().addRange(range)
+      })
+      // Shift+Enter keeps the new lines in the editor root; Enter wraps them
+      // in a block that the inserted chip lands outside of.
+      await page.keyboard.press('Shift+Enter')
+      await page.keyboard.press('Shift+Enter')
+      await page.keyboard.type(postOpAddition, { delay: 90 })
+      await page.keyboard.type('{phone', { delay: 140 })
+      await wait(1500)
+      await page.keyboard.press('Enter')
+      await page.keyboard.type('.', { delay: 90 })
+      await expect(page.getByText(/Call us at \(555\) 010-2233\./)).toBeVisible()
+      await wait(3500)
+      const save = page.getByRole('button', { name: 'Save Template' })
+      await save.hover()
+      await wait(400)
+      await save.click()
+      await expect(page.getByText('Unsaved changes', { exact: true })).toBeHidden({
+        timeout: 30000,
+      })
+      await expect(save).toBeDisabled()
+      await wait(2500)
+    },
+  },
+  'email-insert': {
+    path: encounter(),
+    disclosure: 'Example draft · nothing sent',
+    reset: async (db) => {
+      await grantPracticeRelay(db)
+      await resetEmailTemplates(db, postOpEdited)
+    },
+    ready: noteReady,
+    act: async (page) => {
+      await wait(600)
+      const sendEmail = page.getByRole('button', { name: 'Send Email', exact: true })
+      await sendEmail.hover()
+      await wait(400)
+      await sendEmail.click()
+      await wait(700)
+      const sendMessage = page.getByRole('menuitem', { name: /Send message/ })
+      await sendMessage.hover()
+      await wait(300)
+      await sendMessage.click()
+      await expect(page.getByLabel('Subject')).toBeVisible({ timeout: 30000 })
+      await wait(800)
+      const composer = page.getByTestId('composer-full')
+      const templates = composer.getByRole('button', { name: 'Templates' })
+      await templates.hover()
+      await wait(400)
+      await templates.click()
+      await expect(page.getByText('Insert a template')).toBeVisible()
+      await expect(page.getByTestId('template-picker-loading')).toHaveCount(0)
+      await wait(1200)
+      const postOp = page.getByRole('button', { name: /^Post-op check-in/ })
+      await postOp.hover()
+      await wait(400)
+      await postOp.click()
+      await expect(page.getByLabel('Subject')).toHaveValue('How is Mochi recovering?')
+      const message = composer.getByRole('textbox', { name: 'Message' })
+      await expect(message).toContainText('Call us at (555) 010-0200.')
+      await wait(1200)
+      await message.hover()
+      await page.mouse.wheel(0, 240)
+      await expect.poll(() => message.evaluate((element) => element.scrollTop)).toBeGreaterThan(0)
+      await wait(3500)
+    },
+  },
+  'email-recipient': {
+    path: '/dashboard',
+    disclosure: 'Nothing sent',
+    reset: async (db) => {
+      await grantPracticeRelay(db)
+      await resetEmailTemplates(db)
+    },
+    ready: (page) =>
+      expect(page.getByText('Your work', { exact: true })).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(500)
+      const newMessage = page.getByRole('button', { name: 'New Message', exact: true })
+      await newMessage.hover()
+      await wait(400)
+      await newMessage.click()
+      const dialog = page.getByRole('dialog')
+      await expect(dialog.getByText('New message', { exact: true })).toBeVisible()
+      await wait(900)
+      const templates = dialog.getByRole('button', { name: 'Templates' })
+      await templates.hover()
+      await wait(400)
+      await templates.click()
+      await expect(page.getByText('Insert a template')).toBeVisible()
+      await expect(page.getByTestId('template-picker-loading')).toHaveCount(0)
+      await wait(1200)
+      const recheck = page.getByRole('button', { name: /^Recheck reminder/ })
+      await recheck.hover()
+      await wait(400)
+      await recheck.click()
+      await expect(
+        dialog.getByText(/This placeholder fills from the recipient in To/),
+      ).toBeVisible()
+      await wait(2500)
+      const to = dialog.getByLabel('To', { exact: true })
+      await to.click()
+      await to.pressSequentially('jamie.chen@example.test', { delay: 55 })
+      await to.press('Enter')
+      await expect(dialog.getByLabel('Subject')).toHaveValue('Mochi is due for a recheck', {
+        timeout: 15000,
+      })
+      await expect(dialog.getByText(/fills from the recipient in To/)).toBeHidden()
+      await wait(4000)
     },
   },
   'discharge-routes': {
