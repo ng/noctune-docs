@@ -212,6 +212,45 @@ async function replaceInEditor(page, find, replacement) {
   await page.keyboard.type(replacement, { delay: 90 })
 }
 
+// The reserved user has no stored template defaults and has never answered the
+// welcome prompt. The setup wizard saves both, so restore them before each take;
+// other episodes' drawers keep resolving the system defaults.
+async function resetFirstRun(db) {
+  await db`update users set default_soap_template_id = null, default_discharge_template_id = null, onboarding_prompt_answered_at = null where id = (select user_id from soap_templates where id = 'd0c50000-0000-4000-8000-000000000701')`
+}
+
+// The runner serves dismissed onboarding state, so reopen the real first-visit
+// prompt with Core's `?onboarding=1` support override, then walk the /setup
+// wizard to `step` (0 note template, 1 discharge template, 2 hand-off).
+async function openSetup(page, step) {
+  await page.goto('/dashboard?onboarding=1', { waitUntil: 'domcontentloaded' })
+  await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' })
+  await expect(page.getByRole('dialog', { name: 'Set up noctune?' })).toBeVisible({
+    timeout: 60000,
+  })
+  if (step === undefined) return
+  await page.getByRole('button', { name: 'Set up now', exact: true }).click()
+  const headings = [
+    'How should your notes come out?',
+    'What should the client get afterwards?',
+    'Record your next visit.',
+  ]
+  await expect(page.getByRole('heading', { name: headings[0] })).toBeVisible({ timeout: 60000 })
+  for (let at = 1; at <= step; at++) {
+    await expect(page.getByRole('button', { name: 'Continue', exact: true })).toBeEnabled()
+    await page.getByRole('button', { name: 'Continue', exact: true }).click()
+    await expect(page.getByRole('heading', { name: headings[at] })).toBeVisible()
+  }
+}
+
+// Hover each wizard card in turn so viewers can read the choices.
+async function tourCards(page, names) {
+  for (const name of names) {
+    await page.getByRole('button', { name: new RegExp(`^${name}`) }).hover()
+    await wait(1400)
+  }
+}
+
 async function recordFor(page, seconds) {
   await page.getByRole('button', { name: 'Record from web', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Stop', exact: true })).toBeVisible()
@@ -866,6 +905,196 @@ export const shots = {
       await page.getByTestId('panel-open-encounter').click()
       await expect(page.getByText(/Sentinel — Safety Alert/)).toBeVisible({ timeout: 60000 })
       await wait(3000)
+    },
+  },
+  welcome: {
+    path: '/dashboard',
+    reset: resetFirstRun,
+    disclosure: 'Starts after sign-in · welcome prompt reopened',
+    ready: (page) => openSetup(page),
+    act: async (page) => {
+      await wait(5000)
+      await page.getByRole('button', { name: 'I’ll just record', exact: true }).hover()
+      await wait(3500)
+      await page.getByRole('button', { name: 'Set up now', exact: true }).hover()
+      await wait(1500)
+      await page.getByRole('button', { name: 'Set up now', exact: true }).click()
+      await expect(
+        page.getByRole('heading', { name: 'How should your notes come out?' }),
+      ).toBeVisible({ timeout: 30000 })
+      await wait(2500)
+    },
+  },
+  'setup-note': {
+    path: '/dashboard',
+    reset: resetFirstRun,
+    ready: (page) => openSetup(page, 0),
+    act: async (page) => {
+      await wait(2500)
+      await tourCards(page, [
+        'General SOAP Note',
+        'Emergency Triage',
+        'Dental Procedure',
+        'Wellness Exam',
+      ])
+      await page.getByRole('button', { name: /^General SOAP Note/ }).hover()
+      await wait(400)
+      await page.getByRole('button', { name: /^General SOAP Note/ }).click()
+      await expect(page.getByRole('button', { name: /^General SOAP Note/ })).toHaveAttribute(
+        'aria-pressed',
+        'true',
+      )
+      await wait(2000)
+      await page.getByRole('button', { name: 'Continue', exact: true }).hover()
+      await wait(400)
+      await page.getByRole('button', { name: 'Continue', exact: true }).click()
+      await expect(
+        page.getByRole('heading', { name: 'What should the client get afterwards?' }),
+      ).toBeVisible()
+      await wait(2000)
+    },
+  },
+  'setup-discharge': {
+    path: '/dashboard',
+    reset: resetFirstRun,
+    ready: (page) => openSetup(page, 1),
+    act: async (page) => {
+      await wait(4500)
+      await tourCards(page, ['General Discharge', 'Post-Surgical Discharge', 'Nothing for now'])
+      await page.getByRole('button', { name: /^General Discharge/ }).hover()
+      await wait(400)
+      await page.getByRole('button', { name: /^General Discharge/ }).click()
+      await expect(page.getByRole('button', { name: /^General Discharge/ })).toHaveAttribute(
+        'aria-pressed',
+        'true',
+      )
+      await wait(1200)
+      await page.getByRole('button', { name: 'Continue', exact: true }).hover()
+      await wait(400)
+      await page.getByRole('button', { name: 'Continue', exact: true }).click()
+      await expect(page.getByRole('heading', { name: 'Record your next visit.' })).toBeVisible()
+      await wait(2500)
+    },
+  },
+  // Stops before recording; the first-encounter episode continues from here.
+  'setup-handoff': {
+    path: '/dashboard',
+    reset: resetFirstRun,
+    ready: (page) => openSetup(page, 2),
+    act: async (page) => {
+      await wait(1500)
+      await page.getByRole('button', { name: 'Start an encounter', exact: true }).hover()
+      await wait(400)
+      await page.getByRole('button', { name: 'Start an encounter', exact: true }).click()
+      const patient = page.getByPlaceholder('Search or type a new name...')
+      await expect(patient).toBeVisible({ timeout: 30000 })
+      await expect
+        .poll(() =>
+          page.locator('input').evaluateAll((inputs) => inputs.map((input) => input.value)),
+        )
+        .toEqual(expect.arrayContaining(['General SOAP Note', 'General Discharge']))
+      await wait(2000)
+      await patient.hover()
+      await wait(400)
+      await patient.click()
+      await wait(800)
+      await page.getByRole('option', { name: /Mochi/ }).click()
+      await expect(patient).toHaveValue('Mochi')
+      await wait(1500)
+      await page.getByRole('button', { name: 'Record from web', exact: true }).hover()
+      await wait(3000)
+    },
+  },
+  'account-basics': {
+    path: '/settings?tab=account',
+    reset: resetFirstRun,
+    ready: (page) =>
+      expect(page.getByText('Display name', { exact: true })).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(1000)
+      await page.locator('input[value="Dr. Avery Morgan"]').hover()
+      await wait(3500)
+      await page
+        .getByText(/@inbox\.noctune\./)
+        .first()
+        .hover()
+      await wait(2500)
+      await page.getByText('Auto-finish on copy or send', { exact: true }).hover()
+      await wait(4500)
+    },
+  },
+  // Fills the invitation and cancels it; nothing is sent.
+  'practice-invite': {
+    path: '/practice',
+    reset: resetFirstRun,
+    disclosure: 'Nothing sent',
+    ready: (page) =>
+      expect(page.getByText('Active members', { exact: true })).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(4500)
+      await page.getByRole('button', { name: 'Invite member' }).hover()
+      await wait(400)
+      await page.getByRole('button', { name: 'Invite member' }).click()
+      const dialog = page.getByRole('dialog')
+      await expect(dialog.getByText('Invite a member')).toBeVisible()
+      await dialog.getByLabel('Email address').pressSequentially('sam.rivera@example.test', {
+        delay: 90,
+      })
+      await wait(600)
+      await dialog.getByRole('combobox').hover()
+      await wait(400)
+      await dialog.getByRole('combobox').click()
+      await wait(900)
+      await page.getByRole('option', { name: 'Technician', exact: true }).click()
+      await expect(dialog.getByRole('combobox')).toHaveText('Technician')
+      await wait(1500)
+      await dialog.getByRole('button', { name: 'Cancel' }).hover()
+      await wait(500)
+      await dialog.getByRole('button', { name: 'Cancel' }).click()
+      await expect(dialog).toBeHidden()
+      await wait(2000)
+    },
+  },
+  // Serves onboarding state for a new account so the dashboard checklist shows.
+  'next-steps': {
+    path: '/dashboard',
+    reset: resetFirstRun,
+    disclosure: 'Checklist shown as for a new account',
+    ready: async (page, ctx) => {
+      await page.unroute('**/api/v1/me/onboarding')
+      await page.route('**/api/v1/me/onboarding', async (route) => {
+        if (route.request().method() !== 'GET') return route.continue()
+        await route.fulfill({
+          json: {
+            ok: true,
+            data: {
+              promptAnsweredAt: ctx.now,
+              checklistHiddenAt: null,
+              dismissedAt: null,
+              completedSteps: [],
+            },
+          },
+        })
+      })
+      await page.reload({ waitUntil: 'domcontentloaded' })
+      await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' })
+      await expect(page.getByText('Finish setting up', { exact: true })).toBeVisible({
+        timeout: 60000,
+      })
+    },
+    act: async (page) => {
+      await wait(3000)
+      for (const step of [
+        'Record or upload audio',
+        'Create a SOAP template',
+        'Send a discharge',
+        'Meet your inbox',
+      ]) {
+        await page.getByText(step, { exact: true }).hover()
+        await wait(1300)
+      }
+      await page.getByRole('link', { name: /^Docs for Record or upload audio/ }).hover()
+      await wait(3500)
     },
   },
   'follow-up': {
