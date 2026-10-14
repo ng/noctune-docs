@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "title": "Messages in noctune — web",
+  "kicker": "MESSAGES",
+  "tagline": "Every reply, on the visit it belongs to.",
+  "scenes": [
+    {
+      "id": "messages-triage",
+      "platform": "web",
+      "headline": ["Sort the", "inbox."],
+      "narration": "This video covers Messages, where client replies arrive as threads. Each one is linked to its patient and visit. Choose Unread to see new replies, or Flagged for encounters that Sentinel marked for review. Choose All to see every thread again.",
+      "start": 3
+    },
+    {
+      "id": "messages-open-encounter",
+      "platform": "web",
+      "headline": ["Open the", "visit."],
+      "narration": "Open a thread to read the conversation. A reply to an encounter email shows the patient and the visit. Choose See Mochi's encounter to open that visit, with the note beside the conversation, so you can check the plan before you answer.",
+      "start": 3.5
+    },
+    {
+      "id": "messages-encounter-reply",
+      "platform": "web",
+      "headline": ["Reply from", "the encounter."],
+      "narration": "On the encounter, choose Reply. The client's address and the subject are filled in for you. Choose Templates to insert a saved email, like a recheck reminder. The patient's name is filled in, and you can edit it before sending. This demo switches to no-reply and stops here. Nothing is sent until you choose Send.",
+      "start": 1.5
+    },
+    {
+      "id": "messages-assign-archive",
+      "platform": "web",
+      "headline": ["Share it,", "then clear it."],
+      "narration": "In a practice, owners and admins can assign a thread to a teammate, so everyone knows who's answering. When a thread is handled, open More actions and choose Archive. It leaves the inbox, and the Archived filter keeps it if you need it later.",
+      "start": 4
+    }
+  ]
+}

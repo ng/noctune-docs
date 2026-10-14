@@ -6,5 +6,6 @@ export default {
   'review-with-confidence': 'Review with confidence',
   templates: 'Make templates your own',
   'discharge-follow-up': 'Discharge and follow-up',
+  messages: 'Messages',
   sentinel: 'Sentinel',
 }

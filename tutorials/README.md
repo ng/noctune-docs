@@ -428,6 +428,35 @@ wizard saves template defaults and answers the prompt, so every shot first clear
 user's default templates and prompt answer; record the shots in storyboard order. The cut is web
 only: no native onboarding takes exist.
 
+## Messages (episode 9)
+
+Web only. iOS Messages lists Inbound, Sent, and All mail and labels flagged threads, but has no
+Unread or Flagged filters, assignment, or Archive. Thread states were checked against Core
+`MessagesInbox`, `InboxToolbar`, and the encounter message PATCH route: opening a thread marks it
+read, **Archive** (More actions, or `e`) is the "done" state, and assignment is owner/admin-only
+on message threads in a practice. Web shots: `messages-triage` (Unread, Flagged, All),
+`messages-open-encounter` (open the Mochi reply, **See Mochi's encounter**),
+`messages-encounter-reply` (Reply on the encounter's Messages tab, **Templates** → Recheck
+reminder, no-reply selected, never sent), and `messages-assign-archive` (assign to Dr. Riley
+Patel, Archive, Archived filter). Each resets the reserved Mochi and Jasper threads (`…501`,
+`…502`) to their seeded state: unread, unassigned, not archived. The reply shot also adds the
+practice relay grant (`…414`). Opening the inbox auto-selects and reads the Mochi thread, so
+Unread shows Jasper only. Record `messages-assign-archive` first and the encounter page shots
+before `messages-open-encounter`, so the final reset leaves Mochi in the live inbox and the
+encounter route is compiled before the navigation is filmed. Story `start` in-points skip each
+take's idle opening so actions land on their narration.
+
+Native audio hydration had rebound Mochi to a development upload that now returns HTTP 403, so
+the player raised "Audio link expired" on Mochi's encounter. The runner now serves the same
+deterministic 284-second synthetic WAV for uploads under the reserved user, as it already does
+for `docs-capture/…02NN`. Encounter shots assert the 284-second duration before acting:
+
+```sh
+pnpm tutorials:capture-web /absolute/path/to/noctune-docs /absolute/path/to/noctune-core \
+  .tutorial-output/web-ep9 \
+  messages-assign-archive,messages-triage,messages-encounter-reply,messages-open-encounter
+```
+
 ## Publishing to the docs
 
 Reviewed videos are served from `https://docs-media.noctune.ai`, a dedicated S3
