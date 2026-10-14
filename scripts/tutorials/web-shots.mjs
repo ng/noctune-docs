@@ -982,7 +982,7 @@ export const shots = {
     reset: resetFirstRun,
     ready: (page) => openSetup(page, 2),
     act: async (page) => {
-      await wait(1500)
+      await wait(500)
       await page.getByRole('button', { name: 'Start an encounter', exact: true }).hover()
       await wait(400)
       await page.getByRole('button', { name: 'Start an encounter', exact: true }).click()
@@ -993,11 +993,11 @@ export const shots = {
           page.locator('input').evaluateAll((inputs) => inputs.map((input) => input.value)),
         )
         .toEqual(expect.arrayContaining(['General SOAP Note', 'General Discharge']))
-      await wait(2000)
+      await wait(500)
       await patient.hover()
       await wait(400)
       await patient.click()
-      await wait(800)
+      await wait(600)
       await page.getByRole('option', { name: /Mochi/ }).click()
       await expect(patient).toHaveValue('Mochi')
       await wait(1500)
@@ -1028,10 +1028,16 @@ export const shots = {
     path: '/practice',
     reset: resetFirstRun,
     disclosure: 'Nothing sent',
-    ready: (page) =>
-      expect(page.getByText('Active members', { exact: true })).toBeVisible({ timeout: 60000 }),
+    // Wait for member and invitation rows; the panels load after their headings.
+    ready: async (page) => {
+      await expect(page.getByText('Active members', { exact: true })).toBeVisible({
+        timeout: 60000,
+      })
+      await expect(page.getByText('Jordan Kim', { exact: true })).toBeVisible({ timeout: 60000 })
+      await expect(page.getByText('taylor.nguyen@example.test')).toBeVisible({ timeout: 60000 })
+    },
     act: async (page) => {
-      await wait(4500)
+      await wait(2500)
       await page.getByRole('button', { name: 'Invite member' }).hover()
       await wait(400)
       await page.getByRole('button', { name: 'Invite member' }).click()
@@ -1047,7 +1053,7 @@ export const shots = {
       await wait(900)
       await page.getByRole('option', { name: 'Technician', exact: true }).click()
       await expect(dialog.getByRole('combobox')).toHaveText('Technician')
-      await wait(1500)
+      await wait(1000)
       await dialog.getByRole('button', { name: 'Cancel' }).hover()
       await wait(500)
       await dialog.getByRole('button', { name: 'Cancel' }).click()
@@ -1090,7 +1096,8 @@ export const shots = {
         'Send a discharge',
         'Meet your inbox',
       ]) {
-        await page.getByText(step, { exact: true }).hover()
+        // Titles carry a visually hidden "Not started: " prefix.
+        await page.getByText(new RegExp(`${step}$`)).hover()
         await wait(1300)
       }
       await page.getByRole('link', { name: /^Docs for Record or upload audio/ }).hover()
