@@ -34,6 +34,8 @@ The table lists every active member's name, email, role, join date, and whether 
 
 The current user-facing table displays these assignments. It does not expose inline role changes or member removal controls.
 
+Roles also matter when your team works on the same note. Anyone in the practice can add recordings and edit sections, but only a veterinarian, owner, or admin can unlock a section someone else locked. See [Collaborative Notes](/encounters/collaborative-notes).
+
 ## Invite a member
 
 Owners and admins can choose **Invite member**, enter an email address, and select Veterinarian, Technician, Receptionist, or Admin. **Send invitation** is enabled after an address is entered.
@@ -45,6 +47,14 @@ Owners and admins can choose **Invite member**, enter an email address, and sele
 />
 
 Pending invitations show their role, status, invited date, expiration date, and a revoke action. Once accepted, the person moves into Active members.
+
+## Audit log
+
+Every active member can open the practice audit log at `app.noctune.ai/practice/audit-log`. It's an append-only timeline of actions taken in the practice, such as new encounters, generated notes, note edits, invitations, and settings changes, each with who did it and when.
+
+Filter the timeline by action, for example **Generate** for new note versions. You can also filter by person with **Filter by actor**, or by time with **Last 24h**, **Last 7d**, **Last 30d**, or **All time**. Saved note edits appear as "updated SOAP note" entries. The log records that a note changed, not the note's text.
+
+Actions taken outside a practice, in a personal workspace, aren't recorded here.
 
 ## Agreements and email footers
 

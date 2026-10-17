@@ -115,6 +115,30 @@
     "docs": ["content/encounters/review-and-edit.mdx", "content/patients.mdx"]
   },
   {
+    "id": "collaborative-section-cards",
+    "route": "/encounters/d0c50000-0000-4000-8000-000000000208",
+    "output": "public/screenshots/encounters/collaborative/section-cards.webp",
+    "docs": ["content/encounters/collaborative-notes.mdx"]
+  },
+  {
+    "id": "collaborative-suggestion",
+    "route": "/encounters/d0c50000-0000-4000-8000-000000000208",
+    "output": "public/screenshots/encounters/collaborative/suggestion.webp",
+    "docs": ["content/encounters/collaborative-notes.mdx"]
+  },
+  {
+    "id": "collaborative-regenerate-section",
+    "route": "/encounters/d0c50000-0000-4000-8000-000000000208",
+    "output": "public/screenshots/encounters/collaborative/regenerate-section.webp",
+    "docs": ["content/encounters/collaborative-notes.mdx"]
+  },
+  {
+    "id": "collaborative-version-history",
+    "route": "/encounters/d0c50000-0000-4000-8000-000000000208",
+    "output": "public/screenshots/encounters/collaborative/version-history.webp",
+    "docs": ["content/encounters/collaborative-notes.mdx"]
+  },
+  {
     "id": "encounters-sentinel-alert",
     "route": "/encounters/d0c50000-0000-4000-8000-000000000202",
     "output": "public/screenshots/encounters/detail/sentinel-alert.webp",

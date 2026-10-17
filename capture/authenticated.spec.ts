@@ -426,7 +426,7 @@ test('encounters — status filters and deterministic list', async ({ page }) =>
   const item = capture('encounters-list')
   await openProductPage(page, item.route)
   await expect(page.getByRole('heading', { name: 'Encounters' })).toBeVisible()
-  await expect(page.getByText('6 encounters', { exact: true })).toBeVisible()
+  await expect(page.getByText('7 encounters', { exact: true })).toBeVisible()
   await expect(page.getByRole('button', { name: /Needs review/ })).toBeVisible()
   await expect(page.getByText('Jasper', { exact: true })).toBeVisible()
   await expect(page.getByText('luna-wellness.m4a', { exact: true })).toBeVisible()
@@ -529,6 +529,81 @@ test('encounters — prior-visit context', async ({ page }) => {
   await expect(page.getByPlaceholder('e.g. bloodwork, medications, weight')).toBeVisible()
   await expect(page.getByText(/Annual wellness examination with stable weight/)).toBeVisible()
   await expect(page.getByText(/Healthy new-patient examination/)).toBeVisible()
+  await savePageScreenshot(page, item)
+})
+
+/** Opens Theo's three-recording team note and waits for its section cards. */
+async function openTheoCollaborativeNote(page: Page, route: string): Promise<void> {
+  await openProductPage(page, route)
+  await expect(page.getByText('Theo', { exact: true }).first()).toBeVisible()
+  await expect(page.getByTestId('section-card-subjective')).toContainText(
+    'Locked · edited by Morgan Lee',
+  )
+  await expect(page.getByTestId('section-card-objective')).toContainText(
+    'Locked · edited by Dr. Riley Patel',
+  )
+  await expect(page.getByTestId('recordings-list')).toContainText('Recording 3 · Morgan Lee')
+}
+
+test('collaborative notes — section cards with locks and attribution', async ({ page }) => {
+  const item = capture('collaborative-section-cards')
+  await openTheoCollaborativeNote(page, item.route)
+  await expect(page.getByTestId('section-card-assessment')).toContainText(
+    'AI · from recording 2 (Dr. Riley Patel)',
+  )
+  await page.getByTestId('section-card-subjective').evaluate((element) => {
+    element.scrollIntoView({ block: 'start' })
+  })
+  await savePageScreenshot(page, item)
+})
+
+test('collaborative notes — suggestion for a locked section', async ({ page }) => {
+  const item = capture('collaborative-suggestion')
+  await openTheoCollaborativeNote(page, item.route)
+  const suggestion = page.getByTestId('section-suggestion-objective')
+  await expect(suggestion).toContainText('Suggested from recording 3 (Morgan Lee)')
+  await expect(suggestion.getByRole('button', { name: 'Insert' })).toBeVisible()
+  await expect(suggestion.getByRole('button', { name: 'Dismiss' })).toBeVisible()
+  await page.getByTestId('section-card-objective').evaluate((element) => {
+    element.scrollIntoView({ block: 'start' })
+  })
+  await savePageScreenshot(page, item)
+})
+
+test('collaborative notes — regenerate one section', async ({ page }) => {
+  const item = capture('collaborative-regenerate-section')
+  await openTheoCollaborativeNote(page, item.route)
+  const plan = page.getByTestId('section-card-plan')
+  await expect(plan).toContainText('AI · from recording 3 (Morgan Lee)')
+  await page.getByTestId('section-regenerate-plan').click()
+  await page
+    .getByTestId('section-regenerate-instructions-plan')
+    .fill('Keep it to the home-care steps')
+  await page.getByTestId('section-regenerate-submit-plan').click()
+  const proposal = page.getByTestId('section-proposal-plan')
+  await expect(proposal).toContainText('Suggested rewrite')
+  await expect(proposal.getByRole('button', { name: 'Accept' })).toBeVisible()
+  await expect(proposal.getByRole('button', { name: 'Discard' })).toBeVisible()
+  await plan.evaluate((element) => {
+    element.scrollIntoView({ block: 'start' })
+  })
+  await savePageScreenshot(page, item)
+})
+
+test('collaborative notes — version history', async ({ page }) => {
+  const item = capture('collaborative-version-history')
+  await openTheoCollaborativeNote(page, item.route)
+  await page.getByTestId('section-card-subjective').evaluate((element) => {
+    element.scrollIntoView({ block: 'start' })
+  })
+  await page.getByLabel('Note version').click()
+  await expect(page.getByTestId('version-option-3')).toContainText(
+    'v3 · Recording added by Morgan Lee',
+  )
+  await expect(page.getByTestId('version-option-2')).toContainText(
+    'v2 · Recording added by Dr. Riley Patel',
+  )
+  await expect(page.getByTestId('version-option-1')).toContainText('v1 · First draft by Morgan Lee')
   await savePageScreenshot(page, item)
 })
 
