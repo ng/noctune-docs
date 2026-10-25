@@ -1,3 +1,9 @@
+---
+type: Social Post
+title: 10. Email templates
+description: Guidance for 10. Email templates.
+---
+
 # 10. Email templates
 
 Video: `email-templates-web` → `walkthrough-captioned.mp4` (about 75 seconds). Email templates

@@ -170,7 +170,7 @@
   },
   {
     "id": "templates-editor",
-    "route": "/templates",
+    "route": "/templates/soap/d0c50000-0000-4000-8000-000000000701",
     "output": "public/screenshots/templates/editor.webp",
     "docs": ["content/templates.mdx"]
   },
@@ -206,20 +206,20 @@
   },
   {
     "id": "templates-review",
-    "route": "/templates",
+    "route": "/templates/soap/d0c50000-0000-4000-8000-000000000701",
     "output": "public/screenshots/templates/review.webp",
     "docs": ["content/templates.mdx"]
   },
   {
     "id": "templates-review-single-fix",
-    "route": "/templates",
+    "route": "/templates/soap/d0c50000-0000-4000-8000-000000000701",
     "output": "public/screenshots/templates/review-single-fix.webp",
     "preserveFocus": true,
     "docs": ["content/templates.mdx"]
   },
   {
     "id": "templates-publish",
-    "route": "/templates",
+    "route": "/templates/soap/d0c50000-0000-4000-8000-000000000701",
     "output": "public/screenshots/templates/publish.webp",
     "docs": ["content/templates.mdx", "content/community.mdx"]
   },

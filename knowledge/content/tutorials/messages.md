@@ -1,0 +1,23 @@
+---
+title: Messages
+type: Tutorial
+description: Work through client replies, one visit at a time.
+---
+
+# Work through client replies, one visit at a time
+
+Sort the inbox with Unread and Flagged, open the encounter a reply belongs to, answer from that encounter with an email template, assign the thread to a teammate, and archive it when it is handled.
+
+## Personal and practice inboxes
+
+The current web inbox also offers **All inboxes**, the practice name, and **You** when both inboxes are available. Practice conversations are shared with the team; personal conversations stay private until you move one into the practice. Choose the **From** inbox for new messages. See the [current Messages guide](../messages.md) for routing, access, and moving a thread.
+
+The video below shows the earlier inbox layout; follow the written guide for the inbox switcher and current controls.
+
+## On the web
+
+Tutorial video (messages-web) is not yet published.
+
+## On iPhone
+
+The iPhone Messages tab lists **Inbound**, **Sent**, and **All** mail, labels Sentinel-flagged threads, and starts a **New Message**. Replies linked to a visit also appear on that encounter's Messages tab; [Discharge and follow-up](discharge-follow-up.md) shows it. The **Unread** and **Flagged** filters, assignment, and **Archive** are web only, so this topic has no iPhone video.

@@ -68,10 +68,10 @@ export default defineConfig({
   outputDir: path.join(docsRoot, '.capture/test-results'),
   fullyParallel: false,
   workers: 1,
-  retries: 0,
+  retries: 1,
   reporter: [['list']],
-  timeout: 60_000,
-  expect: { timeout: 15_000 },
+  timeout: 600_000,
+  expect: { timeout: 240_000 },
   use: {
     ...devices['Desktop Chrome'],
     baseURL,
@@ -88,7 +88,7 @@ export default defineConfig({
       args: deterministicChromiumArgs,
     },
     actionTimeout: 15_000,
-    navigationTimeout: 30_000,
+    navigationTimeout: 300_000,
   },
   projects: [
     {
@@ -129,7 +129,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `corepack pnpm exec next dev -p ${port}`,
+    // Match Core’s webpack resolver configuration in isolated nested worktrees.
+    command: `corepack pnpm exec next dev --webpack -p ${port}`,
     cwd: runtimeCoreDir,
     env: childEnv,
     url: baseURL,

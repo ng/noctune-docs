@@ -1,3 +1,9 @@
+---
+type: Runbook
+title: Reusing fictional product fixtures
+description: Guidance for reusing fictional product fixtures.
+---
+
 # Reusing fictional product fixtures
 
 Use the existing docs capture setup for documentation and native App Store media. Do not

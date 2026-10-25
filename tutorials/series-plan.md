@@ -1,3 +1,9 @@
+---
+type: Production Guide
+title: Beginner tutorial series
+description: Guidance for beginner tutorial series.
+---
+
 # Beginner tutorial series
 
 Start with the complete encounter workflow, then teach each major feature with

@@ -16,13 +16,15 @@
     [
       "@semantic-release/changelog",
       {
-        "changelogFile": "CHANGELOG.md"
+        "changelogFile": "CHANGELOG.md",
+        "changelogTitle": "---\ntype: Release History\ntitle: CHANGELOG\ndescription: Versioned release history for noctune documentation.\n---"
       }
     ],
+    "./scripts/release-okf.mjs",
     [
       "@semantic-release/git",
       {
-        "assets": ["CHANGELOG.md", "package.json"],
+        "assets": ["CHANGELOG.md", "package.json", "knowledge/"],
         "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}"
       }
     ],

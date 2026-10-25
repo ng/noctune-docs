@@ -62,6 +62,11 @@ const stagingDir = path.join(captureRoot, `staging-${process.pid}`)
 const testResultsDir = path.join(captureRoot, 'test-results')
 const lockPath = path.join(captureRoot, 'screenshots.lock')
 const manifest = JSON.parse(fs.readFileSync(path.join(docsRoot, 'capture/manifest.json'), 'utf8'))
+const args = process.argv.slice(2)
+if (args.length && (args.length !== 2 || args[0] !== '--grep' || !args[1].trim())) {
+  throw new Error('Usage: screenshots:update [--grep <Playwright test title pattern>]')
+}
+const grep = args[1]
 
 fs.mkdirSync(captureRoot, { recursive: true })
 const lockFd = acquireLock(lockPath)
@@ -110,6 +115,18 @@ try {
   fs.rmSync(stagingDir, { force: true, recursive: true })
   fs.rmSync(testResultsDir, { force: true, recursive: true })
   fs.mkdirSync(stagingDir, { recursive: true })
+  // A focused refresh keeps unchanged, policy-validated assets byte-for-byte.
+  // New captures still use the native renderer, and the entire staged tree must
+  // pass strict verification before the same atomic promotion used by full runs.
+  if (grep) {
+    fs.cpSync(
+      path.join(docsRoot, 'public/screenshots'),
+      path.join(stagingDir, 'public/screenshots'),
+      {
+        recursive: true,
+      },
+    )
+  }
 
   await run(
     'Applying Core migrations',
@@ -135,7 +152,14 @@ try {
   await run(
     'Capturing screenshots',
     'corepack',
-    ['pnpm', 'exec', 'playwright', 'test', '--config=capture/playwright.config.mjs'],
+    [
+      'pnpm',
+      'exec',
+      'playwright',
+      'test',
+      '--config=capture/playwright.config.mjs',
+      ...(grep ? ['--grep', grep] : []),
+    ],
     docsRoot,
     playwrightEnv,
   )
@@ -147,7 +171,9 @@ try {
     playwrightEnv,
   )
   promoteScreenshots(manifest, stagingDir)
-  console.log(`\n[screenshots] Updated ${manifest.length} committed screenshot assets`)
+  console.log(
+    `\n[screenshots] ${grep ? 'Refreshed selected captures and verified' : 'Updated'} ${manifest.length} committed screenshot assets`,
+  )
 } finally {
   fs.rmSync(authDir, { force: true, recursive: true })
   fs.rmSync(stagingDir, { force: true, recursive: true })

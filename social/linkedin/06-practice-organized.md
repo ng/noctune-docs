@@ -1,3 +1,9 @@
+---
+type: Social Post
+title: 6. Keep the practice organized
+description: Guidance for 6. Keep the practice organized.
+---
+
 # 6. Keep the practice organized
 
 Videos (burned-caption exports from `tutorials/episodes.json`):
@@ -41,3 +47,7 @@ Practice workspace guide: https://docs.noctune.ai/practice
 - How long does it take to get up to speed on a patient another doctor usually sees?
 - Do techs and front desk read the SOAP note, or only the discharge?
 - What does your team use for handoffs today?
+
+## Current inbox workflow
+
+The web app now supports **All inboxes**, the practice name, and **You**. Personal noctune inbox mail stays private; the practice inbox is shared by active members. New messages choose a From inbox, and a personal thread can be moved to the practice after confirmation. Update or replace older video footage before presenting these controls. See [Messages](../../content/messages.mdx).

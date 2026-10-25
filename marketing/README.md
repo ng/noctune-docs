@@ -1,3 +1,9 @@
+---
+type: Runbook
+title: Reusable noctune marketing assets
+description: Guidance for reusable noctune marketing assets.
+---
+
 # Reusable noctune marketing assets
 
 This folder belongs in noctune-docs because it reuses the tutorial capture fixtures

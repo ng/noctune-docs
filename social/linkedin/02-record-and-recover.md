@@ -1,3 +1,9 @@
+---
+type: Social Post
+title: 2. Record and recover
+description: Guidance for 2. Record and recover.
+---
+
 # 2. Record and recover
 
 Videos (burned-caption exports from `tutorials/episodes.json`):
