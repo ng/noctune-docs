@@ -1,3 +1,9 @@
+---
+type: Agent Instructions
+title: Repository Agent Instructions
+description: Repository instructions for documentation, OKF maintenance, and generated screenshots.
+---
+
 # Repository Agent Instructions
 
 ## Wordmark
@@ -33,3 +39,18 @@ Product screenshots are generated assets. Do not hand-edit or re-encode files un
 If capture credentials are unavailable, you may edit copy or capture definitions, but do
 not fabricate replacement screenshot bytes. Report that `pnpm screenshots:update` still
 needs to run.
+
+## Documentation format
+
+Use Google Cloud Open Knowledge Format (OKF) v0.2 for all authored docs. Follow
+[the authoring guide](docs/open-knowledge-format.md). Every Markdown/MDX source
+needs YAML `type`, `title`, and `description`. Preserve existing metadata. Start
+discovery at [knowledge/index.md](knowledge/index.md); edit source files, never the
+generated bundle. Run `pnpm okf:build` after edits and `pnpm check` before committing.
+Do not claim human verification or refresh provenance dates merely for formatting.
+Keep code fences intact and add portable representations for new MDX components.
+
+For a focused product change, `pnpm screenshots:update --grep "<test title pattern>"`
+recaptures matching Playwright scenarios, preserves other screenshot bytes, and
+strictly verifies the complete staged library before atomic promotion. Review the
+contact sheets after a focused refresh too.

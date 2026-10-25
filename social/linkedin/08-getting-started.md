@@ -1,3 +1,9 @@
+---
+type: Social Post
+title: 8. Getting started
+description: Guidance for 8. Getting started.
+---
+
 # 8. Getting started
 
 Video: `getting-started-web` → `walkthrough-captioned.mp4` (about 75 seconds; web only). It starts

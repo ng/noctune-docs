@@ -1,3 +1,9 @@
+---
+type: Social Post
+title: 7. Sentinel
+description: Guidance for 7. Sentinel.
+---
+
 # 7. Sentinel
 
 Videos (burned-caption exports from `tutorials/episodes.json`):

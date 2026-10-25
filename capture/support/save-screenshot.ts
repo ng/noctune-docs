@@ -59,6 +59,12 @@ export async function savePageScreenshot(page: Page, capture: CaptureOutput): Pr
   }
   await fs.mkdir(path.dirname(outputPath), { recursive: true })
 
+  // Preserve the original browser PNG for native social uploads. These ignored
+  // originals are never published until matched to a verified WebP capture.
+  const originalPath = path.resolve(process.cwd(), '.capture/originals', `${capture.id}.png`)
+  await fs.mkdir(path.dirname(originalPath), { recursive: true })
+  await fs.writeFile(originalPath, png)
+
   if (imagePolicy.encoding.format !== 'webp') {
     throw new Error(`Unsupported screenshot format: ${imagePolicy.encoding.format}`)
   }

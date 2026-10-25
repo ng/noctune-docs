@@ -1,5 +1,7 @@
 ---
 title: Setup Guide
+type: User Guide
+description: Set up noctune in eight steps.
 ---
 
 # Set up noctune in eight steps
@@ -26,7 +28,7 @@ See [New Encounter](/encounters/new-encounter) for the complete recording and up
 
 ## Create a SOAP template \[#soap-template]
 
-Open **Templates**, stay on **SOAP Templates**, and choose **New Template**. A SOAP template structures the **internal clinical record**: the clinician-facing note that noctune drafts from the encounter.
+Open **Templates**, stay on **SOAP**, and choose **New Template**. A SOAP template structures the **internal clinical record**: the clinician-facing note that noctune drafts from the encounter.
 
 <BrowserFrame
   src="/screenshots/templates/new-template.webp"
@@ -40,11 +42,11 @@ See [Create a custom template](/templates#create-a-custom-template) for editing,
 
 ## Create a discharge template \[#discharge-template]
 
-Open **Templates**, select **Discharge Templates**, and choose **New Template**. A discharge template structures **patient-specific take-home instructions**, such as medication directions, warnings, home care, and recheck timing.
+Open **Templates**, select **Discharge**, and choose **New Template**. A discharge template structures **patient-specific take-home instructions**, such as medication directions, warnings, home care, and recheck timing.
 
 <BrowserFrame
   src="/screenshots/templates/new-discharge-template.webp"
-  alt="Create a custom discharge template dialog with the Discharge Templates tab selected and Copy a template active"
+  alt="Create a custom discharge template dialog with the Discharge tab selected and Copy a template active"
   url="app.noctune.ai/templates/discharge"
 />
 
@@ -133,3 +135,9 @@ Open **Messages** in the sidebar to see client replies, their patient context, a
 **[Open Messages in noctune →](https://app.noctune.ai/messages)**
 
 See [Messages](/messages) for inbox workflows and [Messaging & Email Relay](/reference/messaging) for delivery and reply routing.
+
+## Keep reviewed sections and team workflows consistent
+
+Editing an encounter section locks it against later generation. New audio updates unlocked sections and offers suggestions for locked sections. Changing your template default only affects future encounters. Read [Collaborative Notes](/encounters/collaborative-notes) before regenerating an edited note.
+
+In a practice, owners and admins can share templates and set practice defaults. Your own default takes precedence. In [Messages](/messages), choose the practice inbox for shared follow-up or **You** for your personal noctune inbox; **All inboxes** shows both when available.

@@ -6,6 +6,7 @@ const withNextra = nextra({
 
 export default withNextra({
   reactStrictMode: true,
+  turbopack: { root: process.cwd() },
   experimental: {
     // Nextra and Twoslash use the TypeScript 6 compatibility API. The standalone
     // `pnpm tsc` check still runs the TypeScript 7 CLI from `@typescript/native`.

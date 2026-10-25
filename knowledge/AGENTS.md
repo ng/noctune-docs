@@ -1,0 +1,56 @@
+---
+type: Agent Instructions
+title: Repository Agent Instructions
+description: Repository instructions for documentation, OKF maintenance, and generated screenshots.
+---
+
+# Repository Agent Instructions
+
+## Wordmark
+
+Use `noctune` with a lowercase n in all authored documentation, including headings,
+metadata, alt text, and accessibility labels. Keep exact upstream UI selectors and
+canonical legal document text unchanged until their source is updated; never rewrite a
+generated screenshot only to change wordmark casing.
+
+## Product screenshots
+
+Product screenshots are generated assets. Do not hand-edit or re-encode files under
+`public/screenshots/`.
+
+- Treat `capture/image-policy.json` as the source of truth for dimensions, encoding,
+  color/metadata rules, and byte budgets.
+- Add or change screenshot states in `capture/manifest.json` and the Playwright capture
+  specs. Put deterministic synthetic product data in the noctune Core capture seeder.
+- Never use production/customer data or generative-image tools for product UI screenshots.
+- Keep raster assets in Git LFS. Do not bypass the `.gitattributes` rules or commit
+  raster binaries directly to regular Git history.
+- Keep Git LFS enabled for the Vercel project. `pnpm assets:verify` must pass before
+  a deployment build so LFS pointer files can never be published as images.
+- Add a database fingerprint to `capture/database-allowlist.json` only after a
+  human independently confirms that the target is disposable and capture-only.
+- Run `pnpm screenshots:update` to rebuild assets atomically from the disposable fixture
+  database.
+- Run `pnpm screenshots:contact-sheet` and inspect every generated sheet under
+  `.capture/contact-sheets/`.
+- Run `pnpm check` before committing. It verifies formatting, Markdown, screenshot
+  dimensions/format/metadata/byte budgets, TypeScript, and the production build.
+
+If capture credentials are unavailable, you may edit copy or capture definitions, but do
+not fabricate replacement screenshot bytes. Report that `pnpm screenshots:update` still
+needs to run.
+
+## Documentation format
+
+Use Google Cloud Open Knowledge Format (OKF) v0.2 for all authored docs. Follow
+[the authoring guide](docs/open-knowledge-format.md). Every Markdown/MDX source
+needs YAML `type`, `title`, and `description`. Preserve existing metadata. Start
+discovery at [knowledge/index.md](index.md); edit source files, never the
+generated bundle. Run `pnpm okf:build` after edits and `pnpm check` before committing.
+Do not claim human verification or refresh provenance dates merely for formatting.
+Keep code fences intact and add portable representations for new MDX components.
+
+For a focused product change, `pnpm screenshots:update --grep "<test title pattern>"`
+recaptures matching Playwright scenarios, preserves other screenshot bytes, and
+strictly verifies the complete staged library before atomic promotion. Review the
+contact sheets after a focused refresh too.

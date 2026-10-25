@@ -1,0 +1,76 @@
+---
+title: Practice
+type: User Guide
+description: Run your clinic and team in one workspace.
+sources:
+  - id: core-1
+    resource: https://github.com/ng/noctune-core/blob/33734aea/src/components/practice/PracticePage.tsx
+  - id: core-2
+    resource: https://github.com/ng/noctune-core/blob/33734aea/src/components/practice/PracticeTeamCard.tsx
+  - id: core-10
+    resource: https://github.com/ng/noctune-core/blob/33734aea/src/lib/practice/can-send.ts
+---
+
+# Run your clinic and team in one workspace
+
+A practice workspace groups clinic membership, invitations, billing seats, a shared inbox identity, agreements, and email footers. The Practice page shows the active clinic selected in the workspace switcher.
+
+[Video: Keep the practice organized — web](https://docs-media.noctune.ai/assets/2878e63d6b3b875850d83e13188dd22c8b3ec9b140a83b2f4fa9f7a44aad5206/practice-organized-web.mp4)
+
+[Video: Keep the practice organized — iPhone](https://docs-media.noctune.ai/assets/a1af1bb97f965d5eb4b641ed9416bc5348909ba8d3dd356fffffa1790bb99848/practice-organized-ios.mp4)
+
+The videos show an earlier practice layout. The written steps below describe the current web team, seat, and inbox controls.
+
+![Northstar Veterinary Clinic practice page with Practice plan, inbox handle, three billable seats, four active members, and a pending invitation](https://docs.noctune.ai/screenshots/practice/overview.webp)
+
+## Practice summary
+
+The header shows the practice name, phone, location, and shared inbox address. Choose **Copy inbox address** to copy the address. Owners and admins can choose **Edit details** to update the practice name, admin contact email, phone, website, postal address, and timezone, then **Save changes**.
+
+The plan and billing area is available to owners and admins. Veterinarians hold paid seats. Owners and admins can hold a seat when they also do clinical work; their access role alone does not mean they occupy one. Technicians and receptionists appear under **Support staff** and do not need paid seats.
+
+## Shared inbox and personal mail
+
+Open [Messages](messages.md) and choose the practice name to work in the shared inbox. Every active practice member can see that practice's conversations. Use patient links and assignment to coordinate follow-up. **You** shows your separate personal noctune inbox, and **All inboxes** combines the two when both are available. Teammates cannot see your personal messages unless you move a conversation into the practice inbox.
+
+The practice inbox sends and receives through the practice address. It depends on the practice's relay plan; a paid seat in a relay-enabled practice can also enable a member's personal inbox.
+
+## Shared templates
+
+Owners and admins can share a saved personal SOAP or discharge template with the practice, edit the separate practice copy, and set a practice default. Members can use practice templates or duplicate them into their own library. A personal default takes precedence over the practice default. See [Templates](templates.md#set-the-default).
+
+## Active members
+
+The team area groups **Veterinarian seats** and **Support staff**, with member identities and access roles. Seats can be in use, reserved for an invitation, or open. Current roles are:
+
+- **Owner** — owns the practice workspace and its billing relationship
+- **Admin** — manages practice operations and invitations
+- **Veterinarian** — clinical user and billable seat
+- **Technician** — clinical support role
+- **Receptionist** — front-desk and communication role
+
+Owners and admins manage team members through each eligible row’s **More actions** menu, including changing a role or removing a member. You cannot change your own role or remove yourself there; only an owner can manage another owner. Other members see the team read-only. Assigning a veterinarian requires an available seat.
+
+Anyone in the practice can record, generate, and edit a draft. Members can explicitly unlock a colleague’s section before changing it. Sending discharge notes to a client requires a paid seat, including for owners and admins; free-text messages and replies remain available to support staff. See [Collaborative Notes](encounters/collaborative-notes.md).
+
+## Invite a member
+
+Owners and admins can choose **Invite member**, enter an email address, and select Veterinarian, Technician, Receptionist, or Admin. An invitation needs a valid email and an available seat when inviting a veterinarian.
+
+![Invite a member dialog with a technician email, role selector, Cancel, and Send invitation actions](https://docs.noctune.ai/screenshots/practice/invite-member.webp)
+
+Pending invitations appear with the team and offer resend and revoke actions to managers. Once accepted, the person moves into Active members.
+
+## Audit log
+
+Every active member can open the practice audit log at `app.noctune.ai/practice/audit-log`. It's an append-only timeline of actions taken in the practice, such as new encounters, generated notes, note edits, invitations, and settings changes, each with who did it and when.
+
+Filter the timeline by action, for example **Generate** for new note versions. You can also filter by person with **Filter by actor**, or by time with **Last 24h**, **Last 7d**, **Last 30d**, or **All time**. Saved note edits appear as "updated SOAP note" entries. The log records that a note changed, not the note's text.
+
+Actions taken outside a practice, in a personal workspace, aren't recorded here.
+
+## Agreements and email footers
+
+The page includes the current Business Associate Agreement status and practice email footers. Owners or admins can complete the available agreement action and manage footers used by practice messages.
+
+If you do not belong to a practice yet, the page shows the setup flow instead of these panels.

@@ -1,3 +1,9 @@
+---
+type: Social Post
+title: 5. Discharge and follow-up
+description: Guidance for 5. Discharge and follow-up.
+---
+
 # 5. Discharge and follow-up
 
 Videos (burned-caption exports from `tutorials/episodes.json`):

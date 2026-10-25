@@ -1,0 +1,67 @@
+---
+title: Messaging & Email Relay
+type: Reference
+description: How client replies are routed back to you.
+sources:
+  - id: core-1
+    resource: https://github.com/ng/noctune-core/blob/33734aea/src/lib/email/direct-messages-service.ts
+  - id: core-2
+    resource: https://github.com/ng/noctune-core/blob/33734aea/src/app/api/v1/messages/send/route.ts
+---
+
+# How client replies are routed back to you
+
+Practice inbox messages use the practice address for replies. Personal and encounter composers offer a reply route. The route determines which address the recipient sees and where a reply arrives.
+
+## Personal and encounter reply routes
+
+| Route                   | Recipient experience                                    | Reply destination                           | Requirement                     |
+| ----------------------- | ------------------------------------------------------- | ------------------------------------------- | ------------------------------- |
+| **noctune Nest**        | A noctune relay identity; personal address stays hidden | Encounter thread or global Messages inbox   | Nest entitlement                |
+| **noctune (no reply)**  | From `noreply@mail.noctune.ai`; one-way message         | Recipient cannot reply through that message | Available without Nest          |
+| **Your personal email** | Your personal address is shared                         | Your external email inbox                   | Messages: none. Discharge: Nest |
+
+When Nest is active, a new composer starts on the Nest route. Otherwise it starts on no-reply. You can change the route before sending.
+
+![noctune message composer with the From picker for practice and personal inboxes](https://docs.noctune.ai/screenshots/messages/composer.webp)
+
+## noctune Nest
+
+Nest is the reply-enabled noctune inbox. The label adapts to context:
+
+- In an encounter, **This encounter** keeps replies attached to that clinical record.
+- In a global composer, **The Nest** or the patient's Nest returns replies to Messages.
+
+The recipient never needs a noctune account. They reply with ordinary email, and noctune threads the inbound message into [Messages](../messages.md). Practice teammates can then see the same encounter context and assignment state.
+
+## No reply
+
+Use **noctune (no reply)** for one-way communication. The composer explains that the recipient cannot respond and shows `noreply@mail.noctune.ai`. This route does not create a Nest conversation.
+
+## Personal email
+
+Use **Your personal email** when the reply should leave noctune and go directly to your mailbox. The selector keeps a warning visible because this shares your address and removes the reply from the team's noctune workflow.
+
+## Personal and practice inboxes
+
+noctune also provides inbound handles that do not require an earlier outbound message. A personal or practice address under `inbox.noctune.ai` can receive direct mail in Messages. The Account tab shows the current personal handle; paid access can expose handle customization where available.
+
+A handle is a standing inbox identity, while an encounter Nest route is tied to a particular visit. Personal inbox mail is visible only to its owner; practice inbox mail is shared with active practice members. **All inboxes** combines the active practice and your personal inbox, never other members' personal mail.
+
+Choose the **From** inbox when composing a direct message. Practice messages use the practice address and route replies back there; the personal route selector does not override that destination. A personal thread can be moved into the practice with confirmation. See [Messages](../messages.md#personal-and-practice-inboxes).
+
+The practice inbox requires the practice's relay plan. Personal inbox access can come from personal relay or a paid seat in a relay-enabled practice. Only available inboxes appear in the switcher.
+
+## Mail domains
+
+| Domain               | Purpose                                     | Example shape                    |
+| -------------------- | ------------------------------------------- | -------------------------------- |
+| `mail.noctune.ai`    | Outbound transactional and no-reply mail    | `noreply@mail.noctune.ai`        |
+| `replies.noctune.ai` | Reply tokens for encounter-linked Nest mail | unique reply token at the domain |
+| `inbox.noctune.ai`   | Personal and practice inbound handles       | `{handle}@inbox.noctune.ai`      |
+
+The domains separate one-way sending, reply routing, and standing inbound mail.
+
+## Entitlement changes
+
+If Nest is unavailable in the active billing workspace, the composer hides or disables that route and uses no-reply instead. In the message composers, personal email remains a separate choice. Sending discharge notes from your personal email requires Nest. Existing messages stay visible in the inbox even when the current workspace cannot start a new Nest send.

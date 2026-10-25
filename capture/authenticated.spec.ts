@@ -114,7 +114,7 @@ async function mockExpandedNavigationRecents(page: Page): Promise<void> {
       return
     }
 
-    const response = await route.fetch()
+    const response = await route.fetch({ timeout: 240_000 })
     const payload = (await response.json()) as {
       ok?: boolean
       data?: {
@@ -218,7 +218,7 @@ async function mockMochiReadyForReview(page: Page): Promise<void> {
       return
     }
 
-    const response = await route.fetch()
+    const response = await route.fetch({ timeout: 240_000 })
     const payload = (await response.json()) as {
       ok?: boolean
       data?: Record<string, unknown>
@@ -251,7 +251,7 @@ async function mockMochiReadyForReview(page: Page): Promise<void> {
         return
       }
 
-      const response = await route.fetch()
+      const response = await route.fetch({ timeout: 240_000 })
       const payload = (await response.json()) as {
         ok?: boolean
         data?: Record<string, unknown>
@@ -302,6 +302,20 @@ async function mockMochiReadyForReview(page: Page): Promise<void> {
 
 /** Orders tied practice-member fixtures before the product page consumes them. */
 async function mockDeterministicPracticeMembers(page: Page): Promise<void> {
+  // The July fixture invitation is pending at the fixed browser instant even
+  // when the API runs months later. Preserve its dates and restore that state.
+  await page.route('**/api/v1/practices/*/invitations', async (route) => {
+    if (route.request().method() !== 'GET') return route.continue()
+    const response = await route.fetch({ timeout: 240_000 })
+    const payload = await response.json()
+    if (!payload.ok || !Array.isArray(payload.data)) {
+      throw new Error('Could not prepare the capture-time practice invitation')
+    }
+    for (const invitation of payload.data) {
+      if (invitation.email === 'taylor.nguyen@example.test') invitation.status = 'pending'
+    }
+    await route.fulfill({ response, json: payload })
+  })
   const roleOrder = new Map([
     ['owner', 0],
     ['veterinarian', 1],
@@ -315,7 +329,7 @@ async function mockDeterministicPracticeMembers(page: Page): Promise<void> {
       return
     }
 
-    const response = await route.fetch()
+    const response = await route.fetch({ timeout: 240_000 })
     const payload = (await response.json()) as {
       ok?: boolean
       data?: Array<{ role?: string; userName?: string }>
@@ -355,7 +369,7 @@ async function mockUnreadMessagesCount(page: Page, totalCount: number): Promise<
       return
     }
 
-    const response = await route.fetch()
+    const response = await route.fetch({ timeout: 240_000 })
     const payload = (await response.json()) as {
       ok?: boolean
       data?: {
@@ -414,7 +428,7 @@ test('navigation — global quick and meaning-based search', async ({ page }) =>
   await search.fill('Mochi')
 
   await expect(page.getByText('Quick matches', { exact: true })).toBeVisible()
-  await expect(page.getByText('Noctune Intelligence', { exact: true })).toBeVisible()
+  await expect(page.getByText('noctune intelligence', { exact: true })).toBeVisible()
   await expect(page.getByText(/Annual wellness visit\. Jamie reports Mochi/)).toBeVisible()
   await expect(
     page.getByText(/Healthy young adult cat, overdue for vaccine boosters/),
@@ -436,9 +450,9 @@ test('encounters — status filters and deterministic list', async ({ page }) =>
 test('encounters — New Encounter drawer', async ({ page }) => {
   const item = capture('encounters-new-encounter')
   await openEncounterDrawer(page, item.route)
-  await expect(page.getByText('Unlimited', { exact: true })).toBeVisible()
-  await expect(page.getByText('Pro', { exact: true })).toBeVisible()
-  await expect(page.getByPlaceholder('Select a template')).toHaveCount(2)
+  await expect(page.getByPlaceholder('Select a template')).toHaveCount(2, { timeout: 60_000 })
+  await expect(page.getByText('SOAP template', { exact: true })).toBeVisible()
+  await expect(page.getByText('Discharge template', { exact: true })).toBeVisible()
   await savePageScreenshot(page, item)
 })
 
@@ -450,6 +464,9 @@ test('encounters — active browser recording', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Stop' })).toBeVisible()
   await expect(page.getByLabel('Discard recording')).toBeVisible()
+  // Pause real recording motion so the screenshot can settle without changing the UI.
+  await page.getByRole('button', { name: 'Pause', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Resume', exact: true })).toBeVisible()
   await savePageScreenshot(page, item)
   await page.getByLabel('Discard recording').click()
 })
@@ -470,6 +487,21 @@ test('encounters — selected file queue', async ({ page }) => {
 
 test('encounters — processing after upload', async ({ page }) => {
   const item = capture('encounters-processing')
+  // This fixture represents an in-flight run at the fixed capture instant.
+  // Server-side stale-run detection otherwise compares its historical seed date
+  // with wall-clock time and correctly renders the recovery screen instead.
+  const id = item.route.split('/').at(-1)
+  await page.route(`**/api/v1/transcriptions/${id}`, async (route) => {
+    const response = await route.fetch({ timeout: 240_000 })
+    const payload = await response.json()
+    if (!payload.ok || payload.data?.status !== 'transcribing') {
+      throw new Error('Expected the seeded in-flight transcription')
+    }
+    await route.fulfill({
+      response,
+      json: { ...payload, data: { ...payload.data, staleRun: false, staleRetryStep: null } },
+    })
+  })
   await openProductPage(page, item.route)
   await expect(page.getByRole('heading', { name: 'Transcribing Your Recording' })).toBeVisible()
   await expect(page.getByText('Transcribing', { exact: true })).toBeVisible()
@@ -548,6 +580,10 @@ async function openTheoCollaborativeNote(page: Page, route: string): Promise<voi
 test('collaborative notes — section cards with locks and attribution', async ({ page }) => {
   const item = capture('collaborative-section-cards')
   await openTheoCollaborativeNote(page, item.route)
+  await page
+    .getByTestId('section-suggestion-objective')
+    .getByRole('button', { name: 'Hide suggestion' })
+    .click()
   await expect(page.getByTestId('section-card-assessment')).toContainText(
     'AI · from recording 2 (Dr. Riley Patel)',
   )
@@ -561,9 +597,9 @@ test('collaborative notes — suggestion for a locked section', async ({ page })
   const item = capture('collaborative-suggestion')
   await openTheoCollaborativeNote(page, item.route)
   const suggestion = page.getByTestId('section-suggestion-objective')
-  await expect(suggestion).toContainText('Suggested from recording 3 (Morgan Lee)')
-  await expect(suggestion.getByRole('button', { name: 'Insert' })).toBeVisible()
-  await expect(suggestion.getByRole('button', { name: 'Dismiss' })).toBeVisible()
+  await expect(suggestion).toHaveAttribute('aria-label', 'Suggested from recording 3 (Morgan Lee)')
+  await expect(suggestion.getByRole('button', { name: 'Add line' })).toBeVisible()
+  await expect(suggestion.getByRole('button', { name: 'Keep mine' })).toBeVisible()
   await page.getByTestId('section-card-objective').evaluate((element) => {
     element.scrollIntoView({ block: 'start' })
   })
@@ -581,8 +617,8 @@ test('collaborative notes — regenerate one section', async ({ page }) => {
     .fill('Keep it to the home-care steps')
   await page.getByTestId('section-regenerate-submit-plan').click()
   const proposal = page.getByTestId('section-proposal-plan')
-  await expect(proposal).toContainText('Suggested rewrite')
-  await expect(proposal.getByRole('button', { name: 'Accept' })).toBeVisible()
+  await expect(proposal).toHaveAttribute('aria-label', 'Suggested rewrite')
+  await expect(proposal.getByRole('button', { name: 'Apply rewrite' })).toBeVisible()
   await expect(proposal.getByRole('button', { name: 'Discard' })).toBeVisible()
   await plan.evaluate((element) => {
     element.scrollIntoView({ block: 'start' })
@@ -611,7 +647,7 @@ test('sentinel — encounter safety alert and retained markers', async ({ page }
   const item = capture('encounters-sentinel-alert')
   await openProductPage(page, item.route)
   await expect(page.getByText('Jasper', { exact: true }).first()).toBeVisible()
-  await expect(page.getByText(/Noctune Sentinel/)).toBeVisible()
+  await expect(page.getByText(/noctune sentinel/)).toBeVisible()
   await expect(page.getByText(/declining a recommended recheck/).first()).toBeVisible()
   await expect(page.getByText(/This encounter is preserved for you/)).toBeVisible()
   await savePageScreenshot(page, item)
@@ -630,6 +666,8 @@ test('encounters — complete and prepare discharge', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Completed', exact: true })).toBeVisible()
   await savePageScreenshot(page, completedItem)
 
+  await page.getByRole('tab', { name: 'Discharge Notes', exact: true }).click()
+  await expect(page.getByText(/Mochi’s examination was reassuring today/).first()).toBeVisible()
   await page.getByRole('button', { name: 'Send Email' }).click()
   await page.getByRole('menuitem', { name: /Send discharge notes/ }).click()
 
@@ -680,7 +718,7 @@ test('templates — markdown editor and preview', async ({ page }) => {
   await openProductPage(page, item.route)
   await expect(page.getByText('Northstar Wellness SOAP', { exact: true }).first()).toBeVisible()
   await expect(page.getByRole('tab', { name: 'Preview' })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Publish' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'More actions' })).toBeVisible()
   await savePageScreenshot(page, item)
 })
 
@@ -707,9 +745,9 @@ test('templates — custom-template dialog', async ({ page }) => {
 test('templates — custom discharge-template dialog', async ({ page }) => {
   const item = capture('templates-new-discharge')
   await openProductPage(page, item.route)
-  const dischargeTab = page.getByRole('tab', { name: 'Discharge Templates' })
+  const dischargeTab = page.getByRole('tab', { name: 'Discharge', exact: true })
   await expect(dischargeTab).toHaveAttribute('aria-selected', 'true')
-  await expect(page.getByPlaceholder('Search templates...')).toHaveValue('General Discharge')
+  await expect(page.getByRole('heading', { name: 'General Discharge', exact: true })).toBeVisible()
   await page.waitForLoadState('networkidle')
   await page.getByRole('button', { name: 'New Template' }).click()
   const dialog = page.getByRole('dialog')
@@ -870,14 +908,10 @@ async function openAnalyzedImport(page: Page, route: string): Promise<void> {
     'aria-selected',
     'true',
   )
-  await expect(
-    page.getByText('Imported from pasted text. Nothing is saved until you press Save Template.'),
-  ).toBeVisible()
+  await expect(page.getByText(/Imported draft · not saved yet/)).toBeVisible()
   await expect(page.getByRole('button', { name: 'View original paste' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Create discharge template' })).toBeVisible()
-  await expect(
-    page.getByText(/client-education block from your paste stays in this draft/),
-  ).toBeVisible()
+  await expect(page.locator('#template-content-editor')).toHaveValue(IMPORT_PASTE)
 }
 
 test('templates — import existing template paste', async ({ page }) => {
@@ -1031,9 +1065,10 @@ test('templates — publish confirmation', async ({ page }) => {
   await openProductPage(page, item.route)
   await expect(page.getByText('Northstar Wellness SOAP', { exact: true }).first()).toBeVisible()
   await page.waitForLoadState('networkidle')
-  await page.getByRole('button', { name: 'Publish' }).click()
+  await page.getByRole('button', { name: 'More actions' }).click()
+  await page.getByRole('menuitem', { name: 'Publish to community', exact: true }).click()
   const dialog = page.getByRole('dialog')
-  await expect(dialog.getByRole('heading', { name: 'Publish to community gallery?' })).toBeVisible()
+  await expect(dialog.getByRole('heading', { name: 'Publish to community?' })).toBeVisible()
   await dialog
     .getByLabel('Publisher notes')
     .fill('Designed for routine canine and feline wellness visits with evidence-only findings.')
@@ -1044,10 +1079,12 @@ test('templates — publish confirmation', async ({ page }) => {
 test('community — browse published templates', async ({ page }) => {
   const item = capture('community-browse')
   await openProductPage(page, item.route)
-  await expect(page.getByRole('heading', { name: 'Community Templates' })).toBeVisible()
-  await expect(page.getByText('Showing 3 templates')).toBeVisible()
-  await expect(page.getByText('Low-Stress Wellness Exam', { exact: true })).toBeVisible()
-  await expect(page.getByText('Clear Home-Care Instructions', { exact: true })).toBeVisible()
+  await expect(page.getByRole('tab', { name: 'Discover', exact: true })).toBeVisible()
+  await expect(page.getByRole('tab', { name: 'noctune templates', exact: true })).toBeVisible()
+  await expect(page.getByText('Low-Stress Wellness Exam', { exact: true }).first()).toBeVisible()
+  await expect(
+    page.getByText('Clear Home-Care Instructions', { exact: true }).first(),
+  ).toBeVisible()
   await savePageScreenshot(page, item)
 })
 
@@ -1055,8 +1092,10 @@ test('community — template detail and duplicate action', async ({ page }) => {
   const item = capture('community-detail')
   await openProductPage(page, item.route)
   await expect(page.getByText('Low-Stress Wellness Exam', { exact: true }).first()).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Duplicate' })).toBeVisible()
-  await expect(page.getByLabel('Likes: 3')).toBeVisible()
+  await expect(
+    page.getByRole('button', { name: 'Add Low-Stress Wellness Exam to…', exact: true }),
+  ).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Unlike', exact: true })).toBeVisible()
   await expect(page.getByRole('tab', { name: 'Preview' })).toBeVisible()
   await savePageScreenshot(page, item)
 })
@@ -1064,9 +1103,7 @@ test('community — template detail and duplicate action', async ({ page }) => {
 test('community — threaded notes from other vets', async ({ page }) => {
   const item = capture('community-notes')
   await openProductPage(page, item.route)
-  const heading = page.getByText('Notes from other vets', { exact: true })
-  await expect(heading).toBeAttached()
-  await heading.evaluate((element) => element.scrollIntoView({ block: 'start' }))
+  await page.getByRole('tab', { name: /^Questions/ }).click()
   const notes = page.locator('#community-template-notes')
   await expect(notes.getByText(/evidence-only objective instructions/)).toBeVisible()
   await expect(notes.getByText(/mobility and cognition subsection/)).toBeVisible()
@@ -1083,8 +1120,7 @@ test('community — threaded notes from other vets', async ({ page }) => {
 test('community — report dialog', async ({ page }) => {
   const item = capture('community-report')
   await openProductPage(page, item.route)
-  await page.getByRole('button', { name: 'More' }).click()
-  await page.getByRole('menuitem', { name: 'Report' }).click()
+  await page.getByRole('button', { name: 'Report this template', exact: true }).click()
   const dialog = page.getByRole('dialog')
   await expect(dialog.getByRole('heading', { name: 'Report this template' })).toBeVisible()
   await expect(dialog.getByText('Prompt injection', { exact: true })).toBeVisible()
@@ -1109,9 +1145,12 @@ test('messages — Nest inbox with encounter context', async ({ page }) => {
   const item = capture('messages-inbox')
   await mockUnreadMessagesCount(page, 2)
   await openProductPage(page, item.route)
+  await expect(page.getByTestId('inbox-switcher-personal')).toBeVisible()
+  await expect(page.getByTestId('inbox-switcher-practice')).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Messages' })).toBeVisible()
   await expect(page.getByTestId('conversation-subject')).toHaveText(
     'Mochi is eating normally again',
+    { timeout: 180_000 },
   )
   await expect(
     page
@@ -1128,10 +1167,11 @@ test('messages — composer with reply-routing choices', async ({ page }) => {
   await page.getByRole('button', { name: 'New Message' }).click()
   const dialog = page.getByRole('dialog')
   await expect(dialog.getByRole('heading', { name: 'New message' })).toBeVisible()
-  await dialog.getByRole('button', { name: 'Change' }).click()
-  await expect(page.getByText('Noctune Nest', { exact: true })).toBeVisible()
-  await expect(page.getByText('Noctune (no reply)', { exact: true })).toBeVisible()
-  await expect(page.getByText('Your personal email', { exact: true })).toBeVisible()
+  // The global composer loads inbox choices on its first open.
+  await expect(dialog.getByRole('combobox', { name: 'From' })).toBeVisible()
+  await dialog.getByRole('combobox', { name: 'From' }).click()
+  await expect(page.getByTestId('inbox-from-practice')).toBeVisible()
+  await expect(page.getByTestId('inbox-from-personal')).toBeVisible()
   await page.waitForLoadState('networkidle')
   await savePageScreenshot(page, item)
 })
@@ -1157,7 +1197,10 @@ test('practice — plan, team, and pending invitation', async ({ page }) => {
   await mockDeterministicPracticeMembers(page)
   await openProductPage(page, item.route)
   await expect(page.getByText('Northstar Veterinary Clinic', { exact: true })).toBeVisible()
-  await expect(page.getByText('Active members', { exact: true })).toBeVisible()
+  await expect(page.getByText('Team', { exact: true })).toBeVisible()
+  await expect(
+    page.getByText('3 paid seats · 2 in use · 1 reserved', { exact: true }),
+  ).toBeVisible()
   await expect(page.getByText('Dr. Riley Patel', { exact: true })).toBeVisible()
   await expect(page.getByText('taylor.nguyen@example.test', { exact: true })).toBeVisible()
   await savePageScreenshot(page, item)
@@ -1196,7 +1239,7 @@ test('settings — Pro plan, add-ons, and usage', async ({ page }) => {
   await openProductPage(page, item.route)
   await expect(page.getByText('Current plan', { exact: true })).toBeVisible()
   await expect(page.getByText('Pro', { exact: true }).first()).toBeVisible()
-  await expect(page.getByText('Noctune Nest', { exact: true }).first()).toBeVisible()
+  await expect(page.getByText('noctune nest', { exact: true }).first()).toBeVisible()
   await expect(page.getByText('Long-term storage', { exact: true }).first()).toBeVisible()
   await expect(page.getByText('SOAP note · Mochi', { exact: true })).toBeVisible()
   await savePageScreenshot(page, item)

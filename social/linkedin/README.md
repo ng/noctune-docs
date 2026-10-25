@@ -1,3 +1,9 @@
+---
+type: Social Post
+title: LinkedIn posts for the tutorial series
+description: Guidance for linkedIn posts for the tutorial series.
+---
+
 # LinkedIn posts for the tutorial series
 
 One post accompanies each tutorial video in [the series plan](../../tutorials/series-plan.md).
@@ -54,3 +60,7 @@ replying to commenters. Copy the text inside each code block exactly; line break
 3. State one limit or caution honestly (for example, that the draft needs clinical review).
 4. End with one specific question. Save other questions for the first-hour replies.
 5. Use lowercase `noctune` and fictional patients only.
+
+## Next week: section locks and inboxes
+
+[Keep the reviewed parts of the note](12-locked-sections-and-inboxes.md) is the draft for October 27, 2026, with a current screenshot sequence and first comment.

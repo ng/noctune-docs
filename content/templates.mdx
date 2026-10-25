@@ -1,5 +1,14 @@
 ---
 title: Templates
+type: User Guide
+description: Shape how noctune writes your SOAP notes and discharge instructions.
+sources:
+  - id: core-1
+    resource: https://github.com/ng/noctune-core/blob/33734aea/src/components/soap-templates/SoapTemplateClientPage.tsx
+  - id: core-2
+    resource: https://github.com/ng/noctune-core/blob/33734aea/src/components/soap-templates/TemplateEditorHeader.tsx
+  - id: core-3
+    resource: https://github.com/ng/noctune-core/blob/33734aea/src/lib/templates/ownership.ts
 ---
 
 # Shape how noctune writes your SOAP notes and discharge instructions
@@ -8,11 +17,11 @@ SOAP and discharge templates tell noctune how to structure generated notes. The 
 
 <TutorialVideo id="templates" />
 
-Use the tabs at the top to switch template types. System templates are maintained by noctune and open read-only. Custom templates belong to you and can be edited, saved, set as the default, published, or deleted. The selector groups **My Templates** and **System Templates** and marks defaults and published templates where applicable.
+Use the tabs at the top to switch template types. System templates are maintained by noctune and open read-only. Personal templates belong to you; practice templates are shared with your active practice. Owners and admins manage practice templates, while other members can use them or duplicate one into **My templates**. The searchable library groups **My templates**, practice templates when you belong to a practice, and **System** templates. It marks your default and the practice default separately. Select a template to open its editor.
 
 <BrowserFrame
   src="/screenshots/templates/editor.webp"
-  alt="noctune SOAP template editor with markdown instructions, live preview, template selector, Publish, Set Default, Delete, and Save controls"
+  alt="noctune SOAP template editor with markdown instructions, live preview, searchable template library, personal and practice default actions and Save controls"
   url="app.noctune.ai/templates"
 />
 
@@ -26,7 +35,7 @@ SOAP templates structure the internal medical record: the clinician-facing note 
 
 ## Discharge templates \[#discharge-templates]
 
-Discharge templates structure the client-facing summary generated from an encounter. Put patient-specific home care, medication directions, warnings, follow-up, and recheck instructions here. noctune uses this content when you choose **Send Discharge**.
+Discharge templates structure the client-facing summary generated from an encounter. Put patient-specific home care, medication directions, warnings, follow-up, and recheck instructions here. noctune uses this content when you choose **Send Email → Send discharge notes**.
 
 **[Open Discharge Templates in noctune →](https://app.noctune.ai/templates/discharge)**
 
@@ -34,11 +43,11 @@ Discharge templates structure the client-facing summary generated from an encoun
 
 Think of these as the chart, the take-home plan, and the reusable handout:
 
-| Use                    | What belongs there                                                                                                                                              |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **SOAP Template**      | The internal medical-record structure: Subjective, Objective, Assessment, Plan, and a concise record of Client Communications.                                  |
-| **Discharge Template** | Personalized home care, medication directions, warnings, follow-up, and recheck instructions. noctune uses this content when you choose **Send Discharge**.     |
-| **Email Template**     | Reusable delivery or cover messages and client education, such as diet guidance, reminders, greetings, and signatures. See [Email Templates](/email-templates). |
+| Use                    | What belongs there                                                                                                                                                             |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **SOAP Template**      | The internal medical-record structure: Subjective, Objective, Assessment, Plan, and a concise record of Client Communications.                                                 |
+| **Discharge Template** | Personalized home care, medication directions, warnings, follow-up, and recheck instructions. noctune uses this content when you choose **Send Email → Send discharge notes**. |
+| **Email Template**     | Reusable delivery or cover messages and client education, such as diet guidance, reminders, greetings, and signatures. See [Email Templates](/email-templates).                |
 
 In this workflow, client literature means reusable education rather than a separate template type. Keep it in an Email Template so you can reuse it without adding the same material to every clinical note or discharge summary.
 
@@ -46,7 +55,7 @@ One large imported template can be saved as a SOAP or discharge template if it p
 
 ## Create a custom template
 
-First select **SOAP Templates** or **Discharge Templates**; the active tab determines the new template's type. Choose **New Template**, name it, and choose one of the three starting-point tiles:
+First select **SOAP** or **Discharge**; the active tab determines the new template's type. Choose **New Template**, name it, and choose one of the three starting-point tiles:
 
 - **Copy a template** creates an editable copy. This is the default, with a noctune starter preselected; use **Copy from** to choose one of **My Templates** or **noctune Starters** instead.
 - **Blank** opens an empty, unsaved draft.
@@ -58,11 +67,11 @@ First select **SOAP Templates** or **Discharge Templates**; the active tab deter
   url="app.noctune.ai/templates/soap"
 />
 
-The discharge workflow uses the same creation dialog, but starts from the active **Discharge Templates** tab and offers discharge templates as starting points.
+The discharge workflow uses the same creation dialog, but starts from the active **Discharge** tab and offers discharge templates as starting points.
 
 <BrowserFrame
   src="/screenshots/templates/new-discharge-template.webp"
-  alt="Create a custom discharge template dialog with the Discharge Templates tab selected and Copy a template active"
+  alt="Create a custom discharge template dialog with the Discharge tab selected and Copy a template active"
   url="app.noctune.ai/templates/discharge"
 />
 
@@ -82,7 +91,7 @@ noctune analyzes the paste's structure without rewriting it, then opens the comp
 
 ### Review organizer suggestions \[#review-an-imported-template]
 
-After **Organize this**, the right pane stays on **Preview**. An import banner above the editor identifies the draft as pasted text, keeps **View original paste** available, and reminds you that the current imported template is unsaved. The separate **Review** pane remains dedicated to quality-review text suggestions.
+After **Organize this**, the right pane stays on **Preview**. The header identifies an **Imported draft · not saved yet** and keeps **View original** available. The import banner above the editor contains the organizer’s findings and split actions. The separate **Review** pane remains dedicated to quality-review text suggestions.
 
 If noctune finds content that belongs in another template, the banner shows a suggestion with its proposed name and reason. The current editor retains the full paste until you approve that suggestion.
 
@@ -129,7 +138,7 @@ This guidance is different from the resolved merge fields in [Email Templates](/
 
 ## Review template quality
 
-Choose **Save Template** after making changes. A valid custom template saves first, and then noctune automatically runs a quality review. You can also open **Review** and choose **Review Template** whenever you want a fresh review. The reviewer looks for sample values, missing sections, weak structure, unclear guidance, and clinical prompting best practices.
+Choose **Save** after making changes. A valid custom template saves first, and then noctune automatically runs a quality review. You can also open **Review** and choose **Review Template** whenever you want a fresh review. The reviewer looks for sample values, missing sections, weak structure, unclear guidance, and clinical prompting best practices.
 
 If a template cannot be saved, the editor identifies the affected field and gives the specific reason instead of showing only **Validation failed**. Template content has a hard limit of 50,000 characters. If your template is longer, separate the SOAP chart, discharge instructions, and reusable client education or email content.
 
@@ -155,15 +164,23 @@ After you apply one suggestion or edit the draft manually, **Fix All** disables 
 
 The reviewer may recommend moving substantial discharge content out of a SOAP template, internal charting out of a discharge template, or evergreen client education into an Email Template. These are text recommendations only; use the separate import proposal actions to create another template.
 
-Review the changed preview, then choose **Save Template** again to persist applied fixes. New encounters use the saved content, while existing notes are not rewritten.
+Review the changed preview, then choose **Save** again to persist applied fixes. New encounters use the saved content, while existing notes are not rewritten.
 
 ## Set the default
 
-Choose **Set Default** on the template you want preselected for new encounters. SOAP and discharge defaults are independent. The default does not change existing encounters.
+Choose **Set as my default** on a saved template to preselect it for your new encounters. SOAP and discharge defaults are independent. Your personal choice takes precedence over the active practice default; otherwise noctune uses the practice default, then the system default. Existing encounters keep their templates.
+
+Owners and admins can choose **Share with practice** on a saved personal template to create a separate practice copy. Save pending changes first. They can edit that shared copy and choose **Set as practice default** for the team. Sharing does not publish the template to the community or keep the two copies synchronized.
+
+## Templates and locked note sections
+
+Templates guide generation; section locks protect text in an encounter that you have already reviewed. Editing a SOAP section locks it automatically, and the padlock can protect a section without changing it. Later audio and regeneration update unlocked sections. Proposed changes to locked sections appear as suggestions for review.
+
+Once a note has edits or locks, regeneration keeps its current SOAP and discharge templates. Changing a library template or a default does not rewrite that note. See [Collaborative Notes](/encounters/collaborative-notes) for applying suggestions, **Keep mine**, unlocking permissions, and regenerating a single section.
 
 ## Publish to the community
 
-Owners of saved custom templates can choose **Publish**. The confirmation explains that every noctune user will be able to preview, duplicate, and report the template. Add optional notes to tell other clinicians what the template is for.
+Owners of saved custom templates can choose **More actions → Publish to community**. The confirmation explains that every noctune user will be able to preview, duplicate, and report the template. Add optional notes to tell other clinicians what the template is for.
 
 <BrowserFrame
   src="/screenshots/templates/publish.webp"
@@ -171,7 +188,7 @@ Owners of saved custom templates can choose **Publish**. The confirmation explai
   url="app.noctune.ai/templates"
 />
 
-Remove patient information, client names, and internal-only instructions before publishing. Publishing is reversible with **Unpublish**; clinicians who already duplicated the template keep their copies.
+Remove patient information, client names, and internal-only instructions before publishing. Publishing is reversible with **More actions → Unpublish from community**; clinicians who already duplicated the template keep their copies.
 
 ## Write reliable clinical instructions
 
@@ -268,4 +285,4 @@ template is a worked example of this pattern.
 
 ## Use a community template
 
-The [Community Template Library](/community) contains published templates from other clinicians. Choose **Duplicate** on a detail page to create your own editable copy; the published original stays unchanged.
+The [Community Template Library](/community) contains published templates from other clinicians. Choose **Add to… → My templates** on a detail page to create your own editable copy; the published original stays unchanged.
