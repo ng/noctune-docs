@@ -508,6 +508,38 @@ the same local fixture as the `docs-capture/` keys. Opening an encounter from th
 several seconds in the capture server even with the route compiled, so `patient-profile` ends on
 about 1.7 seconds of the encounter loading before the next scene opens it.
 
+## Section locks (episode 12)
+
+Web only. Behavior was checked against Core `SoapSectionCard`, `useSectionEditor`,
+`lib/soap/section-edit.ts`, and the section regenerate route: saving a section auto-locks it to
+the editor ("Locked · edited by …"), Regenerate appears only on unlocked SOAP sections, and a
+rewrite is a proposal until **Apply rewrite**, which saves it as an edit and locks that section.
+Shots work on the reserved tutorial note: `locks-review` (hover Edit, Lock, and Regenerate on
+Objective), `locks-edit` (Edit on Objective, change "stable" to "up slightly", the episode 3
+transcript-backed correction, then Save), and `locks-regenerate` (the same correction saved in
+`ready`, before the in-point; then Regenerate on Plan with "Make it a short list", review, and
+**Apply rewrite**). Each `reset` restores the tutorial note's text, section state, suggestions,
+and revision from Mochi's seeded note; shots that save also `restore` it afterwards, so the
+shared database ends unlocked.
+
+The capture server's deterministic model (`E2E_FAKES`) answers every section rewrite with another
+fixture's vomiting plan. The regenerate shot lets the real route check access and the lock, then
+replaces only the model's text with Mochi's plan split into a list, wording unchanged, and labels
+the scene "rewrite simulated". Applying it uses the real save. Lock labels show the capture's
+real save time (for example "Oct 26, 10:26 PM"), not the fixture visit date. The closing scene is
+the existing `templates/practice-template-locked.webp` still of a practice member's read-only view.
+
+The reserved tutorial note is `…390`. It was `…309` until Core's seeder took that ID for Theo's
+second note version; the runner then reactivated Theo's v2 and left Mochi without an active note.
+The runner now refuses to activate a note on another encounter.
+
+```sh
+pnpm tutorials:capture-web /absolute/path/to/noctune-docs /absolute/path/to/noctune-core \
+  .tutorial-output/web-locks locks-review,locks-edit,locks-regenerate
+pnpm tutorials:prepare-media tutorials/locked-sections-web.json .tutorial-output/web-locks \
+  .tutorial-output/locked-sections-web/prepared
+```
+
 ## Publishing to the docs
 
 Reviewed videos are served from `https://docs-media.noctune.ai`, a dedicated S3

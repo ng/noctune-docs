@@ -13,7 +13,7 @@ import {
   requireLoopbackBaseUrl,
 } from '../../capture/support/capture-safety.mjs'
 import { withStagedOutput } from './staged-output.mjs'
-import { shots as registry } from './web-shots.mjs'
+import { MOCHI, MOCHI_NOTE, TUTORIAL_NOTE, resetNote, shots as registry } from './web-shots.mjs'
 import { locateReadyFrame } from './video-timing.mjs'
 
 const [
@@ -107,12 +107,12 @@ try {
     // from the original fictional note rather than rewriting generated content.
     await sql.begin(async (tx) => {
       await tx`update soap_notes set is_active = false where transcription_id = 'd0c50000-0000-4000-8000-000000000201' and is_active = true`
-      await tx`insert into soap_notes select (jsonb_populate_record(null::soap_notes, to_jsonb(n) || jsonb_build_object('id', 'd0c50000-0000-4000-8000-000000000309', 'version', 2, 'parent_note_id', n.id, 'is_active', true, 'content_blocks', ${tx.json(blocks)}::jsonb))).* from soap_notes n where n.id = 'd0c50000-0000-4000-8000-000000000301' on conflict (id) do update set is_active = true`
+      const [copy] =
+        await tx`insert into soap_notes select (jsonb_populate_record(null::soap_notes, to_jsonb(n) || jsonb_build_object('id', ${TUTORIAL_NOTE}::text, 'version', 2, 'parent_note_id', n.id, 'is_active', true, 'content_blocks', ${tx.json(blocks)}::jsonb))).* from soap_notes n where n.id = ${MOCHI_NOTE} on conflict (id) do update set is_active = true where soap_notes.transcription_id = ${MOCHI} returning id`
+      // Never activate another encounter's note that happens to hold the ID.
+      if (!copy) throw Error('Reserved tutorial note ID belongs to another encounter')
     })
-    if (shots.some((id) => registry[id].resetsNote)) {
-      await sql`update soap_notes n set rendered_markdown = original.rendered_markdown, edit_metadata = null, updated_at = original.updated_at from soap_notes original where n.id = 'd0c50000-0000-4000-8000-000000000309' and original.id = 'd0c50000-0000-4000-8000-000000000301'`
-      await sql`update transcriptions set finished_at = null, finished_by = null, finish_method = null where id = 'd0c50000-0000-4000-8000-000000000201'`
-    }
+    if (shots.some((id) => registry[id].resetsNote)) await resetNote(sql)
     // Native capture uploads leave queued, never-processed encounters on reserved
     // patients. Remove only those so lists show the reserved fictional visits.
     strayEncounters = (
@@ -292,6 +292,7 @@ try {
       await wait(Math.max(1000, (begin + duration + 1) * 1000 - (performance.now() - started)))
       await page.screenshot({ path: path.join(stage, `${id}-poster.png`) })
       await context.close()
+      if (shot.restore) await shot.restore(db, ctx)
       const rawPath = await video.path()
       const rawDuration = Number(
         execFileSync(

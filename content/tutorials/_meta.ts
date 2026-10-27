@@ -10,4 +10,5 @@ export default {
   'email-templates': 'Email templates',
   sentinel: 'Sentinel',
   'patients-history': 'Patients and history',
+  'locked-sections': 'Section locks',
 }
