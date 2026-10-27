@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "title": "Section locks in noctune — web",
+  "kicker": "SECTION LOCKS",
+  "tagline": "Keep the parts you've reviewed.",
+  "scenes": [
+    {
+      "id": "locks-review",
+      "platform": "web",
+      "headline": ["One card", "per section."],
+      "start": 2,
+      "narration": "This video covers section locks. noctune drafts the note as one card per section. Each card has its own buttons to edit, lock, or regenerate it. Review the draft against the recording before you change anything."
+    },
+    {
+      "id": "locks-edit",
+      "platform": "web",
+      "headline": ["Edit it,", "and it locks."],
+      "narration": "To fix one section, choose Edit on its card. The recording says her weight is up a touch, so change stable to up slightly, and choose Save. The section locks automatically, and its label shows who edited it, and when."
+    },
+    {
+      "id": "locks-regenerate",
+      "platform": "web",
+      "headline": ["Regenerate what's", "still unlocked."],
+      "start": 1,
+      "narration": "Locked sections have no Regenerate button, so new recordings and regenerations can't change them. On an unlocked section, choose Regenerate, and add an instruction if you like. noctune shows the rewrite before anything changes. Removed text is crossed out, and new lines are highlighted. Choose Apply rewrite, and that section locks too. Or choose Discard to leave it as it was."
+    },
+    {
+      "id": "practice-templates",
+      "platform": "web",
+      "headline": ["Practice templates,", "locked too."],
+      "source": "templates/practice-template-locked.webp",
+      "disclosure": "Practice member's view",
+      "narration": "Practice templates are locked too. Owners and admins edit them and set the practice default. Everyone else can use them, set one as their default, or duplicate it to My templates to make their own version. Locks protect your reviewed work, but every note still needs your clinical review."
+    }
+  ]
+}

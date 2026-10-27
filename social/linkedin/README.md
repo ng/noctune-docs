@@ -25,6 +25,7 @@ the next person.
 | 9   | [Messages](09-messages.md)                               | Web captioned MP4                      |
 | 10  | [Email templates](10-email-templates.md)                 | Web captioned MP4                      |
 | 11  | [Patients and history](11-patients-history.md)           | Web captioned MP4 (iPhone history)     |
+| 12  | [Section locks](12-locked-sections-and-inboxes.md)       | Web captioned MP4                      |
 
 Each file contains the post, a first comment carrying the docs link, and extra questions for
 replying to commenters. Copy the text inside each code block exactly; line breaks are deliberate.

@@ -10,6 +10,8 @@
 
 - [Video Tutorials](overview.md) - Watch noctune in short walkthroughs.
 
+- [Section locks](locked-sections.md) - Keep the parts of the note you've already reviewed.
+
 - [Messages](messages.md) - Work through client replies, one visit at a time.
 
 - [Patients and history](patients-history.md) - See a patient's whole history before you decide.
