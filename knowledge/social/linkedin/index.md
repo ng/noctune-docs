@@ -22,6 +22,6 @@
 
 - [11. Patients and history](11-patients-history.md) - Guidance for 11. Patients and history.
 
-- [Keep the reviewed parts of the note](12-locked-sections-and-inboxes.md) - LinkedIn draft for the week of October 26, 2026, showing section locks and team follow-up.
+- [Keep the reviewed parts of the note](12-locked-sections-and-inboxes.md) - LinkedIn draft for the week of October 26, 2026, showing how technicians and veterinarians build one note through the day without losing each other's edits.
 
 - [LinkedIn posts for the tutorial series](README.md) - Guidance for linkedIn posts for the tutorial series.
