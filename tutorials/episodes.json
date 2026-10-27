@@ -258,8 +258,9 @@
       "output": ".tutorial-output/locked-sections-web",
       "post": "social/linkedin/12-locked-sections-and-inboxes.md",
       "review": {
-        "framesChecked": false,
-        "listened": false
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
       }
     }
   ]

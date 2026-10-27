@@ -196,6 +196,20 @@
       "width": 1920,
       "height": 1080,
       "listenedBy": "Jonathan Ng"
+    },
+    "locked-sections-web": {
+      "title": "Section locks — web",
+      "platform": "web",
+      "series": 12,
+      "url": "https://docs-media.noctune.ai/assets/61fa8e4f2dea96892257397dae2a348342c2fc1bf45a92c995451bf17ac8ac49/locked-sections-web.mp4",
+      "sha256": "61fa8e4f2dea96892257397dae2a348342c2fc1bf45a92c995451bf17ac8ac49",
+      "bytes": 3482246,
+      "poster": "https://docs-media.noctune.ai/assets/6312df9d2c48ebccde077ae857b95778bb89c13d8e890982b8e3fcf32076bc0c/locked-sections-web.jpg",
+      "captions": "/tutorials/locked-sections-web.vtt",
+      "duration": 68.1,
+      "width": 1920,
+      "height": 1080,
+      "listenedBy": "Jonathan Ng"
     }
   }
 }
