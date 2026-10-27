@@ -10,6 +10,6 @@ Edit one section of the SOAP note and it locks, so new recordings and regenerati
 
 ## On the web
 
-Tutorial video (locked-sections-web) is not yet published.
+[Video: Section locks — web](https://docs-media.noctune.ai/assets/61fa8e4f2dea96892257397dae2a348342c2fc1bf45a92c995451bf17ac8ac49/locked-sections-web.mp4)
 
 Section editing, locks, and single-section regeneration are covered in full in [Collaborative Notes](../encounters/collaborative-notes.md). Practice templates are described in [Templates](../templates.md#practice-templates).

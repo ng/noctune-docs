@@ -19,6 +19,8 @@ sources:
 
 A busy appointment rarely has one author. A technician takes the history, the veterinarian examines the patient, and the technician comes back later with treatments and discharge instructions. In noctune, everyone in the practice can add to the same note while it stays one clear record. Edits you make are protected, and later recordings can't quietly undo them.
 
+[Video: Section locks — web](https://docs-media.noctune.ai/assets/61fa8e4f2dea96892257397dae2a348342c2fc1bf45a92c995451bf17ac8ac49/locked-sections-web.mp4)
+
 Here is how a typical visit comes together:
 
 1. **The technician records the history.** noctune drafts the note. The technician fixes a detail in **Subjective**, which locks that section to protect the change.
