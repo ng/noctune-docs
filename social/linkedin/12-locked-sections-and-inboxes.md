@@ -28,6 +28,8 @@ You can also lock a section without editing it, or regenerate one unlocked SOAP 
 
 Templates set the structure. Section locks protect the reviewed text in that visit. The final note still needs your clinical review.
 
+Practice templates are locked too. Owners and admins set the clinic's standard; everyone else can use it, make it their default, or duplicate it to adapt their own version.
+
 And when the visit turns into follow-up, Messages now brings together your personal noctune inbox and the practice inbox. Personal mail stays private; practice conversations are shared with the team. You choose when to move a personal thread into the practice.
 
 Where does your team most often hand off the note: after intake, after the exam, or after treatment?
@@ -51,19 +53,21 @@ Use the original PNG exports from the regenerated synthetic product captures, in
 
 1. [Section cards](assets/2026-10-27/collaborative-section-cards.png): a technician's locked history, the veterinarian's locked exam, and the remaining AI sections.
 2. [Suggestion](assets/2026-10-27/collaborative-suggestion.png): proposed new information beside the locked section with Add line and Keep mine.
-3. [Messages](assets/2026-10-27/messages-inbox.png): the practice and personal inbox switcher.
+3. [Locked practice template](assets/2026-10-27/templates-practice-locked.png): a practice member's read-only view, with the padlock note that only owners and admins can edit.
+4. [Messages](assets/2026-10-27/messages-inbox.png): the practice and personal inbox switcher.
 
 The images use synthetic capture data. The existing tutorial videos predate the inbox and template-library redesign; use these current screenshots for this post.
 
-Suggested image alt text: “Synthetic noctune encounter showing individually locked SOAP sections and a proposed update for clinician review.” For the inbox image: “noctune Messages with separate personal and practice inbox scopes.”
+Suggested image alt text: “Synthetic noctune encounter showing individually locked SOAP sections and a proposed update for clinician review.” For the template image: “noctune practice template open read-only for a practice member, with a note that only owners and admins can edit it.” For the inbox image: “noctune Messages with separate personal and practice inbox scopes.”
 
 ## Source checks
 
 - [Collaborative notes](../../content/encounters/collaborative-notes.mdx)
 - [Templates and locked note sections](../../content/templates.mdx)
+- [Practice templates](../../content/templates.mdx#practice-templates)
 - [Messages and moving a conversation](../../content/messages.mdx)
 
-These behaviors were checked against noctune Core develop revision `33734aea`. Recheck the deployed app and the linked documentation before posting next week.
+These behaviors were checked against noctune Core develop revision `33734aea`; the practice-template lock was checked against develop revision `96542a95`. Recheck the deployed app and the linked documentation before posting next week.
 
 ## Reproduce the image exports
 

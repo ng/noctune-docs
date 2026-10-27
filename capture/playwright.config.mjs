@@ -61,6 +61,7 @@ const childEnv = {
 }
 const authStatePath = path.join(docsRoot, '.capture/auth/user.json')
 const termsAuthStatePath = path.join(docsRoot, '.capture/auth/terms-user.json')
+const memberAuthStatePath = path.join(docsRoot, '.capture/auth/member-user.json')
 const deterministicChromiumArgs = ['--disable-gpu', '--font-render-hinting=none']
 
 export default defineConfig({
@@ -125,6 +126,21 @@ export default defineConfig({
       dependencies: ['terms-auth-setup'],
       use: {
         storageState: termsAuthStatePath,
+      },
+    },
+    {
+      name: 'member-auth-setup',
+      testMatch: /\/member-auth\.setup\.ts$/,
+      // Signing in syncs Riley's app email from auth, so capture the owner's
+      // team views with the fixture email first.
+      dependencies: ['authenticated'],
+    },
+    {
+      name: 'member-authenticated',
+      testMatch: /\/member-authenticated\.spec\.ts$/,
+      dependencies: ['member-auth-setup'],
+      use: {
+        storageState: memberAuthStatePath,
       },
     },
   ],

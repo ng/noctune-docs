@@ -722,6 +722,16 @@ test('templates — markdown editor and preview', async ({ page }) => {
   await savePageScreenshot(page, item)
 })
 
+test('templates — practice template managed by an owner', async ({ page }) => {
+  const item = capture('templates-practice')
+  await openProductPage(page, item.route)
+  await expect(page.getByText('Wellness & Vaccine Visit', { exact: true }).first()).toBeVisible()
+  await expect(page.getByText(/^Practice template/)).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Practice default', exact: true })).toBeDisabled()
+  await expect(page.getByRole('tab', { name: 'Preview' })).toBeVisible()
+  await savePageScreenshot(page, item)
+})
+
 test('templates — custom-template dialog', async ({ page }) => {
   const item = capture('templates-new')
   await openProductPage(page, item.route)
@@ -747,7 +757,10 @@ test('templates — custom discharge-template dialog', async ({ page }) => {
   await openProductPage(page, item.route)
   const dischargeTab = page.getByRole('tab', { name: 'Discharge', exact: true })
   await expect(dischargeTab).toHaveAttribute('aria-selected', 'true')
-  await expect(page.getByRole('heading', { name: 'General Discharge', exact: true })).toBeVisible()
+  // The seeded practice discharge default opens before the system starter.
+  await expect(
+    page.getByRole('heading', { name: 'Client Visit Summary', exact: true }),
+  ).toBeVisible()
   await page.waitForLoadState('networkidle')
   await page.getByRole('button', { name: 'New Template' }).click()
   const dialog = page.getByRole('dialog')
