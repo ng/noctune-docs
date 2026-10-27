@@ -6,6 +6,11 @@ import { expect } from '@playwright/test'
 import { installUploadFixture } from './web-upload-fixture.mjs'
 
 export const MOCHI = 'd0c50000-0000-4000-8000-000000000201'
+// Mochi's seeded note, and the reserved tutorial version the runner copies from
+// it. The tutorial ID must stay outside the seeder's notes: Core's seeder uses
+// …309 for Theo's second version.
+export const MOCHI_NOTE = 'd0c50000-0000-4000-8000-000000000301'
+export const TUTORIAL_NOTE = 'd0c50000-0000-4000-8000-000000000390'
 const MOCHI_REPLY = 'd0c50000-0000-4000-8000-000000000501'
 const encounter = (id = MOCHI) => `/encounters/${id}`
 
@@ -35,10 +40,13 @@ async function noteReady(page) {
 const uploadDisclosure = 'Demo upload · cloud services simulated'
 
 // Restore the reserved tutorial note and reopen the encounter before a shot
-// that edits or completes it, so every take starts from the same draft.
-async function resetNote(db) {
-  await db`update soap_notes n set rendered_markdown = original.rendered_markdown, edit_metadata = null, updated_at = original.updated_at from soap_notes original where n.id = 'd0c50000-0000-4000-8000-000000000309' and original.id = 'd0c50000-0000-4000-8000-000000000301'`
+// that edits or completes it, so every take starts from the same draft. Saving
+// a section locks it and bumps the revision, so restore those with the text.
+export async function resetNote(db) {
+  const rows =
+    await db`update soap_notes n set rendered_markdown = original.rendered_markdown, discharge_markdown = original.discharge_markdown, edit_metadata = null, section_state = original.section_state, pending_suggestions = original.pending_suggestions, revision = original.revision, is_accepted = original.is_accepted, accepted_at = original.accepted_at, updated_at = original.updated_at from soap_notes original where n.id = ${TUTORIAL_NOTE} and n.transcription_id = ${MOCHI} and original.id = ${MOCHI_NOTE} returning n.id`
   await db`update transcriptions set finished_at = null, finished_by = null, finish_method = null where id = ${MOCHI}`
+  return rows.length === 1
 }
 
 // Remove templates the reserved capture user created in earlier takes (copies,

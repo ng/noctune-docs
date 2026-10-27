@@ -10,6 +10,7 @@ import {
   assertCaptureDatabase,
   parseCaptureDatabaseAllowlist,
 } from '../../capture/support/capture-safety.mjs'
+import { resetNote } from './web-shots.mjs'
 
 const [configRootArg, coreArg] = process.argv.slice(2)
 if (!configRootArg || !coreArg)
@@ -31,10 +32,8 @@ const sql = createRequire(path.join(path.resolve(coreArg), 'package.json'))('pos
   { max: 1 },
 )
 try {
-  const [note] =
-    await sql`update soap_notes n set rendered_markdown = original.rendered_markdown, edit_metadata = null, updated_at = original.updated_at from soap_notes original where n.id = 'd0c50000-0000-4000-8000-000000000309' and original.id = 'd0c50000-0000-4000-8000-000000000301' returning n.id`
-  await sql`update transcriptions set finished_at = null, finished_by = null, finish_method = null where id = 'd0c50000-0000-4000-8000-000000000201'`
-  if (!note) throw Error('Reserved tutorial note is missing; run a web capture first')
+  if (!(await resetNote(sql)))
+    throw Error('Reserved tutorial note is missing; run a web capture first')
   console.log('Reserved tutorial note restored; relaunch the app to clear its cache.')
 } finally {
   await sql.end()
