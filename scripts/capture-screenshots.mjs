@@ -28,6 +28,7 @@ const databaseUrl = captureEnv.CAPTURE_DATABASE_URL
 const baseURL = captureEnv.CAPTURE_BASE_URL || 'http://localhost:3100'
 const captureUserEmail = captureEnv.DOCS_CAPTURE_USER_EMAIL || 'docs-capture@test.noctune.local'
 const termsUserEmail = captureEnv.DOCS_TERMS_USER_EMAIL || 'docs-terms@test.noctune.local'
+const memberUserEmail = captureEnv.DOCS_MEMBER_USER_EMAIL || 'docs-member@test.noctune.local'
 const captureUserPassword = `Docs-${randomBytes(24).toString('base64url')}!1a`
 const captureNow = captureEnv.DOCS_CAPTURE_NOW || '2026-07-15T17:00:00.000Z'
 const allowedDatabaseFingerprints = parseCaptureDatabaseAllowlist(
@@ -47,6 +48,9 @@ if (!captureUserEmail.endsWith('@test.noctune.local')) {
 if (!termsUserEmail.endsWith('@test.noctune.local')) {
   throw new Error('DOCS_TERMS_USER_EMAIL must use the reserved @test.noctune.local domain')
 }
+if (!memberUserEmail.endsWith('@test.noctune.local')) {
+  throw new Error('DOCS_MEMBER_USER_EMAIL must use the reserved @test.noctune.local domain')
+}
 if (!coreEnv.NEXT_PUBLIC_SUPABASE_URL || !coreEnv.SUPABASE_SERVICE_ROLE_KEY) {
   throw new Error('noctune Core DEV Supabase configuration is required for authenticated capture')
 }
@@ -62,6 +66,11 @@ const stagingDir = path.join(captureRoot, `staging-${process.pid}`)
 const testResultsDir = path.join(captureRoot, 'test-results')
 const lockPath = path.join(captureRoot, 'screenshots.lock')
 const manifest = JSON.parse(fs.readFileSync(path.join(docsRoot, 'capture/manifest.json'), 'utf8'))
+const args = process.argv.slice(2)
+if (args.length && (args.length !== 2 || args[0] !== '--grep' || !args[1].trim())) {
+  throw new Error('Usage: screenshots:update [--grep <Playwright test title pattern>]')
+}
+const grep = args[1]
 
 fs.mkdirSync(captureRoot, { recursive: true })
 const lockFd = acquireLock(lockPath)
@@ -92,6 +101,7 @@ try {
     SUPABASE_REALTIME_ENABLED: 'false',
     DOCS_CAPTURE_USER_EMAIL: captureUserEmail,
     DOCS_TERMS_USER_EMAIL: termsUserEmail,
+    DOCS_MEMBER_USER_EMAIL: memberUserEmail,
     DOCS_CAPTURE_USER_PASSWORD: captureUserPassword,
     DOCS_CAPTURE_NOW: captureNow,
   }
@@ -102,6 +112,7 @@ try {
     CAPTURE_RUNTIME_CORE_DIR: runtimeCoreDir,
     DOCS_CAPTURE_USER_EMAIL: captureUserEmail,
     DOCS_TERMS_USER_EMAIL: termsUserEmail,
+    DOCS_MEMBER_USER_EMAIL: memberUserEmail,
     DOCS_CAPTURE_USER_PASSWORD: captureUserPassword,
     DOCS_CAPTURE_NOW: captureNow,
   }
@@ -110,6 +121,18 @@ try {
   fs.rmSync(stagingDir, { force: true, recursive: true })
   fs.rmSync(testResultsDir, { force: true, recursive: true })
   fs.mkdirSync(stagingDir, { recursive: true })
+  // A focused refresh keeps unchanged, policy-validated assets byte-for-byte.
+  // New captures still use the native renderer, and the entire staged tree must
+  // pass strict verification before the same atomic promotion used by full runs.
+  if (grep) {
+    fs.cpSync(
+      path.join(docsRoot, 'public/screenshots'),
+      path.join(stagingDir, 'public/screenshots'),
+      {
+        recursive: true,
+      },
+    )
+  }
 
   await run(
     'Applying Core migrations',
@@ -135,7 +158,14 @@ try {
   await run(
     'Capturing screenshots',
     'corepack',
-    ['pnpm', 'exec', 'playwright', 'test', '--config=capture/playwright.config.mjs'],
+    [
+      'pnpm',
+      'exec',
+      'playwright',
+      'test',
+      '--config=capture/playwright.config.mjs',
+      ...(grep ? ['--grep', grep] : []),
+    ],
     docsRoot,
     playwrightEnv,
   )
@@ -147,7 +177,9 @@ try {
     playwrightEnv,
   )
   promoteScreenshots(manifest, stagingDir)
-  console.log(`\n[screenshots] Updated ${manifest.length} committed screenshot assets`)
+  console.log(
+    `\n[screenshots] ${grep ? 'Refreshed selected captures and verified' : 'Updated'} ${manifest.length} committed screenshot assets`,
+  )
 } finally {
   fs.rmSync(authDir, { force: true, recursive: true })
   fs.rmSync(stagingDir, { force: true, recursive: true })

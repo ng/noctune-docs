@@ -1,3 +1,9 @@
+---
+type: Social Post
+title: 4. Make templates your own
+description: Guidance for 4. Make templates your own.
+---
+
 # 4. Make templates your own
 
 Video: `templates` → `walkthrough-captioned.mp4` (about 74 seconds). Template management is on the

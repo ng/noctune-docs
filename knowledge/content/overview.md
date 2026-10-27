@@ -1,0 +1,55 @@
+---
+title: Introduction
+type: User Guide
+description: Explore noctune guides for encounters, templates, messaging, and practice workflows.
+---
+
+# noctune
+
+**You see the patient. We handle the rest.**
+
+noctune is AI for veterinary medicine — not just a scribe. Record a visit from the web or the iOS app, and noctune writes the SOAP note, drafts the follow-up, flags the tough conversations, and keeps a secure audio record of every encounter.
+
+[Watch the noctune overview](https://docs.noctune.ai/)
+
+## What noctune does
+
+- **Writes your SOAP notes.** Structured output in under a minute, with speaker labels and timestamps.
+- **Drafts client messages.** Discharge instructions, follow-ups, and visit summaries — sent through noctune, encrypted, tied to the patient record.
+- **Flags tough conversations.** Frustration, confusion, or tension during a visit gets marked on your dashboard, before it shows up in a bad review.
+- **Keeps the audio.** Every visit is recorded and retrievable — replay the exact moment you recommended an over-the-counter product or refresh your memory before a follow-up appointment.
+- **Catches what could otherwise get missed.** Surfaces relevant context from prior visits, suggests differentials, flags things the client said that didn't make it into the note.
+- **Works in a real exam room.** Use your computer or phone as the microphone. noctune handles barking, clippers, and the dental scaler in the next room.
+
+## Get started
+
+- [Sign up & first login](getting-started.md) — create your account and record your first visit
+
+## Daily workflow
+
+- [Navigation & Search](navigation-and-search.md) — move around the app and find records by text or meaning
+- [Dashboard](dashboard.md) — the landing page and quick actions
+- [Encounters](encounters/overview.md) — record, review, and edit SOAP notes
+- [Messages](messages.md) — private client messaging, the Nest inbox, and discharge notes
+
+## Records
+
+- [Patients](patients.md) — patient records and visit history
+
+## Templates & Content
+
+- [SOAP & Discharge Templates](templates.md) — shape the medical record and personalized take-home instructions
+- [Email Templates](email-templates.md) — reuse delivery messages and client education
+- [Community Templates](community.md) — browse SOAP and discharge templates shared by other veterinarians
+
+## Practice
+
+- [Practice & Team](practice.md) — invite members, configure practice settings
+
+## Your account
+
+- [Settings](settings/overview.md) — account, billing, and notifications
+
+## Technical reference
+
+- [Reference](reference/overview.md) — audio quality, data storage, safety detection, and more

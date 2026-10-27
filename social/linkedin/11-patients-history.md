@@ -1,3 +1,9 @@
+---
+type: Social Post
+title: 11. Patients and history
+description: Guidance for 11. Patients and history.
+---
+
 # 11. Patients and history
 
 Video (burned-caption export from `tutorials/episodes.json`):

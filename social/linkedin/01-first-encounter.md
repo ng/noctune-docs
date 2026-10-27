@@ -1,3 +1,9 @@
+---
+type: Social Post
+title: 1. Your first encounter
+description: Guidance for 1. Your first encounter.
+---
+
 # 1. Your first encounter
 
 Videos (burned-caption exports from `tutorials/episodes.json`):

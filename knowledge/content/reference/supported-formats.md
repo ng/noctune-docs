@@ -1,0 +1,41 @@
+---
+title: Supported Formats & Limits
+type: Reference
+description: Audio you can record or upload, and its limits.
+---
+
+# Audio you can record or upload, and its limits
+
+What noctune accepts when you upload or record audio.
+
+## Accepted audio formats
+
+Any of these work without transcoding on your end:
+
+- **MP3** — most common
+- **M4A** (AAC in MP4 container) — iPhone voice memos
+- **AAC** (raw)
+- **WAV** (PCM / Linear16)
+- **FLAC**
+- **Ogg**, **Opus**
+- **WebM** (audio track)
+- **MP4** (audio-only)
+- **3GPP**, **AMR**
+
+Full allow-list: AAC, AMR, FLAC, MP3, MP4, M4A, Ogg, Opus, WAV, WebM, 3GPP, 3GPP2. If you have an unusual source and it rejects, transcode to MP3 or M4A and retry.
+
+## File size and duration
+
+| Limit                              | Value                                                      |
+| ---------------------------------- | ---------------------------------------------------------- |
+| Max file size per upload           | 500 MB                                                     |
+| Max duration per encounter         | 4 hours                                                    |
+| Append audio to existing encounter | Yes, see [Review & Edit](../encounters/review-and-edit.md) |
+
+For appointments longer than 4 hours, record in segments and upload each as its own encounter, or stop/restart recording mid-visit.
+
+## Image and document attachments
+
+Inbound email threads (Nest) **can receive attachments** sent by clients — photos, lab results, forms. They're stored alongside the thread and visible in the encounter. You **cannot send attachments** from noctune; outbound sends are text-only.
+
+noctune does **not** offer PDF export of SOAP notes or discharge summaries. Use the copy-to-clipboard or email flows to get content out.

@@ -61,6 +61,7 @@ const childEnv = {
 }
 const authStatePath = path.join(docsRoot, '.capture/auth/user.json')
 const termsAuthStatePath = path.join(docsRoot, '.capture/auth/terms-user.json')
+const memberAuthStatePath = path.join(docsRoot, '.capture/auth/member-user.json')
 const deterministicChromiumArgs = ['--disable-gpu', '--font-render-hinting=none']
 
 export default defineConfig({
@@ -68,10 +69,10 @@ export default defineConfig({
   outputDir: path.join(docsRoot, '.capture/test-results'),
   fullyParallel: false,
   workers: 1,
-  retries: 0,
+  retries: 1,
   reporter: [['list']],
-  timeout: 60_000,
-  expect: { timeout: 15_000 },
+  timeout: 600_000,
+  expect: { timeout: 240_000 },
   use: {
     ...devices['Desktop Chrome'],
     baseURL,
@@ -88,7 +89,7 @@ export default defineConfig({
       args: deterministicChromiumArgs,
     },
     actionTimeout: 15_000,
-    navigationTimeout: 30_000,
+    navigationTimeout: 300_000,
   },
   projects: [
     {
@@ -127,9 +128,25 @@ export default defineConfig({
         storageState: termsAuthStatePath,
       },
     },
+    {
+      name: 'member-auth-setup',
+      testMatch: /\/member-auth\.setup\.ts$/,
+      // Signing in syncs Riley's app email from auth, so capture the owner's
+      // team views with the fixture email first.
+      dependencies: ['authenticated'],
+    },
+    {
+      name: 'member-authenticated',
+      testMatch: /\/member-authenticated\.spec\.ts$/,
+      dependencies: ['member-auth-setup'],
+      use: {
+        storageState: memberAuthStatePath,
+      },
+    },
   ],
   webServer: {
-    command: `corepack pnpm exec next dev -p ${port}`,
+    // Match Core’s webpack resolver configuration in isolated nested worktrees.
+    command: `corepack pnpm exec next dev --webpack -p ${port}`,
     cwd: runtimeCoreDir,
     env: childEnv,
     url: baseURL,

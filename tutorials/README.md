@@ -1,3 +1,9 @@
+---
+type: Production Guide
+title: Narrated tutorials
+description: Guidance for narrated tutorials.
+---
+
 # Narrated tutorials
 
 Tutorials live with the written guides and consume authentic web/iOS captures.

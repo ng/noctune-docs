@@ -1,3 +1,9 @@
+---
+type: Social Post
+title: 9. Messages
+description: Guidance for 9. Messages.
+---
+
 # 9. Messages
 
 Video (burned-caption export from `tutorials/episodes.json`):
@@ -40,3 +46,7 @@ Messages guide: https://docs.noctune.ai/messages
 - How do you make sure a client reply doesn't sit unanswered over a weekend?
 - Do client emails get copied into the record at your clinic, or do they live in someone's inbox?
 - When a client writes back about a visit, who checks the note before answering?
+
+## Current inbox workflow
+
+The web app now supports **All inboxes**, the practice name, and **You**. Personal noctune inbox mail stays private; the practice inbox is shared by active members. New messages choose a From inbox, and a personal thread can be moved to the practice after confirmation. Update or replace older video footage before presenting these controls. See [Messages](../../content/messages.mdx).

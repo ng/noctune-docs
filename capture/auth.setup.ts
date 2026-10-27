@@ -14,6 +14,9 @@ if (!signIn) {
 }
 
 test('authenticate the documentation capture user', async ({ page }) => {
+  // A cold Core worktree compiles the protected dashboard after sign-in.
+  test.setTimeout(180_000)
+  page.setDefaultNavigationTimeout(120_000)
   const email = process.env.DOCS_CAPTURE_USER_EMAIL
   const password = process.env.DOCS_CAPTURE_USER_PASSWORD
 
@@ -33,10 +36,12 @@ test('authenticate the documentation capture user', async ({ page }) => {
   await page.getByLabel('Password').fill(password)
 
   await Promise.all([
-    page.waitForURL(/\/dashboard(?:[/?#]|$)/),
+    page.waitForURL(/\/dashboard(?:[/?#]|$)/, { waitUntil: 'domcontentloaded' }),
     page.getByRole('button', { name: 'Continue', exact: true }).click(),
   ])
-  await expect(page.getByRole('button', { name: 'Start an encounter' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Start an encounter' })).toBeVisible({
+    timeout: 120_000,
+  })
 
   // PracticeProvider resolves the seeded default workspace asynchronously
   // after sign-in. Persist auth only once that selection is in the browser
@@ -48,6 +53,12 @@ test('authenticate the documentation capture user', async ({ page }) => {
       return cookies.find((cookie) => cookie.name === 'noctune-practice-id')?.value
     })
     .toBe(capturePracticeId)
+
+  // Capture an established inbox session, with its one-time address intro
+  // already dismissed. Otherwise the modal hides the actual inbox controls.
+  await page.evaluate(() => {
+    window.localStorage.setItem('noctune.inbound-address-intro.v1', '1')
+  })
 
   await fs.mkdir(path.dirname(authStatePath), { recursive: true })
   await page.context().storageState({ path: authStatePath })

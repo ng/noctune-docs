@@ -1,3 +1,9 @@
+---
+type: Runbook
+title: noctune-docs
+description: Guidance for noctune-docs.
+---
+
 # noctune-docs
 
 User guides and (eventually) API reference for noctune, built with [Nextra 4](https://nextra.site).
@@ -100,3 +106,10 @@ scripts and CI remain the authoritative implementation so both tools produce the
 result.
 
 For fixture locations, synthetic authentication, and reuse in native iPhone/iPad App Store captures, see [Reusing fictional product fixtures](docs/fixture-capture.md).
+
+## Knowledge bundle
+
+All docs use [Open Knowledge Format](docs/open-knowledge-format.md) metadata.
+Read the portable Markdown bundle from [knowledge/index.md](knowledge/index.md).
+Edit the original docs, run `pnpm okf:build`, and commit source plus bundle.
+`pnpm okf:check` verifies metadata and generated content across the full docs inventory.

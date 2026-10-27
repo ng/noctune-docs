@@ -1,0 +1,19 @@
+---
+title: Getting started
+type: Tutorial
+description: Set up once, then just record.
+---
+
+# Set up once, then just record
+
+Your first day in noctune on the web: answer the welcome prompt, choose how notes and client discharges come out, open your first New Encounter, check your Account settings, invite your team, and find the setup checklist for what comes next.
+
+## On the web
+
+Tutorial video (getting-started-web) is not yet published.
+
+The video starts on the dashboard after sign-in. Signing up, signing in, and accepting the terms are covered in [Sign up & first login](../getting-started.md). To change a default template later, open it under [Templates](../templates.md#set-the-default) and choose **Set as my default**.
+
+## On iPhone
+
+There is no iPhone version of this video. Sign in with the same account; after the terms, the app shows a one-time **How your recordings are used** screen. You can choose SOAP and discharge templates when you start an encounter on iPhone, but the welcome setup and the practice members and invitations shown here are on the web only.

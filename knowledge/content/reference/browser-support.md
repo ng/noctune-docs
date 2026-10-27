@@ -1,0 +1,46 @@
+---
+title: Browser Support
+type: Reference
+description: Which browsers can record, upload, and review.
+---
+
+# Which browsers can record, upload, and review
+
+The noctune web app can **record, upload, review, edit, and manage** encounters. Browser recording uses your computer's microphone and requires microphone permission.
+
+## Tested browsers
+
+| Browser | Desktop           | Mobile                    |
+| ------- | ----------------- | ------------------------- |
+| Chrome  | Latest 2 versions | Android: latest           |
+| Safari  | Latest 2 versions | iOS: latest               |
+| Firefox | Latest 2 versions | Not tested — likely works |
+| Edge    | Latest 2 versions | Latest                    |
+
+Edge (Chromium) is fully supported — it's the same rendering engine as Chrome. Internet Explorer is not supported. Chromium forks (Brave, Arc, etc.) generally work but aren't formally tested.
+
+## Microphone permission
+
+The first time you choose **Record from web**, your browser asks whether noctune may use the microphone. Allow access to begin recording. If access is denied or no input is available, the New Encounter drawer shows the problem and a **Try again** action.
+
+You can change microphones during a take. If the active device disconnects, noctune switches to the system default when one is available; otherwise the take pauses until an input returns.
+
+Browser or operating-system privacy settings can continue blocking the microphone after you dismiss the prompt. In that case, allow microphone access for noctune in the site's permissions and try again.
+
+## Local recording recovery
+
+During a browser recording, noctune stores small audio chunks and recovery details in IndexedDB on that device. This lets noctune offer recovery after a tab or browser crash. Private browsing, storage quotas, and enterprise browser policies can disable this storage; recording then continues in memory, but it cannot be recovered after the tab closes.
+
+Keep the tab open while a recording or file queue is active. noctune displays a browser warning if you try to close or reload it.
+
+## Audio playback
+
+To play back a recording on the web, your browser needs standard `<audio>` support — universal in all tested browsers. No plugins or extensions needed.
+
+## Uploading audio
+
+Upload from the web accepts any of the formats listed in [Supported Formats & Limits](supported-formats.md). The upload happens over HTTPS and resumes automatically if your connection drops mid-upload.
+
+## Screen reader / keyboard
+
+All core flows are keyboard-accessible: browsing encounters, editing the SOAP note, managing patients and templates. We test with VoiceOver (macOS) and NVDA (Windows).

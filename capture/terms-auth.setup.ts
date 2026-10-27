@@ -13,6 +13,9 @@ if (!signIn) {
 }
 
 test('authenticate the documentation legal-gate user', async ({ page }) => {
+  // A cold Core worktree compiles the protected dashboard after sign-in.
+  test.setTimeout(180_000)
+  page.setDefaultNavigationTimeout(120_000)
   const email = process.env.DOCS_TERMS_USER_EMAIL
   const password = process.env.DOCS_CAPTURE_USER_PASSWORD
 
@@ -32,7 +35,7 @@ test('authenticate the documentation legal-gate user', async ({ page }) => {
   await page.getByLabel('Password').fill(password)
 
   await Promise.all([
-    page.waitForURL(/\/accept-terms(?:[/?#]|$)/),
+    page.waitForURL(/\/accept-terms(?:[/?#]|$)/, { waitUntil: 'domcontentloaded' }),
     page.getByRole('button', { name: 'Continue', exact: true }).click(),
   ])
   await expect(page.getByRole('heading', { name: 'Before you record', level: 1 })).toBeVisible()

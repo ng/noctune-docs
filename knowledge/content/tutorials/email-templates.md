@@ -1,0 +1,17 @@
+---
+title: Email templates
+type: Tutorial
+description: Write the client emails you send most, once.
+---
+
+# Write the client emails you send most, once
+
+Open a template from the library, add guidance and a placeholder, preview it with a sample patient, then insert it into a message from an encounter and watch the placeholders fill in before you send.
+
+## On the web
+
+Tutorial video (email-templates-web) is not yet published.
+
+## On iPhone
+
+Email templates are created, edited, and inserted on the web. The iPhone app does not include the Email Templates library or a template picker in its composers.

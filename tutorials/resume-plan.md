@@ -1,3 +1,9 @@
+---
+type: Production Guide
+title: Resume the tutorial buildout
+description: Guidance for resume the tutorial buildout.
+---
+
 # Resume the tutorial buildout
 
 ## Objective

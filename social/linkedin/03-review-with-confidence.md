@@ -1,3 +1,9 @@
+---
+type: Social Post
+title: 3. Review with confidence
+description: Guidance for 3. Review with confidence.
+---
+
 # 3. Review with confidence
 
 Videos (burned-caption exports from `tutorials/episodes.json`):
