@@ -9,8 +9,8 @@ const policy = JSON.parse(await fs.readFile(path.join(root, 'capture/image-polic
 const ids = [
   'collaborative-section-cards',
   'collaborative-suggestion',
-  'templates-practice-locked',
-  'messages-inbox',
+  'collaborative-regenerate-section',
+  'collaborative-version-history',
 ]
 const target = path.join(root, 'social/linkedin/assets/2026-10-27')
 const pending = []
