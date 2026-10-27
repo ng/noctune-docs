@@ -248,6 +248,19 @@
         "framesChecked": true,
         "listened": false
       }
+    },
+    {
+      "id": "locked-sections-web",
+      "series": 12,
+      "title": "Section locks — web",
+      "platform": "web",
+      "story": "tutorials/locked-sections-web.json",
+      "output": ".tutorial-output/locked-sections-web",
+      "post": "social/linkedin/12-locked-sections-and-inboxes.md",
+      "review": {
+        "framesChecked": false,
+        "listened": false
+      }
     }
   ]
 }

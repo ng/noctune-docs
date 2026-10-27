@@ -1,6 +1,7 @@
 // Web tutorial shots. Each shot opens `path`, waits for `ready`, takes the
 // ready-state reference, then performs `act`. `reset` runs against the approved
-// capture database before the shot; `setup` installs page fixtures before loading.
+// capture database before the shot and `restore` after it; `setup` installs page
+// fixtures before loading.
 import { setTimeout as wait } from 'node:timers/promises'
 import { expect } from '@playwright/test'
 import { installUploadFixture } from './web-upload-fixture.mjs'
@@ -315,6 +316,77 @@ async function restoreTheo(db, modifiedAt) {
   if (modifiedAt)
     await db`update patients set archived = false, archived_at = null, modified_at = ${modifiedAt} where id = ${THEO}`
   else await db`update patients set archived = false, archived_at = null where id = ${THEO}`
+}
+
+// Section locks (episode 12) work on the reserved tutorial note's section cards.
+const card = (page, key) => page.getByTestId(`section-card-${key}`)
+const lockedByAvery = /Locked · edited by Dr\. Avery Morgan/
+
+async function sectionCardsReady(page) {
+  await noteReady(page)
+  for (const key of ['subjective', 'objective', 'assessment', 'plan'])
+    await expect(card(page, key)).toBeVisible({ timeout: 60000 })
+  await expect(page.getByTestId('section-lock-objective')).toBeEnabled()
+}
+
+// Episode 3's transcript-backed correction, made on the Objective card alone:
+// at 1:09 the owner says the weight is "up just a touch from Tuesday".
+async function correctWeight(page, { paced = true } = {}) {
+  const pause = (ms) => (paced ? wait(ms) : null)
+  await point(page.getByTestId('section-edit-objective'))
+  const input = page.getByTestId('section-input-objective')
+  await expect(input).toBeVisible()
+  const at = (await input.inputValue()).indexOf('stable')
+  if (at < 0) throw Error('Expected fixture weight wording')
+  await input.evaluate(
+    (element, [start, end]) => {
+      element.focus()
+      element.setSelectionRange(start, end)
+    },
+    [at, at + 'stable'.length],
+  )
+  await pause(900)
+  await page.keyboard.type('up slightly', { delay: paced ? 90 : 0 })
+  await pause(1000)
+  await point(page.getByTestId('section-save-objective'))
+  await expect(input).toBeHidden()
+  await expect(card(page, 'objective')).toContainText(lockedByAvery)
+  await expect(card(page, 'objective')).toContainText(/up slightly from the previous visit/)
+}
+
+const planInstruction = 'Make it a short list'
+const planRewrite = [
+  '- Continue the current diet without changes.',
+  '- Monitor appetite and energy at home over the next week.',
+  '- Recheck promptly if Mochi skips more than one full day of meals or develops vomiting, lethargy, or hiding.',
+  '- Bloodwork deferred given her age and recovery.',
+  '- Assess the dental tartar at the next wellness visit.',
+].join('\n')
+
+// The capture server's deterministic model (E2E_FAKES) answers every section
+// rewrite with another fixture's vomiting plan. Let the real route check access
+// and the lock, then replace only the model's text with the fixture plan split
+// into a list, wording unchanged. Applying it uses the real save. Labelled.
+async function installPlanRewriteFixture(page) {
+  await page.route(`**/soap-notes/${TUTORIAL_NOTE}/sections/plan/regenerate`, async (route) => {
+    if (route.request().method() !== 'POST') return route.continue()
+    if (route.request().postDataJSON()?.instructions !== planInstruction)
+      throw Error('Unexpected rewrite instruction')
+    const response = await route.fetch()
+    const result = await response.json()
+    if (!response.ok() || result.data?.key !== 'plan')
+      throw Error('The section regenerate route refused the request')
+    await route.fulfill({
+      json: {
+        ok: true,
+        data: {
+          key: 'plan',
+          body: planRewrite,
+          rationale: 'Split the plan into a short list, as asked. The wording is unchanged.',
+        },
+      },
+    })
+  })
 }
 
 async function recordFor(page, seconds) {
@@ -1606,6 +1678,83 @@ export const shots = {
       }
       await page.getByRole('link', { name: /^Docs for Record or upload audio/ }).hover()
       await wait(3500)
+    },
+  },
+  // Section locks (episode 12): each shot restores the reserved tutorial note,
+  // including its section state, so every take starts from the unlocked draft.
+  'locks-review': {
+    path: encounter(),
+    reset: resetNote,
+    disclosure: 'Example draft',
+    ready: sectionCardsReady,
+    act: async (page) => {
+      await wait(7000)
+      for (const control of ['edit', 'lock', 'regenerate']) {
+        await page.getByTestId(`section-${control}-objective`).hover()
+        await wait(2000)
+      }
+    },
+  },
+  'locks-edit': {
+    path: encounter(),
+    reset: resetNote,
+    restore: resetNote,
+    disclosure: 'Example draft',
+    ready: sectionCardsReady,
+    act: async (page) => {
+      await wait(2500)
+      await correctWeight(page)
+      await wait(3500)
+      await page.getByTestId('section-unlock-objective').hover()
+      await wait(3000)
+    },
+  },
+  // Starts from the saved correction (made in `ready`, before the in-point).
+  'locks-regenerate': {
+    path: encounter(),
+    reset: resetNote,
+    restore: resetNote,
+    disclosure: 'Example draft · rewrite simulated',
+    setup: (page) => installPlanRewriteFixture(page),
+    ready: async (page, ctx) => {
+      await sectionCardsReady(page)
+      await correctWeight(page, { paced: false })
+      // Compile the route so the filmed request isn't held up by the dev server.
+      const warm = await page.request.post(
+        `${ctx.baseURL}/api/v1/transcriptions/${MOCHI}/soap-notes/${TUTORIAL_NOTE}/sections/missing/regenerate`,
+        { data: {} },
+      )
+      if (warm.status() !== 404) throw Error('Unexpected section regenerate warm-up response')
+      await page.mouse.move(24, 14)
+    },
+    act: async (page) => {
+      await wait(1500)
+      await page.getByTestId('section-unlock-objective').hover()
+      await wait(3000)
+      await card(page, 'plan').evaluate((element) =>
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' }),
+      )
+      await wait(1500)
+      await point(page.getByTestId('section-regenerate-plan'))
+      const instructions = page.getByTestId('section-regenerate-instructions-plan')
+      await expect(instructions).toBeVisible()
+      await wait(500)
+      await instructions.pressSequentially(planInstruction, { delay: 70 })
+      await wait(800)
+      await point(page.getByTestId('section-regenerate-submit-plan'))
+      await expect(page.getByTestId('section-proposal-plan')).toBeVisible({ timeout: 30000 })
+      await wait(1200)
+      // The highlighted rewrite opens below the crossed-out text; bring both into view.
+      await card(page, 'plan').evaluate((element) =>
+        element.scrollIntoView({ behavior: 'smooth', block: 'end' }),
+      )
+      await wait(5000)
+      await point(page.getByTestId('section-proposal-plan-accept'))
+      await expect(page.getByTestId('section-proposal-plan')).toHaveCount(0, { timeout: 30000 })
+      // The cards reflow under the pointer; keep it off the next card's buttons.
+      await page.mouse.move(520, 860, { steps: 12 })
+      await expect(card(page, 'plan')).toContainText(lockedByAvery)
+      await wait(3000)
     },
   },
   'follow-up': {
