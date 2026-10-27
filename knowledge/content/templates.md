@@ -142,6 +142,22 @@ The reviewer may recommend moving substantial discharge content out of a SOAP te
 
 Review the changed preview, then choose **Save** again to persist applied fixes. New encounters use the saved content, while existing notes are not rewritten.
 
+<span id="practice-templates"></span>
+
+## Practice templates
+
+Practice templates keep everyone in a practice working from the same structure. They appear under your practice's name in the template library, and the editor labels each one **Practice template** with the name of the person who last edited it.
+
+Owners and admins edit, rename, and delete practice templates, and choose **Set as practice default** for SOAP and discharge separately. New members whose practice has defaults can skip choosing a template during setup.
+
+![noctune practice template opened by a practice owner, with the Practice default action selected, the markdown editor, and the live preview](https://docs.noctune.ai/screenshots/templates/practice-template.webp)
+
+For everyone else in the practice, practice templates are locked. The template opens read-only, and a padlock note explains that only owners and admins can edit it. Members can still use the template for encounters, choose **Set as my default**, or duplicate it to **My templates** to adapt their own version. The practice copy stays unchanged.
+
+![noctune practice template opened read-only by a practice member, with a padlock note that only owners and admins can edit practice templates](https://docs.noctune.ai/screenshots/templates/practice-template-locked.webp)
+
+System templates are locked for everyone in the same way. Duplicate one to **My templates** to customize it.
+
 ## Set the default
 
 Choose **Set as my default** on a saved template to preselect it for your new encounters. SOAP and discharge defaults are independent. Your personal choice takes precedence over the active practice default; otherwise noctune uses the practice default, then the system default. Existing encounters keep their templates.

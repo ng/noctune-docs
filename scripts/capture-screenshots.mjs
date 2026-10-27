@@ -28,6 +28,7 @@ const databaseUrl = captureEnv.CAPTURE_DATABASE_URL
 const baseURL = captureEnv.CAPTURE_BASE_URL || 'http://localhost:3100'
 const captureUserEmail = captureEnv.DOCS_CAPTURE_USER_EMAIL || 'docs-capture@test.noctune.local'
 const termsUserEmail = captureEnv.DOCS_TERMS_USER_EMAIL || 'docs-terms@test.noctune.local'
+const memberUserEmail = captureEnv.DOCS_MEMBER_USER_EMAIL || 'docs-member@test.noctune.local'
 const captureUserPassword = `Docs-${randomBytes(24).toString('base64url')}!1a`
 const captureNow = captureEnv.DOCS_CAPTURE_NOW || '2026-07-15T17:00:00.000Z'
 const allowedDatabaseFingerprints = parseCaptureDatabaseAllowlist(
@@ -46,6 +47,9 @@ if (!captureUserEmail.endsWith('@test.noctune.local')) {
 }
 if (!termsUserEmail.endsWith('@test.noctune.local')) {
   throw new Error('DOCS_TERMS_USER_EMAIL must use the reserved @test.noctune.local domain')
+}
+if (!memberUserEmail.endsWith('@test.noctune.local')) {
+  throw new Error('DOCS_MEMBER_USER_EMAIL must use the reserved @test.noctune.local domain')
 }
 if (!coreEnv.NEXT_PUBLIC_SUPABASE_URL || !coreEnv.SUPABASE_SERVICE_ROLE_KEY) {
   throw new Error('noctune Core DEV Supabase configuration is required for authenticated capture')
@@ -97,6 +101,7 @@ try {
     SUPABASE_REALTIME_ENABLED: 'false',
     DOCS_CAPTURE_USER_EMAIL: captureUserEmail,
     DOCS_TERMS_USER_EMAIL: termsUserEmail,
+    DOCS_MEMBER_USER_EMAIL: memberUserEmail,
     DOCS_CAPTURE_USER_PASSWORD: captureUserPassword,
     DOCS_CAPTURE_NOW: captureNow,
   }
@@ -107,6 +112,7 @@ try {
     CAPTURE_RUNTIME_CORE_DIR: runtimeCoreDir,
     DOCS_CAPTURE_USER_EMAIL: captureUserEmail,
     DOCS_TERMS_USER_EMAIL: termsUserEmail,
+    DOCS_MEMBER_USER_EMAIL: memberUserEmail,
     DOCS_CAPTURE_USER_PASSWORD: captureUserPassword,
     DOCS_CAPTURE_NOW: captureNow,
   }

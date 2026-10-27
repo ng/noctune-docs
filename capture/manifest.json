@@ -175,6 +175,18 @@
     "docs": ["content/templates.mdx"]
   },
   {
+    "id": "templates-practice",
+    "route": "/templates/soap/d0c50000-0000-4000-8000-000000000715",
+    "output": "public/screenshots/templates/practice-template.webp",
+    "docs": ["content/templates.mdx"]
+  },
+  {
+    "id": "templates-practice-locked",
+    "route": "/templates/soap/d0c50000-0000-4000-8000-000000000715",
+    "output": "public/screenshots/templates/practice-template-locked.webp",
+    "docs": ["content/templates.mdx"]
+  },
+  {
     "id": "templates-new",
     "route": "/templates",
     "output": "public/screenshots/templates/new-template.webp",

@@ -6,7 +6,12 @@ import sharp from 'sharp'
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const manifest = JSON.parse(await fs.readFile(path.join(root, 'capture/manifest.json'), 'utf8'))
 const policy = JSON.parse(await fs.readFile(path.join(root, 'capture/image-policy.json'), 'utf8'))
-const ids = ['collaborative-section-cards', 'collaborative-suggestion', 'messages-inbox']
+const ids = [
+  'collaborative-section-cards',
+  'collaborative-suggestion',
+  'templates-practice-locked',
+  'messages-inbox',
+]
 const target = path.join(root, 'social/linkedin/assets/2026-10-27')
 const pending = []
 for (const id of ids) {
