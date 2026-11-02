@@ -22,9 +22,22 @@ export async function openDrawer(page) {
   await patient.click()
   await page.getByRole('option', { name: /Mochi/ }).click()
   await expect(patient).toHaveValue('Mochi')
-  await expect
-    .poll(() => page.locator('input').evaluateAll((inputs) => inputs.map((input) => input.value)))
-    .toContain('General SOAP Note')
+  // The fictional practice has its own default templates; the tutorials use the
+  // general ones noctune includes, so choose them the way a clinician would.
+  const templates = page.getByPlaceholder('Select a template')
+  for (const [index, name] of [
+    [0, 'General SOAP Note'],
+    [1, 'General Discharge'],
+  ]) {
+    const field = templates.nth(index)
+    await expect(field).not.toHaveValue('')
+    if ((await field.inputValue()) === name) continue
+    await field.click()
+    await wait(600)
+    await page.getByRole('option', { name, exact: true }).click()
+    await expect(field).toHaveValue(name)
+    await wait(400)
+  }
 }
 
 async function noteReady(page) {
@@ -428,6 +441,24 @@ export const shots = {
   process: {
     path: encounter('d0c50000-0000-4000-8000-000000000203'),
     resetsNote: true,
+    // The fixture is an in-flight run at the fixed capture instant, but Core's
+    // stale-run check compares its seed date with wall-clock time and would
+    // show the recovery screen. Same override as the screenshot capture.
+    setup: async (page) => {
+      await page.route(
+        '**/api/v1/transcriptions/d0c50000-0000-4000-8000-000000000203',
+        async (route) => {
+          const response = await route.fetch({ timeout: 240_000 })
+          const payload = await response.json()
+          if (!payload.ok || payload.data?.status !== 'transcribing')
+            throw Error('Expected the seeded in-flight transcription')
+          await route.fulfill({
+            response,
+            json: { ...payload, data: { ...payload.data, staleRun: false, staleRetryStep: null } },
+          })
+        },
+      )
+    },
     ready: (page) =>
       expect(page.getByRole('button', { name: 'View Encounters', exact: true })).toBeVisible({
         timeout: 60000,
@@ -569,14 +600,16 @@ export const shots = {
       await expect(page.getByRole('button', { name: /Process 1 file/ })).toBeEnabled()
       await wait(1000)
       await page.getByRole('button', { name: /Process 1 file/ }).click()
-      // The queued take stays in the drawer with retry guidance (Core PR #836).
-      await expect(page.getByText(/The upload didn't finish/).last()).toBeVisible({
+      // The queued take stays in the drawer with the upload error. Core PR #836
+      // (friendlier "The upload didn't finish" guidance) is not on develop.
+      await expect(page.getByText(/upload failed|The upload didn't finish/).last()).toBeVisible({
         timeout: 30000,
       })
       await wait(3500)
       // Depending on timing the progress modal also offers Retry; use whichever
       // retry control is on screen.
       const retry = page.getByRole('dialog').getByRole('button', { name: 'Retry', exact: true })
+      await retry.waitFor({ timeout: 5000 }).catch(() => {})
       if (await retry.isVisible()) await retry.click()
       else await page.getByRole('button', { name: /Process 1 file/ }).click()
       await expect(page.getByText('Upload Complete', { exact: true })).toBeVisible({
@@ -713,23 +746,27 @@ export const shots = {
       await expect(page.getByRole('button', { name: 'Full screen', exact: true })).toBeVisible()
     },
   },
+  // Templates opens on the practice default; the sidebar groups practice,
+  // personal, and system templates, with SOAP and Discharge tabs above.
   'templates-library': {
     path: '/templates/soap',
     reset: resetTemplates,
-    ready: (page) =>
-      expect(page.getByRole('tab', { name: 'SOAP Templates' })).toBeVisible({ timeout: 60000 }),
+    ready: async (page) => {
+      await expect(page.getByRole('tab', { name: 'SOAP', exact: true })).toBeVisible({
+        timeout: 60000,
+      })
+      await expect(page.getByRole('button', { name: 'Save', exact: true })).toBeVisible()
+    },
     act: async (page) => {
-      await wait(3000)
-      await page.getByPlaceholder('Search templates...').click()
-      await expect(page.getByText('System Templates', { exact: true })).toBeVisible()
-      await wait(4000)
-      await page.keyboard.press('Escape')
-      await wait(1500)
-      await page.getByRole('tab', { name: 'Discharge Templates' }).click()
-      await wait(2500)
-      await page.getByPlaceholder('Search templates...').click()
       await wait(3500)
-      await page.keyboard.press('Escape')
+      await point(page.getByRole('button', { name: /^General SOAP Note/ }))
+      await expect(page.getByRole('heading', { name: 'General SOAP Note' })).toBeVisible()
+      await wait(4000)
+      await point(page.getByRole('tab', { name: 'Discharge', exact: true }))
+      await wait(1500)
+      await point(page.getByRole('button', { name: /^General Discharge/ }))
+      await expect(page.getByRole('heading', { name: 'General Discharge' })).toBeVisible()
+      await wait(3500)
     },
   },
   'community-duplicate': {
@@ -742,16 +779,21 @@ export const shots = {
       }),
     act: async (page) => {
       await wait(3000)
-      await page.getByRole('button', { name: 'Discharge', exact: true }).click()
-      await wait(2500)
-      await page.getByRole('button', { name: 'Open template Clear Home-Care Instructions' }).click()
-      await expect(page.getByRole('button', { name: 'Duplicate', exact: true })).toBeVisible({
-        timeout: 30000,
-      })
+      await point(page.getByRole('combobox', { name: 'Template type' }))
+      await point(page.getByRole('option', { name: 'Discharge', exact: true }))
+      await wait(2000)
+      await point(page.getByRole('button', { name: 'Open Clear Home-Care Instructions' }))
+      await expect(page.getByText('Call us if', { exact: true })).toBeVisible({ timeout: 30000 })
       await wait(4000)
-      await page.getByRole('button', { name: 'Duplicate', exact: true }).click()
+      await point(page.locator('main button', { hasText: /^Add to/ }).first())
+      await wait(800)
+      await point(page.getByRole('menuitem', { name: /My templates/ }))
+      const added = page.getByRole('alert').filter({ hasText: 'Added to My templates' }).first()
+      await expect(added).toBeVisible({ timeout: 30000 })
+      await wait(1500)
+      await point(added.getByText('Open', { exact: true }))
       await page.waitForURL(/\/templates\/discharge\//, { timeout: 30000 })
-      await expect(page.getByRole('button', { name: 'Save Template' })).toBeVisible({
+      await expect(page.getByRole('button', { name: 'Save', exact: true })).toBeVisible({
         timeout: 30000,
       })
     },
@@ -761,12 +803,12 @@ export const shots = {
     reset: resetTemplates,
     duration: 36,
     ready: (page) =>
-      expect(page.getByRole('button', { name: 'New Template' })).toBeVisible({ timeout: 60000 }),
+      expect(page.getByRole('button', { name: 'New template' })).toBeVisible({ timeout: 60000 }),
     act: async (page) => {
       await wait(2500)
-      await page.getByRole('button', { name: 'New Template' }).click()
+      await point(page.getByRole('button', { name: 'New template' }))
       const dialog = page.getByRole('dialog')
-      await expect(dialog.getByText('Create a custom template')).toBeVisible()
+      await expect(dialog.getByRole('button', { name: /Copy a template/ })).toBeVisible()
       await wait(2500)
       await dialog.getByRole('button', { name: /Copy a template/ }).click()
       await wait(1200)
@@ -776,7 +818,8 @@ export const shots = {
       await wait(1500)
       await dialog.getByRole('button', { name: 'Create', exact: true }).click()
       await expect(dialog).toBeHidden({ timeout: 30000 })
-      await expect(page.getByRole('button', { name: 'Save Template' })).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Northstar dental recheck' })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Save', exact: true })).toBeVisible()
     },
   },
   'template-import': {
@@ -786,10 +829,10 @@ export const shots = {
     disclosure: 'Import analysis simulated',
     setup: (page) => installImportFixture(page),
     ready: (page) =>
-      expect(page.getByRole('button', { name: 'New Template' })).toBeVisible({ timeout: 60000 }),
+      expect(page.getByRole('button', { name: 'New template' })).toBeVisible({ timeout: 60000 }),
     act: async (page) => {
       await wait(2000)
-      await page.getByRole('button', { name: 'New Template' }).click()
+      await point(page.getByRole('button', { name: 'New template' }))
       const dialog = page.getByRole('dialog')
       await dialog.getByRole('button', { name: /Import/ }).click()
       await wait(1000)
@@ -799,10 +842,17 @@ export const shots = {
       await paste.fill(importSample)
       await wait(3500)
       await dialog.getByRole('button', { name: 'Organize this' }).click()
-      await expect(page.getByText(/Imported from pasted text/)).toBeVisible({ timeout: 90000 })
-      await wait(6000)
-      await page.getByRole('button', { name: 'Save Template' }).click()
-      await expect(page.getByText(/saved/i).first()).toBeVisible({ timeout: 30000 })
+      // The draft keeps every block and offers the client-facing block as a
+      // separate discharge template.
+      const offer = page.getByRole('button', { name: 'Create discharge template' })
+      await expect(offer).toBeVisible({ timeout: 90000 })
+      await wait(2500)
+      await offer.hover()
+      await wait(3500)
+      await point(page.getByRole('button', { name: 'Save', exact: true }))
+      await expect(page.getByText('All changes saved', { exact: true })).toBeVisible({
+        timeout: 30000,
+      })
     },
   },
   'email-templates': {
@@ -909,7 +959,7 @@ export const shots = {
       await sendMessage.hover()
       await wait(300)
       await sendMessage.click()
-      await expect(page.getByLabel('Subject')).toBeVisible({ timeout: 30000 })
+      await expect(page.getByRole('textbox', { name: 'Subject' })).toBeVisible({ timeout: 30000 })
       await wait(800)
       const composer = page.getByTestId('composer-full')
       const templates = composer.getByRole('button', { name: 'Templates' })
@@ -923,7 +973,9 @@ export const shots = {
       await postOp.hover()
       await wait(400)
       await postOp.click()
-      await expect(page.getByLabel('Subject')).toHaveValue('How is Mochi recovering?')
+      await expect(page.getByRole('textbox', { name: 'Subject' })).toHaveValue(
+        'How is Mochi recovering?',
+      )
       const message = composer.getByRole('textbox', { name: 'Message' })
       await expect(message).toContainText('Call us at (555) 010-0200.')
       await wait(1200)
@@ -970,9 +1022,12 @@ export const shots = {
       await to.click()
       await to.pressSequentially('jamie.chen@example.test', { delay: 55 })
       await to.press('Enter')
-      await expect(dialog.getByLabel('Subject')).toHaveValue('Mochi is due for a recheck', {
-        timeout: 15000,
-      })
+      await expect(dialog.getByRole('textbox', { name: 'Subject' })).toHaveValue(
+        'Mochi is due for a recheck',
+        {
+          timeout: 15000,
+        },
+      )
       await expect(dialog.getByText(/fills from the recipient in To/)).toBeHidden()
       await wait(4000)
     },
@@ -1019,7 +1074,7 @@ export const shots = {
       await page.getByRole('button', { name: 'Send Email', exact: true }).click()
       await wait(800)
       await page.getByRole('menuitem', { name: /Send message/ }).click()
-      await expect(page.getByLabel('Subject')).toBeVisible({ timeout: 30000 })
+      await expect(page.getByRole('textbox', { name: 'Subject' })).toBeVisible({ timeout: 30000 })
       await wait(1500)
       const to = page.getByLabel('To', { exact: true })
       await to.pressSequentially('jamie.chen@example.test', { delay: 45 })
@@ -1131,11 +1186,13 @@ export const shots = {
     path: '/practice',
     duration: 36,
     ready: (page) =>
-      expect(page.getByText('Active members', { exact: true })).toBeVisible({ timeout: 60000 }),
+      expect(page.getByRole('button', { name: 'Invite member' })).toBeVisible({ timeout: 60000 }),
     act: async (page) => {
       await wait(4000)
-      await page.getByText('Pending invitations').scrollIntoViewIfNeeded()
-      await wait(2500)
+      // Members and pending invitations share the Team table, one row per seat.
+      await page.mouse.move(660, 600)
+      await page.mouse.wheel(0, 520)
+      await wait(3500)
       await page.getByRole('button', { name: 'Invite member' }).click()
       const dialog = page.getByRole('dialog')
       await expect(dialog.getByText('Invite a member')).toBeVisible()
@@ -1159,6 +1216,9 @@ export const shots = {
       await page.getByTestId('inbox-row-assign-button').first().click()
       await wait(1500)
       await page.getByRole('menuitem', { name: /Riley Patel/ }).click()
+      // An assigned thread leaves the Unassigned filter; show it under All.
+      await wait(2000)
+      await page.getByRole('button', { name: 'All', exact: true }).click()
       await expect(page.getByTestId('inbox-row-assignee-chip').first()).toBeVisible()
       await wait(3000)
     },
@@ -1452,7 +1512,7 @@ export const shots = {
     duration: 40,
     disclosure: 'Synthetic Sentinel example · fixture audio',
     ready: (page) =>
-      expect(page.getByText(/Sentinel — Safety Alert/)).toBeVisible({ timeout: 60000 }),
+      expect(page.getByText(/sentinel — Safety Alert/i)).toBeVisible({ timeout: 60000 }),
     act: async (page) => {
       await wait(6000)
       const row = page.getByRole('button', { name: /^Seek to / }).first()
@@ -1479,7 +1539,7 @@ export const shots = {
       await expect(page.getByTestId('conversation-subject')).toContainText('activity restriction')
       await wait(3000)
       await page.getByTestId('panel-open-encounter').click()
-      await expect(page.getByText(/Sentinel — Safety Alert/)).toBeVisible({ timeout: 60000 })
+      await expect(page.getByText(/sentinel — Safety Alert/i)).toBeVisible({ timeout: 60000 })
       await wait(3000)
     },
   },

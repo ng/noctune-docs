@@ -8,25 +8,25 @@
       "id": "templates-library",
       "platform": "web",
       "headline": ["Two kinds of", "template."],
-      "narration": "This video covers templates. SOAP note templates shape the clinical record. Discharge templates shape what the client takes home. Open Templates to see your own and the ones noctune includes. Switch tabs for discharge templates."
+      "narration": "This video covers templates. SOAP note templates shape the clinical record. Discharge templates shape what the client takes home. Open Templates to see your practice's templates, your own, and the ones noctune includes. Switch to the Discharge tab for discharge templates."
     },
     {
       "id": "community-duplicate",
       "platform": "web",
       "headline": ["Start from the", "community."],
-      "narration": "Other clinicians share templates in the community library. Filter by type, and open one to preview it. If it suits your practice, choose Duplicate. The copy is added to your templates, ready for you to adjust and save."
+      "narration": "Other clinicians share templates in the community library. Filter by type, and open one to preview it. If it suits your practice, choose Add to, then My templates. Open your copy to adjust it and save."
     },
     {
       "id": "template-create",
       "platform": "web",
       "headline": ["Create your", "own."],
-      "narration": "To build your own, choose New Template. Copy an existing template, start blank, or import. Name it, choose Create, then edit and save."
+      "narration": "To build your own, choose New template, the plus beside search. Copy an existing template, start blank, or import. Name it, choose Create, then edit and save."
     },
     {
       "id": "template-import",
       "platform": "web",
       "headline": ["Import what", "you already use."],
-      "narration": "Already have a template in a document? Choose Import, paste it, and choose Organize this. noctune splits it into drafts, and offers client-facing instructions as a discharge template. Reusable client education stays in your text. Nothing is saved until you choose Save Template."
+      "narration": "Already have a template in a document? Choose Import, paste it, and choose Organize this. noctune turns it into a draft. If part of it is written for clients, noctune offers to make that a discharge template. Nothing is saved until you choose Save."
     },
     {
       "id": "email-templates",
