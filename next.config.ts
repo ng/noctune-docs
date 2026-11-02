@@ -12,6 +12,16 @@ export default withNextra({
     // `pnpm tsc` check still runs the TypeScript 7 CLI from `@typescript/native`.
     useTypeScriptCli: false,
   },
+  async headers() {
+    return [
+      {
+        // Public JSON fetched without credentials by noctune Core's global search,
+        // from production, Vercel previews, and localhost alike.
+        source: '/search-index.json',
+        headers: [{ key: 'Access-Control-Allow-Origin', value: '*' }],
+      },
+    ]
+  },
   async redirects() {
     return [
       {
