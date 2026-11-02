@@ -10,7 +10,7 @@ Search the transcript, jump from a citation to the moment it was said, correct t
 
 ## On the web
 
-[Video: Review with confidence — web](https://docs-media.noctune.ai/assets/88a0ef6531297e3dc7bccb2bd20b389f359eb4f81f951b92deacc5030995b3af/review-with-confidence-web.mp4)
+[Video: Review with confidence — web](https://docs-media.noctune.ai/assets/461d5796c84adcd19da60f074731f9a510d366a5dc2eee56f82339831a2dc709/review-with-confidence-web.mp4)
 
 ## On iPhone
 

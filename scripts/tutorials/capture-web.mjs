@@ -272,6 +272,17 @@ try {
           },
         })
       })
+      // Core's setup checklist reads its hidden flag from this endpoint; hide it
+      // so dashboard shots match a practice that has finished setup.
+      await page.route(/\/api\/v1\/onboarding(?:\?.*)?$/, async (route) => {
+        if (route.request().method() !== 'GET') return route.continue()
+        const response = await route.fetch()
+        const payload = await response.json()
+        await route.fulfill({
+          response,
+          json: payload.ok ? { ...payload, data: { ...payload.data, hidden: true } } : payload,
+        })
+      })
       await page.goto(shot.path, { waitUntil: 'domcontentloaded' })
       await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' })
       await expect(page.getByRole('button', { name: 'New Encounter', exact: true })).toBeVisible({

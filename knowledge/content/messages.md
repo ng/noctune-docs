@@ -15,7 +15,7 @@ sources:
 
 Messages brings together encounter replies and direct mail for your personal noctune inbox and your active practice inbox. **Sent** keeps the outbound messages you initiated from noctune.
 
-[Video: Discharge and follow-up — web](https://docs-media.noctune.ai/assets/25b6dfe3ea85748629276310c3588f5bfb4b36547bdf0950f446f07aaf221ac6/discharge-follow-up-web.mp4)
+[Video: Discharge and follow-up — web](https://docs-media.noctune.ai/assets/83a833dc10ebedaa2394f93a224befdd3fea310f3df0117e2829eb9a995238c1/discharge-follow-up-web.mp4)
 
 ![noctune Messages inbox with two client threads, selected Mochi conversation, encounter link, assignment, and reply actions](https://docs.noctune.ai/screenshots/messages/inbox.webp)
 

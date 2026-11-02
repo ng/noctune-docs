@@ -10,7 +10,7 @@ One fictional appointment, start to finish: record or upload audio, review the S
 
 ## On the web
 
-[Video: Your first encounter — web](https://docs-media.noctune.ai/assets/e22c711bc4654c48e1c8cb87534a57c804303a06555c2b56190d8f24515b51ff/first-encounter-web.mp4)
+[Video: Your first encounter — web](https://docs-media.noctune.ai/assets/6e6937b3f519589ada43d925951b23a4314eccf6d3ad4b1cc33001ecb7938cac/first-encounter-web.mp4)
 
 ## On iPhone
 
@@ -18,4 +18,4 @@ One fictional appointment, start to finish: record or upload audio, review the S
 
 ## iPhone and web together
 
-[Video: Your first encounter — iPhone and web](https://docs-media.noctune.ai/assets/fdd9105006b8977e05dd284324158e387f599f64b76309a6e9921026b4ecf08e/first-encounter-hybrid.mp4)
+[Video: Your first encounter — iPhone and web](https://docs-media.noctune.ai/assets/6d61edda9ff4fded20eecd67a8075e85f3236e798a47f0931e21dd8edf458f65/first-encounter-hybrid.mp4)

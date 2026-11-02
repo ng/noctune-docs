@@ -10,7 +10,7 @@ See how a flagged encounter looks, hear the marked moment in the original audio,
 
 ## On the web
 
-[Video: Sentinel — web](https://docs-media.noctune.ai/assets/c3835d907839e2a52051c0c401c8cf3c13ebb2ba9b16bbecf59eb3e896736d09/sentinel-web.mp4)
+[Video: Sentinel — web](https://docs-media.noctune.ai/assets/c0455853728264a2e03ef03ebba80c178a5433dba105e9fc65da9675356f64da/sentinel-web.mp4)
 
 ## On iPhone
 

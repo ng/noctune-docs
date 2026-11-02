@@ -187,7 +187,11 @@ ready references, match scores, and source in-points remain in the manifest. A
 reading hold may extend the last authentic frame. Missing UI states fail the run
 while preserving previous complete output.
 The developer-only Next.js badge is hidden during recording; product UI is unchanged.
-Review footage before composing it into an episode. The runner creates a reserved
+Review footage before composing it into an episode. The runner hides Core's dashboard setup
+checklist (`/api/v1/onboarding`), and the New Encounter drawer shots choose the general SOAP and
+discharge templates over the fictional practice's defaults. The `process` shot clears Core's
+stale-run flag, as the screenshot capture does, because the in-flight fixture predates the
+wall-clock time Core compares it with. The runner creates a reserved
 tutorial note version with a citation tied to the existing weight discussion. It
 serves Core’s deterministic 284-second synthetic WAV locally with byte-range support
 to verify real audio seeking and transcript navigation. This is fixture audio, not
@@ -323,8 +327,10 @@ Add a shot there rather than branching inside the runner. Episode 2 adds:
   **Retry upload**, then **Done**.
 
 The failure and retry footage needs Core PR #836: before it, a storage failure left the file
-stuck in `uploading`, so Retry did nothing. `prepare-media` accepts comma-separated capture
-roots, and a later root replaces an earlier shot with the same ID.
+stuck in `uploading`, so Retry did nothing. The PR is still open, so capture `upload-retry` from
+a Core worktree with it merged onto `develop` and every other shot from `develop` itself.
+`prepare-media` accepts comma-separated capture roots, and a later root replaces an earlier shot
+with the same ID.
 
 Native takes use the capture-only `NoctuneCaptureTakes` UI-test target in the Swift capture
 worktree (`scripts/asc-capture/takes`, driven by `record-take.mjs`). The target attaches to the
@@ -371,7 +377,10 @@ Web shots `templates-library`, `community-duplicate`, `template-create`, `templa
 `email-templates` first remove templates the reserved user created in earlier takes. The
 development import analyzer calls Bedrock, which needs an AWS SSO login. The shot therefore
 fulfils `/import/analyze` with the split the product proposes for the fictional paste and
-labels it "Import analysis simulated". Saving the resulting draft uses the real API. The email
+labels it "Import analysis simulated". The draft keeps every pasted block and offers the
+client-facing block through **Create discharge template**; saving the draft uses the real API.
+The community shot filters by template type, opens a template, and uses **Add to… → My
+templates**, then opens the copy from the confirmation. The email
 shot rewrites the seeded greetings to match Core PR #837, which removes an unregistered
 `{{client.first_name}}` merge field from the capture seed.
 
