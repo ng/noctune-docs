@@ -10,7 +10,7 @@ Record in the browser or on iPhone, upload audio you already have, and pick up a
 
 ## On the web
 
-[Video: Record and recover — web](https://docs-media.noctune.ai/assets/0cc877af025b42a26d5227444863458956855a9f67dfa9d27aea2e10bd8f1046/record-and-recover-web.mp4)
+[Video: Record and recover — web](https://docs-media.noctune.ai/assets/434e1c3ddf6de6bcb67f27a42f47792876d72cc53bbcb594f39d37ebf90a71ca/record-and-recover-web.mp4)
 
 ## On iPhone
 

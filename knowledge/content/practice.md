@@ -15,7 +15,7 @@ sources:
 
 A practice workspace groups clinic membership, invitations, billing seats, a shared inbox identity, agreements, and email footers. The Practice page shows the active clinic selected in the workspace switcher.
 
-[Video: Keep the practice organized — web](https://docs-media.noctune.ai/assets/2878e63d6b3b875850d83e13188dd22c8b3ec9b140a83b2f4fa9f7a44aad5206/practice-organized-web.mp4)
+[Video: Keep the practice organized — web](https://docs-media.noctune.ai/assets/df463b06b4ead645038daf9f34ce5cc512a025f1665c2631c758eb316d5a7e3d/practice-organized-web.mp4)
 
 [Video: Keep the practice organized — iPhone](https://docs-media.noctune.ai/assets/a1af1bb97f965d5eb4b641ed9416bc5348909ba8d3dd356fffffa1790bb99848/practice-organized-ios.mp4)
 

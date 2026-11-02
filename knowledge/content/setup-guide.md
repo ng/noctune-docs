@@ -8,7 +8,7 @@ description: Set up noctune in eight steps.
 
 Set up noctune's core workflow with these eight essentials. Follow them in order or jump to the feature you need.
 
-[Video: Your first encounter — web](https://docs-media.noctune.ai/assets/e22c711bc4654c48e1c8cb87534a57c804303a06555c2b56190d8f24515b51ff/first-encounter-web.mp4)
+[Video: Your first encounter — web](https://docs-media.noctune.ai/assets/6e6937b3f519589ada43d925951b23a4314eccf6d3ad4b1cc33001ecb7938cac/first-encounter-web.mp4)
 
 **[Open noctune →](https://app.noctune.ai/dashboard)**
 
