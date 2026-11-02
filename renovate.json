@@ -131,6 +131,11 @@
       "commitMessageAction": "Update {{packageName}}"
     },
     {
+      "description": "Next.js is pinned to 16.3.x because 16.4 Vercel builds leave no HTML in .next/server/app, so the Pagefind and search-index postbuild steps fail (#113). Remove this rule once both read Next 16.4's output.",
+      "matchPackageNames": ["next"],
+      "allowedVersions": "<16.4.0"
+    },
+    {
       "description": "Zod is pinned in pnpm-workspace.yaml because Nextra 4.6.1 rejects its layout props with Zod 4.4+. Remove this rule with the pin once https://github.com/shuding/nextra/issues/4989 is fixed.",
       "matchPackageNames": ["zod"],
       "allowedVersions": "<4.4.0"
