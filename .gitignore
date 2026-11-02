@@ -2,6 +2,7 @@ node_modules
 .next
 out
 public/_pagefind
+public/search-index.json
 .env*.local
 .vercel
 *.tsbuildinfo

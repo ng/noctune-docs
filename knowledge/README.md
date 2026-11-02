@@ -25,6 +25,18 @@ pnpm dev
 
 Content lives in `content/`. Navigation order is controlled by `_meta.ts` files alongside pages.
 
+## Search index for noctune Core
+
+`pnpm build` runs Pagefind for the site's own search, then `scripts/build-search-index.mjs`
+writes `public/search-index.json` for noctune Core's global search. It has one entry per
+visible guide: path, frontmatter `title` and `description`, its sidebar section, the h2/h3
+anchors read from the prerendered HTML, and optional frontmatter `keywords`. Hidden `_meta`
+entries and the `/ios` pages are left out; set `searchable: false` in a page's frontmatter
+to leave out another. The JSON is public and fetched without credentials, so
+`next.config.ts` serves it with `Access-Control-Allow-Origin: *`. Core bundles a snapshot
+of it; after a deploy that changes guides, refresh that snapshot with
+`pnpm docs:sync-index` in noctune Core.
+
 ## Legal documents
 
 The iOS-facing legal pages (`/ios/privacy`, `/ios/terms`, `/ios/ca-privacy`,
