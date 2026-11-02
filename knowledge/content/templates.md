@@ -15,7 +15,7 @@ sources:
 
 SOAP and discharge templates tell noctune how to structure generated notes. The editor keeps markdown instructions on the left and a rendered preview or quality review on the right.
 
-[Video: Make templates your own — web, with iPhone selection](https://docs-media.noctune.ai/assets/f7e730263c98678ebc8519a5319455b74011a12ca6327e67f688848ca9608096/templates.mp4)
+[Video: Make templates your own — web, with iPhone selection](https://docs-media.noctune.ai/assets/c8b6baafd1dd443e6a4cfc21fed7ecdf6627f0ea32c7b8cfdcebf65a85f797be/templates.mp4)
 
 Use the tabs at the top to switch template types. System templates are maintained by noctune and open read-only. Personal templates belong to you; practice templates are shared with your active practice. Owners and admins manage practice templates, while other members can use them or duplicate one into **My templates**. The searchable library groups **My templates**, practice templates when you belong to a practice, and **System** templates. It marks your default and the practice default separately. Select a template to open its editor.
 

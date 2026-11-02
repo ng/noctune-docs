@@ -8,7 +8,7 @@ description: Check the draft against the recording, then finish the note.
 
 Open a ready encounter to review the generated SOAP note beside the source transcript. The header keeps patient details and the main actions visible while you work.
 
-[Video: Review with confidence — web](https://docs-media.noctune.ai/assets/88a0ef6531297e3dc7bccb2bd20b389f359eb4f81f951b92deacc5030995b3af/review-with-confidence-web.mp4)
+[Video: Review with confidence — web](https://docs-media.noctune.ai/assets/461d5796c84adcd19da60f074731f9a510d366a5dc2eee56f82339831a2dc709/review-with-confidence-web.mp4)
 
 ![Mochi encounter with the generated SOAP note on the left and speaker-labeled transcript on the right](https://docs.noctune.ai/screenshots/encounters/detail/overview.webp)
 

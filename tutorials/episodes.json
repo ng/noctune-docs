@@ -10,8 +10,9 @@
       "output": ".tutorial-output/first-encounter-recorded",
       "post": "social/linkedin/01-first-encounter.md",
       "review": {
-        "framesChecked": false,
-        "listened": false
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
       }
     },
     {
@@ -37,8 +38,9 @@
       "output": ".tutorial-output/first-encounter-hybrid",
       "post": "social/linkedin/01-first-encounter.md",
       "review": {
-        "framesChecked": false,
-        "listened": false
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
       }
     },
     {
@@ -50,8 +52,9 @@
       "output": ".tutorial-output/record-and-recover-web",
       "post": "social/linkedin/02-record-and-recover.md",
       "review": {
-        "framesChecked": false,
-        "listened": false
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
       }
     },
     {
@@ -77,8 +80,9 @@
       "output": ".tutorial-output/review-with-confidence-web",
       "post": "social/linkedin/03-review-with-confidence.md",
       "review": {
-        "framesChecked": false,
-        "listened": false
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
       }
     },
     {
@@ -104,8 +108,9 @@
       "output": ".tutorial-output/templates",
       "post": "social/linkedin/04-templates.md",
       "review": {
-        "framesChecked": false,
-        "listened": false
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
       }
     },
     {
@@ -117,8 +122,9 @@
       "output": ".tutorial-output/discharge-follow-up-web",
       "post": "social/linkedin/05-discharge-and-follow-up.md",
       "review": {
-        "framesChecked": false,
-        "listened": false
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
       }
     },
     {
@@ -144,8 +150,9 @@
       "output": ".tutorial-output/practice-organized-web",
       "post": "social/linkedin/06-practice-organized.md",
       "review": {
-        "framesChecked": false,
-        "listened": false
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
       }
     },
     {
@@ -171,8 +178,9 @@
       "output": ".tutorial-output/sentinel-web",
       "post": "social/linkedin/07-sentinel.md",
       "review": {
-        "framesChecked": false,
-        "listened": false
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
       }
     },
     {

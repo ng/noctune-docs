@@ -8,7 +8,7 @@ description: Record a visit or upload audio you already have.
 
 Start from **New Encounter** in the top bar or **Start an encounter** on the Dashboard. The same drawer handles live browser recording and existing audio files.
 
-[Video: Record and recover — web](https://docs-media.noctune.ai/assets/0cc877af025b42a26d5227444863458956855a9f67dfa9d27aea2e10bd8f1046/record-and-recover-web.mp4)
+[Video: Record and recover — web](https://docs-media.noctune.ai/assets/434e1c3ddf6de6bcb67f27a42f47792876d72cc53bbcb594f39d37ebf90a71ca/record-and-recover-web.mp4)
 
 ![New Encounter drawer with patient, SOAP template, discharge template, browser recording, and file upload controls](https://docs.noctune.ai/screenshots/encounters/new-encounter/drawer.webp)
 
