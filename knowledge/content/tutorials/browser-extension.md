@@ -10,6 +10,6 @@ Open the noctune panel next to the patient record in your practice management sy
 
 ## In your browser
 
-Tutorial video (chrome-extension-web) is not yet published.
+[Video: Browser extension — move a note into your practice system](https://docs-media.noctune.ai/assets/b2bb6a40424e45db2fb7aae01c42c15f26aeea1c8151fccde814649bcbc7929e/chrome-extension-web.mp4)
 
 Installing, signing in, whole note mode, and the shortcut are covered in full in the [Browser extension](../browser-extension.md) guide.

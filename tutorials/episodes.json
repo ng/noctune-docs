@@ -272,8 +272,9 @@
       "output": ".tutorial-output/chrome-extension-web",
       "post": "social/linkedin/13-chrome-extension.md",
       "review": {
-        "framesChecked": false,
-        "listened": false
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
       }
     }
   ]
