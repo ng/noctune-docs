@@ -211,6 +211,7 @@ function browserFrame(box, story) {
           <text x="${box.x + 54}" y="${box.y - 65}" font-size="16" fill="#2C3033">${escape(story.tab)}</text>
           <path d="M${box.x} ${box.y - 54}h${box.w}" stroke="#D5DFDB"/>
           <path d="M${box.x + box.w - 94} ${box.y - 34}h6v-4a3 3 0 0 1 6 0v4h6v6h-4a3 3 0 0 0 0 6h4v6h-18z" fill="#8A9B96"/>
+          <rect x="${box.x + box.w - 57}" y="${box.y - 45}" width="34" height="34" rx="7" fill="#FFFFFF" stroke="#132D2B" stroke-width="1"/>
           <image href="data:image/png;base64,${extensionIcon()}" x="${box.x + box.w - 54}" y="${box.y - 42}" width="28" height="28"/>`
     : ''
   return `<defs><filter id="browser-shadow" x="-15%" y="-15%" width="130%" height="145%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#153D38" flood-opacity="0.14"/></filter></defs>

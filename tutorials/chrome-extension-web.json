@@ -26,10 +26,10 @@
     {
       "id": "panel",
       "platform": "web",
-      "headline": ["Click the noctune icon.", "Your note's already there."],
+      "headline": ["Click the noctune icon.", "Your notes, already synced."],
       "source": "panel.mp4",
       "disclosure": "Demo practice record · side panel shown docked",
-      "narration": "Click the noctune icon in your browser. Your note's already there."
+      "narration": "Click the noctune icon in your browser. Your notes are already synced."
     },
     {
       "id": "keys",
@@ -67,7 +67,7 @@
       "id": "outro",
       "platform": "web",
       "headline": ["Try it today."],
-      "brandCard": ["noctune.ai", "docs.noctune.ai/browser-extension"],
+      "brandCard": ["noctune.ai"],
       "narration": "noctune. Try it today."
     }
   ]

@@ -14,12 +14,12 @@
     },
     {
       "id": "panel",
-      "duration": 4.567,
+      "duration": 4.967,
       "cuts": [
         {
           "source": "move-a-note.mp4",
           "start": 3.9,
-          "duration": 4.567
+          "duration": 4.967
         }
       ]
     },
