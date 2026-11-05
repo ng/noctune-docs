@@ -247,9 +247,16 @@ class Film {
     if (!result?.ok) throw Error(`Insert failed for ${section}: ${JSON.stringify(result)}`)
     this.mark('insert', { section, box: this.box(this.site, box) })
   }
-  // Docks the panel: the composition slides it in from here; the record reflows
-  // to the narrower width once it has arrived, as Chrome's page does.
+  // Docks the panel: the pointer first glides up to the record's top-right corner,
+  // under the extension icon the renderer draws in the browser toolbar, and leaves
+  // the page as if clicking it. The composition slides the panel in from here; the
+  // record reflows to the narrower width once it has arrived, as Chrome's page does.
   async openPanel() {
+    const to = { x: STAGE.width - 40, y: 6 }
+    const from = this.pointer.get(this.site) ?? { x: to.x - 160, y: to.y + 120 }
+    await this.move(this.site, from, to, 0.45)
+    await wait(140)
+    await this.hideCursor(this.site)
     this.openAt = this.now()
     this.mark('panel-open')
     await wait(SLIDE * 1000)

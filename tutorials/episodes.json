@@ -266,7 +266,7 @@
     {
       "id": "chrome-extension-web",
       "series": 13,
-      "title": "Chrome extension — move a note into your practice system",
+      "title": "Browser extension — move a note into your practice system",
       "platform": "web",
       "story": "tutorials/chrome-extension-web.json",
       "output": ".tutorial-output/chrome-extension-web",

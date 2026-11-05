@@ -21,8 +21,9 @@ export const SHORTCUT = ['⇧', '⌘', 'E']
 // Save is the record's own button: a fresh element, so the test page's "must
 // never be clicked" alarm is not wired to it.
 export function dressRecord() {
-  document.title = 'Patient record · Mochi'
-  document.querySelector('header h1').textContent = 'Patient record'
+  document.title = 'Northstar PMS · Mochi'
+  document.querySelector('header h1').innerHTML =
+    'Northstar PMS<span style="font-weight:400;color:#6b7a76"> · Patient record</span>'
   const patient = document.querySelector('header .patient')
   patient.innerHTML =
     '<b id="patient-name" data-patient-name>Mochi</b> · Feline, Domestic Shorthair · 5 yrs · Owner: Jamie Chen'
@@ -229,7 +230,7 @@ export const shots = {
       const { site, panel } = film
       await film.at(1.6)
       await film.glide(site, site.locator('#assessment'), { settle: false })
-      await film.at(4.2)
+      await film.at(3.7)
       await film.openPanel()
       await film.at(6.15)
       await film.click(panel, film.listRow('Mochi'))

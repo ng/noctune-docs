@@ -24,6 +24,6 @@
 
 - [Keep the reviewed parts of the note](12-locked-sections-and-inboxes.md) - LinkedIn draft for the week of October 26, 2026, showing how technicians and veterinarians build one note through the day without losing each other's edits.
 
-- [13. Chrome extension](13-chrome-extension.md) - LinkedIn draft for the Chrome extension film, moving a noctune note into a browser-based practice system one keystroke per section.
+- [13. Browser extension](13-chrome-extension.md) - LinkedIn draft for the browser extension film, moving a noctune note into a browser-based practice system one keystroke per section.
 
 - [LinkedIn posts for the tutorial series](README.md) - Guidance for linkedIn posts for the tutorial series.

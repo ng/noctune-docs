@@ -549,7 +549,7 @@ pnpm tutorials:prepare-media tutorials/locked-sections-web.json .tutorial-output
   .tutorial-output/locked-sections-web/prepared
 ```
 
-## Chrome extension (episode 13)
+## Browser extension (episode 13)
 
 Playwright can't film Chrome's side panel, so `capture-extension.mjs` is a separate capture
 source. It records one Chromium profile with the extension's e2e build loaded: the extension's

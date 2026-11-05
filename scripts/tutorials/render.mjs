@@ -40,6 +40,13 @@ export function validateTimeline(story) {
     (typeof story.address !== 'string' || !/^[a-z0-9.-]{3,40}$/.test(story.address))
   )
     throw Error('Address must be a 3–40 character hostname')
+  // Optional browser tab title; when set the frame grows a tab strip and shows
+  // the extension icon in the toolbar, so the page reads as a site in a browser.
+  if (
+    story.tab !== undefined &&
+    (typeof story.tab !== 'string' || !story.tab.trim() || story.tab.length > 40)
+  )
+    throw Error('Tab must contain 1–40 characters')
   const validTransition = (value) =>
     value === undefined || value === 0 || (Number.isFinite(value) && value >= 0.2 && value <= 0.6)
   if (!validTransition(story.transition)) throw Error('Transition must be 0 or 0.2–0.6 seconds')
@@ -181,6 +188,30 @@ function joinSegments(segments, scenes, story, work, video) {
 // A full-frame title card for the opening and closing lines: the logo, the
 // scene headline, and up to two short lines, with a slow push-in. Drawn at twice
 // the output size so the zoom stays smooth.
+// The browser chrome around a web capture: back/forward, the address bar and, when
+// the story names a tab, a tab strip above and the noctune extension icon at the
+// right of the toolbar (where a click opens the side panel).
+function browserFrame(box, story) {
+  const tab = story.tab ? 42 : 0
+  const top = box.y - 54 - tab
+  const strip = story.tab
+    ? `<path d="M${box.x + 14} ${box.y - 54}v-26a8 8 0 0 1 8 -8h${Math.min(300, story.tab.length * 10 + 56)}a8 8 0 0 1 8 8v26z" fill="#FFFFFF" stroke="#D8E2DE"/>
+          <circle cx="${box.x + 38}" cy="${box.y - 71}" r="6" fill="#2A7F78"/>
+          <text x="${box.x + 54}" y="${box.y - 65}" font-size="16" fill="#2C3033">${escape(story.tab)}</text>
+          <path d="M${box.x} ${box.y - 54}h${box.w}" stroke="#D5DFDB"/>
+          <path d="M${box.x + box.w - 94} ${box.y - 34}h6v-4a3 3 0 0 1 6 0v4h6v6h-4a3 3 0 0 0 0 6h4v6h-18z" fill="#8A9B96"/>
+          <rect x="${box.x + box.w - 56}" y="${box.y - 44}" width="32" height="32" rx="8" fill="#2A7F78"/>
+          <text x="${box.x + box.w - 40}" y="${box.y - 21}" text-anchor="middle" font-size="19" font-weight="700" fill="#FFFFFF">n</text>`
+    : ''
+  return `<defs><filter id="browser-shadow" x="-15%" y="-15%" width="130%" height="145%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#153D38" flood-opacity="0.14"/></filter></defs>
+          <rect x="${box.x - 2}" y="${top}" width="${box.w + 4}" height="${box.y + box.h + 2 - top}" rx="16" fill="#EEF2F1" stroke="#CDD9D5" stroke-width="2" filter="url(#browser-shadow)"/>
+          ${strip}
+          <path d="M${box.x + 27} ${box.y - 36}l-8 8 8 8m20-16 8 8-8 8" fill="none" stroke="#788983" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="${box.x + 240}" y="${box.y - 44}" width="${box.w - 480}" height="33" rx="8" fill="#FFFFFF" stroke="#D8E2DE"/>
+          <text x="${box.x + box.w / 2}" y="${box.y - 21}" text-anchor="middle" font-size="18" fill="#52655D">${escape(story.address || 'app.noctune.ai')}</text>
+          <path d="M${box.x} ${box.y - 1}h${box.w}" stroke="#D5DFDB"/>`
+}
+
 async function brandSegment(scene, story, logo, card, audio, segment) {
   const lines = scene.headline
     .map(
@@ -307,13 +338,8 @@ export async function render(timelineDir, output, roots) {
           ? ''
           : phone
             ? `<rect x="${box.x - 8}" y="${box.y - 8}" width="${box.w + 16}" height="${box.h + 16}" rx="42" fill="#153D38"/>`
-            : `<defs><filter id="browser-shadow" x="-15%" y="-15%" width="130%" height="145%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#153D38" flood-opacity="0.14"/></filter></defs>
-          <rect x="${box.x - 2}" y="${box.y - 54}" width="${box.w + 4}" height="${box.h + 56}" rx="16" fill="#EEF2F1" stroke="#CDD9D5" stroke-width="2" filter="url(#browser-shadow)"/>
-          <path d="M${box.x + 27} ${box.y - 36}l-8 8 8 8m20-16 8 8-8 8" fill="none" stroke="#788983" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <rect x="${box.x + 240}" y="${box.y - 44}" width="${box.w - 480}" height="33" rx="8" fill="#FFFFFF" stroke="#D8E2DE"/>
-          <text x="${box.x + box.w / 2}" y="${box.y - 21}" text-anchor="middle" font-size="18" fill="#52655D">${escape(story.address || 'app.noctune.ai')}</text>
-          <path d="M${box.x} ${box.y - 1}h${box.w}" stroke="#D5DFDB"/>`
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><rect width="100%" height="100%" fill="#F3F8F2"/><ellipse cx="1680" cy="650" rx="690" ry="880" fill="#CDE7DF"/><g font-family="Arial" fill="#132D2B"><image href="data:image/png;base64,${logo}" x="76" y="56" width="300" height="80" preserveAspectRatio="xMinYMid meet"/><text x="76" y="262" font-size="19" fill="#53716A">${String(index + 1).padStart(2, '0')} / ${phone ? 'iOS' : 'WEB'} ${escape(story.kicker || 'WALKTHROUGH')}</text>${headline}<text x="76" y="820" font-size="20" fill="#4D6963">${escape(story.tagline || 'Your first encounter, step by step.')}</text>${bars}${frame}<text x="960" y="1050" text-anchor="middle" font-size="19" fill="#4D6963">Fictional demo data · ${scene.instructionCard ? 'Instruction card' : motion ? 'Recorded app footage' : 'Static app capture'}${scene.disclosure ? ' · ' + escape(scene.disclosure) : ''}</text></g></svg>`
+            : browserFrame(box, story)
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><rect width="100%" height="100%" fill="#F3F8F2"/><ellipse cx="1680" cy="650" rx="690" ry="880" fill="#CDE7DF"/><g font-family="Arial" fill="#132D2B"><image href="data:image/png;base64,${logo}" x="76" y="56" width="300" height="80" preserveAspectRatio="xMinYMid meet"/><text x="76" y="262" font-size="19" fill="#53716A">${String(index + 1).padStart(2, '0')} / ${phone ? 'iOS' : 'WEB'} ${escape(story.kicker || 'WALKTHROUGH')}</text>${headline}<text x="76" y="786" font-size="20" font-weight="700" fill="#11736F">noctune.ai</text><text x="76" y="820" font-size="20" fill="#4D6963">${escape(story.tagline || 'Your first encounter, step by step.')}</text>${bars}${frame}<text x="960" y="1050" text-anchor="middle" font-size="19" fill="#4D6963">Fictional demo data · ${scene.instructionCard ? 'Instruction card' : motion ? 'Recorded app footage' : 'Static app capture'}${scene.disclosure ? ' · ' + escape(scene.disclosure) : ''}</text></g></svg>`
       const card = path.join(work, `${index}-card.png`)
       const segment = path.join(work, `${index}.mp4`)
       if (scene.brandCard) {

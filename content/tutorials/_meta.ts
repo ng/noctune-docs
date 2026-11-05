@@ -11,5 +11,5 @@ export default {
   sentinel: 'Sentinel',
   'patients-history': 'Patients and history',
   'locked-sections': 'Section locks',
-  'chrome-extension': 'Chrome extension',
+  'browser-extension': 'Browser extension',
 }

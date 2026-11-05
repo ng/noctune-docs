@@ -1,3 +1,3 @@
 # capture
 
-- [Chrome extension videos and screenshots](extension-videos.md) - Storyboards for the hand-recorded Chrome extension (beta) videos and the screenshot list still needed for the guide.
+- [Chrome extension videos and screenshots](extension-videos.md) - Storyboards for the hand-recorded browser extension videos and the screenshot list still needed for the guide.

@@ -34,7 +34,7 @@ export default {
     type: 'separator',
     title: 'Integrations',
   },
-  'chrome-extension': 'Chrome extension (beta)',
+  'browser-extension': 'Browser extension',
   '--practice': {
     type: 'separator',
     title: 'Practice',

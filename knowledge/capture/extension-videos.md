@@ -1,17 +1,17 @@
 ---
 type: Production Guide
 title: Chrome extension videos and screenshots
-description: Storyboards for the hand-recorded Chrome extension (beta) videos and the screenshot list still needed for the guide.
+description: Storyboards for the hand-recorded browser extension videos and the screenshot list still needed for the guide.
 ---
 
 # Chrome extension videos and screenshots
 
-These assets support the [Chrome extension (beta) guide](../content/chrome-extension.md).
+These assets support the [Browser extension guide](../content/browser-extension.md).
 
 Video 1 is produced by the tutorial pipeline as the `chrome-extension-web` episode: the
 `capture-extension.mjs` source films the real panel app beside the extension's demo patient
 record and composes the panel docked at the right (see
-[Narrated tutorials](../tutorials/README.md#chrome-extension-episode-13)). Videos 2 and 3 have
+[Narrated tutorials](../tutorials/README.md#browser-extension-episode-13)). Videos 2 and 3 have
 no capture shot or narration yet. Record those by hand in real Chrome with QuickTime Player or
 Screen Studio, or add shots to `scripts/tutorials/extension-shots.mjs`. `pnpm screenshots:update`
 still cannot render the side panel. Never fake or mock the panel, and never use production or
