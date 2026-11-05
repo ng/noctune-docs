@@ -21,9 +21,9 @@ export const SHORTCUT = ['⇧', '⌘', 'E']
 // Save is the record's own button: a fresh element, so the test page's "must
 // never be clicked" alarm is not wired to it.
 export function dressRecord() {
-  document.title = 'Northstar PMS · Mochi'
+  document.title = 'Northstar PIMS · Mochi'
   document.querySelector('header h1').innerHTML =
-    'Northstar PMS<span style="font-weight:400;color:#6b7a76"> · Patient record</span>'
+    'Northstar PIMS<span style="font-weight:400;color:#6b7a76"> · Patient record</span>'
   const patient = document.querySelector('header .patient')
   patient.innerHTML =
     '<b id="patient-name" data-patient-name>Mochi</b> · Feline, Domestic Shorthair · 5 yrs · Owner: Jamie Chen'

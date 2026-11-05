@@ -1,14 +1,16 @@
 ---
 title: Browser extension
 type: User Guide
-description: Keep your noctune note beside your practice management system and move it into the record one section at a time.
+description: Keep your noctune note beside your practice information management system and move it into the record one section at a time.
 ---
 
 # Browser extension
 
 ## What it does \[#what-it-does]
 
-The noctune browser extension opens your noctune note in a panel beside your practice management system (PMS), on any PMS website. Click a field in the patient record and press one key. The next section of your note goes into that field. The extension never saves, submits, or sends anything in your PMS. You still review the record and save it there yourself.
+The noctune browser extension opens your noctune note in a panel beside your practice information management system (PIMS), on any PIMS website. Click a field in the patient record and press one key. The next section of your note goes into that field. The extension never saves, submits, or sends anything in your PIMS. You still review the record and save it there yourself.
+
+<TutorialVideo id="chrome-extension-web" caption={false} />
 
 ## Before you start \[#requirements]
 
@@ -35,7 +37,7 @@ To switch later, use the dropdown at the top of the panel. If you don't belong t
 
 Pick a note from the list in the panel. Then:
 
-1. **Open the patient record** in your PMS, in the same Chrome window.
+1. **Open the patient record** in your PIMS, in the same Chrome window.
 2. **Click a field**, such as the Subjective box.
 3. **Press Command-Shift-E** on a Mac or **Ctrl-Shift-E** on Windows.
 
@@ -61,9 +63,9 @@ If no field was selected, or the field wouldn't take the text, noctune copies th
 
 ### Undo an insert \[#undo]
 
-To take text back out of a field, press **Command-Z** (Mac) or **Ctrl-Z** (Windows) in your PMS, just like undoing your own typing.
+To take text back out of a field, press **Command-Z** (Mac) or **Ctrl-Z** (Windows) in your PIMS, just like undoing your own typing.
 
-To send a section again, select it in the panel. It becomes the next section, and your next press inserts it. You can also choose **Insert** on it. The tick stays; nothing is removed from your PMS.
+To send a section again, select it in the panel. It becomes the next section, and your next press inserts it. You can also choose **Insert** on it. The tick stays; nothing is removed from your PIMS.
 
 ### Track your progress \[#progress]
 
@@ -72,11 +74,11 @@ To send a section again, select it in the panel. It becomes the next section, an
 - Select any section, finished or not, to make it next. You can move through the note in any order.
 - When every section is in, the panel shows **All sections inserted**. Select **Start over** to go through the note again from the top.
 
-Before you insert, check the patient name at the top of the note. On some PMS websites, a dot shows whether the open patient record matches. Green means it matches; amber means the page shows a different patient.
+Before you insert, check the patient name at the top of the note. On some PIMS websites, a dot shows whether the open patient record matches. Green means it matches; amber means the page shows a different patient.
 
 ## Whole note mode and Copy \[#whole-note]
 
-Some PMS websites have one large box for the whole visit. Select **Whole note** at the top of the note, then click the box and press the shortcut once. The full note goes in, and every section is ticked. Select **Sections** to go back. The panel remembers your choice.
+Some PIMS websites have one large box for the whole visit. Select **Whole note** at the top of the note, then click the box and press the shortcut once. The full note goes in, and every section is ticked. Select **Sections** to go back. The panel remembers your choice.
 
 Every section also has a **Copy** button. Use it to paste a section anywhere yourself.
 
@@ -98,7 +100,7 @@ Some notes show a status label:
 
 The shortcut works on any website without extra setup. When you press it, Chrome lets noctune use that one tab until you leave the page.
 
-To skip that step on your PMS, the panel may ask **Use noctune on your-pms.com every time?** Select **Allow**, then confirm in Chrome. This lets noctune put text into fields on that one website whenever you ask it to. It doesn't give noctune access to any other website. Select **Not now** to hide the question for that site.
+To skip that step on your PIMS, the panel may ask **Use noctune on your-pims.com every time?** Select **Allow**, then confirm in Chrome. This lets noctune put text into fields on that one website whenever you ask it to. It doesn't give noctune access to any other website. Select **Not now** to hide the question for that site.
 
 To remove this access later, select the puzzle-piece icon in the Chrome toolbar, then open the menu next to **noctune**.
 
@@ -111,7 +113,7 @@ If another extension already uses Command-Shift-E or Ctrl-Shift-E, Chrome may le
 ## Privacy and safety \[#privacy]
 
 - The extension only reads your notes. It never changes anything in noctune.
-- It never saves, submits, or sends anything in your PMS. You do that yourself.
+- It never saves, submits, or sends anything in your PIMS. You do that yourself.
 - It only reaches a website when you press the shortcut there, or on sites you allowed.
 - Note text is never stored on your computer. Chrome keeps only your sign-in and a few settings, such as your practice and the sites you allowed. Signing out clears your notes from the extension.
 - The extension doesn't collect analytics on what your notes say.
@@ -129,5 +131,5 @@ If another extension already uses Command-Shift-E or Ctrl-Shift-E, Chrome may le
 ## Known limits \[#known-limits]
 
 - noctune doesn't yet know which field each section belongs in. You choose the field each time.
-- The patient name check only works on PMS websites where noctune can read the patient's name. Elsewhere, check the name yourself.
+- The patient name check only works on PIMS websites where noctune can read the patient's name. Elsewhere, check the name yourself.
 - The extension works only in Chrome on a desktop or laptop computer.
