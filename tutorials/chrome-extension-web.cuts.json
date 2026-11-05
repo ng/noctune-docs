@@ -81,12 +81,12 @@
     },
     {
       "id": "anywhere",
-      "duration": 3.533,
+      "duration": 5.033,
       "cuts": [
         {
           "source": "move-a-note.mp4",
           "start": 24.367,
-          "duration": 3.533
+          "duration": 5.033
         }
       ]
     }

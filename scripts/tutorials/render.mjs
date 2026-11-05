@@ -244,7 +244,10 @@ async function brandSegment(scene, story, logo, card, audio, segment) {
     '-i',
     audio,
     '-filter_complex',
-    `[0:v]zoompan=z='1+0.035*on/${frames}':x='iw/2-iw/zoom/2':y='ih/2-ih/zoom/2':d=1:s=1920x1080:fps=30,format=yuv420p[v];[1:a]apad,aresample=48000[a]`,
+    // zoompan rounds its crop origin to whole input pixels each frame, which
+    // shows as a shake on a slow zoom. Zooming an 8K upscale down to 4K and
+    // then to 1080p keeps that rounding under a quarter of an output pixel.
+    `[0:v]scale=7680:4320:flags=lanczos,zoompan=z='1+0.035*on/${frames}':x='iw/2-iw/zoom/2':y='ih/2-ih/zoom/2':d=1:s=3840x2160:fps=30,scale=1920:1080:flags=lanczos,format=yuv420p[v];[1:a]apad,aresample=48000[a]`,
     '-map',
     '[v]',
     '-map',
