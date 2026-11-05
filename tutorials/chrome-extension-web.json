@@ -4,7 +4,7 @@
   "kicker": "BROWSER EXTENSION",
   "tagline": "Your note into your PIMS. Faster than copy and paste.",
   "address": "pms.northstarvet.example",
-  "tab": "Northstar PMS · Mochi",
+  "tab": "Northstar PIMS · Mochi",
   "transition": 0.4,
   "cover": 13,
   "scenes": [
@@ -26,7 +26,7 @@
     {
       "id": "panel",
       "platform": "web",
-      "headline": ["Click the noctune icon.", "Your notes, already synced."],
+      "headline": ["Click the noctune icon.", "Your notes,", "already synced."],
       "source": "panel.mp4",
       "disclosure": "Demo practice record · side panel shown docked",
       "narration": "Click the noctune icon in your browser. Your notes are already synced."
