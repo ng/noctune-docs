@@ -35,6 +35,7 @@
     "tutorials:audition": "node scripts/tutorials/audition.mjs",
     "tutorials:caption-video": "node scripts/tutorials/caption-video.mjs",
     "tutorials:captions": "node scripts/tutorials/captions.mjs",
+    "tutorials:capture-extension": "node scripts/tutorials/capture-extension.mjs",
     "tutorials:capture-web": "node scripts/tutorials/capture-web.mjs",
     "tutorials:index": "node scripts/tutorials/delivery-index.mjs",
     "tutorials:narrate": "node scripts/tutorials/narrate.mjs",

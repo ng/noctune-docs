@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "scenes": [
+    {
+      "id": "record",
+      "duration": 3,
+      "cuts": [
+        {
+          "source": "move-a-note.mp4",
+          "start": 1,
+          "duration": 3
+        }
+      ]
+    },
+    {
+      "id": "panel",
+      "duration": 4.567,
+      "cuts": [
+        {
+          "source": "move-a-note.mp4",
+          "start": 3.9,
+          "duration": 4.567
+        }
+      ]
+    },
+    {
+      "id": "keys",
+      "duration": 2.833,
+      "cuts": [
+        {
+          "source": "move-a-note.mp4",
+          "start": 8.367,
+          "duration": 2.833,
+          "zoom": {
+            "to": [0, 0, 1600],
+            "in": [0.55, 1.35]
+          }
+        }
+      ]
+    },
+    {
+      "id": "again",
+      "duration": 3.767,
+      "cuts": [
+        {
+          "source": "move-a-note.mp4",
+          "start": 11.1,
+          "duration": 3.767,
+          "zoom": {
+            "to": [0, 0, 1600],
+            "out": [0.5, 1.1]
+          }
+        }
+      ]
+    },
+    {
+      "id": "discharge",
+      "duration": 9.7,
+      "cuts": [
+        {
+          "source": "move-a-note.mp4",
+          "start": 14.767,
+          "duration": 4.2,
+          "zoom": {
+            "to": [600, 400, 1600],
+            "in": [0.15, 0.85],
+            "out": [2.2, 3]
+          }
+        },
+        {
+          "source": "move-a-note.mp4",
+          "start": 18.967,
+          "duration": 5.5,
+          "zoom": {
+            "to": [732, 410, 1828],
+            "in": [1.4, 2.2],
+            "out": [3.9, 4.6]
+          }
+        }
+      ]
+    },
+    {
+      "id": "anywhere",
+      "duration": 3.533,
+      "cuts": [
+        {
+          "source": "move-a-note.mp4",
+          "start": 24.367,
+          "duration": 3.533
+        }
+      ]
+    }
+  ]
+}

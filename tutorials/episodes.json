@@ -262,6 +262,19 @@
         "listened": true,
         "listenedBy": "Jonathan Ng"
       }
+    },
+    {
+      "id": "chrome-extension-web",
+      "series": 13,
+      "title": "Chrome extension — move a note into your practice system",
+      "platform": "web",
+      "story": "tutorials/chrome-extension-web.json",
+      "output": ".tutorial-output/chrome-extension-web",
+      "post": "social/linkedin/13-chrome-extension.md",
+      "review": {
+        "framesChecked": false,
+        "listened": false
+      }
     }
   ]
 }

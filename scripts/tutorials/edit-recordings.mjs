@@ -14,6 +14,44 @@ const probe = (file) =>
     }),
   )
 
+// An eased push-in on part of a cut. `to` is the [x, y, width] of the framed
+// region in source pixels (height follows the source's aspect); `in` and `out` are
+// [start, end] seconds from the cut's start, and either may be omitted to begin
+// or end the cut zoomed. The region's anchor stays fixed, so the frame never
+// leaves the footage while it zooms.
+export function zoomFilter(zoom, width, height) {
+  const [x, y, w] = zoom.to,
+    level = width / w
+  const ramp = (range) => {
+    const p = `clip((it-${range[0]})/${range[1] - range[0]},0,1)`
+    return `(${p}*${p}*(3-2*${p}))`
+  }
+  const amount = [zoom.in ? ramp(zoom.in) : '1', zoom.out ? `(1-${ramp(zoom.out)})` : '1'].join('*')
+  const anchor = (offset) => (level > 1 ? offset / (1 - 1 / level) : 0)
+  return `zoompan=z='1+${level - 1}*${amount}':x='${anchor(x)}*(1-1/zoom)':y='${anchor(y)}*(1-1/zoom)':d=1:s=${width}x${height}:fps=30`
+}
+export function validateZoom(zoom, width, height, duration) {
+  if (zoom === undefined) return
+  const [x, y, w] = zoom.to ?? []
+  const h = (w * height) / width
+  const range = (value) =>
+    value === undefined ||
+    (Array.isArray(value) && value[0] >= 0 && value[1] > value[0] && value[1] <= duration + 0.001)
+  if (
+    ![x, y, w].every(Number.isFinite) ||
+    w < width / 3 ||
+    w > width ||
+    x < 0 ||
+    y < 0 ||
+    x + w > width ||
+    y + h > height ||
+    !range(zoom.in) ||
+    !range(zoom.out) ||
+    (zoom.in && zoom.out && zoom.out[0] < zoom.in[1])
+  )
+    throw Error('Invalid zoom')
+}
+
 // Normal editorial cuts only. Preserve raw bytes and record every chosen range.
 export async function editRecordings(root, recipe, output) {
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json')))
@@ -64,6 +102,7 @@ export async function editRecordings(root, recipe, output) {
       const hold = cut.hold ?? 0
       if (!Number.isFinite(hold) || hold < 0 || hold > 600)
         throw Error(`Invalid reading hold: ${scene.id}`)
+      validateZoom(cut.zoom, source.width, source.height, cut.duration)
       total += cut.duration + hold
       return { ...cut, hold, ...source }
     })
@@ -90,7 +129,7 @@ export async function editRecordings(root, recipe, output) {
       const inputs = scene.cuts.flatMap((cut) => ['-i', cut.file])
       const filters = scene.cuts.map(
         (cut, i) =>
-          `[${i}:v]fps=30,trim=start=${cut.start}:duration=${cut.duration},setpts=PTS-STARTPTS,setsar=1,tpad=stop_mode=clone:stop_duration=${cut.hold},trim=duration=${cut.duration + cut.hold},setpts=PTS-STARTPTS[v${i}]`,
+          `[${i}:v]fps=30,trim=start=${cut.start}:duration=${cut.duration},setpts=PTS-STARTPTS,${cut.zoom ? `${zoomFilter(cut.zoom, cut.width, cut.height)},` : ''}setsar=1,tpad=stop_mode=clone:stop_duration=${cut.hold},trim=duration=${cut.duration + cut.hold},setpts=PTS-STARTPTS[v${i}]`,
       )
       filters.push(
         scene.cuts.map((_, i) => `[v${i}]`).join('') +
@@ -138,6 +177,7 @@ export async function editRecordings(root, recipe, output) {
           start: cut.start,
           duration: cut.duration,
           hold: cut.hold,
+          ...(cut.zoom ? { zoom: cut.zoom } : {}),
         })),
       })
     }

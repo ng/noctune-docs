@@ -8,11 +8,15 @@ description: Storyboards for the hand-recorded Chrome extension (beta) videos an
 
 These assets support the [Chrome extension (beta) guide](../content/chrome-extension.mdx).
 
-**Record these by hand in real Chrome** with QuickTime Player or Screen Studio. The
-Playwright capture pipeline in this directory cannot render a Chrome extension side
-panel, so neither `pnpm screenshots:update` nor the tutorial pipeline can produce them.
-Never fake or mock the panel, and never use production or customer data. Sign in with
-a disposable capture account whose notes come from the synthetic capture seed.
+Video 1 is produced by the tutorial pipeline as the `chrome-extension-web` episode: the
+`capture-extension.mjs` source films the real panel app beside the extension's demo patient
+record and composes the panel docked at the right (see
+[Narrated tutorials](../tutorials/README.md#chrome-extension-episode-13)). Videos 2 and 3 have
+no capture shot or narration yet. Record those by hand in real Chrome with QuickTime Player or
+Screen Studio, or add shots to `scripts/tutorials/extension-shots.mjs`. `pnpm screenshots:update`
+still cannot render the side panel. Never fake or mock the panel, and never use production or
+customer data. Sign in with a disposable capture account whose notes come from the synthetic
+capture seed.
 
 ## Recording setup
 

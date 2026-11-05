@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "title": "Move a note into your practice system with the noctune Chrome extension",
+  "kicker": "CHROME EXTENSION",
+  "tagline": "Your note, into your practice system.",
+  "address": "pms.northstarvet.example",
+  "transition": 0.4,
+  "cover": 13,
+  "scenes": [
+    {
+      "id": "intro",
+      "platform": "web",
+      "headline": ["Your note, into", "your practice system."],
+      "brandCard": ["Chrome extension · Beta"],
+      "narration": "You recorded the visit. noctune wrote the note."
+    },
+    {
+      "id": "record",
+      "platform": "web",
+      "headline": ["Now it goes", "in the record."],
+      "source": "record.mp4",
+      "disclosure": "Demo practice record",
+      "narration": "Now it has to get into your practice system."
+    },
+    {
+      "id": "panel",
+      "platform": "web",
+      "headline": ["Your note,", "already there."],
+      "source": "panel.mp4",
+      "disclosure": "Demo practice record · side panel shown docked",
+      "narration": "Open the noctune panel next to your record. Your note's already there."
+    },
+    {
+      "id": "keys",
+      "platform": "web",
+      "headline": ["Click a field.", "Press one key."],
+      "source": "keys.mp4",
+      "disclosure": "Demo practice record · side panel shown docked",
+      "narration": "Click a field. Press one key."
+    },
+    {
+      "id": "again",
+      "platform": "web",
+      "headline": ["Each press,", "the next section."],
+      "source": "again.mp4",
+      "disclosure": "Demo practice record · side panel shown docked",
+      "narration": "That's Subjective. Again. Objective. Again."
+    },
+    {
+      "id": "discharge",
+      "platform": "web",
+      "headline": ["Discharge too.", "Then you save."],
+      "source": "discharge.mp4",
+      "disclosure": "Demo practice record · side panel shown docked",
+      "narration": "Discharge instructions too. It never saves or sends anything for you. You read it, you hit Save. It just does the copying."
+    },
+    {
+      "id": "anywhere",
+      "platform": "web",
+      "headline": ["Any practice system", "in your browser."],
+      "source": "anywhere.mp4",
+      "disclosure": "Demo practice record · side panel shown docked",
+      "narration": "Works with any practice system that runs in a browser."
+    },
+    {
+      "id": "outro",
+      "platform": "web",
+      "headline": ["Beta's open."],
+      "brandCard": ["Chrome extension", "docs.noctune.ai/chrome-extension"],
+      "narration": "noctune. Beta's open."
+    }
+  ]
+}
