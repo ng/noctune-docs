@@ -87,7 +87,7 @@ If no field was selected, or the field wouldn't take the text, noctune copies th
 
 To take text back out of a field, press **Command-Z** (Mac) or **Ctrl-Z** (Windows) in your PMS, just like undoing your own typing.
 
-The panel also shows **Undo** on the section you just inserted. It only removes the tick and makes that section next again. It doesn't change your PMS. Use Command-Z or Ctrl-Z for that.
+To send a section again, select its line in the panel to open it, then choose **Make next** or **Insert**. The tick stays; nothing is removed from your PMS.
 
 <span id="progress"></span>
 
@@ -95,7 +95,7 @@ The panel also shows **Undo** on the section you just inserted. It only removes 
 
 - The bar at the top of the note shows how many sections are in, such as **2/5**.
 - The next section stays open and highlighted. Sections that are in shrink to one line with a tick.
-- Select a finished section's title to open it again. **Make next** sends it again with your next press.
+- Select a finished section's line to open it again. **Make next** sends it again with your next press.
 - When every section is in, the panel shows **All sections inserted**. Select **Start over** to go through the note again from the top.
 
 Before you insert, check the patient name at the top of the note. On some PMS websites, a dot shows whether the open patient record matches. Green means it matches; amber means the page shows a different patient.
