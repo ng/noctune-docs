@@ -191,6 +191,17 @@ function joinSegments(segments, scenes, story, work, video) {
 // The browser chrome around a web capture: back/forward, the address bar and, when
 // the story names a tab, a tab strip above and the noctune extension icon at the
 // right of the toolbar (where a click opens the side panel).
+// The extension's own toolbar icon: the owl mark, as Chrome shows it.
+let extensionIconData = null
+function extensionIcon() {
+  extensionIconData ??= fs
+    .readFileSync(
+      fileURLToPath(new URL('../../public/noctune-extension-icon.png', import.meta.url)),
+    )
+    .toString('base64')
+  return extensionIconData
+}
+
 function browserFrame(box, story) {
   const tab = story.tab ? 42 : 0
   const top = box.y - 54 - tab
@@ -200,8 +211,7 @@ function browserFrame(box, story) {
           <text x="${box.x + 54}" y="${box.y - 65}" font-size="16" fill="#2C3033">${escape(story.tab)}</text>
           <path d="M${box.x} ${box.y - 54}h${box.w}" stroke="#D5DFDB"/>
           <path d="M${box.x + box.w - 94} ${box.y - 34}h6v-4a3 3 0 0 1 6 0v4h6v6h-4a3 3 0 0 0 0 6h4v6h-18z" fill="#8A9B96"/>
-          <rect x="${box.x + box.w - 56}" y="${box.y - 44}" width="32" height="32" rx="8" fill="#2A7F78"/>
-          <text x="${box.x + box.w - 40}" y="${box.y - 21}" text-anchor="middle" font-size="19" font-weight="700" fill="#FFFFFF">n</text>`
+          <image href="data:image/png;base64,${extensionIcon()}" x="${box.x + box.w - 54}" y="${box.y - 42}" width="28" height="28"/>`
     : ''
   return `<defs><filter id="browser-shadow" x="-15%" y="-15%" width="130%" height="145%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#153D38" flood-opacity="0.14"/></filter></defs>
           <rect x="${box.x - 2}" y="${top}" width="${box.w + 4}" height="${box.y + box.h + 2 - top}" rx="16" fill="#EEF2F1" stroke="#CDD9D5" stroke-width="2" filter="url(#browser-shadow)"/>

@@ -25,12 +25,12 @@
     },
     {
       "id": "keys",
-      "duration": 2.833,
+      "duration": 2.9,
       "cuts": [
         {
           "source": "move-a-note.mp4",
           "start": 8.367,
-          "duration": 2.833,
+          "duration": 2.9,
           "zoom": {
             "to": [0, 0, 1600],
             "in": [0.55, 1.35]
@@ -55,7 +55,7 @@
     },
     {
       "id": "discharge",
-      "duration": 9.7,
+      "duration": 8.9,
       "cuts": [
         {
           "source": "move-a-note.mp4",
@@ -70,7 +70,7 @@
         {
           "source": "move-a-note.mp4",
           "start": 18.967,
-          "duration": 5.5,
+          "duration": 4.7,
           "zoom": {
             "to": [732, 410, 1828],
             "in": [1.4, 2.2],
