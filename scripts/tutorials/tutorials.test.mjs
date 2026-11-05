@@ -766,3 +766,86 @@ test('delivery catalog requires explicit review status and a named listener', as
   )
   validateCatalog(catalog)
 })
+
+test('renderer adds brand cards, crossfades, the frame address, and a cover time', async (t) => {
+  const { render, validateTimeline } = await import('./render.mjs')
+  const { default: sharp } = await import('sharp')
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tutorial-brand-test-'))
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }))
+  const media = path.join(root, 'media')
+  fs.mkdirSync(media)
+  await sharp({ create: { width: 1600, height: 900, channels: 3, background: '#fff' } })
+    .png()
+    .toFile(path.join(media, 'web.png'))
+  const story = {
+    version: 1,
+    title: 'Brand fixture',
+    address: 'pms.example',
+    transition: 0.3,
+    cover: 0.2,
+    scenes: [
+      { id: 'intro', platform: 'web', headline: ['Hello'], brandCard: ['Beta'], narration: 'Hi.' },
+      { id: 'web', platform: 'web', headline: ['Web'], narration: 'Web.', source: 'web.png' },
+      {
+        id: 'cut',
+        platform: 'web',
+        headline: ['Cut'],
+        narration: 'Cut.',
+        source: 'web.png',
+        transition: 0,
+      },
+    ],
+  }
+  registerProvider('brand-test', {
+    validate() {},
+    async synthesize() {
+      return { bytes: wav(), extension: 'wav' }
+    },
+  })
+  const narration = path.join(root, 'narration'),
+    output = path.join(root, 'video')
+  await narrate(
+    story,
+    { provider: 'brand-test', model: 'test' },
+    {},
+    narration,
+    path.join(root, 'cache'),
+  )
+  await render(narration, output, { web: media })
+  const manifest = JSON.parse(fs.readFileSync(path.join(output, 'manifest.json')))
+  const timeline = JSON.parse(fs.readFileSync(path.join(narration, 'timeline.json')))
+  assert.equal(manifest.cover, 0.2)
+  assert.ok(Math.abs(manifest.duration - timeline.duration) < 0.1)
+  // The brand card has no browser frame: its centre is the pale card, not white footage.
+  const { data } = await sharp(path.join(output, 'qa', 'intro.png'))
+    .extract({ left: 1700, top: 120, width: 1, height: 1 })
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+  assert.ok(data[0] < 240)
+  for (const [change, error] of [
+    [(s) => (s.address = 'Not a host!'), /Address/],
+    [(s) => (s.transition = 0.1), /Transition/],
+    [(s) => (s.scenes[0].transition = 0.3), /Invalid transition/],
+    [(s) => (s.scenes[0].source = 'web.png'), /Invalid brand card/],
+    [(s) => (s.scenes[0].brandCard = ['x'.repeat(61)]), /Invalid brand card/],
+    [(s) => (s.cover = 99), /Cover/],
+  ]) {
+    const copy = structuredClone(timeline)
+    change(copy)
+    assert.throws(() => validateTimeline(copy), error)
+  }
+})
+
+test('extension composition docks the panel and slides it in when it opens', async () => {
+  const { composeFilter, panelX } = await import('./extension-shots.mjs')
+  assert.equal(panelX({ openAt: 0, stageWidth: 2560, panelWidth: 762 }), '1798')
+  assert.match(
+    panelX({ openAt: 4.2, slide: 0.32, stageWidth: 2560, panelWidth: 762 }),
+    /^2560-762\*\(1-pow\(1-clip\(\(t-4\.2\)\/0\.32,0,1\),3\)\)$/,
+  )
+  const filter = composeFilter({ siteIn: 1.5, panelIn: 1.25, duration: 10, openAt: 0, slide: 0.32 })
+  assert.match(filter, /\[0:v\]trim=start=1\.500,/)
+  assert.match(filter, /\[1:v\]trim=start=1\.250,.*crop=760:1360:0:0\[body\]/)
+  assert.match(filter, /vstack=inputs=2,pad=762:1440:2:0/)
+  assert.match(filter, /overlay=x='1798':y=0:eval=frame,trim=duration=10/)
+})

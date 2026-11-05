@@ -1,5 +1,7 @@
 # content/tutorials
 
+- [Browser extension](browser-extension.md) - Move a noctune note into your practice system, one keystroke per section.
+
 - [Discharge and follow-up](discharge-follow-up.md) - Send discharge instructions and keep replies with the visit.
 
 - [Email templates](email-templates.md) - Write the client emails you send most, once.

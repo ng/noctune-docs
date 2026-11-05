@@ -549,6 +549,67 @@ pnpm tutorials:prepare-media tutorials/locked-sections-web.json .tutorial-output
   .tutorial-output/locked-sections-web/prepared
 ```
 
+## Browser extension (episode 13)
+
+Playwright can't film Chrome's side panel, so `capture-extension.mjs` is a separate capture
+source. It records one Chromium profile with the extension's e2e build loaded: the extension's
+test page, dressed as a patient record for the fictional Mochi (`dressRecord` in
+`extension-shots.mjs`), and the real panel app (`sidepanel.html`) in an unfocused popup window,
+as the extension's own e2e suite drives it. It then composes both into one 1280×720 stage, at
+twice that size, with the panel docked at the right under a drawn Chrome side-panel header. When
+a shot opens the panel, it slides in and the record reflows to the narrower width. A magenta
+square shown in both pages before filming pins each recording to the film clock. The shortcut
+runs through the e2e build's `insertNext` hook; drawn keycaps show it above the field.
+
+The backend is the extension e2e harness from the Core checkout, on ports of its own (app 3118,
+test page 8797/8798, WebSocket proxy 5491): a throwaway `<DATABASE_URL_TEST>_ext_docs`
+database, recreated and migrated, two throwaway development Supabase users seeded with the
+`noctune-demo` story, and `next dev` with the harness's app environment. Users, the proxy
+container, and the servers are removed afterwards. The runner refuses ports in use, a non-local
+database, and any Supabase project other than development. Capture runs headful, like the
+extension's suite: only a real window on a Retina display records at twice the page size.
+
+```sh
+git -C /absolute/path/to/noctune-core worktree add /tmp/ext-video-core origin/feat/chrome-extension
+cp /absolute/path/to/noctune-core/.env.local /tmp/ext-video-core/.env.local
+cp /absolute/path/to/noctune-core/extension/.env.dev /tmp/ext-video-core/extension/.env.dev
+(cd /tmp/ext-video-core && pnpm install && cd extension && pnpm install)
+pnpm tutorials:capture-extension /tmp/ext-video-core .tutorial-output/extension-interactions
+```
+
+The output follows the native raw-root contract (`manifest.json` with approved `clips`), so
+`edit-recordings.mjs` cuts it into scenes. Each clip records its `events` (panel open, clicks,
+inserts) in film seconds; the `move-a-note` shot paces its actions against the narration with a
+one-second lead-in, so its cuts are contiguous. A cut may add `zoom`: `to` is the framed
+`[x, y, width]` in source pixels, and `in`/`out` are eased ranges in seconds from the cut's
+start (omit either to begin or end zoomed).
+
+The story adds three renderer options: `address` (the browser frame's address field),
+`transition` (a crossfade in seconds between scenes; a scene may override it), and `cover` (a
+time whose clean frame `caption-video` writes as `walkthrough-cover.png` for the LinkedIn
+thumbnail). Scenes with `brandCard` render a full-frame title card with the logo, the headline,
+and up to two short lines.
+
+```sh
+pnpm tutorials:narrate tutorials/chrome-extension-web.json \
+  .tutorial-output/chrome-extension-web/narration "$TUTORIAL_ENV_FILE"
+pnpm tutorials:captions .tutorial-output/chrome-extension-web/narration \
+  .tutorial-output/chrome-extension-web/captions "$TUTORIAL_ENV_FILE"
+node scripts/tutorials/edit-recordings.mjs .tutorial-output/extension-interactions \
+  tutorials/chrome-extension-web.cuts.json .tutorial-output/chrome-extension-web/media
+pnpm tutorials:render .tutorial-output/chrome-extension-web/narration \
+  .tutorial-output/chrome-extension-web/video .tutorial-output/chrome-extension-web/media
+pnpm tutorials:caption-video .tutorial-output/chrome-extension-web/video \
+  .tutorial-output/chrome-extension-web/captions .tutorial-output/chrome-extension-web/delivery
+```
+
+Short narration lines leave the caption aligner no room for a misheard word, and the narrator
+reads the same text differently on each call. When a scene's alignment fails, delete that
+scene's cached WAV in `.speech-cache/` and narrate again until every scene aligns; the
+discharge and review lines share a scene because "too" alone is heard as "two". The `cover`
+time and the cut recipe follow the current narration timeline, so recheck both after a new
+take. The record is a demo page, not a practice system; the footer says so.
+
 ## Publishing to the docs
 
 Reviewed videos are served from `https://docs-media.noctune.ai`, a dedicated S3

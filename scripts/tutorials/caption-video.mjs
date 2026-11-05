@@ -156,6 +156,12 @@ export async function captionVideo(videoDir, captionDir, output) {
     )
       throw Error('Captioned video failed delivery checks')
     fs.copyFileSync(input, path.join(stage, 'walkthrough-clean.mp4'))
+    // A story may name a cover frame for social uploads; take it from the clean
+    // export so the thumbnail carries no caption bar.
+    const cover = path.join(stage, 'walkthrough-cover.png')
+    fs.rmSync(cover, { force: true })
+    if (manifest.cover !== undefined)
+      run(['-ss', String(manifest.cover), '-i', input, '-frames:v', '1', cover])
     writeSubtitles(stage, captions.cues)
     fs.writeFileSync(path.join(stage, 'captions.json'), JSON.stringify(captions, null, 2) + '\n')
     fs.writeFileSync(

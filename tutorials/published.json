@@ -210,6 +210,20 @@
       "width": 1920,
       "height": 1080,
       "listenedBy": "Jonathan Ng"
+    },
+    "chrome-extension-web": {
+      "title": "Browser extension — move a note into your practice system",
+      "platform": "web",
+      "series": 13,
+      "url": "https://docs-media.noctune.ai/assets/b2bb6a40424e45db2fb7aae01c42c15f26aeea1c8151fccde814649bcbc7929e/chrome-extension-web.mp4",
+      "sha256": "b2bb6a40424e45db2fb7aae01c42c15f26aeea1c8151fccde814649bcbc7929e",
+      "bytes": 4296025,
+      "poster": "https://docs-media.noctune.ai/assets/8fbb16c112c52226389fdd9f463b7a85c60d05c42ce2d74a5cffa6aa8de3449d/chrome-extension-web.jpg",
+      "captions": "/tutorials/chrome-extension-web.vtt",
+      "duration": 33.4,
+      "width": 1920,
+      "height": 1080,
+      "listenedBy": "Jonathan Ng"
     }
   }
 }
