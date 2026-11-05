@@ -33,6 +33,23 @@ export function sourcePath(root, relative) {
 }
 export function validateTimeline(story) {
   validateStory(story)
+  // Optional polish: the address shown in the browser frame, a crossfade between
+  // scenes (seconds, 0 or 0.2–0.6), and a cover frame time for social uploads.
+  if (
+    story.address !== undefined &&
+    (typeof story.address !== 'string' || !/^[a-z0-9.-]{3,40}$/.test(story.address))
+  )
+    throw Error('Address must be a 3–40 character hostname')
+  // Optional browser tab title; when set the frame grows a tab strip and shows
+  // the extension icon in the toolbar, so the page reads as a site in a browser.
+  if (
+    story.tab !== undefined &&
+    (typeof story.tab !== 'string' || !story.tab.trim() || story.tab.length > 40)
+  )
+    throw Error('Tab must contain 1–40 characters')
+  const validTransition = (value) =>
+    value === undefined || value === 0 || (Number.isFinite(value) && value >= 0.2 && value <= 0.6)
+  if (!validTransition(story.transition)) throw Error('Transition must be 0 or 0.2–0.6 seconds')
   let at = 0
   for (const scene of story.scenes) {
     if (
@@ -52,7 +69,18 @@ export function validateTimeline(story) {
       scene.headline.some((line) => typeof line !== 'string' || line.length > 36)
     )
       throw Error(`Headline needs 1–3 short lines: ${scene.id}`)
-    if (scene.instructionCard !== undefined) {
+    if (!validTransition(scene.transition) || (scene.transition && scene === story.scenes[0]))
+      throw Error(`Invalid transition: ${scene.id}`)
+    if (scene.brandCard !== undefined) {
+      if (
+        scene.source ||
+        scene.instructionCard !== undefined ||
+        !Array.isArray(scene.brandCard) ||
+        scene.brandCard.length > 2 ||
+        scene.brandCard.some((line) => typeof line !== 'string' || !line.trim() || line.length > 60)
+      )
+        throw Error(`Invalid brand card: ${scene.id}`)
+    } else if (scene.instructionCard !== undefined) {
       if (
         scene.source ||
         !Array.isArray(scene.instructionCard) ||
@@ -88,6 +116,177 @@ export function validateTimeline(story) {
   }
   if (!Number.isFinite(story.duration) || Math.abs(story.duration - at) > 0.001)
     throw Error('Timeline total does not match scenes')
+  if (story.cover !== undefined && !(story.cover >= 0 && story.cover < story.duration))
+    throw Error('Cover time must fall inside the video')
+}
+// Join rendered scenes. Without transitions the segments are copied end to end.
+// A crossfade holds the outgoing scene's last frame for the fade, so every scene
+// still starts on its narration and the total length is unchanged.
+function joinSegments(segments, scenes, story, work, video) {
+  const fades = scenes.map((scene, i) => (i ? (scene.transition ?? story.transition ?? 0) : 0))
+  if (fades.every((fade) => !fade)) {
+    const list = path.join(work, 'concat.txt')
+    fs.writeFileSync(
+      list,
+      segments.map((file) => `file '${file.replaceAll("'", "'\\''")}'`).join('\n'),
+    )
+    run(['-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', '-movflags', '+faststart', video])
+    return
+  }
+  const filters = segments.map(
+    (_, i) =>
+      `[${i}:v]settb=AVTB,setpts=PTS-STARTPTS${fades[i + 1] ? `,tpad=stop_mode=clone:stop_duration=${fades[i + 1]}` : ''}[s${i}]`,
+  )
+  let joined = 's0',
+    at = 0
+  for (let i = 1; i < segments.length; i++) {
+    at += scenes[i - 1].duration
+    filters.push(
+      fades[i]
+        ? `[${joined}][s${i}]xfade=transition=fade:duration=${fades[i]}:offset=${at.toFixed(4)}[j${i}]`
+        : `[${joined}][s${i}]concat=n=2:v=1:a=0[j${i}]`,
+    )
+    joined = `j${i}`
+  }
+  filters.push(
+    `[${joined}]format=yuv420p[v]`,
+    `${segments.map((_, i) => `[${i}:a]`).join('')}concat=n=${segments.length}:v=0:a=1[a]`,
+  )
+  run([
+    ...segments.flatMap((file) => ['-i', file]),
+    '-filter_complex',
+    filters.join(';'),
+    '-map',
+    '[v]',
+    '-map',
+    '[a]',
+    '-r',
+    '30',
+    '-c:v',
+    'libx264',
+    '-preset',
+    'fast',
+    '-crf',
+    '20',
+    '-pix_fmt',
+    'yuv420p',
+    '-c:a',
+    'aac',
+    '-b:a',
+    '192k',
+    '-ac',
+    '2',
+    '-ar',
+    '48000',
+    '-t',
+    String(story.duration),
+    '-movflags',
+    '+faststart',
+    video,
+  ])
+}
+// A full-frame title card for the opening and closing lines: the logo, the
+// scene headline, and up to two short lines, with a slow push-in. Drawn at twice
+// the output size so the zoom stays smooth.
+// The browser chrome around a web capture: back/forward, the address bar and, when
+// the story names a tab, a tab strip above and the noctune extension icon at the
+// right of the toolbar (where a click opens the side panel).
+// The extension's own toolbar icon: the owl mark, as Chrome shows it.
+let extensionIconData = null
+function extensionIcon() {
+  extensionIconData ??= fs
+    .readFileSync(
+      fileURLToPath(new URL('../../public/noctune-extension-icon.png', import.meta.url)),
+    )
+    .toString('base64')
+  return extensionIconData
+}
+
+function browserFrame(box, story) {
+  const tab = story.tab ? 42 : 0
+  const top = box.y - 54 - tab
+  const strip = story.tab
+    ? `<path d="M${box.x + 14} ${box.y - 54}v-26a8 8 0 0 1 8 -8h${Math.min(300, story.tab.length * 10 + 56)}a8 8 0 0 1 8 8v26z" fill="#FFFFFF" stroke="#D8E2DE"/>
+          <circle cx="${box.x + 38}" cy="${box.y - 71}" r="6" fill="#2A7F78"/>
+          <text x="${box.x + 54}" y="${box.y - 65}" font-size="16" fill="#2C3033">${escape(story.tab)}</text>
+          <path d="M${box.x} ${box.y - 54}h${box.w}" stroke="#D5DFDB"/>
+          <path d="M${box.x + box.w - 94} ${box.y - 34}h6v-4a3 3 0 0 1 6 0v4h6v6h-4a3 3 0 0 0 0 6h4v6h-18z" fill="#8A9B96"/>
+          <rect x="${box.x + box.w - 57}" y="${box.y - 45}" width="34" height="34" rx="7" fill="#FFFFFF" stroke="#132D2B" stroke-width="1"/>
+          <image href="data:image/png;base64,${extensionIcon()}" x="${box.x + box.w - 54}" y="${box.y - 42}" width="28" height="28"/>`
+    : ''
+  return `<defs><filter id="browser-shadow" x="-15%" y="-15%" width="130%" height="145%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#153D38" flood-opacity="0.14"/></filter></defs>
+          <rect x="${box.x - 2}" y="${top}" width="${box.w + 4}" height="${box.y + box.h + 2 - top}" rx="16" fill="#EEF2F1" stroke="#CDD9D5" stroke-width="2" filter="url(#browser-shadow)"/>
+          ${strip}
+          <path d="M${box.x + 27} ${box.y - 36}l-8 8 8 8m20-16 8 8-8 8" fill="none" stroke="#788983" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="${box.x + 240}" y="${box.y - 44}" width="${box.w - 480}" height="33" rx="8" fill="#FFFFFF" stroke="#D8E2DE"/>
+          <text x="${box.x + box.w / 2}" y="${box.y - 21}" text-anchor="middle" font-size="18" fill="#52655D">${escape(story.address || 'app.noctune.ai')}</text>
+          <path d="M${box.x} ${box.y - 1}h${box.w}" stroke="#D5DFDB"/>`
+}
+
+async function brandSegment(scene, story, logo, card, audio, segment) {
+  const lines = scene.headline
+    .map(
+      (line, i) =>
+        `<text x="1920" y="${1150 + i * 150}" text-anchor="middle" font-size="124" font-weight="700">${escape(line)}</text>`,
+    )
+    .join('')
+  const below = 1150 + scene.headline.length * 150 + 30
+  const notes = scene.brandCard
+    .map(
+      (line, i) =>
+        `<text x="1920" y="${below + i * 76}" text-anchor="middle" font-size="54" fill="#4D6963">${escape(line)}</text>`,
+    )
+    .join('')
+  await sharp(
+    Buffer.from(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="3840" height="2160"><rect width="100%" height="100%" fill="#F3F8F2"/><ellipse cx="3360" cy="1300" rx="1380" ry="1760" fill="#CDE7DF"/><ellipse cx="300" cy="2300" rx="900" ry="620" fill="#E1EFE9"/><g font-family="Arial" fill="#132D2B"><image href="data:image/png;base64,${logo}" x="1468" y="560" width="904" height="240" preserveAspectRatio="xMidYMid meet"/><rect x="1872" y="900" width="96" height="8" rx="4" fill="#11736F"/>${lines}${notes}</g></svg>`,
+    ),
+  )
+    .png()
+    .toFile(card)
+  const frames = Math.round(scene.duration * 30)
+  run([
+    '-loop',
+    '1',
+    '-framerate',
+    '30',
+    '-i',
+    card,
+    '-i',
+    audio,
+    '-filter_complex',
+    // zoompan rounds its crop origin to whole input pixels each frame, which
+    // shows as a shake on a slow zoom. Zooming an 8K upscale down to 4K and
+    // then to 1080p keeps that rounding under a quarter of an output pixel.
+    `[0:v]scale=7680:4320:flags=lanczos,zoompan=z='1+0.035*on/${frames}':x='iw/2-iw/zoom/2':y='ih/2-ih/zoom/2':d=1:s=3840x2160:fps=30,scale=1920:1080:flags=lanczos,format=yuv420p[v];[1:a]apad,aresample=48000[a]`,
+    '-map',
+    '[v]',
+    '-map',
+    '[a]',
+    '-t',
+    String(scene.duration),
+    '-r',
+    '30',
+    '-c:v',
+    'libx264',
+    '-preset',
+    'fast',
+    '-crf',
+    '20',
+    '-pix_fmt',
+    'yuv420p',
+    '-c:a',
+    'aac',
+    '-b:a',
+    '192k',
+    '-ac',
+    '2',
+    '-ar',
+    '48000',
+    '-movflags',
+    '+faststart',
+    segment,
+  ])
 }
 export async function render(timelineDir, output, roots) {
   const story = JSON.parse(fs.readFileSync(path.join(timelineDir, 'timeline.json')))
@@ -102,7 +301,7 @@ export async function render(timelineDir, output, roots) {
   const inputs = story.scenes.map((scene) => {
     const root = roots[scene.platform]
     if (!root) throw Error(`Missing ${scene.platform} media root`)
-    const source = scene.instructionCard ? null : sourcePath(root, scene.source)
+    const source = scene.instructionCard || scene.brandCard ? null : sourcePath(root, scene.source)
     const audio = sourcePath(timelineDir, scene.audio)
     const motion = /\.(mp4|mov)$/i.test(source)
     if (source && !motion && !/\.(png|webp|jpg|jpeg)$/i.test(source))
@@ -148,20 +347,30 @@ export async function render(timelineDir, output, roots) {
             `<rect x="${left + i * 55}" y="860" width="42" height="4" rx="2" fill="${i <= index ? '#11736F' : '#D2E2DC'}"/>`,
         )
         .join('')
-      const frame = scene.instructionCard
-        ? ''
-        : phone
-          ? `<rect x="${box.x - 8}" y="${box.y - 8}" width="${box.w + 16}" height="${box.h + 16}" rx="42" fill="#153D38"/>`
-          : `<defs><filter id="browser-shadow" x="-15%" y="-15%" width="130%" height="145%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#153D38" flood-opacity="0.14"/></filter></defs>
-          <rect x="${box.x - 2}" y="${box.y - 54}" width="${box.w + 4}" height="${box.h + 56}" rx="16" fill="#EEF2F1" stroke="#CDD9D5" stroke-width="2" filter="url(#browser-shadow)"/>
-          <path d="M${box.x + 27} ${box.y - 36}l-8 8 8 8m20-16 8 8-8 8" fill="none" stroke="#788983" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <rect x="${box.x + 240}" y="${box.y - 44}" width="${box.w - 480}" height="33" rx="8" fill="#FFFFFF" stroke="#D8E2DE"/>
-          <text x="${box.x + box.w / 2}" y="${box.y - 21}" text-anchor="middle" font-size="18" fill="#52655D">app.noctune.ai</text>
-          <path d="M${box.x} ${box.y - 1}h${box.w}" stroke="#D5DFDB"/>`
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><rect width="100%" height="100%" fill="#F3F8F2"/><ellipse cx="1680" cy="650" rx="690" ry="880" fill="#CDE7DF"/><g font-family="Arial" fill="#132D2B"><image href="data:image/png;base64,${logo}" x="76" y="56" width="300" height="80" preserveAspectRatio="xMinYMid meet"/><text x="76" y="262" font-size="19" fill="#53716A">${String(index + 1).padStart(2, '0')} / ${phone ? 'iOS' : 'WEB'} ${escape(story.kicker || 'WALKTHROUGH')}</text>${headline}<text x="76" y="820" font-size="20" fill="#4D6963">${escape(story.tagline || 'Your first encounter, step by step.')}</text>${bars}${frame}<text x="960" y="1050" text-anchor="middle" font-size="19" fill="#4D6963">Fictional demo data · ${scene.instructionCard ? 'Instruction card' : motion ? 'Recorded app footage' : 'Static app capture'}${scene.disclosure ? ' · ' + escape(scene.disclosure) : ''}</text></g></svg>`
+      const frame =
+        scene.instructionCard || scene.brandCard
+          ? ''
+          : phone
+            ? `<rect x="${box.x - 8}" y="${box.y - 8}" width="${box.w + 16}" height="${box.h + 16}" rx="42" fill="#153D38"/>`
+            : browserFrame(box, story)
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><rect width="100%" height="100%" fill="#F3F8F2"/><ellipse cx="1680" cy="650" rx="690" ry="880" fill="#CDE7DF"/><g font-family="Arial" fill="#132D2B"><image href="data:image/png;base64,${logo}" x="76" y="56" width="300" height="80" preserveAspectRatio="xMinYMid meet"/><text x="76" y="262" font-size="19" fill="#53716A">${String(index + 1).padStart(2, '0')} / ${phone ? 'iOS' : 'WEB'} ${escape(story.kicker || 'WALKTHROUGH')}</text>${headline}<text x="76" y="786" font-size="20" font-weight="700" fill="#11736F">noctune.ai</text><text x="76" y="820" font-size="20" fill="#4D6963">${escape(story.tagline || 'Your first encounter, step by step.')}</text>${bars}${frame}<text x="960" y="1050" text-anchor="middle" font-size="19" fill="#4D6963">Fictional demo data · ${scene.instructionCard ? 'Instruction card' : motion ? 'Recorded app footage' : 'Static app capture'}${scene.disclosure ? ' · ' + escape(scene.disclosure) : ''}</text></g></svg>`
       const card = path.join(work, `${index}-card.png`)
-      await sharp(Buffer.from(svg)).png().toFile(card)
       const segment = path.join(work, `${index}.mp4`)
+      if (scene.brandCard) {
+        await brandSegment(scene, story, logo, card, audio, segment)
+        run([
+          '-ss',
+          String(Math.min(1, scene.duration / 2)),
+          '-i',
+          segment,
+          '-frames:v',
+          '1',
+          path.join(qa, `${scene.id}.png`),
+        ])
+        segments.push(segment)
+        continue
+      }
+      await sharp(Buffer.from(svg)).png().toFile(card)
       let visualSource = source
       if (scene.instructionCard) {
         visualSource = path.join(work, `${index}-instructions.png`)
@@ -263,13 +472,14 @@ export async function render(timelineDir, output, roots) {
       ])
       segments.push(segment)
     }
-    const list = path.join(work, 'concat.txt')
-    fs.writeFileSync(
-      list,
-      segments.map((file) => `file '${file.replaceAll("'", "'\\''")}'`).join('\n'),
-    )
     const video = path.join(stage, 'walkthrough-landscape.mp4')
-    run(['-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', '-movflags', '+faststart', video])
+    joinSegments(
+      segments,
+      inputs.map(({ scene }) => scene),
+      story,
+      work,
+      video,
+    )
     run(['-xerror', '-i', video, '-f', 'null', '-'])
     const metadata = probe(video),
       v = metadata.streams.find((s) => s.codec_type === 'video'),
@@ -299,6 +509,7 @@ export async function render(timelineDir, output, roots) {
             at: scene.at,
             duration: scene.duration,
           })),
+          ...(story.cover !== undefined ? { cover: story.cover } : {}),
           fullDecodePassed: true,
           visualReviewPassed: false,
           published: false,

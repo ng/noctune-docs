@@ -30,6 +30,11 @@ export default {
   templates: 'SOAP & Discharge Templates',
   'email-templates': 'Email Templates',
   community: 'Community Templates',
+  '--integrations': {
+    type: 'separator',
+    title: 'Integrations',
+  },
+  'browser-extension': 'Browser extension',
   '--practice': {
     type: 'separator',
     title: 'Practice',

@@ -86,6 +86,8 @@ export async function buildIndex(catalogFile, destination, root = process.cwd())
       fs.mkdirSync(target, { recursive: true })
       for (const file of deliveryFiles)
         fs.copyFileSync(path.join(delivery, file), path.join(target, file))
+      const cover = path.join(delivery, 'walkthrough-cover.png')
+      if (fs.existsSync(cover)) fs.copyFileSync(cover, path.join(target, 'walkthrough-cover.png'))
       const manifest = JSON.parse(fs.readFileSync(path.join(delivery, 'manifest.json')))
       const cues = JSON.parse(fs.readFileSync(path.join(delivery, 'captions.json'))).cues.length
       const player = await checkPlayer(browser, path.join(target, 'review.html'), cues)

@@ -8,6 +8,8 @@
 
 - [tutorials](tutorials/index.md) - Documentation in content/tutorials.
 
+- [Browser extension](browser-extension.md) - Keep your noctune note beside your practice management system and move it into the record one section at a time.
+
 - [Community](community.md) - Start from a template another clinician shared.
 
 - [Dashboard](dashboard.md) - See your day at a glance.

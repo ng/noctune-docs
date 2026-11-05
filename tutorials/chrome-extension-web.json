@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "title": "Move a note into your practice system with the noctune browser extension",
+  "kicker": "BROWSER EXTENSION",
+  "tagline": "Your note into your PIMS. Faster than copy and paste.",
+  "address": "pms.northstarvet.example",
+  "tab": "Northstar PMS · Mochi",
+  "transition": 0.4,
+  "cover": 13,
+  "scenes": [
+    {
+      "id": "intro",
+      "platform": "web",
+      "headline": ["Your noctune note,", "into your PIMS."],
+      "brandCard": ["Browser extension"],
+      "narration": "You recorded the visit. noctune wrote the note."
+    },
+    {
+      "id": "record",
+      "platform": "web",
+      "headline": ["Now it goes", "in the record."],
+      "source": "record.mp4",
+      "disclosure": "Demo practice record",
+      "narration": "Now it has to get into your practice system."
+    },
+    {
+      "id": "panel",
+      "platform": "web",
+      "headline": ["Click the noctune icon.", "Your notes, already synced."],
+      "source": "panel.mp4",
+      "disclosure": "Demo practice record · side panel shown docked",
+      "narration": "Click the noctune icon in your browser. Your notes are already synced."
+    },
+    {
+      "id": "keys",
+      "platform": "web",
+      "headline": ["Click a field.", "Press your hotkey.", "You choose the key."],
+      "source": "keys.mp4",
+      "disclosure": "Demo practice record · side panel shown docked",
+      "narration": "Click a field. Press your hotkey."
+    },
+    {
+      "id": "again",
+      "platform": "web",
+      "headline": ["Each press,", "the next section."],
+      "source": "again.mp4",
+      "disclosure": "Demo practice record · side panel shown docked",
+      "narration": "That's Subjective. Again. Objective. Again."
+    },
+    {
+      "id": "discharge",
+      "platform": "web",
+      "headline": ["Discharge too.", "Then Save in your PIMS."],
+      "source": "discharge.mp4",
+      "disclosure": "Demo practice record · side panel shown docked",
+      "narration": "Discharge instructions too. It never saves or sends anything for you. You read it, then Save in your PIMS. It just does the copying."
+    },
+    {
+      "id": "anywhere",
+      "platform": "web",
+      "headline": ["Any PIMS", "in your browser."],
+      "source": "anywhere.mp4",
+      "disclosure": "Demo practice record · side panel shown docked",
+      "narration": "Works with any practice system that runs in a browser. No integration needed."
+    },
+    {
+      "id": "outro",
+      "platform": "web",
+      "headline": ["Try it today."],
+      "brandCard": ["noctune.ai"],
+      "narration": "noctune. Try it today."
+    }
+  ]
+}

@@ -160,3 +160,81 @@ test('editor keeps static screen time when a cut starts between variable-rate fr
   assert.ok(pixel(0.2)[0] > 200, 'static red screen time was dropped')
   assert.ok(pixel(0.8)[2] > 200)
 })
+
+test('zoom pushes in on the framed region and rejects regions outside the footage', async (t) => {
+  const { validateZoom, zoomFilter } = await import('./edit-recordings.mjs')
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tutorial-zoom-'))
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }))
+  const file = 'quadrants.mp4',
+    full = path.join(root, file)
+  // Red top-left quadrant on blue: zoomed onto it, the whole frame turns red.
+  execFileSync('ffmpeg', [
+    '-v',
+    'error',
+    '-f',
+    'lavfi',
+    '-i',
+    'color=blue:s=320x180:d=2:r=30',
+    '-vf',
+    'drawbox=x=0:y=0:w=160:h=90:color=red:t=fill',
+    '-c:v',
+    'libx264',
+    '-pix_fmt',
+    'yuv420p',
+    full,
+  ])
+  fs.writeFileSync(
+    path.join(root, 'manifest.json'),
+    JSON.stringify({
+      clips: [
+        {
+          file,
+          usable: true,
+          sha256: createHash('sha256').update(fs.readFileSync(full)).digest('hex'),
+        },
+      ],
+    }),
+  )
+  const zoom = { to: [0, 0, 160], in: [0.2, 0.8], out: [1.2, 1.8] }
+  assert.match(zoomFilter(zoom, 320, 180), /^zoompan=z='1\+1\*/)
+  const output = path.join(root, 'edited')
+  await editRecordings(
+    root,
+    {
+      version: 1,
+      scenes: [{ id: 'zoom', duration: 2, cuts: [{ source: file, start: 0, duration: 2, zoom }] }],
+    },
+    output,
+  )
+  const pixel = (at, x) =>
+    execFileSync('ffmpeg', [
+      '-v',
+      'error',
+      '-ss',
+      String(at),
+      '-i',
+      path.join(output, 'zoom.mp4'),
+      '-frames:v',
+      '1',
+      '-vf',
+      `crop=8:8:${x}:80,scale=1:1`,
+      '-pix_fmt',
+      'rgb24',
+      '-f',
+      'rawvideo',
+      '-',
+    ])
+  assert.ok(pixel(0.05, 300)[2] > 200, 'starts wide: right side is blue')
+  assert.ok(pixel(1, 300)[0] > 200, 'zoomed: right side shows the red quadrant')
+  assert.ok(pixel(1.95, 300)[2] > 200, 'zooms back out')
+  const edited = JSON.parse(fs.readFileSync(path.join(output, 'manifest.json')))
+  assert.deepEqual(edited.clips[0].cuts[0].zoom, zoom)
+  for (const bad of [
+    { to: [200, 0, 160] },
+    { to: [0, 0, 80] },
+    { to: [0, 0, 160], in: [0.5, 0.2] },
+    { to: [0, 0, 160], in: [0, 1], out: [0.5, 1.5] },
+    { to: [0, 0, 160], out: [1, 3] },
+  ])
+    assert.throws(() => validateZoom(bad, 320, 180, 2), /Invalid zoom/)
+})

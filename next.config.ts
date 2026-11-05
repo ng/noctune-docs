@@ -25,6 +25,16 @@ export default withNextra({
   async redirects() {
     return [
       {
+        source: '/chrome-extension',
+        destination: '/browser-extension',
+        permanent: true,
+      },
+      {
+        source: '/tutorials/chrome-extension',
+        destination: '/tutorials/browser-extension',
+        permanent: true,
+      },
+      {
         source: '/ios',
         destination: '/ios/support',
         permanent: true,
