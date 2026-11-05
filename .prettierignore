@@ -17,3 +17,4 @@ knowledge/
 
 # Disposable capture runtime and review artifacts.
 .capture/
+.ygg/
