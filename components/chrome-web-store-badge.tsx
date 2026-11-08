@@ -11,8 +11,9 @@ interface ChromeWebStoreBadgeProps {
 /**
  * Official “Available in the Chrome Web Store” badge linked to the noctune extension.
  *
- * Uses Google's bordered artwork for colored backgrounds, unmodified and at its
- * original aspect ratio, as the Chrome Web Store branding guidelines require.
+ * Uses Google's bordered artwork for colored backgrounds at its original aspect ratio,
+ * as the Chrome Web Store branding guidelines require, with corners rounded to match
+ * the App Store badge.
  */
 export function ChromeWebStoreBadge({ height = 40, className }: ChromeWebStoreBadgeProps) {
   return (
@@ -28,7 +29,7 @@ export function ChromeWebStoreBadge({ height = 40, className }: ChromeWebStoreBa
         alt="Available in the Chrome Web Store"
         width={Math.round(height * BADGE_ASPECT_RATIO)}
         height={height}
-        style={{ height, width: 'auto' }}
+        style={{ height, width: 'auto', borderRadius: height * 0.17 }}
         unoptimized
       />
     </a>
