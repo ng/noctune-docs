@@ -1,5 +1,7 @@
 import Image from 'next/image'
 import { AppStoreBadge } from './app-store-badge'
+import { ChromeWebStoreBadge } from './chrome-web-store-badge'
+import { CHROME_WEB_STORE_URL } from '../lib/chrome-web-store'
 
 import styles from './footer.module.css'
 
@@ -14,6 +16,7 @@ const FOOTER_LINKS: Record<string, { label: string; href: string }[]> = {
     { label: 'Pricing', href: `${BRAND_URL}/pricing` },
     { label: 'Pay-per-note', href: `${BRAND_URL}/pay-per-note` },
     { label: 'Staff safety', href: `${BRAND_URL}/staff-safety` },
+    { label: 'Chrome extension', href: CHROME_WEB_STORE_URL },
     { label: 'FAQ', href: `${BRAND_URL}/#faq` },
   ],
   Resources: [
@@ -51,8 +54,9 @@ export function DocsFooter() {
             style={{ display: 'block', height: 28, width: 'auto' }}
           />
           <p className={styles.tagline}>AI for veterinary medicine.</p>
-          <div style={{ marginTop: 20 }}>
+          <div className={styles.badges}>
             <AppStoreBadge height={40} />
+            <ChromeWebStoreBadge height={40} />
           </div>
         </div>
 
