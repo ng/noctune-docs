@@ -610,6 +610,44 @@ discharge and review lines share a scene because "too" alone is heard as "two". 
 time and the cut recipe follow the current narration timeline, so recheck both after a new
 take. The record is a demo page, not a practice system; the footer says so.
 
+## Windows app (episode 14)
+
+The footage is the Windows app's own overview take, `desktop/marketing/windows-overview/12-insert-flow.mp4`
+in Core (`dotnet run --project integration -- --video …` on Windows; see that folder's README). It is
+the real app and the real Ctrl+Shift+E against the test harness's `--demo` exam-notes record, recorded
+at 100% display scaling, 1794×1160, with no audio. Nothing here can re-record it on a Mac.
+
+Copy it into a raw root with a `manifest.json` that approves it, as the native contract expects:
+
+```sh
+mkdir -p .tutorial-output/windows-interactions
+cp /absolute/path/to/noctune-core/desktop/marketing/windows-overview/12-insert-flow.mp4 \
+  .tutorial-output/windows-interactions/insert-flow.mp4
+# manifest.json: {"version": 1, "coreCommit": "<sha>", "device": "Windows 11, 100% scaling",
+#   "clips": [{"file": "insert-flow.mp4", "usable": true, "sha256": "<sha256 of the file>"}]}
+```
+
+The story sets `frame: "window"`: the footage already carries its own title bars, so the renderer
+draws a plain window shadow sized to the take's aspect instead of the browser chrome, and labels the
+scenes WINDOWS. Scenes stay `platform: "web"`, so the media root is the renderer's third argument.
+
+The take has one fault: at 24.40–24.80 s the demo record drops out and a window behind it shows
+through. The discharge cut skips those frames; keep it skipped if the cuts change. The cuts land each
+insert a beat before its word in the narration (`captions/captions.json` has the word times).
+
+```sh
+pnpm tutorials:narrate tutorials/windows-app.json \
+  .tutorial-output/windows-app/narration "$TUTORIAL_ENV_FILE"
+pnpm tutorials:captions .tutorial-output/windows-app/narration \
+  .tutorial-output/windows-app/captions "$TUTORIAL_ENV_FILE"
+node scripts/tutorials/edit-recordings.mjs .tutorial-output/windows-interactions \
+  tutorials/windows-app.cuts.json .tutorial-output/windows-app/media
+pnpm tutorials:render .tutorial-output/windows-app/narration \
+  .tutorial-output/windows-app/video .tutorial-output/windows-app/media
+pnpm tutorials:caption-video .tutorial-output/windows-app/video \
+  .tutorial-output/windows-app/captions .tutorial-output/windows-app/delivery
+```
+
 ## Publishing to the docs
 
 Reviewed videos are served from `https://docs-media.noctune.ai`, a dedicated S3

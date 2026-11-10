@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "title": "Move a note into a Windows practice system with noctune for Windows",
+  "kicker": "DESKTOP APP",
+  "tagline": "Your note into your PIMS. On Windows, too.",
+  "frame": "window",
+  "transition": 0.4,
+  "cover": 13.0,
+  "scenes": [
+    {
+      "id": "intro",
+      "platform": "web",
+      "headline": ["Your noctune note,", "into a Windows PIMS."],
+      "brandCard": ["noctune for Windows"],
+      "narration": "Your practice system runs on Windows, or over Remote Desktop. noctune works there too."
+    },
+    {
+      "id": "open",
+      "platform": "web",
+      "headline": ["Open the panel.", "Pick the patient."],
+      "source": "open.mp4",
+      "disclosure": "Demo practice record",
+      "narration": "Pick the patient's note in the noctune panel, beside the record."
+    },
+    {
+      "id": "keys",
+      "platform": "web",
+      "headline": ["Click a field.", "Press Ctrl+Shift+E."],
+      "source": "keys.mp4",
+      "disclosure": "Demo practice record",
+      "narration": "Click a field. Press Control Shift E. Subjective goes in."
+    },
+    {
+      "id": "again",
+      "platform": "web",
+      "headline": ["Each press,", "the next section."],
+      "source": "again.mp4",
+      "disclosure": "Demo practice record",
+      "narration": "Each press, the next section. Objective. Assessment. Plan."
+    },
+    {
+      "id": "discharge",
+      "platform": "web",
+      "headline": ["Discharge too.", "Then Save in your PIMS."],
+      "source": "discharge.mp4",
+      "disclosure": "Demo practice record",
+      "narration": "Discharge instructions too. It only ever pastes. It never saves or sends anything for you. You read it, then Save in your PIMS."
+    },
+    {
+      "id": "anywhere",
+      "platform": "web",
+      "headline": ["On the PC,", "remote, or in Chrome."],
+      "instructionTitle": "Where noctune works",
+      "instructionCard": [
+        "Installed on the PC",
+        "Over Remote Desktop or Citrix",
+        "In Chrome, with the browser extension"
+      ],
+      "instructionStyle": "checklist",
+      "narration": "On the PC, over Remote Desktop or Citrix, and in Chrome with the browser extension."
+    },
+    {
+      "id": "outro",
+      "platform": "web",
+      "headline": ["Early access is open."],
+      "brandCard": ["noctune.ai"],
+      "narration": "noctune for Windows. Early access is open."
+    }
+  ]
+}

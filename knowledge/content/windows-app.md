@@ -41,6 +41,8 @@ It works with Windows PIMS such as IDEXX Cornerstone, Covetrus AVImark, Covetrus
 
 Click a field in the patient record and press **Ctrl+Shift+E**. The next section of your note goes into that field. Press again in the next field for the next section.
 
+Tutorial video (windows-app) is not yet published.
+
 ![An exam notes record for Mochi beside the noctune panel. Subjective and Objective are in the record, the badge over the Assessment field reads "✓ Objective → Mochi, Ctrl+Z undoes, Next: Assessment Ctrl+Shift+E", and the panel shows Assessment as next, 2 of 5](https://docs.noctune.ai/windows-app/insert-flow.webp)
 
 noctune never saves, submits, clicks, or presses Enter in your PIMS. The only keys it ever sends are **Ctrl+V**. When it can't insert a section, it copies it and tells you, so you can paste it yourself. You still review the record and save it in your PIMS.

@@ -307,6 +307,11 @@ test('renderer handles web, iOS, and instruction cards and rejects unsafe inputs
   timeline.scenes[2].instructionCard = ['x'.repeat(51)]
   assert.throws(() => validateTimeline(timeline), /Invalid instruction card/)
   timeline.scenes[2].instructionCard = ['Check the draft.']
+  timeline.frame = 'phone'
+  assert.throws(() => validateTimeline(timeline), /Frame must be "window"/)
+  timeline.frame = 'window'
+  validateTimeline(timeline)
+  delete timeline.frame
   timeline.scenes[1].at += 1
   assert.throws(() => validateTimeline(timeline), /timing/)
 })
