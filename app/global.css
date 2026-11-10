@@ -127,3 +127,24 @@ article blockquote {
 html.dark .noctune-logo {
   filter: invert(1) hue-rotate(180deg);
 }
+
+/*
+ * noctune for Windows stills are native-size window captures (a narrow panel,
+ * a short record crop), so cap them instead of stretching them to the column.
+ */
+.windows-app-shot {
+  margin-top: 1.5rem;
+}
+
+.windows-app-shot img {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.windows-app-shot-wide img {
+  max-width: 640px;
+}

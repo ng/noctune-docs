@@ -35,6 +35,7 @@ export default {
     title: 'Integrations',
   },
   'browser-extension': 'Browser extension',
+  'windows-app': 'Windows app',
   '--practice': {
     type: 'separator',
     title: 'Practice',
