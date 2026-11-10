@@ -4,6 +4,10 @@
   "kicker": "DESKTOP APP",
   "tagline": "Your note into your PIMS. On Windows, too.",
   "frame": "window",
+  "panes": [
+    [2, 2, 1190, 1156],
+    [1214, 2, 578, 1156]
+  ],
   "transition": 0.4,
   "cover": 13.0,
   "scenes": [

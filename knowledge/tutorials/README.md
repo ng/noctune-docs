@@ -631,6 +631,12 @@ The story sets `frame: "window"`: the footage already carries its own title bars
 draws a plain window shadow sized to the take's aspect instead of the browser chrome, and labels the
 scenes WINDOWS. Scenes stay `platform: "web"`, so the media root is the renderer's third argument.
 
+The take is one rectangle around both windows, so Windows 11's rounded corners and the seam between
+them show the desktop behind. `panes` lists each window's rectangle in source pixels (the record at
+`[2, 2, 1190, 1156]`, the panel at `[1214, 2, 578, 1156]`). The renderer crops each one, scales them
+together, rounds each with its own mask, and sets them side by side with a gap and a shadow apiece.
+The record's crop stops at x 1192, where the panel's drop shadow on it starts to show.
+
 The take has one fault: at 24.40–24.80 s the demo record drops out and a window behind it shows
 through. The discharge cut skips those frames; keep it skipped if the cuts change. The cuts land each
 insert a beat before its word in the narration (`captions/captions.json` has the word times).

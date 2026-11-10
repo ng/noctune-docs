@@ -311,9 +311,36 @@ test('renderer handles web, iOS, and instruction cards and rejects unsafe inputs
   assert.throws(() => validateTimeline(timeline), /Frame must be "window"/)
   timeline.frame = 'window'
   validateTimeline(timeline)
+  timeline.panes = [[0, 0, 8, 100]]
+  assert.throws(() => validateTimeline(timeline), /Panes need the window frame/)
+  timeline.panes = [
+    [0, 0, 800, 600],
+    [810, 0, 300, 600],
+  ]
+  validateTimeline(timeline)
   delete timeline.frame
+  assert.throws(() => validateTimeline(timeline), /Panes need the window frame/)
+  delete timeline.panes
   timeline.scenes[1].at += 1
   assert.throws(() => validateTimeline(timeline), /timing/)
+})
+
+test('window panes scale together, fit the box, and keep their gap', async () => {
+  const { layoutPanes } = await import('./render.mjs')
+  const box = { x: 620, y: 112, w: 1240, h: 800 }
+  const [record, panel] = layoutPanes(
+    [
+      [2, 2, 1180, 1156],
+      [1214, 2, 578, 1156],
+    ],
+    box,
+  )
+  assert.equal(panel.x - (record.x + record.w), 28)
+  assert.equal(record.h, panel.h)
+  assert.ok(record.x >= box.x && panel.x + panel.w <= box.x + box.w)
+  assert.ok(record.y >= box.y && record.y + record.h <= box.y + box.h)
+  for (const pane of [record, panel]) assert.ok(pane.w % 2 === 0 && pane.h % 2 === 0)
+  assert.ok(Math.abs(record.w / panel.w - 1180 / 578) < 0.02)
 })
 
 test('captions preserve authored wording, flag recognition corrections, and bound line lengths', async () => {

@@ -20,7 +20,8 @@
         {
           "source": "insert-flow.mp4",
           "start": 3.5,
-          "duration": 4.867
+          "duration": 3.5,
+          "hold": 1.367
         }
       ]
     },
@@ -30,17 +31,17 @@
       "cuts": [
         {
           "source": "insert-flow.mp4",
-          "start": 7.8,
-          "duration": 2.3
+          "start": 7.0,
+          "duration": 2.4
         },
         {
           "source": "insert-flow.mp4",
-          "start": 12.3,
-          "duration": 1.1
+          "start": 12.05,
+          "duration": 1.0
         },
         {
           "source": "insert-flow.mp4",
-          "start": 16.1,
+          "start": 15.78,
           "duration": 1.7
         }
       ]

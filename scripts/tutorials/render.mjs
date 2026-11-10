@@ -52,6 +52,26 @@ export function validateTimeline(story) {
   // footage's aspect, and the scene label reads WINDOWS instead of WEB.
   if (story.frame !== undefined && story.frame !== 'window')
     throw Error('Frame must be "window" when set')
+  // Optional `panes` with the window frame: one to three [x, y, width, height]
+  // rectangles in source pixels, one per app window in the take. Each is cropped
+  // out and set as its own rounded window with a gap between, so the desktop
+  // behind the windows' corners and seams never shows.
+  if (
+    story.panes !== undefined &&
+    (story.frame !== 'window' ||
+      !Array.isArray(story.panes) ||
+      !story.panes.length ||
+      story.panes.length > 3 ||
+      story.panes.some(
+        (pane) =>
+          !Array.isArray(pane) ||
+          pane.length !== 4 ||
+          pane.some((n) => !Number.isInteger(n) || n < 0) ||
+          pane[2] < 16 ||
+          pane[3] < 16,
+      ))
+  )
+    throw Error('Panes need the window frame and one to three [x, y, width, height] rectangles')
   const validTransition = (value) =>
     value === undefined || value === 0 || (Number.isFinite(value) && value >= 0.2 && value <= 0.6)
   if (!validTransition(story.transition)) throw Error('Transition must be 0 or 0.2–0.6 seconds')
@@ -207,9 +227,34 @@ function extensionIcon() {
   return extensionIconData
 }
 
-function windowFrame(box) {
+function windowFrame(box, radius = 6) {
   return `<defs><filter id="window-shadow" x="-15%" y="-15%" width="130%" height="145%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#153D38" flood-opacity="0.16"/></filter></defs>
-          <rect x="${box.x - 1}" y="${box.y - 1}" width="${box.w + 2}" height="${box.h + 2}" rx="6" fill="#FFFFFF" stroke="#CDD9D5" stroke-width="1" filter="url(#window-shadow)"/>`
+          <rect x="${box.x - 1}" y="${box.y - 1}" width="${box.w + 2}" height="${box.h + 2}" rx="${radius}" fill="#FFFFFF" stroke="#CDD9D5" stroke-width="1" filter="url(#window-shadow)"/>`
+}
+
+const PANE_GAP = 28,
+  PANE_RADIUS = 10
+// Scales the panes together so the row fits the box, then centres the row.
+// Sizes are even so the crops scale cleanly into yuv420p.
+export function layoutPanes(panes, box) {
+  const even = (n) => Math.max(2, Math.round(n / 2) * 2)
+  const width = panes.reduce((sum, pane) => sum + pane[2], 0)
+  const scale = Math.min(
+    (box.w - PANE_GAP * (panes.length - 1)) / width,
+    box.h / Math.max(...panes.map((pane) => pane[3])),
+  )
+  const sized = panes.map((pane) => ({
+    crop: pane,
+    w: even(pane[2] * scale),
+    h: even(pane[3] * scale),
+  }))
+  const row = sized.reduce((sum, pane) => sum + pane.w, 0) + PANE_GAP * (panes.length - 1)
+  let x = box.x + Math.round((box.w - row) / 2)
+  return sized.map((pane) => {
+    const placed = { ...pane, x, y: box.y + Math.round((box.h - pane.h) / 2) }
+    x += pane.w + PANE_GAP
+    return placed
+  })
 }
 
 function browserFrame(box, story) {
@@ -322,6 +367,11 @@ export async function render(timelineDir, output, roots) {
       throw Error(
         `Footage too short for narration: ${scene.id}. Supply a longer take or use an explicit still.`,
       )
+    if (story.panes && source) {
+      const video = probe(source).streams.find((stream) => stream.codec_type === 'video')
+      if (story.panes.some(([x, y, w, h]) => !video || x + w > video.width || y + h > video.height))
+        throw Error(`Pane outside the footage: ${scene.id}`)
+    }
     const measuredAudio = Number(probe(audio).format.duration)
     if (!Number.isFinite(measuredAudio) || Math.abs(measuredAudio - scene.speechSeconds) > 0.1)
       throw Error(`Audio changed since narration: ${scene.id}`)
@@ -348,6 +398,10 @@ export async function render(timelineDir, output, roots) {
         : desktop
           ? { x: 640, y: 128, w: 1200, h: 776 }
           : { x: 610, y: 156, w: 1248, h: 702 }
+      const panes =
+        desktop && story.panes && !scene.instructionCard && !scene.brandCard
+          ? layoutPanes(story.panes, { x: 620, y: 112, w: 1240, h: 800 })
+          : null
       const left = 76,
         fontSize = phone ? 60 : 40
       const headline = scene.headline
@@ -367,9 +421,11 @@ export async function render(timelineDir, output, roots) {
           ? ''
           : phone
             ? `<rect x="${box.x - 8}" y="${box.y - 8}" width="${box.w + 16}" height="${box.h + 16}" rx="42" fill="#153D38"/>`
-            : desktop
-              ? windowFrame(box)
-              : browserFrame(box, story)
+            : panes
+              ? panes.map((pane) => windowFrame(pane, PANE_RADIUS)).join('')
+              : desktop
+                ? windowFrame(box)
+                : browserFrame(box, story)
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><rect width="100%" height="100%" fill="#F3F8F2"/><ellipse cx="1680" cy="650" rx="690" ry="880" fill="#CDE7DF"/><g font-family="Arial" fill="#132D2B"><image href="data:image/png;base64,${logo}" x="76" y="56" width="300" height="80" preserveAspectRatio="xMinYMid meet"/><text x="76" y="262" font-size="19" fill="#53716A">${String(index + 1).padStart(2, '0')} / ${phone ? 'iOS' : desktop ? 'WINDOWS' : 'WEB'} ${escape(story.kicker || 'WALKTHROUGH')}</text>${headline}<text x="76" y="786" font-size="20" font-weight="700" fill="#11736F">noctune.ai</text><text x="76" y="820" font-size="20" fill="#4D6963">${escape(story.tagline || 'Your first encounter, step by step.')}</text>${bars}${frame}<text x="960" y="1050" text-anchor="middle" font-size="19" fill="#4D6963">Fictional demo data · ${scene.instructionCard ? 'Instruction card' : motion ? 'Recorded app footage' : 'Static app capture'}${scene.disclosure ? ' · ' + escape(scene.disclosure) : ''}</text></g></svg>`
       const card = path.join(work, `${index}-card.png`)
       const segment = path.join(work, `${index}.mp4`)
@@ -434,6 +490,36 @@ export async function render(timelineDir, output, roots) {
           .toFile(mask)
       const clipping = roundedScreen ? '[screen][3:v]alphamerge[rounded];' : ''
       const overlaySource = roundedScreen ? 'rounded' : 'screen'
+      // Window panes: crop each window, scale it, round its corners with its own
+      // mask (inputs 3 and on), and lay the panes over the card one by one.
+      const paneMasks = []
+      for (const [i, pane] of (panes ?? []).entries()) {
+        const file = path.join(work, `${index}-pane-${i}-mask.png`)
+        await sharp(
+          Buffer.from(
+            `<svg xmlns="http://www.w3.org/2000/svg" width="${pane.w}" height="${pane.h}"><rect width="100%" height="100%" fill="black"/><rect width="100%" height="100%" rx="${PANE_RADIUS}" fill="white"/></svg>`,
+          ),
+        )
+          .removeAlpha()
+          .png()
+          .toFile(file)
+        paneMasks.push(file)
+      }
+      const composite = panes
+        ? `[1:v]setpts=PTS-STARTPTS,split=${panes.length}${panes.map((_, i) => `[s${i}]`).join('')};` +
+          panes
+            .map(
+              ({ crop: [x, y, w, h], ...pane }, i) =>
+                `[s${i}]crop=${w}:${h}:${x}:${y},scale=${pane.w}:${pane.h}:flags=lanczos,setsar=1[c${i}];[c${i}][${3 + i}:v]alphamerge[p${i}];`,
+            )
+            .join('') +
+          panes
+            .map(
+              (pane, i) =>
+                `[${i ? `o${i - 1}` : '0:v'}][p${i}]overlay=${pane.x}:${pane.y}:shortest=1${i === panes.length - 1 ? ',format=yuv420p[v]' : `[o${i}]`}`,
+            )
+            .join(';')
+        : `[1:v]setpts=PTS-STARTPTS,scale=${box.w}:${box.h}:force_original_aspect_ratio=decrease,pad=${box.w}:${box.h}:(ow-iw)/2:(oh-ih)/2:color=0xF3F8F2,setsar=1[screen];${clipping}[0:v][${overlaySource}]overlay=${box.x}:${box.y}:shortest=1,format=yuv420p[v]`
       const visual = motion
         ? ['-ss', String(start), '-i', visualSource]
         : ['-loop', '1', '-framerate', '30', '-i', visualSource]
@@ -448,8 +534,9 @@ export async function render(timelineDir, output, roots) {
         '-i',
         audio,
         ...(roundedScreen ? ['-loop', '1', '-framerate', '30', '-i', mask] : []),
+        ...paneMasks.flatMap((file) => ['-loop', '1', '-framerate', '30', '-i', file]),
         '-filter_complex',
-        `[1:v]setpts=PTS-STARTPTS,scale=${box.w}:${box.h}:force_original_aspect_ratio=decrease,pad=${box.w}:${box.h}:(ow-iw)/2:(oh-ih)/2:color=0xF3F8F2,setsar=1[screen];${clipping}[0:v][${overlaySource}]overlay=${box.x}:${box.y}:shortest=1,format=yuv420p[v];[2:a]apad,aresample=48000[a]`,
+        `${composite};[2:a]apad,aresample=48000[a]`,
         '-map',
         '[v]',
         '-map',
