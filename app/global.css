@@ -129,8 +129,8 @@ html.dark .noctune-logo {
 }
 
 /*
- * noctune for Windows stills are native-size window captures (a narrow panel,
- * a short record crop), so cap them instead of stretching them to the column.
+ * noctune for Windows panel stills are native-size captures of a narrow window, so
+ * cap them instead of stretching them to the column. The wide side-by-side shot fills it.
  */
 .windows-app-shot {
   margin-top: 1.5rem;
@@ -146,5 +146,5 @@ html.dark .noctune-logo {
 }
 
 .windows-app-shot-wide img {
-  max-width: 640px;
+  max-width: 100%;
 }
