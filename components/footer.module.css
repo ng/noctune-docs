@@ -1,70 +1,60 @@
-/* Matches the marketing site's SiteFooter colors and type (noctune-marketing). */
+/* Matches the marketing site's SiteFooter layout, colors and type (noctune-marketing):
+   MUI's lg Container, a spacing-5 grid and its body2/overline/caption sizes. */
 footer.footer {
   max-width: none;
   margin: 0;
-  padding: 64px max(env(safe-area-inset-right), 1.5rem) 32px max(env(safe-area-inset-left), 1.5rem);
+  padding: 64px max(env(safe-area-inset-right), 24px) 32px max(env(safe-area-inset-left), 24px);
   background: #212121;
   color: #bdbdbd;
 }
 
 .container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1152px;
   margin: 0 auto;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: 4fr repeat(4, 2fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 40px;
   margin-bottom: 48px;
 }
 
+.column,
+.brand {
+  min-width: 0;
+}
+
 .tagline {
   max-width: 280px;
-  margin-top: 16px;
+  margin: 16px 0 0;
   font-size: 14px;
   line-height: 1.43;
   color: #9e9e9e;
 }
 
-/* Store badges and the Windows button share Apple's 40px on-screen minimum. */
-.apps {
+.contact {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px 16px;
-  align-items: center;
-  margin-bottom: 32px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 20px;
 }
 
-.appsHeading {
-  margin-right: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: #fff;
-}
-
-.windows {
+.contactLink {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  box-sizing: border-box;
-  height: 40px;
-  padding: 0 16px;
-  border: 1px solid #757575;
-  border-radius: 8px;
   font-size: 14px;
-  font-weight: 600;
-  color: #fff;
+  line-height: 1.43;
+  color: #9e9e9e;
   text-decoration: none;
-  white-space: nowrap;
-  transition: border-color 0.2s;
+  transition: color 0.2s;
 }
 
-.windows:hover {
-  border-color: #fff;
+.contactLink:hover {
+  color: #fff;
 }
 
 .heading {
@@ -75,12 +65,13 @@ footer.footer {
   line-height: 2.66;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #fff;
+  color: #bdbdbd;
 }
 
 .links {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 12px;
 }
 
@@ -96,6 +87,42 @@ footer.footer {
   color: #fff;
 }
 
+/* Store badges and the Windows button share Apple's 40px on-screen minimum. */
+.appList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.appNote {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.66;
+  color: #9e9e9e;
+}
+
+/* Same 7px corners as the App Store and Chrome Web Store badges beside it. */
+.windows {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid #757575;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 0.2s;
+}
+
+.windows:hover {
+  border-color: #fff;
+}
+
 .bottom {
   display: flex;
   flex-wrap: wrap;
@@ -105,34 +132,24 @@ footer.footer {
   padding-top: 32px;
   border-top: 1px solid #424242;
   font-size: 12px;
+  line-height: 1.66;
   color: #9e9e9e;
 }
 
-.icons {
+.legal {
   display: flex;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 8px 24px;
 }
 
-.icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  background: #424242;
-  color: #9e9e9e;
-  transition: all 0.2s;
-}
-
-.icon:hover {
-  background: #616161;
-  color: #fff;
+.legal .link {
+  font-size: 12px;
+  line-height: 1.66;
 }
 
 @media (max-width: 899px) {
   .grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .brand {
@@ -140,12 +157,19 @@ footer.footer {
   }
 }
 
+/* Phones: brand, then Product and Resources side by side, then Get the app. */
 @media (max-width: 599px) {
+  footer.footer {
+    padding-right: max(env(safe-area-inset-right), 16px);
+    padding-left: max(env(safe-area-inset-left), 16px);
+  }
+
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .appsHeading {
-    flex-basis: 100%;
+  .apps {
+    grid-column: 1 / -1;
+    order: 1;
   }
 }
