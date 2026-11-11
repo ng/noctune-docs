@@ -27,17 +27,15 @@ practice system is the app's demo exam-notes record, labelled in the video.
 When we launched the noctune browser extension, the first reply from a lot of vets was:
 "Our practice system isn't in a browser."
 
-Cornerstone, AVImark, ImproMed, DVMAX: installed on the PC, or reached over Remote Desktop or Citrix.
+Fair. Plenty of clinics run their PIMS on Windows: IDEXX Small Animal Health Cornerstone and DVMAX, Covetrus AVImark and Impromed. Installed on the PC, or reached over Remote Desktop or Citrix.
 
-So we built noctune for Windows. The same panel, beside the record:
+We'd love to integrate directly with every one of them. Until then, there's noctune for Windows. The same panel, beside the record:
 
 → Click a field and press Ctrl+Shift+E: the next section goes in
 → Subjective, Objective, Assessment, Plan, then the discharge instructions
-→ On the PC, over Remote Desktop or Citrix, and in Chrome with the extension
+→ Nothing is saved or sent for you. You read it, then Save in your PIMS
 
-The only key it ever presses is Ctrl+V. It never saves or sends anything for you.
-
-Early access is open. Which practice system does your clinic run?
+Already in the browser, on DaySmart Vet, ezyVet, Instinct Science or another web-based PIMS? The noctune Chrome extension does the same thing there, and it's live on the Chrome Web Store.
 
 #VeterinaryMedicine #VetMed #VetTech
 ```
@@ -46,7 +44,7 @@ Early access is open. Which practice system does your clinic run?
 
 ```text
 Windows app guide: https://docs.noctune.ai/windows-app
-noctune.ai
+Chrome extension: https://chromewebstore.google.com/detail/noctune/kcknienoooaaaagldfclmkfhodnfjhjf
 ```
 
 ## Replies for the first hour
@@ -59,5 +57,5 @@ noctune.ai
 
 - [noctune for Windows](../../content/windows-app.mdx)
 
-_IDEXX Cornerstone, AVImark, ImproMed and DVMAX are trademarks of their respective owners. noctune
-is not affiliated with or endorsed by them._
+_IDEXX, Cornerstone, DVMAX, Covetrus, AVImark, Impromed, DaySmart Vet, ezyVet and Instinct are
+trademarks of their respective owners. noctune is not affiliated with or endorsed by them._
