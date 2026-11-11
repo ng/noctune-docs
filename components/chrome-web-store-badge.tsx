@@ -43,6 +43,7 @@ export function ChromeWebStoreBadge({
         width={Math.round(height * BADGE_ASPECT_RATIO)}
         height={height}
         style={{
+          display: 'block',
           height,
           width: 'auto',
           borderRadius: height * BADGE_RADIUS_RATIO,

@@ -57,7 +57,7 @@ function LinkColumn({ title, links }: { title: string; links: { label: string; h
 
 function AppItem({ note, children }: { note: string; children: React.ReactNode }) {
   return (
-    <div>
+    <div className={styles.appItem}>
       {children}
       <p className={styles.appNote}>{note}</p>
     </div>
@@ -131,8 +131,8 @@ export function DocsFooter() {
               >
                 <svg
                   aria-hidden="true"
-                  width="20"
-                  height="20"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                 >

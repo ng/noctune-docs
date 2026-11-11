@@ -28,7 +28,7 @@ export function AppStoreBadge({ height = 40, className }: AppStoreBadgeProps) {
         alt="Download on the App Store"
         width={Math.round(height * BADGE_ASPECT_RATIO)}
         height={height}
-        style={{ height, width: 'auto' }}
+        style={{ display: 'block', height, width: 'auto' }}
         unoptimized
       />
     </a>
