@@ -51,7 +51,7 @@ noctune never saves, submits, clicks, or presses Enter in your PIMS. The only ke
 
 ## Before you start
 
-You need a Windows 10 or Windows 11 computer and a noctune account. The installer adds the Microsoft Edge WebView2 runtime if your computer doesn't already have it.
+You need a Windows 10 or Windows 11 computer and a noctune account. If you don't have one yet, [sign up at app.noctune.ai](https://app.noctune.ai/sign-up). The installer adds the Microsoft Edge WebView2 runtime if your computer doesn't already have it.
 
 <span id="get-the-app"></span>
 
@@ -76,7 +76,7 @@ noctune keeps itself up to date. It checks for updates when it starts and once a
 
 ## Sign in and choose a practice
 
-Sign in with the same account you use for noctune: **Continue with Google**, **Continue with Apple**, or your email and password.
+Sign in with the same account you use for [noctune on the web](https://app.noctune.ai): **Continue with Google**, **Continue with Apple**, or your email and password.
 
 ![The noctune for Windows sign-in panel with Continue with Google, Continue with Apple, and email and password fields](https://docs.noctune.ai/windows-app/sign-in.webp)
 

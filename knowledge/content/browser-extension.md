@@ -18,7 +18,7 @@ The noctune browser extension opens your noctune note in a panel beside your pra
 
 ## Before you start
 
-The extension works in Chrome on a Mac or Windows computer. It doesn't work in other browsers or on phones and tablets yet.
+You need a noctune account. If you don't have one yet, [sign up at app.noctune.ai](https://app.noctune.ai/sign-up). The extension works in Chrome on a Mac or Windows computer. It doesn't work in other browsers or on phones and tablets yet.
 
 If your PIMS is a program installed on Windows, or runs in a Remote Desktop or Citrix window, the extension can't reach it. Use [noctune for Windows](windows-app.md) instead.
 
@@ -34,7 +34,7 @@ If your PIMS is a program installed on Windows, or runs in a Remote Desktop or C
 
 ## Sign in and choose a practice
 
-Sign in with the same account you use for noctune: **Continue with Google**, **Continue with Apple**, or your email and password.
+Sign in with the same account you use for [noctune on the web](https://app.noctune.ai): **Continue with Google**, **Continue with Apple**, or your email and password.
 
 If you belong to a practice, choose where your notes come from:
 
