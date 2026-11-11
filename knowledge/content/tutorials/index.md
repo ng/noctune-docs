@@ -25,3 +25,5 @@
 - [Sentinel](sentinel.md) - Review flagged client interactions.
 
 - [Make templates your own](templates.md) - Build templates that write the way you do.
+
+- [Windows app](windows-app.md) - Move a noctune note into a practice system installed on Windows or reached over Remote Desktop or Citrix.

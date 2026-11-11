@@ -13,7 +13,8 @@ export default {
     [
       remarkLintNoDeadUrls,
       {
-        skipUrlPatterns: ['^https?://localhost', '^#'],
+        // mailto: links can't be fetched, so the dead-URL check can't judge them.
+        skipUrlPatterns: ['^https?://localhost', '^#', '^mailto:'],
       },
     ],
   ],

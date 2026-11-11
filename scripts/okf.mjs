@@ -133,6 +133,13 @@ for (const file of files) {
           return paragraph(
             link('Download noctune on the App Store', 'https://apps.apple.com/app/id6744552826'),
           )
+        case 'WindowsDownloadButton':
+          return paragraph(
+            link(
+              'Download noctune for Windows',
+              'https://downloads.noctune.ai/windows/noctune-setup.exe',
+            ),
+          )
         case 'Diagram': {
           const expression = attr.chart?.value
           if (

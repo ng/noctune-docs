@@ -12,4 +12,5 @@ export default {
   'patients-history': 'Patients and history',
   'locked-sections': 'Section locks',
   'browser-extension': 'Browser extension',
+  'windows-app': 'Windows app',
 }

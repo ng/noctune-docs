@@ -32,8 +32,8 @@ export function validateCatalog(catalog) {
     ids.add(episode.id)
     if (!Number.isInteger(episode.series) || episode.series < 1)
       throw Error(`Episode ${episode.id}: series number required`)
-    if (!['web', 'ios', 'hybrid'].includes(episode.platform))
-      throw Error(`Episode ${episode.id}: platform must be web, ios, or hybrid`)
+    if (!['web', 'ios', 'hybrid', 'windows'].includes(episode.platform))
+      throw Error(`Episode ${episode.id}: platform must be web, ios, hybrid, or windows`)
     if (!episode.story || !episode.output || !episode.post)
       throw Error(`Episode ${episode.id}: story, output, and post are required`)
     const review = episode.review

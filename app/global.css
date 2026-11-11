@@ -127,3 +127,29 @@ article blockquote {
 html.dark .noctune-logo {
   filter: invert(1) hue-rotate(180deg);
 }
+
+/*
+ * noctune for Windows panel stills are native-size captures of a narrow window, so
+ * cap them instead of stretching them to the column. The wide side-by-side shot fills it.
+ */
+.windows-app-shot {
+  margin-top: 1.5rem;
+}
+
+.windows-app-shot img {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.windows-app-shot-wide img {
+  max-width: 100%;
+}
+
+/* Let the 64-character SHA-256 checksums wrap instead of widening the table. */
+.windows-downloads td code {
+  word-break: break-all;
+}

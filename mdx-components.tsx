@@ -6,6 +6,7 @@ import { Diagram } from '@/components/diagram'
 import { IntroFilm } from '@/components/intro-film'
 import { Logo } from '@/components/logo'
 import { TutorialVideo } from '@/components/tutorial-video'
+import { WindowsDownloadButton } from '@/components/windows-download-button'
 
 /** Extends the Nextra MDX component map with noctune documentation primitives. */
 export function useMDXComponents(components?: Readonly<MDXComponents>): MDXComponents {
@@ -16,6 +17,7 @@ export function useMDXComponents(components?: Readonly<MDXComponents>): MDXCompo
     IntroFilm,
     Logo,
     TutorialVideo,
+    WindowsDownloadButton,
     ...components,
   })
 }
