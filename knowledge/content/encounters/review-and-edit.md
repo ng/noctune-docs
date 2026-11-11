@@ -52,8 +52,9 @@ If anyone has already edited or locked a section, the new recording updates only
 - **Complete** marks the clinical review finished. The action changes to **Completed**, while the encounter remains available.
 - **Send Email** opens the encounter email choices. Choose **Send discharge notes**, add the recipient, and send the client-facing summary. In a practice, you need a paid seat to send discharge notes. Support staff can help draft the note and send free-text correspondence.
 - Before completion, the discharge dialog offers **Send + Complete** as the primary action and **Send only** as an option. After completion, the primary action is **Send**.
+- To copy a discharge to a clinic inbox, choose **Bcc** in the send window. Tick **Always Bcc this address** to copy every discharge you send. See [Discharge Copies](discharge-copies.md).
 - If **Auto-finish on copy or send** is enabled in [Account settings](../settings/account.md), copying the SOAP note or sending discharge notes can also complete the encounter.
 
 ![Reviewed encounter showing the disabled Completed action](https://docs.noctune.ai/screenshots/encounters/detail/completed.webp)
 
-![Send Discharge Summary dialog with the pet owner email prepared and Send enabled](https://docs.noctune.ai/screenshots/encounters/detail/send-discharge.webp)
+![Send Discharge Notes dialog for Mochi with jamie.chen@example.test under To, the Bcc link, and Send enabled](https://docs.noctune.ai/screenshots/encounters/detail/send-discharge.webp)

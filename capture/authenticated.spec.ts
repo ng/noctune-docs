@@ -673,7 +673,7 @@ test('encounters — complete and prepare discharge', async ({ page }) => {
 
   const dialog = page.getByRole('dialog')
   await expect(
-    dialog.getByRole('heading', { name: 'Send Discharge Summary', exact: true }),
+    dialog.getByRole('heading', { name: 'Send Discharge Notes', exact: true }),
   ).toBeVisible()
   const recipient = dialog.getByLabel('To')
   await recipient.fill('jamie.chen@example.test')
@@ -681,6 +681,53 @@ test('encounters — complete and prepare discharge', async ({ page }) => {
   await expect(dialog.getByText('jamie.chen@example.test', { exact: true })).toBeVisible()
   await expect(dialog.getByRole('button', { name: 'Send', exact: true })).toBeEnabled()
   await savePageScreenshot(page, dischargeItem)
+})
+
+test('encounters — always Bcc a clinic inbox on discharge', async ({ page }) => {
+  const item = capture('encounters-send-discharge-always-bcc')
+  const clinicInbox = 'records@northstarvet.example.test'
+
+  await mockMochiReadyForReview(page)
+  // No saved copy addresses, so the window offers to save the typed Bcc.
+  await page.route('**/api/v1/me/discharge-recipients?purpose=sent', async (route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue()
+      return
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ ok: true, data: [] }),
+    })
+  })
+  await openMochiEncounter(page, item.route)
+
+  await page.getByRole('tab', { name: 'Discharge Notes', exact: true }).click()
+  await expect(page.getByText(/Mochi’s examination was reassuring today/).first()).toBeVisible()
+  await page.getByRole('button', { name: 'Send Email' }).click()
+  await page.getByRole('menuitem', { name: /Send discharge notes/ }).click()
+
+  const dialog = page.getByRole('dialog')
+  await expect(
+    dialog.getByRole('heading', { name: 'Send Discharge Notes', exact: true }),
+  ).toBeVisible()
+  const recipient = dialog.getByLabel('To')
+  await recipient.fill('jamie.chen@example.test')
+  await recipient.press('Enter')
+  await expect(dialog.getByText('jamie.chen@example.test', { exact: true })).toBeVisible()
+
+  await dialog.getByRole('button', { name: 'Bcc', exact: true }).click()
+  const bcc = dialog.getByLabel('Bcc')
+  await bcc.fill(clinicInbox)
+  await bcc.press('Enter')
+  await expect(dialog.getByText(clinicInbox, { exact: true })).toBeVisible()
+
+  await dialog.getByRole('checkbox', { name: 'Always Bcc this address' }).check()
+  await expect(
+    dialog.getByText(`We’ll send ${clinicInbox} a confirmation link.`, { exact: false }),
+  ).toBeVisible()
+  await expect(dialog.getByRole('button', { name: 'Send + Complete' })).toBeEnabled()
+  await savePageScreenshot(page, item)
 })
 
 test('patients — searchable patient list', async ({ page }) => {

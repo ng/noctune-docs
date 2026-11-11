@@ -103,6 +103,12 @@
     ]
   },
   {
+    "id": "encounters-send-discharge-always-bcc",
+    "route": "/encounters/d0c50000-0000-4000-8000-000000000201",
+    "output": "public/screenshots/encounters/detail/send-discharge-always-bcc.webp",
+    "docs": ["content/encounters/discharge-copies.mdx"]
+  },
+  {
     "id": "encounters-regenerate",
     "route": "/encounters/d0c50000-0000-4000-8000-000000000201",
     "output": "public/screenshots/encounters/detail/regenerate.webp",

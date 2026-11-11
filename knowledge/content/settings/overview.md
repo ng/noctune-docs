@@ -10,7 +10,7 @@ Settings has three tabs for personal identity, billing access, and notification 
 
 ## Account
 
-Manage the display name shown in messages, the personal noctune inbox handle, and the **Auto-finish on copy or send** encounter preference.
+Manage the display name shown in messages, the personal noctune inbox handle, and the encounter preferences: **Auto-finish on copy or send**, discharge drafts by email, and the addresses that get a copy of every discharge you send.
 
 ![Account settings with display-name preview, inbound noctune email, and encounter auto-finish preference](https://docs.noctune.ai/screenshots/settings/account.webp)
 
