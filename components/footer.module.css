@@ -102,10 +102,6 @@ footer.footer {
   gap: 8px;
 }
 
-.appItem > a {
-  display: block;
-}
-
 .appNote {
   margin: 0;
   font-size: 12px;
