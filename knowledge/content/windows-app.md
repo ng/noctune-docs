@@ -41,7 +41,7 @@ It works with Windows PIMS such as IDEXX Cornerstone, Covetrus AVImark, Covetrus
 
 Click a field in the patient record and press **Ctrl+Shift+E**. The next section of your note goes into that field. Press again in the next field for the next section.
 
-Tutorial video (windows-app) is not yet published.
+[Video: Windows app — move a note into a Windows practice system](https://docs-media.noctune.ai/assets/ae3b8af3ccb1eb1637afa264ffca12a029916a3442baf16ec6bb4e3d21bc9e3d/windows-app.mp4)
 
 ![An exam notes record for Mochi beside the noctune panel. Subjective and Objective are in the record, the badge over the Assessment field reads "✓ Objective → Mochi, Ctrl+Z undoes, Next: Assessment Ctrl+Shift+E", and the panel shows Assessment as next, 2 of 5](https://docs.noctune.ai/windows-app/insert-flow.webp)
 

@@ -286,8 +286,9 @@
       "output": ".tutorial-output/windows-app",
       "post": "social/linkedin/14-windows-app.md",
       "review": {
-        "framesChecked": false,
-        "listened": false
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
       }
     }
   ]
