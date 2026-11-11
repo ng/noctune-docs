@@ -1,21 +1,27 @@
 import Image from 'next/image'
 import { CHROME_WEB_STORE_URL } from '../lib/chrome-web-store'
 
-const BADGE_ASPECT_RATIO = 496 / 150
+const BADGE_ASPECT_RATIO = 340 / 96
 
 interface ChromeWebStoreBadgeProps {
   height?: number
+  /** `bordered` is Google's version for colored or dark backgrounds. */
+  variant?: 'standard' | 'bordered'
   className?: string
 }
 
 /**
  * Official “Available in the Chrome Web Store” badge linked to the noctune extension.
  *
- * Uses Google's bordered artwork for colored backgrounds at its original aspect ratio,
- * as the Chrome Web Store branding guidelines require, with corners rounded to match
- * the App Store badge.
+ * Renders Google's supplied artwork unmodified at its original aspect ratio, as the
+ * Chrome Web Store branding guidelines require: the standard badge on white backgrounds
+ * and the bordered one on colored backgrounds.
  */
-export function ChromeWebStoreBadge({ height = 40, className }: ChromeWebStoreBadgeProps) {
+export function ChromeWebStoreBadge({
+  height = 40,
+  variant = 'standard',
+  className,
+}: ChromeWebStoreBadgeProps) {
   return (
     <a
       href={CHROME_WEB_STORE_URL}
@@ -25,11 +31,15 @@ export function ChromeWebStoreBadge({ height = 40, className }: ChromeWebStoreBa
       style={{ display: 'inline-block', lineHeight: 0 }}
     >
       <Image
-        src="/chrome-web-store-badge.png"
+        src={
+          variant === 'bordered'
+            ? '/chrome-web-store-badge-bordered.png'
+            : '/chrome-web-store-badge.png'
+        }
         alt="Available in the Chrome Web Store"
         width={Math.round(height * BADGE_ASPECT_RATIO)}
         height={height}
-        style={{ height, width: 'auto', borderRadius: height * 0.17 }}
+        style={{ height, width: 'auto' }}
         unoptimized
       />
     </a>

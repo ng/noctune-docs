@@ -9,7 +9,7 @@ const BRAND_URL = 'https://noctune.ai'
 const APP_URL = 'https://app.noctune.ai'
 const LINKEDIN_URL = 'https://www.linkedin.com/company/noctune-ai'
 
-// Same columns, labels, and order as the marketing site's footer.
+// Same destinations as the marketing site's footer, in the docs' own layout.
 const FOOTER_LINKS: Record<string, { label: string; href: string }[]> = {
   Product: [
     { label: 'Features', href: `${BRAND_URL}/#features` },
@@ -54,10 +54,6 @@ export function DocsFooter() {
             style={{ display: 'block', height: 28, width: 'auto' }}
           />
           <p className={styles.tagline}>AI for veterinary medicine.</p>
-          <div className={styles.badges}>
-            <AppStoreBadge height={40} />
-            <ChromeWebStoreBadge height={40} />
-          </div>
         </div>
 
         {Object.entries(FOOTER_LINKS).map(([title, links]) => (
@@ -72,6 +68,20 @@ export function DocsFooter() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* App Store first; Google's bordered Chrome badge on the dark footer; Windows has no
+          store listing, so a plain noctune button (never a store badge or the Windows logo). */}
+      <div className={styles.apps}>
+        <span className={styles.appsHeading}>Get the app</span>
+        <AppStoreBadge height={40} />
+        <ChromeWebStoreBadge height={40} variant="bordered" />
+        <a href="/windows-app" className={styles.windows} aria-label="Get noctune for Windows">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z" />
+          </svg>
+          Download for Windows
+        </a>
       </div>
 
       <div className={styles.bottom}>

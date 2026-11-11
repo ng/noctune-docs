@@ -135,10 +135,7 @@ for (const file of files) {
           )
         case 'WindowsDownloadButton':
           return paragraph(
-            link(
-              'Download noctune for Windows',
-              'https://downloads.noctune.ai/windows/noctune-setup.exe',
-            ),
+            link('Download for Windows', 'https://downloads.noctune.ai/windows/noctune-setup.exe'),
           )
         case 'Diagram': {
           const expression = attr.chart?.value
