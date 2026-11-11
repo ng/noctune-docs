@@ -2,6 +2,8 @@ import Image from 'next/image'
 import { CHROME_WEB_STORE_URL } from '../lib/chrome-web-store'
 
 const BADGE_ASPECT_RATIO = 340 / 96
+// The App Store badge's own corner radius at 40px tall, so the two badges match.
+const BADGE_RADIUS_RATIO = 7 / 40
 
 interface ChromeWebStoreBadgeProps {
   height?: number
@@ -15,7 +17,8 @@ interface ChromeWebStoreBadgeProps {
  *
  * Renders Google's supplied artwork unmodified at its original aspect ratio, as the
  * Chrome Web Store branding guidelines require: the standard badge on white backgrounds
- * and the bordered one on colored backgrounds.
+ * and the bordered one on colored backgrounds. Its corners are rounded in CSS to match
+ * the App Store badge.
  */
 export function ChromeWebStoreBadge({
   height = 40,
@@ -39,7 +42,17 @@ export function ChromeWebStoreBadge({
         alt="Available in the Chrome Web Store"
         width={Math.round(height * BADGE_ASPECT_RATIO)}
         height={height}
-        style={{ height, width: 'auto' }}
+        style={{
+          height,
+          width: 'auto',
+          borderRadius: height * BADGE_RADIUS_RATIO,
+          // The bordered artwork's hairline edge is square, so rounding clips it at the
+          // corners; redraw it along the rounded edge in Google's border colour.
+          ...(variant === 'bordered' && {
+            outline: '1px solid rgba(218, 220, 224, 0.5)',
+            outlineOffset: -1,
+          }),
+        }}
         unoptimized
       />
     </a>

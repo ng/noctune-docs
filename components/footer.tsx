@@ -1,45 +1,68 @@
+import { Roboto } from 'next/font/google'
 import Image from 'next/image'
 import { AppStoreBadge } from './app-store-badge'
 import { ChromeWebStoreBadge } from './chrome-web-store-badge'
-import { CHROME_WEB_STORE_URL } from '../lib/chrome-web-store'
 
 import styles from './footer.module.css'
 
-const BRAND_URL = 'https://noctune.ai'
-const APP_URL = 'https://app.noctune.ai'
+const BRAND_URL = 'https://www.noctune.ai'
 const LINKEDIN_URL = 'https://www.linkedin.com/company/noctune-ai'
 
-// Same destinations as the marketing site's footer, in the docs' own layout.
-const FOOTER_LINKS: Record<string, { label: string; href: string }[]> = {
-  Product: [
-    { label: 'Features', href: `${BRAND_URL}/#features` },
-    { label: 'Pricing', href: `${BRAND_URL}/pricing` },
-    { label: 'Pay-per-note', href: `${BRAND_URL}/pay-per-note` },
-    { label: 'Staff safety', href: `${BRAND_URL}/staff-safety` },
-    { label: 'Chrome extension', href: CHROME_WEB_STORE_URL },
-    { label: 'FAQ', href: `${BRAND_URL}/#faq` },
-  ],
-  Resources: [
-    { label: 'For students', href: `${BRAND_URL}/pricing#students` },
-    { label: 'Platform / API', href: `${BRAND_URL}/platform` },
-    { label: 'Mic & audio guide', href: `${BRAND_URL}/microphone` },
-    { label: 'Docs', href: '/' },
-  ],
-  Account: [
-    { label: 'Sign in', href: `${APP_URL}/sign-in` },
-    { label: 'Try noctune for free', href: `${APP_URL}/sign-up` },
-    { label: 'Email us', href: 'mailto:jon@noctune.ai' },
-    { label: 'LinkedIn', href: LINKEDIN_URL },
-  ],
-  Legal: [
-    { label: 'Privacy', href: `${BRAND_URL}/privacy` },
-    { label: 'Terms', href: `${BRAND_URL}/terms` },
-    { label: 'California Privacy', href: `${BRAND_URL}/ca-privacy` },
-    { label: 'Do Not Sell My Info', href: `${BRAND_URL}/do-not-sell` },
-  ],
+// Canonical source: SiteFooter in noctune-marketing
+// (src/components/marketing/SiteFooter.tsx). Keep these links, their order and the
+// app lines in step with it; marketing's relative links are absolute here.
+const PRODUCT_LINKS = [
+  { label: 'Features', href: `${BRAND_URL}/#features` },
+  { label: 'How it works', href: `${BRAND_URL}/#how-it-works` },
+  { label: 'Integrations', href: `${BRAND_URL}/integrations` },
+  { label: 'Pricing', href: `${BRAND_URL}/pricing` },
+  { label: 'Pay-per-note', href: `${BRAND_URL}/pay-per-note` },
+  { label: 'Staff safety', href: `${BRAND_URL}/staff-safety` },
+]
+
+const RESOURCE_LINKS = [
+  { label: 'Docs', href: '/' },
+  { label: 'Mic & audio guide', href: `${BRAND_URL}/microphone` },
+  { label: 'FAQ', href: `${BRAND_URL}/#faq` },
+  { label: 'Platform / API', href: `${BRAND_URL}/platform` },
+  { label: 'For students', href: `${BRAND_URL}/pricing#students` },
+]
+
+const LEGAL_LINKS = [
+  { label: 'Privacy', href: `${BRAND_URL}/privacy` },
+  { label: 'Terms', href: `${BRAND_URL}/terms` },
+  { label: 'California Privacy', href: `${BRAND_URL}/ca-privacy` },
+  { label: 'Do Not Sell My Info', href: `${BRAND_URL}/do-not-sell` },
+]
+
+// The marketing footer's typeface and weights (@fontsource/roboto 400/500/700 there).
+const roboto = Roboto({ subsets: ['latin'], weight: ['400', '500', '700'], display: 'swap' })
+
+export const footerClassName = `${styles.footer} ${roboto.className}`
+
+function LinkColumn({ title, links }: { title: string; links: { label: string; href: string }[] }) {
+  return (
+    <div className={styles.column}>
+      <span className={styles.heading}>{title}</span>
+      <div className={styles.links}>
+        {links.map(({ label, href }) => (
+          <a key={label} href={href} className={styles.link}>
+            {label}
+          </a>
+        ))}
+      </div>
+    </div>
+  )
 }
 
-export const footerClassName = styles.footer
+function AppItem({ note, children }: { note: string; children: React.ReactNode }) {
+  return (
+    <div>
+      {children}
+      <p className={styles.appNote}>{note}</p>
+    </div>
+  )
+}
 
 export function DocsFooter() {
   return (
@@ -54,62 +77,85 @@ export function DocsFooter() {
             style={{ display: 'block', height: 28, width: 'auto' }}
           />
           <p className={styles.tagline}>AI for veterinary medicine.</p>
+          <div className={styles.contact}>
+            <a href="mailto:jon@noctune.ai" className={styles.contactLink}>
+              <svg
+                aria-hidden="true"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2zm-2 0-8 5-8-5zm0 12H4V8l8 5 8-5z" />
+              </svg>
+              Email us
+            </a>
+            <a
+              href={LINKEDIN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.contactLink}
+            >
+              <svg
+                aria-hidden="true"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3z" />
+              </svg>
+              LinkedIn
+            </a>
+          </div>
         </div>
 
-        {Object.entries(FOOTER_LINKS).map(([title, links]) => (
-          <div key={title}>
-            <span className={styles.heading}>{title}</span>
-            <div className={styles.links}>
-              {links.map(({ label, href }) => (
-                <a key={label} href={href} className={styles.link}>
-                  {label}
-                </a>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+        <LinkColumn title="Product" links={PRODUCT_LINKS} />
 
-      {/* App Store first; Google's bordered Chrome badge on the dark footer; Windows has no
-          store listing, so a plain noctune button (never a store badge or the Windows logo). */}
-      <div className={styles.apps}>
-        <span className={styles.appsHeading}>Get the app</span>
-        <AppStoreBadge height={40} />
-        <ChromeWebStoreBadge height={40} variant="bordered" />
-        <a href="/windows-app" className={styles.windows} aria-label="Get noctune for Windows">
-          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z" />
-          </svg>
-          Download for Windows
-        </a>
+        {/* App Store first; Google's bordered Chrome badge on the dark footer; Windows has no
+            store listing, so a plain noctune button (never a store badge or the Windows logo). */}
+        <div className={`${styles.column} ${styles.apps}`}>
+          <span className={styles.heading}>Get the app</span>
+          <div className={styles.appList}>
+            <AppItem note="Record visits on your iPhone">
+              <AppStoreBadge height={40} />
+            </AppItem>
+            <AppItem note="For DaySmart Vet, ezyVet, Shepherd">
+              <ChromeWebStoreBadge height={40} variant="bordered" />
+            </AppItem>
+            <AppItem note="For Cornerstone, AVImark">
+              <a
+                href={`${BRAND_URL}/integrations/windows`}
+                className={styles.windows}
+                aria-label="Get noctune for Windows"
+              >
+                <svg
+                  aria-hidden="true"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M5 20h14v-2H5zM19 9h-4V3H9v6H5l7 7z" />
+                </svg>
+                Download for Windows
+              </a>
+            </AppItem>
+          </div>
+        </div>
+
+        <LinkColumn title="Resources" links={RESOURCE_LINKS} />
       </div>
 
       <div className={styles.bottom}>
         <span>© {new Date().getFullYear()} noctune. All rights reserved.</span>
-        <div className={styles.icons}>
-          <a
-            href={LINKEDIN_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="noctune on LinkedIn"
-            title="noctune on LinkedIn"
-            className={styles.icon}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77Z" />
-            </svg>
-          </a>
-          <a
-            href="mailto:jon@noctune.ai"
-            aria-label="Email noctune"
-            title="Email noctune"
-            className={styles.icon}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z" />
-            </svg>
-          </a>
-        </div>
+        <nav aria-label="Legal" className={styles.legal}>
+          {LEGAL_LINKS.map(({ label, href }) => (
+            <a key={label} href={href} className={styles.link}>
+              {label}
+            </a>
+          ))}
+        </nav>
       </div>
     </div>
   )
