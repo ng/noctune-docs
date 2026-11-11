@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "scenes": [
+    {
+      "id": "open",
+      "duration": 4.067,
+      "cuts": [
+        {
+          "source": "insert-flow.mp4",
+          "start": 0.77,
+          "duration": 3.1,
+          "hold": 0.967
+        }
+      ]
+    },
+    {
+      "id": "keys",
+      "duration": 4.867,
+      "cuts": [
+        {
+          "source": "insert-flow.mp4",
+          "start": 3.5,
+          "duration": 3.5,
+          "hold": 1.367
+        }
+      ]
+    },
+    {
+      "id": "again",
+      "duration": 5.1,
+      "cuts": [
+        {
+          "source": "insert-flow.mp4",
+          "start": 7.0,
+          "duration": 2.4
+        },
+        {
+          "source": "insert-flow.mp4",
+          "start": 12.05,
+          "duration": 1.0
+        },
+        {
+          "source": "insert-flow.mp4",
+          "start": 15.78,
+          "duration": 1.7
+        }
+      ]
+    },
+    {
+      "id": "discharge",
+      "duration": 8.267,
+      "cuts": [
+        {
+          "source": "insert-flow.mp4",
+          "start": 19.47,
+          "duration": 4.9
+        },
+        {
+          "source": "insert-flow.mp4",
+          "start": 24.83,
+          "duration": 2.0,
+          "hold": 1.367
+        }
+      ]
+    }
+  ]
+}

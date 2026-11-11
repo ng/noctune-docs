@@ -276,6 +276,20 @@
         "listened": true,
         "listenedBy": "Jonathan Ng"
       }
+    },
+    {
+      "id": "windows-app",
+      "series": 14,
+      "title": "Windows app — move a note into a Windows practice system",
+      "platform": "windows",
+      "story": "tutorials/windows-app.json",
+      "output": ".tutorial-output/windows-app",
+      "post": "social/linkedin/14-windows-app.md",
+      "review": {
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
+      }
     }
   ]
 }

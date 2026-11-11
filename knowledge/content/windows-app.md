@@ -27,6 +27,8 @@ sources:
     resource: https://github.com/ng/noctune-core/blob/1c641371/desktop/src/shell/Settings.tsx
   - id: core-5
     resource: https://github.com/ng/noctune-core/blob/1c641371/desktop/src/worker/insert.ts
+  - id: downloads-1
+    resource: https://downloads.noctune.ai/windows/1.0.1/SHA256SUMS.txt
 ---
 
 # noctune for Windows
@@ -40,6 +42,8 @@ noctune for Windows opens your noctune note in a panel beside your practice info
 It works with Windows PIMS such as IDEXX Cornerstone, Covetrus AVImark, Covetrus ImproMed, DVMAX, ClienTrax, and IntraVet: anywhere you can click into a text field, on the computer itself or over Remote Desktop or Citrix.
 
 Click a field in the patient record and press **Ctrl+Shift+E**. The next section of your note goes into that field. Press again in the next field for the next section.
+
+[Video: Windows app — move a note into a Windows practice system](https://docs-media.noctune.ai/assets/ae3b8af3ccb1eb1637afa264ffca12a029916a3442baf16ec6bb4e3d21bc9e3d/windows-app.mp4)
 
 ![An exam notes record for Mochi beside the noctune panel. Subjective and Objective are in the record, the badge over the Assessment field reads "✓ Objective → Mochi, Ctrl+Z undoes, Next: Assessment Ctrl+Shift+E", and the panel shows Assessment as next, 2 of 5](https://docs.noctune.ai/windows-app/insert-flow.webp)
 
@@ -57,7 +61,32 @@ You need a Windows 10 or Windows 11 computer and a noctune account. If you don't
 
 ## Get the app
 
-noctune for Windows is in early access. To get the installer for your practice, [email us](mailto:jon@noctune.ai?subject=noctune%20for%20Windows) and tell us which PIMS you use and whether it runs on the computer itself or over Remote Desktop or Citrix.
+[Download noctune for Windows](https://downloads.noctune.ai/windows/noctune-setup.exe)
+
+This downloads the latest installer for your Windows account. To pick a specific file, use the table. Version 1.0.1 was released on November 11, 2026.
+
+| File                                                                                                     | For whom                                                                                                                      | Size   | SHA-256                                                            |
+| -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------ |
+| [noctune\_1.0.1\_x64-setup.exe](https://downloads.noctune.ai/windows/1.0.1/noctune_1.0.1_x64-setup.exe)  | Anyone at the practice. Installs for your Windows account, needs no administrator rights, and keeps itself up to date.        | 2.7 MB | `3d5d635e65df686758f67200a66a726bab7ad1b3ac1df3c1e68291dcd3da3039` |
+| [noctune\_1.0.1\_x64\_en-US.msi](https://downloads.noctune.ai/windows/1.0.1/noctune_1.0.1_x64_en-US.msi) | IT staff. Installs for everyone on the computer through Intune or Group Policy. It never updates itself: deploy each new MSI. | 3.9 MB | `fdb8a6986d5fb5e462d7497d75352531dbcbdafb781af7de5d7c56a90902d85e` |
+
+[SHA256SUMS.txt](https://downloads.noctune.ai/windows/1.0.1/SHA256SUMS.txt) lists the same checksums.
+
+<span id="check-the-download"></span>
+
+### Check the download
+
+To confirm the file wasn't changed on the way, open PowerShell in the folder you downloaded it to and run:
+
+```powershell
+Get-FileHash .\noctune_1.0.1_x64-setup.exe -Algorithm SHA256
+```
+
+The hash it prints should match the SHA-256 in the table.
+
+**Signed by Jonathan Ng.** Windows shows Jonathan Ng as the publisher when you run the installer, and noctune shows the same name in [Settings → About](#about).
+
+IT staff installing noctune inside a Remote Desktop or Citrix session image: [email us](mailto:jon@noctune.ai?subject=noctune%20for%20Windows%20in%20a%20remote%20session) first, as [Remote Desktop and Citrix](#remote-desktop) explains.
 
 <span id="install"></span>
 
@@ -68,9 +97,9 @@ There are two installers:
 - **The standard installer** installs noctune for your Windows account only. It doesn't need administrator rights, so anyone at the practice can run it.
 - **The MSI** installs noctune for everyone on the computer. It's for IT staff who deploy software with Intune or Group Policy.
 
-Every noctune file is signed by the publisher **noctune**. After you install, noctune starts and its panel opens.
+Every noctune file is signed through Microsoft, and Windows names the publisher as **Jonathan Ng**, noctune's founder. After you install, noctune starts and its panel opens.
 
-noctune keeps itself up to date. It checks for updates when it starts and once a day. An update found at start-up installs straight away. One found during the day downloads in the background, and the panel shows **An update to noctune is ready**; select **Restart now**, or it installs the next time noctune starts.
+The standard install keeps itself up to date. It checks for updates when it starts and once a day. An update found at start-up installs straight away. One found during the day downloads in the background, and the panel shows **An update to noctune is ready**; select **Restart now**, or it installs the next time noctune starts. An MSI install never updates itself: IT deploys each new MSI.
 
 <span id="sign-in"></span>
 
@@ -252,7 +281,7 @@ For a hosted PIMS without clipboard redirection, noctune can be installed inside
 
 ### Antivirus and endpoint protection
 
-noctune registers a global shortcut and sends Ctrl+V, which some endpoint tools flag. Every noctune file is signed. If a tool blocks it, allow the signed publisher **noctune** rather than a file path, so updates keep working.
+noctune registers a global shortcut and sends Ctrl+V, which some endpoint tools flag. Every noctune file is signed. If a tool blocks it, allow the signed publisher **Jonathan Ng** (the name in Settings → About) rather than a file path or certificate thumbprint, so updates keep working: the certificate is renewed every few days, but the publisher stays the same.
 
 <span id="signing-in"></span>
 

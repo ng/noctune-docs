@@ -26,3 +26,4 @@ Short, narrated walkthroughs of noctune on the web and iPhone. Each one uses fic
 - [Patients and history](patients-history.md) — Find a patient by pet or owner name, read every visit and its status, compare today's note with an earlier one, and archive patients you no longer see.
 - [Section locks](locked-sections.md) — Edit one section of the SOAP note so it locks, regenerate a section that's still unlocked and review the rewrite before applying it, and see how practice templates stay locked for members.
 - [Browser extension](browser-extension.md) — Open the noctune panel beside a patient record, click a field, and press one key to move each section of the note, discharge instructions included, into your practice system.
+- [Windows app](windows-app.md) — Open the noctune panel beside a record in a practice system installed on Windows or reached over Remote Desktop or Citrix, and press Ctrl+Shift+E to move each section of the note into it.

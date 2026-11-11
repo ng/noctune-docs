@@ -148,3 +148,8 @@ html.dark .noctune-logo {
 .windows-app-shot-wide img {
   max-width: 100%;
 }
+
+/* Let the 64-character SHA-256 checksums wrap instead of widening the table. */
+.windows-downloads td code {
+  word-break: break-all;
+}
