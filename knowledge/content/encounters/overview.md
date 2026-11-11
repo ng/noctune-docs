@@ -44,9 +44,9 @@ Choose **Complete** when the clinical record is ready. The action changes to **C
 
 ### 6. Send the discharge summary
 
-Open **Send Email** and choose **Send discharge notes**. Add the recipient and send the client-facing summary. If you open the discharge dialog before completing the encounter, **Send + Complete** performs both actions together; after completion, the action is **Send**.
+Open **Send Email** and choose **Send discharge notes**. Add the recipient and send the client-facing summary. If you open the discharge dialog before completing the encounter, **Send + Complete** performs both actions together; after completion, the action is **Send**. To copy discharges to a clinic inbox, see [Discharge Copies](discharge-copies.md).
 
-![Send Discharge Summary dialog with the pet owner email prepared and Send enabled](https://docs.noctune.ai/screenshots/encounters/detail/send-discharge.webp)
+![Send Discharge Notes dialog for Mochi with jamie.chen@example.test under To, the Bcc link, and Send enabled](https://docs.noctune.ai/screenshots/encounters/detail/send-discharge.webp)
 
 ## Encounter states
 
