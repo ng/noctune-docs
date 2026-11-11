@@ -66,7 +66,7 @@ There are two installers:
 - **The standard installer** installs noctune for your Windows account only. It doesn't need administrator rights, so anyone at the practice can run it.
 - **The MSI** installs noctune for everyone on the computer. It's for IT staff who deploy software with Intune or Group Policy.
 
-Every noctune file is signed by the publisher **noctune**. After you install, noctune starts and its panel opens.
+Every noctune file is signed through Microsoft, and Windows names the publisher as **Jonathan Ng**, noctune's founder. After you install, noctune starts and its panel opens.
 
 noctune keeps itself up to date. It checks for updates when it starts and once a day. An update found at start-up installs straight away. One found during the day downloads in the background, and the panel shows **An update to noctune is ready**; select **Restart now**, or it installs the next time noctune starts.
 
@@ -222,7 +222,7 @@ For a hosted PIMS without clipboard redirection, noctune can be installed inside
 
 ### Antivirus and endpoint protection \[#antivirus]
 
-noctune registers a global shortcut and sends Ctrl+V, which some endpoint tools flag. Every noctune file is signed. If a tool blocks it, allow the signed publisher **noctune** rather than a file path, so updates keep working.
+noctune registers a global shortcut and sends Ctrl+V, which some endpoint tools flag. Every noctune file is signed. If a tool blocks it, allow the signed publisher **Jonathan Ng** (the name in Settings → About) rather than a file path or certificate thumbprint, so updates keep working: the certificate is renewed every few days, but the publisher stays the same.
 
 ### Signing in \[#signing-in]
 
