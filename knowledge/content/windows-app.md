@@ -61,7 +61,7 @@ You need a Windows 10 or Windows 11 computer and a noctune account. If you don't
 
 ## Get the app
 
-[Download noctune for Windows](https://downloads.noctune.ai/windows/noctune-setup.exe)
+[Download for Windows](https://downloads.noctune.ai/windows/noctune-setup.exe)
 
 This downloads the latest installer for your Windows account. To pick a specific file, use the table. Version 1.0.1 was released on November 11, 2026.
 
