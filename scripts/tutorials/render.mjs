@@ -448,6 +448,9 @@ export async function render(timelineDir, output, roots) {
       if (scene.instructionCard) {
         visualSource = path.join(work, `${index}-instructions.png`)
         const sequence = scene.instructionStyle === 'sequence'
+        // Window stories float the rows on the backdrop, each a white tile with
+        // the panes' shadow, instead of setting them on a white card.
+        const floating = desktop
         const evidence = scene.instructionStyle === 'evidence'
         const gap = evidence || scene.instructionCard.length > 3 ? 120 : 144
         const lines = scene.instructionCard
@@ -461,7 +464,7 @@ export async function render(timelineDir, output, roots) {
               sequence && i < scene.instructionCard.length - 1
                 ? `<path d="M108 ${y + 90}v${gap - 92}m-6-6 6 6 6-6" fill="none" stroke="#78AAA0" stroke-width="2.5"/>`
                 : ''
-            return `<rect x="48" y="${y}" width="1152" height="112" rx="18" fill="#F1F7F4"/>${connector}<circle cx="108" cy="${y + 55}" r="28" fill="${sequence ? '#11736F' : '#D8EDE5'}"/>${icon}${label ? `<text x="164" y="${y + 43}" font-size="30" font-weight="700">${escape(label)}</text>` : ''}<text x="164" y="${y + (label ? 80 : 65)}" font-size="30" fill="#4D6963">${escape(line)}</text>`
+            return `<rect x="48" y="${y}" width="1152" height="112" rx="18" fill="${floating ? '#FFFFFF' : '#F1F7F4'}"${floating ? ' filter="url(#row-shadow)"' : ''}/>${connector}<circle cx="108" cy="${y + 55}" r="28" fill="${sequence ? '#11736F' : '#D8EDE5'}"/>${icon}${label ? `<text x="164" y="${y + 43}" font-size="30" font-weight="700">${escape(label)}</text>` : ''}<text x="164" y="${y + (label ? 80 : 65)}" font-size="30" fill="#4D6963">${escape(line)}</text>`
           })
           .join('')
         const evidenceFlow = evidence
@@ -469,7 +472,7 @@ export async function render(timelineDir, output, roots) {
           : ''
         await sharp(
           Buffer.from(
-            `<svg xmlns="http://www.w3.org/2000/svg" width="1248" height="702"><rect width="1248" height="702" rx="24" fill="#FFFFFF"/><g font-family="Arial" fill="#132D2B"><rect x="48" y="46" width="36" height="4" rx="2" fill="#11736F"/><text x="98" y="54" font-size="18" letter-spacing="2" fill="#53716A">${sequence ? 'STEP BY STEP' : 'WORKFLOW CHECKLIST'}</text><text x="48" y="121" font-size="44" font-weight="700">${escape(scene.instructionTitle || 'Keep these steps in mind')}</text>${lines}${evidenceFlow}</g></svg>`,
+            `<svg xmlns="http://www.w3.org/2000/svg" width="1248" height="702">${floating ? '<defs><filter id="row-shadow" x="-5%" y="-30%" width="110%" height="180%"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#153D38" flood-opacity="0.12"/></filter></defs>' : '<rect width="1248" height="702" rx="24" fill="#FFFFFF"/>'}<g font-family="Arial" fill="#132D2B"><rect x="48" y="46" width="36" height="4" rx="2" fill="#11736F"/><text x="98" y="54" font-size="18" letter-spacing="2" fill="#53716A">${sequence ? 'STEP BY STEP' : 'WORKFLOW CHECKLIST'}</text><text x="48" y="121" font-size="44" font-weight="700">${escape(scene.instructionTitle || 'Keep these steps in mind')}</text>${lines}${evidenceFlow}</g></svg>`,
           ),
         )
           .png()
@@ -519,7 +522,7 @@ export async function render(timelineDir, output, roots) {
                 `[${i ? `o${i - 1}` : '0:v'}][p${i}]overlay=${pane.x}:${pane.y}:shortest=1${i === panes.length - 1 ? ',format=yuv420p[v]' : `[o${i}]`}`,
             )
             .join(';')
-        : `[1:v]setpts=PTS-STARTPTS,scale=${box.w}:${box.h}:force_original_aspect_ratio=decrease,pad=${box.w}:${box.h}:(ow-iw)/2:(oh-ih)/2:color=0xF3F8F2,setsar=1[screen];${clipping}[0:v][${overlaySource}]overlay=${box.x}:${box.y}:shortest=1,format=yuv420p[v]`
+        : `[1:v]setpts=PTS-STARTPTS,scale=${box.w}:${box.h}:force_original_aspect_ratio=decrease,pad=${box.w}:${box.h}:(ow-iw)/2:(oh-ih)/2:color=${desktop && scene.instructionCard ? '0xF3F8F200' : '0xF3F8F2'},setsar=1[screen];${clipping}[0:v][${overlaySource}]overlay=${box.x}:${box.y}:shortest=1,format=yuv420p[v]`
       const visual = motion
         ? ['-ss', String(start), '-i', visualSource]
         : ['-loop', '1', '-framerate', '30', '-i', visualSource]

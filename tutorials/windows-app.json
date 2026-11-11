@@ -66,9 +66,9 @@
     {
       "id": "outro",
       "platform": "web",
-      "headline": ["Early access is open."],
+      "headline": ["noctune for Windows."],
       "brandCard": ["noctune.ai"],
-      "narration": "noctune for Windows. Early access is open."
+      "narration": "noctune for Windows."
     }
   ]
 }

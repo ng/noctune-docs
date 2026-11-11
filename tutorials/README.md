@@ -636,6 +636,8 @@ them show the desktop behind. `panes` lists each window's rectangle in source pi
 `[2, 2, 1190, 1156]`, the panel at `[1214, 2, 578, 1156]`). The renderer crops each one, scales them
 together, rounds each with its own mask, and sets them side by side with a gap and a shadow apiece.
 The record's crop stops at x 1192, where the panel's drop shadow on it starts to show.
+In a window story an instruction card has no white card behind it: its rows float on the
+backdrop as white tiles with the same soft shadow as the panes.
 
 The take has one fault: at 24.40–24.80 s the demo record drops out and a window behind it shows
 through. The discharge cut skips those frames; keep it skipped if the cuts change. The cuts land each
