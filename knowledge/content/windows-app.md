@@ -27,6 +27,8 @@ sources:
     resource: https://github.com/ng/noctune-core/blob/1c641371/desktop/src/shell/Settings.tsx
   - id: core-5
     resource: https://github.com/ng/noctune-core/blob/1c641371/desktop/src/worker/insert.ts
+  - id: downloads-1
+    resource: https://downloads.noctune.ai/windows/1.0.1/SHA256SUMS.txt
 ---
 
 # noctune for Windows
@@ -59,7 +61,32 @@ You need a Windows 10 or Windows 11 computer and a noctune account. If you don't
 
 ## Get the app
 
-noctune for Windows is in early access. To get the installer for your practice, [email us](mailto:jon@noctune.ai?subject=noctune%20for%20Windows) and tell us which PIMS you use and whether it runs on the computer itself or over Remote Desktop or Citrix.
+[Download noctune for Windows](https://downloads.noctune.ai/windows/noctune-setup.exe)
+
+This downloads the latest installer for your Windows account. To pick a specific file, use the table. Version 1.0.1 was released on November 11, 2026.
+
+| File                                                                                                     | For whom                                                                                                                      | Size   | SHA-256                                                            |
+| -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------ |
+| [noctune\_1.0.1\_x64-setup.exe](https://downloads.noctune.ai/windows/1.0.1/noctune_1.0.1_x64-setup.exe)  | Anyone at the practice. Installs for your Windows account, needs no administrator rights, and keeps itself up to date.        | 2.7 MB | `3d5d635e65df686758f67200a66a726bab7ad1b3ac1df3c1e68291dcd3da3039` |
+| [noctune\_1.0.1\_x64\_en-US.msi](https://downloads.noctune.ai/windows/1.0.1/noctune_1.0.1_x64_en-US.msi) | IT staff. Installs for everyone on the computer through Intune or Group Policy. It never updates itself: deploy each new MSI. | 3.9 MB | `fdb8a6986d5fb5e462d7497d75352531dbcbdafb781af7de5d7c56a90902d85e` |
+
+[SHA256SUMS.txt](https://downloads.noctune.ai/windows/1.0.1/SHA256SUMS.txt) lists the same checksums.
+
+<span id="check-the-download"></span>
+
+### Check the download
+
+To confirm the file wasn't changed on the way, open PowerShell in the folder you downloaded it to and run:
+
+```powershell
+Get-FileHash .\noctune_1.0.1_x64-setup.exe -Algorithm SHA256
+```
+
+The hash it prints should match the SHA-256 in the table.
+
+**Signed by Jonathan Ng.** Windows shows Jonathan Ng as the publisher when you run the installer, and noctune shows the same name in [Settings → About](#about).
+
+IT staff installing noctune inside a Remote Desktop or Citrix session image: [email us](mailto:jon@noctune.ai?subject=noctune%20for%20Windows%20in%20a%20remote%20session) first, as [Remote Desktop and Citrix](#remote-desktop) explains.
 
 <span id="install"></span>
 
@@ -72,7 +99,7 @@ There are two installers:
 
 Every noctune file is signed through Microsoft, and Windows names the publisher as **Jonathan Ng**, noctune's founder. After you install, noctune starts and its panel opens.
 
-noctune keeps itself up to date. It checks for updates when it starts and once a day. An update found at start-up installs straight away. One found during the day downloads in the background, and the panel shows **An update to noctune is ready**; select **Restart now**, or it installs the next time noctune starts.
+The standard install keeps itself up to date. It checks for updates when it starts and once a day. An update found at start-up installs straight away. One found during the day downloads in the background, and the panel shows **An update to noctune is ready**; select **Restart now**, or it installs the next time noctune starts. An MSI install never updates itself: IT deploys each new MSI.
 
 <span id="sign-in"></span>
 
