@@ -3,4 +3,5 @@ export default {
   'new-encounter': 'New Encounter',
   'review-and-edit': 'Review & Edit',
   'collaborative-notes': 'Collaborative Notes',
+  'discharge-copies': 'Discharge Copies',
 }

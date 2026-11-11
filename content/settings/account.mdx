@@ -6,7 +6,7 @@ description: Your name, identity, and encounter preferences.
 
 # Your name, identity, and encounter preferences
 
-The Account tab controls the personal identity and encounter preference noctune currently exposes in Settings.
+The Account tab controls your personal identity and the encounter preferences noctune currently exposes in Settings, including where discharge emails go.
 
 <BrowserFrame
   src="/screenshots/settings/account.webp"
@@ -26,9 +26,50 @@ The inbound section shows your standing noctune mailbox under `inbox.noctune.ai`
 
 Handle customization is gated by the available account capability. When customization is not available, the section keeps the assigned address visible and links to the relevant billing option.
 
-## Encounter preference
+<span id="encounter-preference" />
+
+## Encounter preferences \[#encounter-preferences]
+
+The **Encounter preferences** section holds the auto-finish switch and your discharge email settings.
+
+### Auto-finish on copy or send \[#auto-finish-on-copy-or-send]
 
 **Auto-finish on copy or send** marks an encounter complete when you copy the SOAP note or send a discharge message. Turn it off if you prefer to finish every encounter explicitly after those actions.
+
+### Email me the discharge too \[#email-me-the-discharge-too]
+
+Turn on **Email me the discharge too** to get each discharge draft by email. It's off by default. When your SOAP note is ready, noctune sends the discharge in its own email to your account email address, next to the SOAP note ready email.
+
+- Nothing goes to the client. The email says the draft hasn't been sent, and **Review and send** opens the encounter so you can send it.
+- The discharge has its own email, so you can forward it without also forwarding the SOAP note.
+- No draft email is sent when a note has no discharge.
+- The email is a copy of the generated text when the note was ready. Later edits in noctune don't change it.
+
+While the switch is on, an **Also send to** list appears below it. Each address you add there gets its own copy of the draft once it's confirmed, so recipients can't see each other's addresses. These copies say who shared them and leave out the **Review and send** link. You can't add your own account email here, because drafts already go there.
+
+Turning the switch off stops draft emails to you and to the addresses in **Also send to**.
+
+### Copy every discharge I send \[#copy-every-discharge-i-send]
+
+Addresses in the **Send a copy to** list under **Copy every discharge I send** get a hidden copy (Bcc) of each discharge you send a client, from the website or the iPhone app. Use it for a clinic inbox you keep records from. You can add your own account email here.
+
+You can also save an address from the send window with **Always Bcc this address**. See [Always Bcc a clinic inbox](/encounters/discharge-copies#always-bcc-a-clinic-inbox).
+
+### Add and confirm an address \[#add-and-confirm-an-address]
+
+Both lists work the same way:
+
+1. Type the address in the field below the list and choose **Add**.
+2. noctune emails that address a confirmation link. The address shows **Waiting for confirmation** and gets nothing until someone with access to that inbox confirms it. The link expires after 7 days.
+3. Once confirmed, the address shows **Confirmed** and starts getting copies.
+
+If the link has expired or never arrived, choose **Resend** next to the address. A resent link replaces the earlier one. See [For the person receiving copies](/encounters/discharge-copies#for-the-person-receiving-copies) for what the recipient sees.
+
+Each list holds up to 5 addresses. The two lists are separate: an address confirmed for drafts doesn't get sent copies, and the other way round, until it's added and confirmed in that list too.
+
+### Remove an address \[#remove-an-address]
+
+Choose the **×** next to an address to remove it. It stops getting copies straight away. Removing an address from one list doesn't remove it from the other.
 
 ## Sign-in credentials
 

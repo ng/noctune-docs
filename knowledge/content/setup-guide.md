@@ -72,13 +72,13 @@ See [Review an imported template](templates.md#review-an-imported-template) for 
 
 ## Send a discharge
 
-Open a ready encounter, review **Discharge Notes**, then choose **Send Email → Send discharge notes**. Add the recipient and send; noctune never sends a draft automatically.
+Open a ready encounter, review **Discharge Notes**, then choose **Send Email → Send discharge notes**. Add the recipient and send; noctune never sends a draft to the client automatically.
 
-![Send Discharge Summary dialog with the patient owner email prepared and Send enabled](https://docs.noctune.ai/screenshots/encounters/detail/send-discharge.webp)
+![Send Discharge Notes dialog for Mochi with jamie.chen@example.test under To, the Bcc link, and Send enabled](https://docs.noctune.ai/screenshots/encounters/detail/send-discharge.webp)
 
 **[Open encounters in noctune →](https://app.noctune.ai/encounters)**
 
-See [Copy, email, and complete](encounters/review-and-edit.md#copy-email-and-complete) for completion behavior and sending options.
+See [Copy, email, and complete](encounters/review-and-edit.md#copy-email-and-complete) for completion behavior and sending options. To copy every discharge to a clinic inbox, see [Discharge Copies](encounters/discharge-copies.md).
 
 <span id="fullscreen"></span>
 
