@@ -20,6 +20,8 @@ The noctune browser extension opens your noctune note in a panel beside your pra
 
 The extension works in Chrome on a Mac or Windows computer. It doesn't work in other browsers or on phones and tablets yet.
 
+If your PIMS is a program installed on Windows, or runs in a Remote Desktop or Citrix window, the extension can't reach it. Use [noctune for Windows](windows-app.md) instead.
+
 <span id="install"></span>
 
 ## Install the extension
@@ -168,4 +170,4 @@ If another extension already uses Command-Shift-E or Ctrl-Shift-E, Chrome may le
 
 - noctune doesn't yet know which field each section belongs in. You choose the field each time.
 - The patient name check only works on PIMS websites where noctune can read the patient's name. Elsewhere, check the name yourself.
-- The extension works only in Chrome on a desktop or laptop computer.
+- The extension works only in Chrome on a desktop or laptop computer. For a PIMS installed on Windows, see [noctune for Windows](windows-app.md).
