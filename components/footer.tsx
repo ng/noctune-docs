@@ -149,8 +149,7 @@ export function DocsFooter() {
 
       <div className={styles.bottom}>
         <span>
-          © {new Date().getFullYear()} noctune. All rights reserved. noctune™ is a trademark of
-          noctune, Inc.
+          © {new Date().getFullYear()} noctune. All rights reserved. noctune™ is a trademark.
         </span>
         <nav aria-label="Legal" className={styles.legal}>
           {LEGAL_LINKS.map(({ label, href }) => (
