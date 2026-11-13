@@ -31,7 +31,7 @@ export default function StandaloneLayout({ children }: { children: ReactNode }) 
       <footer className={styles.footer} data-support-section="footer">
         <div className={styles.footerInner}>
           <div>
-            <div className={styles.footerBrand}>noctune, Inc.</div>
+            <div className={styles.footerBrand}>noctune</div>
             <div className={styles.copyright}>© {new Date().getFullYear()} noctune</div>
             <div className={styles.copyright}>noctune™ is a trademark.</div>
           </div>
