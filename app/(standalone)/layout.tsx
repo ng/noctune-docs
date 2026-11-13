@@ -33,6 +33,7 @@ export default function StandaloneLayout({ children }: { children: ReactNode }) 
           <div>
             <div className={styles.footerBrand}>noctune, Inc.</div>
             <div className={styles.copyright}>© {new Date().getFullYear()} noctune</div>
+            <div className={styles.copyright}>noctune™ is a trademark.</div>
           </div>
           <nav className={styles.footerLinks} aria-label="iOS support and legal">
             <a href="/ios/support">iOS Support</a>
