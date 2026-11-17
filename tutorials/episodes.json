@@ -300,8 +300,9 @@
       "output": ".tutorial-output/site-builder-web",
       "post": "social/linkedin/15-website-builder.md",
       "review": {
-        "framesChecked": false,
-        "listened": false
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
       }
     }
   ]

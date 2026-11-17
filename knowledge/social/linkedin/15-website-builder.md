@@ -10,7 +10,8 @@ tags:
 
 # 15. Website builder
 
-Draft only; not scheduled or published. The film has not had its full listening review yet.
+Draft only; not scheduled or published. The film was approved by Jonathan Ng on November 17, 2026. The company page posts **Post**, then Jon reposts it from his personal account with
+**Personal repost (Jon)**.
 
 Video (from `tutorials/episodes.json`):
 
@@ -23,8 +24,8 @@ the first draft are simulated in the capture; both are labelled in the video.
 ## Post
 
 ```text
-"We should really update the website."
-Every practice says it. Then the old host's login turns up on a sticky note from 2014.
+Clients check your website before they call.
+Is it showing them this year's hours?
 
 Your practice website now lives in noctune™, included with your subscription:
 
@@ -43,6 +44,30 @@ Read the draft before you publish. You know your practice; it only knows your ol
 What's the one thing clients can never find on your current site?
 
 #VeterinaryMedicine #VetMed #PracticeManagement
+```
+
+## Personal repost (Jon)
+
+Playful, first person, for the repost from Jon's personal account. It keeps the same facts as the
+company post: noctune™ on the first mention only, "part of your subscription" (never "free"), and
+the same price ranges.
+
+```text
+Confession: I've looked at a LOT of vet clinic websites.
+
+The 2011 clip-art paw print. The hours page that still says "Closed for Thanksgiving." The "Book online!" button that leads to… a fax number. 🐾
+
+So we built a website builder into noctune™.
+
+Paste in your current site → noctune drafts a new one from it → tweak it in plain forms with a live preview → publish. Your own photos, a looping video across the top (clinic cat being majestic, optional), the towns you drive to, your pharmacy link. Phone-first, because that's where clients squint at your hours at 9pm.
+
+The part I'm proudest of: vet web companies usually charge $139–$299 a month plus setup fees, and Wix runs $18–$40 a month before anyone writes a single word. With noctune, it's just… part of your subscription. No separate bill. No plugins to patch. We handle HTTPS, hosting and keeping it fast.
+
+90 seconds of proof below 👇
+
+Vets: what's the most outdated thing on your clinic's website right now? I promise not to screenshot it. (Much.)
+
+#VetMed #VeterinaryMedicine #SmallBusiness
 ```
 
 ## First comment
