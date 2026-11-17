@@ -44,6 +44,13 @@
       "narration": "Try a different color, or browse the looks and pick another. Your words and photos stay the same; only the style changes. Every look is checked for readable text."
     },
     {
+      "id": "uploads",
+      "platform": "web",
+      "start": 3.5,
+      "headline": ["Your photos,", "even a looping video."],
+      "narration": "Add your own photos, or a short looping video across the top of your site. Upload a file, and we size photos for every screen and strip location data for you."
+    },
+    {
       "id": "details",
       "platform": "web",
       "start": 3.5,
@@ -62,7 +69,7 @@
       "platform": "web",
       "start": 4.5,
       "headline": ["Publish when", "it's ready."],
-      "narration": "When it looks right, publish. Your site goes live at its address, and later edits stay in a draft until you publish again."
+      "narration": "When it looks right, publish. Your site goes live at its address, and later edits stay in a draft until you publish again. No separate website bill, no plugins to patch. It's hosted, secured, and kept fast by the team that runs noctune."
     },
     {
       "id": "phone",

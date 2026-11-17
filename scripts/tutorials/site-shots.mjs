@@ -3,13 +3,18 @@
 // practice's old website. Each shot restores that draft first, so takes can be
 // recorded in any order; `publish` is the only shot that publishes, and `phone`
 // publishes through the real API before it films the live page.
+import fs from 'node:fs'
 import path from 'node:path'
 import { setTimeout as wait } from 'node:timers/promises'
 import { expect } from '@playwright/test'
+import sharp from 'sharp'
 
 // Free addresses use production's sites domain, so the film shows the address a
 // vet gets. The capture browser maps every host under it to the local renderer.
 export const SITES_ROOT_DOMAIN = 'sites.noctune.ai'
+// Core serves site photos and videos from the assets CDN, which capture leaves unset.
+// Uploaded assets resolve under this path instead, answered inside the capture browser.
+export const SITES_ASSETS_PATH = '/capture-assets'
 const OLD_SITE = 'https://northstarvet.example.test'
 const builder = (edit) => `/website${edit ? `?edit=${edit}` : ''}`
 const phone = {
@@ -46,6 +51,125 @@ async function resetSite(db, ctx) {
       await tx`update site_versions set content = ${tx.json(content)}, updated_at = now() where id = ${site.draftVersionId} and site_id = ${site.id} and published_at is null returning id`
     if (rows.length !== 1) throw Error('Seeded website draft is missing')
   })
+}
+
+// The two files the uploads shot adds: the demo hero video from Core's stock library
+// (Pexels licence) and the photo cut from its first frame, already shipped with the renderer.
+const UPLOADS = {
+  photo: {
+    id: 'd0c50000-0000-4000-8000-000000000a11',
+    file: 'dog-on-cushion.jpg',
+    name: 'clinic-dog.jpg',
+    contentType: 'image/webp',
+  },
+  video: {
+    id: 'd0c50000-0000-4000-8000-000000000a12',
+    file: 'dog-on-cushion.mp4',
+    name: 'clinic-dog.mp4',
+    contentType: 'video/mp4',
+  },
+}
+
+// The bytes Core would store: photos re-encoded to WebP within 2560 px, videos as uploaded.
+async function uploadFixtures(ctx) {
+  const stock = (file) => fs.readFileSync(path.join(ctx.core, 'sites/public/stock', file))
+  const original = stock(UPLOADS.photo.file)
+  const { data, info } = await sharp(original)
+    .resize({ width: 2560, height: 2560, fit: 'inside', withoutEnlargement: true })
+    .webp({ quality: 82 })
+    .toBuffer({ resolveWithObject: true })
+  const video = stock(UPLOADS.video.file)
+  return {
+    photo: { ...UPLOADS.photo, original, stored: data, width: info.width, height: info.height },
+    video: { ...UPLOADS.video, original: video, stored: video, width: 1600, height: 844 },
+  }
+}
+
+// The seeded draft, plus both uploads as processed assets of the site: Core's own
+// completion then finds them ready, as it would after processing the stored original.
+async function resetUploads(db, ctx) {
+  await resetSite(db, ctx)
+  const site = seededSite(ctx)
+  const files = await uploadFixtures(ctx)
+  await db`delete from site_assets where site_id = ${site.id} and id in ${db([UPLOADS.photo.id, UPLOADS.video.id])}`
+  for (const asset of Object.values(files)) {
+    const extension = asset.contentType === 'video/mp4' ? 'mp4' : 'webp'
+    await db`insert into site_assets (id, site_id, status, s3_key, content_type, width, height, bytes, created_by_user_id) select ${asset.id}, ${site.id}, 'ready', ${`sites/${site.id}/${asset.id}.${extension}`}, ${asset.contentType}, ${asset.width}, ${asset.height}, ${asset.stored.length}, created_by_user_id from sites where id = ${site.id}`
+  }
+}
+
+async function restoreUploads(db, ctx) {
+  await resetSite(db, ctx)
+  const site = seededSite(ctx)
+  await db`delete from site_assets where site_id = ${site.id} and id in ${db([UPLOADS.photo.id, UPLOADS.video.id])}`
+}
+
+// The browser's upload to storage and the CDN that serves the result are answered here:
+// capture has no assets bucket. Starting the upload names the matching asset, the PUT
+// succeeds after a moment, and Core's real completion returns the ready asset.
+async function installUploadStorage(page, ctx) {
+  const site = seededSite(ctx)
+  const files = await uploadFixtures(ctx)
+  const byId = new Map(Object.values(files).map((asset) => [asset.id, asset]))
+  await page.route(
+    (url) => url.pathname === `/api/v1/sites/${site.id}/assets`,
+    async (route) => {
+      if (route.request().method() !== 'POST') return route.continue()
+      const { contentType } = route.request().postDataJSON()
+      const asset = contentType === 'video/mp4' ? files.video : files.photo
+      await route.fulfill({
+        json: {
+          ok: true,
+          data: {
+            assetId: asset.id,
+            uploadUrl: `${ctx.baseURL}/capture-upload/${asset.id}`,
+            uploadHeaders: { 'Content-Type': contentType },
+          },
+        },
+      })
+    },
+  )
+  await page.route(
+    (url) => url.pathname.startsWith('/capture-upload/'),
+    async (route) => {
+      await wait(1500)
+      await route.fulfill({ status: 200, body: '' })
+    },
+  )
+  const served = (url) => {
+    const key = url.pathname === '/_next/image' ? url.searchParams.get('url') || '' : url.pathname
+    const match = /\/sites\/[^/]+\/([0-9a-f-]+)\.(?:webp|mp4)$/.exec(key)
+    return key.startsWith(`${SITES_ASSETS_PATH}/`) && match ? byId.get(match[1]) : null
+  }
+  await page.route(
+    (url) => Boolean(served(url)),
+    async (route) => {
+      const asset = served(new URL(route.request().url()))
+      const body = asset.stored
+      const range = /^bytes=(\d+)-(\d*)$/.exec(route.request().headers().range || '')
+      const start = range ? Number(range[1]) : 0
+      const end = range?.[2] ? Math.min(Number(range[2]), body.length - 1) : body.length - 1
+      await route.fulfill({
+        status: range ? 206 : 200,
+        contentType: asset.contentType,
+        headers: {
+          'accept-ranges': 'bytes',
+          ...(range ? { 'content-range': `bytes ${start}-${end}/${body.length}` } : {}),
+        },
+        body: body.subarray(start, end + 1),
+      })
+    },
+  )
+  return files
+}
+
+// The files the current uploads take picks, set by its setup.
+let uploadFiles = null
+
+// Picks a file through the field's own button, as a vet would.
+async function chooseFile(page, button, asset, mimeType) {
+  const [chooser] = await Promise.all([page.waitForEvent('filechooser'), point(button)])
+  await chooser.setFiles({ name: asset.name, mimeType, buffer: asset.original })
 }
 
 async function editorReady(page) {
@@ -279,6 +403,58 @@ export const siteShots = {
       await wait(4000)
     },
   },
+  uploads: {
+    path: builder('section:docs_hero'),
+    app: false,
+    sites: true,
+    duration: 26,
+    disclosure: 'Upload storage simulated',
+    reset: resetUploads,
+    restore: restoreUploads,
+    setup: async (page, ctx) => {
+      uploadFiles = await installUploadStorage(page, ctx)
+      // Compile the completion route so the filmed upload isn't held up by the dev server.
+      // The asset is already ready, so completing it again changes nothing.
+      const site = seededSite(ctx)
+      const warm = await page.request.post(
+        `${ctx.baseURL}/api/v1/sites/${site.id}/assets/${UPLOADS.photo.id}/complete`,
+      )
+      if (!warm.ok()) throw Error(`Upload completion warm-up failed: ${warm.status()}`)
+    },
+    ready: async (page) => {
+      await editorReady(page)
+      await expect(page.getByRole('button', { name: 'Replace' })).toBeVisible()
+    },
+    act: async (page) => {
+      const files = uploadFiles
+      const preview = page.frameLocator('iframe[title="Website preview"]')
+      await wait(1000)
+      await chooseFile(
+        page,
+        page.getByRole('button', { name: 'Replace' }),
+        files.photo,
+        'image/jpeg',
+      )
+      await expect(preview.locator(`img[src*="${files.photo.id}"]`).first()).toBeVisible({
+        timeout: 30000,
+      })
+      await wait(1200)
+      const video = page.getByRole('group', { name: 'Background video (optional)' })
+      await video.evaluate((element) =>
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' }),
+      )
+      await wait(900)
+      await chooseFile(
+        page,
+        video.getByRole('button', { name: 'Choose a File' }),
+        files.video,
+        'video/mp4',
+      )
+      await expect(preview.locator('video').first()).toBeVisible({ timeout: 30000 })
+      await page.mouse.move(1100, 480, { steps: 15 })
+      await wait(7000)
+    },
+  },
   details: {
     path: builder(),
     app: false,
@@ -324,7 +500,7 @@ export const siteShots = {
     path: builder(),
     app: false,
     sites: true,
-    duration: 20,
+    duration: 26,
     reset: resetSite,
     // Leave the shared capture database on the seeded, unpublished draft.
     restore: resetSite,

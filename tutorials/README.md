@@ -673,8 +673,8 @@ and publish dialog show the address a vet gets. The renderer's preview host is `
 editor frames its preview there and Core sends revalidations there after publishing. The capture
 browser maps every host under the sites domain to the local renderer (`--host-resolver-rules`), so
 the published site never leaves the machine, and it adds `--enable-unsafe-swiftshader` so headless
-Chrome draws the WebGL maps. Hosting, domain, upload, stock search and geocoding settings stay
-unset. The seeded service area and contact address carry stored map positions, which a save keeps;
+Chrome draws the WebGL maps. Hosting, domain, upload storage, stock search and geocoding settings
+stay unset. The seeded service area and contact address carry stored map positions, which a save keeps;
 the maps draw over the development environment's self-hosted basemap. A shot may set `app: false`
 (no app shell to wait for) and `device` (Playwright context options, such as a phone viewport).
 Every site shot restores the seeded draft after the take as well as before it.
@@ -688,6 +688,14 @@ Every site shot restores the seeded draft after the take as well as before it.
 - `editor`, `look`, `details`, `address`: the real editor. They change the hero tagline, a color
   and the look, open the service area, hours and pharmacy sections, and hover **Connect Your Own
   Domain** without opening the domain flow, which would call the hosting provider.
+- `uploads`: **Replace** on the hero photo and **Choose a File** for its background video, through
+  the fields' real buttons. The files are the stock `dog-on-cushion` photo and the demo hero video
+  that ship with the renderer (Pexels licence). Capture has no assets bucket, so storage is answered
+  in the browser (labelled "Upload storage simulated"): the shot inserts both as ready assets of the
+  site (`…a11`, `…a12`), starting the upload names the matching asset, the PUT succeeds after a
+  moment, and Core's real completion returns the ready asset. Core's `SITES_ASSETS_URL` is
+  `/capture-assets` in capture, and the shot serves those paths and their `/_next/image` versions:
+  the photo re-encoded to WebP as Core would, the video as uploaded. The restore deletes both rows.
 - `publish`: **Publish** in the real dialog, to **Your website is live**.
 - `phone`: publishes the draft through the real API, then scrolls the live page at a 390×844
   phone viewport, stopping at the hours. The seeded contact map labels the fictional address's pin
@@ -700,7 +708,7 @@ narration; recheck them and `cover` after a retake or a new narration take.
 
 ```sh
 pnpm tutorials:capture-web /absolute/path/to/noctune-docs /absolute/path/to/noctune-core \
-  .tutorial-output/site-capture old-site,draft,editor,look,details,address,publish,phone
+  .tutorial-output/site-capture old-site,draft,editor,look,uploads,details,address,publish,phone
 pnpm tutorials:prepare-media tutorials/site-builder-web.json .tutorial-output/site-capture \
   .tutorial-output/site-builder-web/prepared
 pnpm tutorials:narrate .tutorial-output/site-builder-web/prepared/story.json \

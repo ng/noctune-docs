@@ -17,6 +17,7 @@ import { withStagedOutput } from './staged-output.mjs'
 import {
   MOCHI,
   MOCHI_NOTE,
+  SITES_ASSETS_PATH,
   SITES_ROOT_DOMAIN,
   TUTORIAL_NOTE,
   resetNote,
@@ -88,8 +89,9 @@ const env = {
 // renderer's preview host is `localhost`, so the editor frames its preview and Core
 // sends revalidations there, and the capture browser resolves every `*.<sites root>`
 // host to it, so the published site shows the real address shape while no request
-// leaves the machine. Hosting, domain, upload, search and geocoding services stay
-// unset: nothing is purged, attached or looked up outside the capture.
+// leaves the machine. Hosting, domain, upload storage, search and geocoding services
+// stay unset: nothing is purged, attached or looked up outside the capture. Asset URLs
+// resolve under a path the website shots answer in the browser.
 const sitesURL = 'http://localhost:3208'
 requireLoopbackBaseUrl(sitesURL)
 const withSites = shots.some((id) => registry[id].sites)
@@ -101,7 +103,7 @@ if (withSites)
     SITES_RENDERER_URL: sitesURL,
     SITES_RENDERER_SECRET: sitesSecret,
     SITES_ASSETS_BUCKET: '',
-    SITES_ASSETS_URL: '',
+    SITES_ASSETS_URL: SITES_ASSETS_PATH,
     SITES_GEOCODING_REGION: '',
     VERCEL_SITES_API_TOKEN: '',
     VERCEL_SITES_PROJECT_ID: '',

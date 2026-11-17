@@ -7,7 +7,7 @@ import { expect } from '@playwright/test'
 import { installUploadFixture } from './web-upload-fixture.mjs'
 import { siteShots } from './site-shots.mjs'
 
-export { SITES_ROOT_DOMAIN } from './site-shots.mjs'
+export { SITES_ASSETS_PATH, SITES_ROOT_DOMAIN } from './site-shots.mjs'
 
 export const MOCHI = 'd0c50000-0000-4000-8000-000000000201'
 // Mochi's seeded note, and the reserved tutorial version the runner copies from
