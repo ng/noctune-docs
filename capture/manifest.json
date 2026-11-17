@@ -344,6 +344,12 @@
     "docs": ["content/website.mdx"]
   },
   {
+    "id": "website-hero-video",
+    "route": "/website?edit=section:docs_hero",
+    "output": "public/screenshots/website/hero-video.webp",
+    "docs": ["content/website.mdx"]
+  },
+  {
     "id": "website-look",
     "route": "/website?edit=look",
     "output": "public/screenshots/website/look.webp",

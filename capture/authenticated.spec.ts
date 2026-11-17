@@ -1383,6 +1383,30 @@ async function saveWebsiteScreenshot(
   await savePageScreenshot(page, item)
 }
 
+const WEBSITE_ID = 'd0c50000-0000-4000-8000-000000000a01'
+/** The sites demo's hero clip, which ships with the renderer, so nothing is uploaded. */
+const DEMO_HERO_VIDEO_ID = '5a7c0000-0000-4000-9000-000000000001'
+
+/** Shows the demo hero video in the seeded draft, in this browser only; nothing is saved. */
+async function mockHeroVideo(page: Page): Promise<void> {
+  await page.route(new RegExp(`/api/v1/sites/${WEBSITE_ID}(?:\\?.*)?$`), async (route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue()
+      return
+    }
+
+    const response = await route.fetch({ timeout: 240_000 })
+    const payload = (await response.json()) as {
+      ok?: boolean
+      data?: { draft?: { content?: { sections?: Array<{ type: string; data: object }> } } }
+    }
+    const hero = payload.data?.draft?.content?.sections?.find((section) => section.type === 'hero')
+    if (!payload.ok || !hero) throw new Error('Could not prepare the hero video draft')
+    hero.data = { ...hero.data, video: { assetId: DEMO_HERO_VIDEO_ID } }
+    await route.fulfill({ response, json: payload })
+  })
+}
+
 /** Opens the seeded practice website in the builder and waits for its live preview. */
 async function openWebsiteEditor(page: Page, route: string): Promise<void> {
   await setFixedCaptureTime(page)
@@ -1440,6 +1464,19 @@ test('website — contact section with form and map', async ({ page }) => {
   await expect(contact.locator('.maplibregl-canvas')).toBeVisible()
   await expect(contact.locator('.maplibregl-marker')).toHaveCount(1)
   await page.waitForTimeout(3_000)
+  await saveWebsiteScreenshot(page, item)
+})
+
+test('website — hero background video', async ({ page }) => {
+  const item = capture('website-hero-video')
+  await mockHeroVideo(page)
+  await openWebsiteEditor(page, item.route)
+  const field = page.getByRole('group', { name: 'Background video (optional)' })
+  await field.scrollIntoViewIfNeeded()
+  await expect(field.getByRole('button', { name: 'Remove Video' })).toBeVisible()
+  await expect
+    .poll(() => field.locator('video').evaluate((video: HTMLVideoElement) => video.readyState))
+    .toBeGreaterThanOrEqual(2)
   await saveWebsiteScreenshot(page, item)
 })
 
