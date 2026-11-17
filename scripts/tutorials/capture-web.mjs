@@ -83,19 +83,21 @@ const env = {
   SUPABASE_REALTIME_ENABLED: 'false',
   DOCS_CAPTURE_NOW: now,
 }
-// Website builder shots run Core's sites renderer (`sites/`) on loopback too. The
-// capture browser resolves every `*.<sites root>` host to it, so the editor's
-// preview and the published site show the real address shape while no request
-// leaves the machine. Hosting, domain, upload, search and geocoding services
-// stay unset: nothing is purged, attached or looked up outside the capture.
-const sitesURL = 'http://127.0.0.1:3208'
+// Website builder shots run a production build of Core's sites renderer (`sites/`)
+// on loopback too: its development server only hydrates pages for localhost. The
+// renderer's preview host is `localhost`, so the editor frames its preview and Core
+// sends revalidations there, and the capture browser resolves every `*.<sites root>`
+// host to it, so the published site shows the real address shape while no request
+// leaves the machine. Hosting, domain, upload, search and geocoding services stay
+// unset: nothing is purged, attached or looked up outside the capture.
+const sitesURL = 'http://localhost:3208'
 requireLoopbackBaseUrl(sitesURL)
 const withSites = shots.some((id) => registry[id].sites)
 const sitesSecret = randomBytes(32).toString('base64url')
 if (withSites)
   Object.assign(env, {
     SITES_ROOT_DOMAIN,
-    NEXT_PUBLIC_SITES_PREVIEW_URL: `http://preview.${SITES_ROOT_DOMAIN}`,
+    NEXT_PUBLIC_SITES_PREVIEW_URL: sitesURL,
     SITES_RENDERER_URL: sitesURL,
     SITES_RENDERER_SECRET: sitesSecret,
     SITES_ASSETS_BUCKET: '',
@@ -215,22 +217,29 @@ try {
   }
   if (withSites) {
     // The renderer only reads the four site tables; it gets no Core secrets.
+    const rendererEnv = {
+      ...process.env,
+      SITES_DATABASE_URL: capture.CAPTURE_DATABASE_URL,
+      SITES_ROOT_DOMAIN,
+      SITES_PREVIEW_HOST: 'localhost',
+      SITES_EDITOR_ORIGINS: baseURL,
+      SITES_RENDERER_SECRET: sitesSecret,
+      CORE_API_URL: baseURL,
+      // The development environment's self-hosted basemap: public tiles, read only.
+      SITES_MAP_URL: 'https://sites-assets.noctune.dev/maps',
+    }
+    console.log('Building the sites renderer.')
+    execFileSync('corepack', ['pnpm', 'exec', 'next', 'build', '--webpack'], {
+      cwd: path.join(core, 'sites'),
+      env: rendererEnv,
+      stdio: ['ignore', log, log],
+    })
     renderer = spawn(
       'corepack',
-      ['pnpm', 'exec', 'next', 'dev', '--webpack', '--hostname', '127.0.0.1', '-p', '3208'],
+      ['pnpm', 'exec', 'next', 'start', '--hostname', 'localhost', '-p', '3208'],
       {
         cwd: path.join(core, 'sites'),
-        env: {
-          ...process.env,
-          SITES_DATABASE_URL: capture.CAPTURE_DATABASE_URL,
-          SITES_ROOT_DOMAIN,
-          SITES_PREVIEW_HOST: `preview.${SITES_ROOT_DOMAIN}`,
-          SITES_EDITOR_ORIGINS: baseURL,
-          SITES_RENDERER_SECRET: sitesSecret,
-          CORE_API_URL: baseURL,
-          // The development environment's self-hosted basemap: public tiles, read only.
-          SITES_MAP_URL: 'https://sites-assets.noctune.dev/maps',
-        },
+        env: rendererEnv,
         detached: true,
         stdio: ['ignore', log, log],
       },
@@ -239,18 +248,12 @@ try {
     renderer.on('exit', (code) => {
       rendererExit = code ?? 1
     })
-    // Compile the preview page and the public site route before filming.
-    for (const [host, route] of [
-      [`preview.${SITES_ROOT_DOMAIN}`, '/preview'],
-      [`demo.${SITES_ROOT_DOMAIN}`, '/'],
-    ]) {
-      for (let attempts = 0; ; attempts++) {
-        if (rendererExit !== undefined)
-          throw Error('Sites renderer exited; inspect the local protected log')
-        if (attempts > 180) throw Error('Sites renderer did not become ready')
-        if (await loopbackStatus(sitesURL, host, route)) break
-        await wait(1000)
-      }
+    for (let attempts = 0; ; attempts++) {
+      if (rendererExit !== undefined)
+        throw Error('Sites renderer exited; inspect the local protected log')
+      if (attempts > 90) throw Error('Sites renderer did not become ready')
+      if (await loopbackStatus(sitesURL, 'localhost:3208', '/preview')) break
+      await wait(1000)
     }
   }
   browser = await chromium.launch({
@@ -259,7 +262,13 @@ try {
     args: [
       '--use-fake-ui-for-media-stream',
       '--use-fake-device-for-media-stream',
-      ...(withSites ? [`--host-resolver-rules=MAP *.${SITES_ROOT_DOMAIN} 127.0.0.1:3208`] : []),
+      // Headless Chrome needs the software renderer for the sites' WebGL maps.
+      ...(withSites
+        ? [
+            `--host-resolver-rules=MAP *.${SITES_ROOT_DOMAIN} localhost:3208`,
+            '--enable-unsafe-swiftshader',
+          ]
+        : []),
     ],
   })
   const common = {
@@ -325,15 +334,6 @@ try {
         storageState,
         recordVideo: { dir: raw, size: viewport },
       })
-      // The renderer's development badge shows in the preview iframe too.
-      if (shot.sites)
-        await context.addInitScript(() => {
-          document.addEventListener('DOMContentLoaded', () => {
-            const style = document.createElement('style')
-            style.textContent = 'nextjs-portal { display: none !important; }'
-            document.head.append(style)
-          })
-        })
       const started = performance.now()
       const page = await context.newPage()
       debugPage = page

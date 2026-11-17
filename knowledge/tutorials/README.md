@@ -664,15 +664,19 @@ becomes a noctune site, from the first draft to the live page on a phone. Footag
 practice (`…a01`, `northstarvet`); every shot first restores that draft, its look and its
 unpublished state, so takes can be recorded in any order.
 
-Shots with `sites: true` (`scripts/tutorials/site-shots.mjs`) also start the renderer with
-`next dev` on loopback port 3208, reading the capture database. Core and the renderer use
-production's sites domain, `sites.noctune.ai`, so the editor and publish dialog show the address a
-vet gets. The capture browser maps every host under it to the local renderer
-(`--host-resolver-rules`), so the preview frame and the published site never leave the machine.
-Hosting, domain, upload, stock search and geocoding settings stay unset. The seeded service area
-carries stored map positions, which a save keeps; the map draws over the development
-environment's self-hosted basemap. A shot may set `app: false` (no app shell to wait for) and
-`device` (Playwright context options, such as a phone viewport).
+Shots with `sites: true` (`scripts/tutorials/site-shots.mjs`) also build Core's sites renderer and
+run it with `next start` on loopback port 3208, reading the capture database. Its development
+server only hydrates pages for localhost hosts, so the public site's maps never drew under
+`next dev`. Core and the renderer use production's sites domain, `sites.noctune.ai`, so the editor
+and publish dialog show the address a vet gets. The renderer's preview host is `localhost`: the
+editor frames its preview there and Core sends revalidations there after publishing. The capture
+browser maps every host under the sites domain to the local renderer (`--host-resolver-rules`), so
+the published site never leaves the machine, and it adds `--enable-unsafe-swiftshader` so headless
+Chrome draws the WebGL maps. Hosting, domain, upload, stock search and geocoding settings stay
+unset. The seeded service area and contact address carry stored map positions, which a save keeps;
+the maps draw over the development environment's self-hosted basemap. A shot may set `app: false`
+(no app shell to wait for) and `device` (Playwright context options, such as a phone viewport).
+Every site shot restores the seeded draft after the take as well as before it.
 
 - `old-site`: a dated demo page served only inside the capture browser at
   `northstarvet.example.test`, labelled as a stand-in for the old website.
