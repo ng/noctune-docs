@@ -662,8 +662,9 @@ An overview film for marketing and the docs: the fictional Northstar practice's 
 a noctune site, from the first draft to the live page on a phone. Footage is the real `/website`
 builder and Core's sites renderer (`sites/`). The site is Core's seeded draft for the practice
 (`…a01`, `northstarvet`), whose content comes from `scripts/fixtures/noctune-demo/site.ts` (Core
-#1092; until it merges, capture from a Core worktree with that file added). Every shot first
-restores that draft, its look and its unpublished state, so takes can be recorded in any order.
+#1092). The look picker needs Core #1093's `ThemePicker.tsx`, whose cards fill the row. Until both
+merge, capture from a Core worktree with those two files added. Every shot first restores that
+draft, its look and its unpublished state, so takes can be recorded in any order.
 
 Shots with `sites: true` (`scripts/tutorials/site-shots.mjs`) also build Core's sites renderer and
 run it with `next start` on loopback port 3208, reading the capture database. Its development
