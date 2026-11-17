@@ -61,7 +61,7 @@
       "platform": "web",
       "device": "phone",
       "headline": ["Made for phones", "first."],
-      "narration": "Every site is designed for phones first, so clients can call you, check your hours, or get directions in a tap."
+      "narration": "Every site is designed for phones first, so clients can call you or check your hours in a tap."
     },
     {
       "id": "outro",

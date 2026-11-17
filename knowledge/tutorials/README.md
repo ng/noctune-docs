@@ -690,7 +690,9 @@ Every site shot restores the seeded draft after the take as well as before it.
   Domain** without opening the domain flow, which would call the hosting provider.
 - `publish`: **Publish** in the real dialog, to **Your website is live**.
 - `phone`: publishes the draft through the real API, then scrolls the live page at a 390×844
-  phone viewport. The story's `device: "phone"` sets it in the phone bezel, labelled PHONE.
+  phone viewport, stopping at the hours. The seeded contact map labels the fictional address's pin
+  with a real town, so the take stays above it. The story's `device: "phone"` sets it in the
+  phone bezel, labelled PHONE.
 
 A scene's own `address` replaces the story's in the browser frame.
 

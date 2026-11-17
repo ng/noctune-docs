@@ -361,14 +361,13 @@ export const siteShots = {
     ready: (page) => expect(page.locator('h1')).toBeVisible({ timeout: 90000 }),
     act: async (page) => {
       await wait(3000)
-      // Glide to the hours, then to the address that opens directions.
-      for (const heading of [/hours/i, /contact|visit|find us/i]) {
-        await page
-          .getByRole('heading', { level: 2, name: heading })
-          .first()
-          .evaluate((element) => element.scrollIntoView({ behavior: 'smooth', block: 'start' }))
-        await wait(4500)
-      }
+      // Glide to the hours and stop there: the contact map below labels the fictional
+      // address's pin with a real town.
+      await page
+        .getByRole('heading', { level: 2, name: /hours/i })
+        .first()
+        .evaluate((element) => element.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+      await wait(8000)
     },
   },
 }
