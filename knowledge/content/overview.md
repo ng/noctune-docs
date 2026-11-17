@@ -50,6 +50,7 @@ noctune is AI for veterinary medicine — not just a scribe. Record a visit from
 ## Practice
 
 - [Practice & Team](practice.md) — invite members, configure practice settings
+- [Practice website](website.md) — build, edit, and publish your practice's website, included with your subscription
 
 ## Your account
 

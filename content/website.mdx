@@ -1,0 +1,232 @@
+---
+title: Your practice website
+type: User Guide
+description: Build, edit, and publish your practice website in noctune, from a first draft to your own domain.
+sources:
+  - id: core-sites
+    resource: https://github.com/ng/noctune-core/blob/fa856fbb/docs/noctune-sites.md
+  - id: core-start
+    resource: https://github.com/ng/noctune-core/blob/fa856fbb/src/components/sites/SiteStartFlow.tsx
+  - id: core-editor
+    resource: https://github.com/ng/noctune-core/blob/fa856fbb/src/components/sites/SiteEditor.tsx
+  - id: core-forms
+    resource: https://github.com/ng/noctune-core/blob/fa856fbb/src/components/sites/SectionForms.tsx
+  - id: core-domain
+    resource: https://github.com/ng/noctune-core/blob/fa856fbb/src/components/sites/DomainDialog.tsx
+  - id: core-publish
+    resource: https://github.com/ng/noctune-core/blob/fa856fbb/src/components/sites/PublishDialog.tsx
+---
+
+# Your practice website
+
+noctune builds a simple, phone-friendly website for your practice and keeps it hosted for you. The website is included with your noctune subscription. We write the first draft from your current website or your practice details. You review it, change anything you like, and publish when you're ready.
+
+<TutorialVideo id="site-builder-web" />
+
+## What you get \[#what-you-get]
+
+- **A complete first draft.** Services, hours, team, contact details and more, written in about a minute. We never make up prices, hours, or reviews. Anything we can't find stays blank for you to fill in.
+- **A site built for phones.** Every look is checked for readable text and works on phones without any setup.
+- **Your own address.** Your site lives at an address like `northstarvet.sites.noctune.ai`. You can also connect a domain you already own.
+- **Messages in your inbox.** Messages from your site's contact form arrive in your noctune inbox.
+- **Hosting handled.** We take care of security, updates, and keeping the site online.
+
+## Open the website builder \[#open]
+
+Select **My Website** in the sidebar. In a practice workspace, it's called **Practice website**. The builder opens full screen. Select the noctune logo at the top left to go back to the app.
+
+A practice has one website. Practice owners and admins edit it. Other members see a short note that owners and admins edit the website, with a link to the live site once it's published.
+
+If you work on your own, your website belongs to your personal workspace.
+
+## Start your website \[#start]
+
+Your first screen asks how to start.
+
+<BrowserFrame
+  src="/screenshots/website/start.webp"
+  alt="Website start screen with I have a website and Start from my practice details options, the website address field, and the Write My First Draft button"
+  url="app.noctune.ai/website"
+/>
+
+- **I have a website.** Type your current address, such as `yourpractice.com`. We read it, keep the facts, and rewrite them into the new site. Tick **Also bring over my photos** to bring your photos across too. Only tick it for photos you own or have permission to use.
+- **Start from my practice details.** We use the name, phone, and address noctune already has. Select **Edit** to correct them first.
+
+Under the choices, **Your site will live at** shows your web address. Select **Change** to pick a different one.
+
+Select **Write My First Draft**. It takes about a minute. You can leave the page; we keep working and save the draft for you. Nothing goes live until you publish.
+
+If we can't read your current site, you'll see **We could not read** and your address. Some website builders block automatic reading. Check the spelling or try the address of one page, then select **Try Again**. You can also select **Start From My Practice Details**, then paste wording from your old site into any section later.
+
+### Pick a look \[#pick-a-look]
+
+When the draft is ready, **Pick a look** shows your own draft in each style, on a computer and on a phone. Choose one, then select **Continue With** and the look's name. You can switch any time without losing any words or photos.
+
+If your current website lists a different practice name, phone, email, or address from your noctune profile, you'll see them here too. Tick the ones to keep and select **Save Selected**, or select **Not Now**.
+
+### If we started your website for you \[#already-drafted]
+
+If you gave us your website when you set up noctune, your draft may already be waiting. Open **My Website** to see it. It works the same as a draft you started yourself.
+
+If you see **A website for your practice** with a **Build My Website** button, our team builds your website for you. Add your current website and anything the site should say or leave out, then select **Build My Website**. We'll email you when it's ready to review.
+
+## The editor \[#editor]
+
+The editor shows your sections on the left and a live preview on the right. Changes save as you type. The top bar shows whether your changes are saved, and whether the site is **Not published yet** or **Live**.
+
+<BrowserFrame
+  src="/screenshots/website/editor.webp"
+  alt="Website editor with the section list on the left and a live preview of the Northstar Veterinary Clinic website on the right"
+  url="app.noctune.ai/website"
+/>
+
+- Use the computer and phone buttons above the preview to see either size.
+- Select **Preview** to open the whole site in a new tab. Select **Back to editor** there to return.
+- Select the practice name at the top left for site-wide settings: **Practice & contact**, **Menu & social links**, **Look & colors**, **Search & old pages**, and **Web address**.
+
+### About the preview \[#preview]
+
+Links that would leave the page don't open in the preview. That includes your booking, pharmacy, and social links. Links to sections on the same page still scroll. Select any part of the preview to open that section's settings.
+
+To check an outside link, publish and try it on your live site.
+
+## Edit your sections \[#sections]
+
+Select a section in the list, or select it in the preview, to edit it. Select the back arrow to return to the list.
+
+- **Reorder:** drag a section by its handle.
+- **Hide:** turn off the switch beside a section to keep it off your site without deleting it.
+- **Add:** select **Add Section** and choose one. **Custom section** adds your own heading and content in a fixed layout, such as text, text with a photo, a photo gallery, a list, or a row of buttons. New sections go at the bottom.
+- **Delete:** open the section, select its more options menu, then **Delete Section**.
+
+| Section              | What it holds                                                                                                      |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Hero**             | The top of your site: a tagline, a short intro, a photo, the main button (book or call), and up to four highlights |
+| **Services**         | What you offer, with short descriptions, optional prices, and photos                                               |
+| **Service area**     | The cities or zip codes you serve, with a map                                                                      |
+| **Hours**            | Your week, closed days, and a note such as where to go after hours                                                 |
+| **Team**             | A photo, name, credentials, role, and short bio for each person                                                    |
+| **Booking**          | A button to your booking page, plus deposits, cancellations, and other policies                                    |
+| **Reviews**          | Quotes from clients and a link to your Google reviews                                                              |
+| **FAQ and policies** | Common questions and answers                                                                                       |
+| **Pharmacy**         | A link to your online pharmacy, with an optional second button such as a refill request                            |
+| **Contact**          | Your phone, text, and email, a message form, and a map                                                             |
+
+### Service area and its map \[#service-area]
+
+List each city or zip code under **Cities and zip codes**. When two or more places are found, your site shows them on a map beside the list. A place we can't find stays in the list but not on the map.
+
+<BrowserFrame
+  src="/screenshots/website/service-area.webp"
+  alt="Service area section form with a list of cities beside the preview showing the cities pinned on a map"
+  url="app.noctune.ai/website"
+/>
+
+### Contact \[#contact]
+
+Turn on **Show a message form** to let visitors send you a message. Messages arrive in your noctune inbox. The form starts sending once your site is published. Turn on **Show a map** to pin your street address, with a link for directions. The map appears once your address is found, and only while the address is shown.
+
+<BrowserFrame
+  src="/screenshots/website/contact.webp"
+  alt="Contact section form with Show a message form and Show a map switches beside the preview of the contact section"
+  url="app.noctune.ai/website"
+/>
+
+Your phone, text number, email, and address come from **Practice & contact** in the site menu. Turn on **Hide the street address** there if you only make house calls.
+
+### Photos \[#photos]
+
+Select **Choose a File** to upload your own photo, or **Stock Photos** to pick one (your logo takes an upload only). Upload JPEG, PNG, WebP, or HEIC images up to 15 MB. We remove location data from every photo. **Stock Photos** opens a library of pet and clinic photos you can use on your site.
+
+## Look and colors \[#look]
+
+Open the practice name menu and select **Look & colors**. It shows your current look with your own words and photos.
+
+<BrowserFrame
+  src="/screenshots/website/look.webp"
+  alt="Look and colors panel showing the Warm look, its three color choices, and Your own color"
+  url="app.noctune.ai/website"
+/>
+
+- Select **Browse Looks** to compare every look with your own site.
+- Pick one of the look's colors, or set **Your own color** with the color picker or a color code. If we found a brand color on your current website, select **Use Your Current Site's Color**.
+
+Changing the look keeps every word and photo. Only the design changes, and visitors don't see it until you publish.
+
+## Menu and social links \[#menu]
+
+Open the practice name menu and select **Menu & social links**.
+
+<BrowserFrame
+  src="/screenshots/website/menu.webp"
+  alt="Menu and social links panel with the Automatic menu option and Facebook and Instagram pages"
+  url="app.noctune.ai/website"
+/>
+
+- **Menu:** **Automatic** lists your sections in page order. Choose **Custom** to pick and rename links, add links to other websites such as an online pharmacy, or group links in a dropdown. Turn on **Paid or affiliate link** for a link you're paid for.
+- **Social media:** select **Add a Social Media Page** and paste the page's address. Each page shows as its icon at the top and bottom of your site.
+
+## Your web address \[#web-address]
+
+Your site's address is included with your subscription. Open the practice name menu and select **Web address** to change it. Type the new name and select **Save**.
+
+<BrowserFrame
+  src="/screenshots/website/address.webp"
+  alt="Web address panel with the northstarvet website address and the Connect Your Own Domain button"
+  url="app.noctune.ai/website"
+/>
+
+Change it before you publish if you can. After you publish, changing it breaks links to the old address, such as ones on business cards or in search results.
+
+## Use your own domain \[#domain]
+
+Any noctune subscription can host your website at a domain you already own, like `yourpractice.com`. You buy and renew the domain wherever you registered it. noctune doesn't sell or pay for domains.
+
+1. Select **Connect Your Own Domain** in **Web address**, or from the more actions menu at the top right.
+2. Type the domain without `www` and select **Continue**. We set up both versions.
+3. Sign in where you bought the domain and find the page called "DNS" or "Domain settings". Add each record exactly as shown. Some sites call Name "Host" and Value "Points to". Don't change or delete anything marked MX, or any TXT record that was already there. Those run your email.
+4. Select **I Have Added Them**. We check for you. It usually takes under an hour and can take up to a day.
+
+<BrowserFrame
+  src="/screenshots/website/domain.webp"
+  alt="Use your own domain dialog asking for the domain you already own, with Not Now and Continue buttons"
+  url="app.noctune.ai/website"
+/>
+
+Someone else manages your domain? Select **Email These Steps to Someone** to send them the records. Your noctune address keeps working the whole time. Once your domain connects, it becomes your site's main address.
+
+## Publish \[#publish]
+
+Select **Publish** at the top right. Read your site first. We wrote the draft from what we could find, and you're responsible for what it says about your services, prices, and policies.
+
+<BrowserFrame
+  src="/screenshots/website/publish.webp"
+  alt="Publish your website confirmation with the site address and a reminder to read it through first"
+  url="app.noctune.ai/website"
+/>
+
+Select **Publish** in the dialog. Your site goes live at your address, and you can copy the address to put on your cards, invoices, and voicemail greeting.
+
+Publishing needs an active noctune subscription. Without one, the button reads **Subscribe to Publish** and takes you to billing. You can still build and preview your site.
+
+### After you publish \[#after-publish]
+
+Edits you make after publishing stay private until you publish again. The top bar shows **Unpublished changes**, and the button reads **Publish Changes**.
+
+From the more actions menu at the top right:
+
+- **View Live Site** opens your published site.
+- **Published Versions** lists every version you've published. Restoring one puts it back on your live site and replaces your current draft.
+- **Take Site Offline** stops showing your site to visitors.
+
+## What visitors see \[#visitors]
+
+Visitors see your published site on any computer or phone, at your noctune address or your own domain. Your phone number, booking button, and contact form are easy to reach on a phone. A shown street address links to directions.
+
+If your subscription ends, your site stays up for 7 days. After that, visitors see a simple card with your contact details instead. Renew your plan and the full site comes back.
+
+## Get help \[#help]
+
+Prefer not to build it yourself? Our team can set up your website for you and email you when it's ready to review. You still choose when it goes live.
+
+For help with your website, email [jon@noctune.ai](mailto:jon@noctune.ai).

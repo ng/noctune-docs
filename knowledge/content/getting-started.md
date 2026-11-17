@@ -37,3 +37,4 @@ After acceptance, noctune opens the Dashboard. It brings the selected day's enco
 - [Record your first encounter](encounters/new-encounter.md)
 - [Tour the dashboard](dashboard.md)
 - [Set up your practice](practice.md)
+- [Build your practice website](website.md)

@@ -1318,3 +1318,170 @@ test('settings — notification defaults matrix', async ({ page }) => {
   await expect(page.getByText(/Quiet hours: 8 PM/)).toBeAttached()
   await savePageScreenshot(page, item)
 })
+
+const WEBSITE_TAGLINE = 'Friendly, thorough care for every pet'
+
+/** Shows the website start screen as a practice without a website sees it. */
+async function mockNoWebsiteYet(page: Page): Promise<void> {
+  await page.route('**/api/v1/sites/current*', async (route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue()
+      return
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        ok: true,
+        data: {
+          site: null,
+          canManage: true,
+          canCreate: true,
+          eligibility: { hasPlan: true, customDomain: true },
+          suggestedSubdomain: 'northstarvet',
+          rootDomain: 'sites.noctune.ai',
+          demoUrl: null,
+          draftJob: null,
+        },
+      }),
+    })
+  })
+}
+
+const PREVIEW_CAPTURE_CSS = `
+  nextjs-portal {
+    display: none !important;
+  }
+  *, *::before, *::after {
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
+  }
+`
+
+/** Hides dev-only chrome in each website preview frame and waits for its visible photos. */
+async function stabilizeWebsitePreview(page: Page): Promise<void> {
+  for (const frame of page.frames().filter((item) => item.url().includes('/preview'))) {
+    await frame.addStyleTag({ content: PREVIEW_CAPTURE_CSS })
+    await frame.waitForFunction(() =>
+      [...document.images]
+        .filter((image) => {
+          const box = image.getBoundingClientRect()
+          return box.width > 0 && box.bottom > 0 && box.top < window.innerHeight
+        })
+        .every((image) => image.complete && image.naturalWidth > 0),
+    )
+  }
+}
+
+/** Captures a website builder state once its preview has settled. */
+async function saveWebsiteScreenshot(
+  page: Page,
+  item: Parameters<typeof savePageScreenshot>[1],
+): Promise<void> {
+  await stabilizeWebsitePreview(page)
+  await savePageScreenshot(page, item)
+}
+
+/** Opens the seeded practice website in the builder and waits for its live preview. */
+async function openWebsiteEditor(page: Page, route: string): Promise<void> {
+  await setFixedCaptureTime(page)
+  await page.goto(route, { waitUntil: 'domcontentloaded' })
+  await expect(
+    page.getByRole('button', { name: 'Northstar Veterinary Clinic, site settings' }),
+  ).toBeVisible()
+  await expect(page.getByText('Not published yet', { exact: true }).first()).toBeVisible()
+  await expect(
+    page.frameLocator('iframe[title="Website preview"]').getByText(WEBSITE_TAGLINE).first(),
+  ).toBeVisible()
+}
+
+test('website — start from your current site or practice details', async ({ page }) => {
+  const item = capture('website-start')
+  await setFixedCaptureTime(page)
+  await mockNoWebsiteYet(page)
+  await page.goto(item.route, { waitUntil: 'domcontentloaded' })
+  await expect(
+    page.getByRole('heading', { name: 'Your practice website, done for you' }),
+  ).toBeVisible()
+  await expect(page.getByRole('radio', { name: 'I have a website' })).toBeVisible()
+  await expect(page.getByText('northstarvet.sites.noctune.ai', { exact: true })).toBeVisible()
+  await savePageScreenshot(page, item)
+})
+
+test('website — editor with sections and live preview', async ({ page }) => {
+  const item = capture('website-editor')
+  await openWebsiteEditor(page, item.route)
+  await expect(page.getByRole('button', { name: 'Add Section' })).toBeVisible()
+  await saveWebsiteScreenshot(page, item)
+})
+
+test('website — service area section with its map', async ({ page }) => {
+  const item = capture('website-service-area')
+  await openWebsiteEditor(page, item.route)
+  await expect(page.getByText('Cities and zip codes', { exact: true })).toBeVisible()
+  const preview = page.frameLocator('iframe[title="Website preview"]')
+  await expect(preview.getByText('Philomath', { exact: true }).first()).toBeInViewport()
+  await expect(preview.locator('.maplibregl-canvas').first()).toBeVisible()
+  await expect(preview.locator('.maplibregl-marker')).toHaveCount(6)
+  // Let the basemap tiles finish drawing; the stable-frame check then confirms it.
+  await page.waitForTimeout(3_000)
+  await saveWebsiteScreenshot(page, item)
+})
+
+test('website — contact section with form and map', async ({ page }) => {
+  const item = capture('website-contact')
+  await openWebsiteEditor(page, item.route)
+  await expect(page.getByText('Show a message form', { exact: true }).first()).toBeVisible()
+  await expect(page.getByText('Show a map', { exact: true }).first()).toBeVisible()
+  const contact = page
+    .frameLocator('iframe[title="Website preview"]')
+    .locator('[data-section-id="docs_contact"]')
+  await expect(contact.locator('.maplibregl-canvas')).toBeVisible()
+  await expect(contact.locator('.maplibregl-marker')).toHaveCount(1)
+  await page.waitForTimeout(3_000)
+  await saveWebsiteScreenshot(page, item)
+})
+
+test('website — look and colors', async ({ page }) => {
+  const item = capture('website-look')
+  await openWebsiteEditor(page, item.route)
+  await expect(page.getByRole('button', { name: 'Browse Looks' })).toBeVisible()
+  await expect(page.getByText('Your own color', { exact: true }).first()).toBeVisible()
+  await saveWebsiteScreenshot(page, item)
+})
+
+test('website — menu and social links', async ({ page }) => {
+  const item = capture('website-menu')
+  await openWebsiteEditor(page, item.route)
+  await expect(page.getByText('Social media', { exact: true })).toBeVisible()
+  await saveWebsiteScreenshot(page, item)
+})
+
+test('website — web address', async ({ page }) => {
+  const item = capture('website-address')
+  await openWebsiteEditor(page, item.route)
+  await expect(page.getByLabel('Website address')).toHaveValue('northstarvet')
+  await expect(page.getByRole('button', { name: 'Connect Your Own Domain' })).toBeVisible()
+  await saveWebsiteScreenshot(page, item)
+})
+
+test('website — connect your own domain', async ({ page }) => {
+  const item = capture('website-domain')
+  await openWebsiteEditor(page, item.route)
+  await page.getByRole('button', { name: 'Connect Your Own Domain' }).click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog.getByText('Use your own domain', { exact: true })).toBeVisible()
+  await expect(dialog.getByLabel('The domain you already own')).toBeVisible()
+  await saveWebsiteScreenshot(page, item)
+})
+
+test('website — publish confirmation', async ({ page }) => {
+  const item = capture('website-publish')
+  await openWebsiteEditor(page, item.route)
+  await page.getByRole('button', { name: 'Publish', exact: true }).click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog.getByText('Publish your website?', { exact: true })).toBeVisible()
+  await expect(dialog.getByText('Read it through first', { exact: true })).toBeVisible()
+  await saveWebsiteScreenshot(page, item)
+})

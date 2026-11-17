@@ -88,6 +88,17 @@ try {
       process.env,
     )
   }
+  // The website editor's preview is served by Core's separate public-site renderer package.
+  const runtimeRendererDir = path.join(runtimeCoreDir, 'sites')
+  if (!fs.existsSync(path.join(runtimeRendererDir, 'node_modules'))) {
+    await run(
+      'Installing isolated site renderer dependencies',
+      'corepack',
+      ['pnpm', 'install', '--frozen-lockfile'],
+      runtimeRendererDir,
+      process.env,
+    )
+  }
 
   const coreChildEnv = {
     ...process.env,
