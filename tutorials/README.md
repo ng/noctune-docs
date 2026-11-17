@@ -658,11 +658,12 @@ pnpm tutorials:caption-video .tutorial-output/windows-app/video \
 
 ## Website builder (episode 15)
 
-An overview film for marketing and the docs: the fictional Northstar practice's old website
-becomes a noctune site, from the first draft to the live page on a phone. Footage is the real
-`/website` builder and Core's sites renderer (`sites/`). The site is Core's seeded draft for the
-practice (`…a01`, `northstarvet`); every shot first restores that draft, its look and its
-unpublished state, so takes can be recorded in any order.
+An overview film for marketing and the docs: the fictional Northstar practice's old website becomes
+a noctune site, from the first draft to the live page on a phone. Footage is the real `/website`
+builder and Core's sites renderer (`sites/`). The site is Core's seeded draft for the practice
+(`…a01`, `northstarvet`), whose content comes from `scripts/fixtures/noctune-demo/site.ts` (Core
+#1092; until it merges, capture from a Core worktree with that file added). Every shot first
+restores that draft, its look and its unpublished state, so takes can be recorded in any order.
 
 Shots with `sites: true` (`scripts/tutorials/site-shots.mjs`) also build Core's sites renderer and
 run it with `next start` on loopback port 3208, reading the capture database. Its development

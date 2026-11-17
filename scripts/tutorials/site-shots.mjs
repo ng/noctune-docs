@@ -19,10 +19,19 @@ const phone = {
   deviceScaleFactor: 2,
 }
 
-// The seeded site's IDs and content come from Core, so a reset always matches the seed.
+// The seeded site's IDs and content come from Core's fixture module (Core #1092), parsed
+// as the seeder writes them, so a reset always matches the seed.
 function seededSite(ctx) {
-  const fixture = ctx.requireCore(path.join(ctx.core, 'scripts/fixtures/noctune-demo/site.ts'))
-  return fixture.DOCS_CAPTURE_SITE
+  const { DOCS_CAPTURE_SITE } = ctx.requireCore(
+    path.join(ctx.core, 'scripts/fixtures/noctune-demo/site.ts'),
+  )
+  const { siteContentSchema } = ctx.requireCore(
+    path.join(ctx.core, 'src/lib/sites/shared/content.ts'),
+  )
+  return {
+    ...DOCS_CAPTURE_SITE,
+    content: () => siteContentSchema.parse(DOCS_CAPTURE_SITE.content()),
+  }
 }
 
 // Back to the seeded, never-published draft: no published versions, the seeded
