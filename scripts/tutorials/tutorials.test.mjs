@@ -861,11 +861,17 @@ test('renderer adds brand cards, crossfades, the frame address, and a cover time
     [(s) => (s.scenes[0].source = 'web.png'), /Invalid brand card/],
     [(s) => (s.scenes[0].brandCard = ['x'.repeat(61)]), /Invalid brand card/],
     [(s) => (s.cover = 99), /Cover/],
+    [(s) => (s.scenes[1].address = 'Not a host!'), /Address/],
+    [(s) => (s.scenes[1].device = 'tablet'), /Device/],
+    [(s) => ((s.scenes[1].platform = 'ios'), (s.scenes[1].device = 'phone')), /Device/],
   ]) {
     const copy = structuredClone(timeline)
     change(copy)
     assert.throws(() => validateTimeline(copy), error)
   }
+  const phone = structuredClone(timeline)
+  Object.assign(phone.scenes[1], { address: 'site.example', device: 'phone' })
+  validateTimeline(phone)
 })
 
 test('extension composition docks the panel and slides it in when it opens', async () => {

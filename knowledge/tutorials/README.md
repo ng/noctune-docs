@@ -656,6 +656,39 @@ pnpm tutorials:caption-video .tutorial-output/windows-app/video \
   .tutorial-output/windows-app/captions .tutorial-output/windows-app/delivery
 ```
 
+## Website builder (episode 15)
+
+An overview film for marketing and the docs: the fictional Northstar practice's old website
+becomes a noctune site, from the first draft to the live page on a phone. Footage is the real
+`/website` builder and Core's sites renderer (`sites/`). The site is Core's seeded draft for the
+practice (`…a01`, `northstarvet`); every shot first restores that draft, its look and its
+unpublished state, so takes can be recorded in any order.
+
+Shots with `sites: true` (`scripts/tutorials/site-shots.mjs`) also start the renderer with
+`next dev` on loopback port 3208, reading the capture database. Core and the renderer use
+production's sites domain, `sites.noctune.ai`, so the editor and publish dialog show the address a
+vet gets. The capture browser maps every host under it to the local renderer
+(`--host-resolver-rules`), so the preview frame and the published site never leave the machine.
+Hosting, domain, upload, stock search and geocoding settings stay unset. The seeded service area
+carries stored map positions, which a save keeps; the map draws over the development
+environment's self-hosted basemap. A shot may set `app: false` (no app shell to wait for) and
+`device` (Playwright context options, such as a phone viewport).
+
+- `old-site`: a dated demo page served only inside the capture browser at
+  `northstarvet.example.test`, labelled as a stand-in for the old website.
+- `draft`: the real start form, with the website address typed in. Reading a website and writing
+  with the model need network access and Bedrock, so the create request and the draft job's
+  stages are answered in the browser and shortened (labelled "Website reading and drafting
+  simulated"). The look picker after it loads the seeded draft through the real API.
+- `editor`, `look`, `details`, `address`: the real editor. They change the hero tagline, a color
+  and the look, open the service area, hours and pharmacy sections, and hover **Connect Your Own
+  Domain** without opening the domain flow, which would call the hosting provider.
+- `publish`: **Publish** in the real dialog, to **Your website is live**.
+- `phone`: publishes the draft through the real API, then scrolls the live page at a 390×844
+  phone viewport. The story's `device: "phone"` sets it in the phone bezel, labelled PHONE.
+
+A scene's own `address` replaces the story's in the browser frame.
+
 ## Publishing to the docs
 
 Reviewed videos are served from `https://docs-media.noctune.ai`, a dedicated S3

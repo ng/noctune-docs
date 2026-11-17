@@ -1,5 +1,6 @@
 // Record real product interactions against the existing approved fictional fixtures.
 import fs from 'node:fs'
+import http from 'node:http'
 import path from 'node:path'
 import { createRequire } from 'node:module'
 import { randomBytes, createHash } from 'node:crypto'
@@ -13,7 +14,14 @@ import {
   requireLoopbackBaseUrl,
 } from '../../capture/support/capture-safety.mjs'
 import { withStagedOutput } from './staged-output.mjs'
-import { MOCHI, MOCHI_NOTE, TUTORIAL_NOTE, resetNote, shots as registry } from './web-shots.mjs'
+import {
+  MOCHI,
+  MOCHI_NOTE,
+  SITES_ROOT_DOMAIN,
+  TUTORIAL_NOTE,
+  resetNote,
+  shots as registry,
+} from './web-shots.mjs'
 import { locateReadyFrame } from './video-timing.mjs'
 
 const [
@@ -29,6 +37,21 @@ const configRoot = path.resolve(configRootArg),
   output = path.resolve(outputArg)
 const shots = selected.split(',')
 if (shots.some((id) => !Object.hasOwn(registry, id))) throw Error('Unknown capture shot')
+// Any HTTP answer from a loopback server for `host`; the renderer routes by Host.
+function loopbackStatus(origin, host, route) {
+  return new Promise((resolve) => {
+    const { hostname, port } = new URL(origin)
+    const request = http.get(
+      { hostname, port, path: route, headers: { host }, timeout: 120000 },
+      (response) => {
+        response.resume()
+        resolve(response.statusCode)
+      },
+    )
+    request.on('timeout', () => request.destroy())
+    request.on('error', () => resolve(0))
+  })
+}
 const capture = dotenv.parse(fs.readFileSync(path.join(configRoot, '.env.capture.local')))
 const sourceCore = path.resolve(configRoot, capture.CAPTURE_CORE_DIR || '../noctune-core')
 const sourceEnv = dotenv.parse(fs.readFileSync(path.join(sourceCore, '.env.local')))
@@ -60,6 +83,28 @@ const env = {
   SUPABASE_REALTIME_ENABLED: 'false',
   DOCS_CAPTURE_NOW: now,
 }
+// Website builder shots run Core's sites renderer (`sites/`) on loopback too. The
+// capture browser resolves every `*.<sites root>` host to it, so the editor's
+// preview and the published site show the real address shape while no request
+// leaves the machine. Hosting, domain, upload, search and geocoding services
+// stay unset: nothing is purged, attached or looked up outside the capture.
+const sitesURL = 'http://127.0.0.1:3208'
+requireLoopbackBaseUrl(sitesURL)
+const withSites = shots.some((id) => registry[id].sites)
+const sitesSecret = randomBytes(32).toString('base64url')
+if (withSites)
+  Object.assign(env, {
+    SITES_ROOT_DOMAIN,
+    NEXT_PUBLIC_SITES_PREVIEW_URL: `http://preview.${SITES_ROOT_DOMAIN}`,
+    SITES_RENDERER_URL: sitesURL,
+    SITES_RENDERER_SECRET: sitesSecret,
+    SITES_ASSETS_BUCKET: '',
+    SITES_ASSETS_URL: '',
+    SITES_GEOCODING_REGION: '',
+    VERCEL_SITES_API_TOKEN: '',
+    VERCEL_SITES_PROJECT_ID: '',
+    PEXELS_API_KEY: '',
+  })
 const captureRoot = path.join(configRoot, '.capture')
 fs.mkdirSync(captureRoot, { recursive: true })
 const lockPath = path.join(captureRoot, 'screenshots.lock')
@@ -68,6 +113,7 @@ fs.writeFileSync(lock, String(process.pid))
 const logPath = path.join(captureRoot, 'tutorial-core.log')
 const log = fs.openSync(logPath, 'w', 0o600)
 let server,
+  renderer,
   browser,
   debugPage,
   fixtureAudio,
@@ -167,10 +213,54 @@ try {
     }
     await wait(1000)
   }
+  if (withSites) {
+    // The renderer only reads the four site tables; it gets no Core secrets.
+    renderer = spawn(
+      'corepack',
+      ['pnpm', 'exec', 'next', 'dev', '--webpack', '--hostname', '127.0.0.1', '-p', '3208'],
+      {
+        cwd: path.join(core, 'sites'),
+        env: {
+          ...process.env,
+          SITES_DATABASE_URL: capture.CAPTURE_DATABASE_URL,
+          SITES_ROOT_DOMAIN,
+          SITES_PREVIEW_HOST: `preview.${SITES_ROOT_DOMAIN}`,
+          SITES_EDITOR_ORIGINS: baseURL,
+          SITES_RENDERER_SECRET: sitesSecret,
+          CORE_API_URL: baseURL,
+          // The development environment's self-hosted basemap: public tiles, read only.
+          SITES_MAP_URL: 'https://sites-assets.noctune.dev/maps',
+        },
+        detached: true,
+        stdio: ['ignore', log, log],
+      },
+    )
+    let rendererExit
+    renderer.on('exit', (code) => {
+      rendererExit = code ?? 1
+    })
+    // Compile the preview page and the public site route before filming.
+    for (const [host, route] of [
+      [`preview.${SITES_ROOT_DOMAIN}`, '/preview'],
+      [`demo.${SITES_ROOT_DOMAIN}`, '/'],
+    ]) {
+      for (let attempts = 0; ; attempts++) {
+        if (rendererExit !== undefined)
+          throw Error('Sites renderer exited; inspect the local protected log')
+        if (attempts > 180) throw Error('Sites renderer did not become ready')
+        if (await loopbackStatus(sitesURL, host, route)) break
+        await wait(1000)
+      }
+    }
+  }
   browser = await chromium.launch({
     channel: 'chrome',
     headless: true,
-    args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'],
+    args: [
+      '--use-fake-ui-for-media-stream',
+      '--use-fake-device-for-media-stream',
+      ...(withSites ? [`--host-resolver-rules=MAP *.${SITES_ROOT_DOMAIN} 127.0.0.1:3208`] : []),
+    ],
   })
   const common = {
     baseURL,
@@ -204,8 +294,10 @@ try {
   const ctx = {
     baseURL,
     citationTime,
+    core,
     db,
     now,
+    requireCore,
     uploadAudio: buildSyntheticDemoAudio(180).bytes,
   }
   console.log('Authenticated the fictional practice; recording selected shots.')
@@ -224,16 +316,28 @@ try {
         capturedAt: shot.capturedAt || previous.capturedAt,
       }))
     for (const id of shots) {
+      const shot = registry[id]
+      // A shot may record at its own viewport, such as a phone's.
+      const viewport = shot.device?.viewport ?? common.viewport
       const context = await browser.newContext({
         ...common,
+        ...shot.device,
         storageState,
-        recordVideo: { dir: raw, size: common.viewport },
+        recordVideo: { dir: raw, size: viewport },
       })
+      // The renderer's development badge shows in the preview iframe too.
+      if (shot.sites)
+        await context.addInitScript(() => {
+          document.addEventListener('DOMContentLoaded', () => {
+            const style = document.createElement('style')
+            style.textContent = 'nextjs-portal { display: none !important; }'
+            document.head.append(style)
+          })
+        })
       const started = performance.now()
       const page = await context.newPage()
       debugPage = page
       const video = page.video()
-      const shot = registry[id]
       if (shot.reset) await shot.reset(db, ctx)
       const evidence = shot.setup ? await shot.setup(page, ctx) : null
       await page.clock.setFixedTime(new Date(now))
@@ -285,9 +389,11 @@ try {
       })
       await page.goto(shot.path, { waitUntil: 'domcontentloaded' })
       await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' })
-      await expect(page.getByRole('button', { name: 'New Encounter', exact: true })).toBeVisible({
-        timeout: 60000,
-      })
+      // The website builder and public sites have no app shell.
+      if (shot.app !== false)
+        await expect(page.getByRole('button', { name: 'New Encounter', exact: true })).toBeVisible({
+          timeout: 60000,
+        })
       await shot.ready(page, ctx)
       await expect(page.locator('.MuiSkeleton-root')).toHaveCount(0, { timeout: 60000 })
       // Let the browser screencast flush the ready state before any interaction.
@@ -373,6 +479,7 @@ try {
         frameDifference,
         readyReference: path.basename(readyReference),
         rawDuration,
+        ...(shot.device ? { viewport } : {}),
         ...(shot.disclosure ? { disclosure: shot.disclosure } : {}),
         duration,
         ...(evidence ? { fixture: evidence() } : {}),
@@ -426,9 +533,10 @@ try {
 } finally {
   await browser?.close().catch(() => {})
   await db?.end().catch(() => {})
-  if (server?.pid) {
+  for (const child of [server, renderer]) {
+    if (!child?.pid) continue
     try {
-      process.kill(-server.pid, 'SIGTERM')
+      process.kill(-child.pid, 'SIGTERM')
     } catch {
       /* already exited */
     }

@@ -96,6 +96,16 @@ export function validateTimeline(story) {
       throw Error(`Headline needs 1–3 short lines: ${scene.id}`)
     if (!validTransition(scene.transition) || (scene.transition && scene === story.scenes[0]))
       throw Error(`Invalid transition: ${scene.id}`)
+    // A web scene may name its own address (a public site rather than the app), or
+    // set `device: "phone"` for footage recorded at a phone viewport: it gets the
+    // phone bezel instead of the browser chrome and reads PHONE, not WEB.
+    if (
+      scene.address !== undefined &&
+      (typeof scene.address !== 'string' || !/^[a-z0-9.-]{3,40}$/.test(scene.address))
+    )
+      throw Error(`Address must be a 3–40 character hostname: ${scene.id}`)
+    if (scene.device !== undefined && (scene.device !== 'phone' || scene.platform !== 'web'))
+      throw Error(`Device must be "phone" on a web scene: ${scene.id}`)
     if (scene.brandCard !== undefined) {
       if (
         scene.source ||
@@ -257,7 +267,7 @@ export function layoutPanes(panes, box) {
   })
 }
 
-function browserFrame(box, story) {
+function browserFrame(box, story, scene) {
   const tab = story.tab ? 42 : 0
   const top = box.y - 54 - tab
   const strip = story.tab
@@ -274,7 +284,7 @@ function browserFrame(box, story) {
           ${strip}
           <path d="M${box.x + 27} ${box.y - 36}l-8 8 8 8m20-16 8 8-8 8" fill="none" stroke="#788983" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           <rect x="${box.x + 240}" y="${box.y - 44}" width="${box.w - 480}" height="33" rx="8" fill="#FFFFFF" stroke="#D8E2DE"/>
-          <text x="${box.x + box.w / 2}" y="${box.y - 21}" text-anchor="middle" font-size="18" fill="#52655D">${escape(story.address || 'app.noctune.ai')}</text>
+          <text x="${box.x + box.w / 2}" y="${box.y - 21}" text-anchor="middle" font-size="18" fill="#52655D">${escape(scene.address || story.address || 'app.noctune.ai')}</text>
           <path d="M${box.x} ${box.y - 1}h${box.w}" stroke="#D5DFDB"/>`
 }
 
@@ -391,7 +401,7 @@ export async function render(timelineDir, output, roots) {
     fs.mkdirSync(qa, { recursive: true })
     const segments = []
     for (const [index, { scene, source, audio, motion, start }] of inputs.entries()) {
-      const phone = scene.platform === 'ios'
+      const phone = scene.platform === 'ios' || scene.device === 'phone'
       const desktop = !phone && story.frame === 'window'
       const box = phone
         ? { x: 1280, y: 64, w: 380, h: 826 }
@@ -425,8 +435,8 @@ export async function render(timelineDir, output, roots) {
               ? panes.map((pane) => windowFrame(pane, PANE_RADIUS)).join('')
               : desktop
                 ? windowFrame(box)
-                : browserFrame(box, story)
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><rect width="100%" height="100%" fill="#F3F8F2"/><ellipse cx="1680" cy="650" rx="690" ry="880" fill="#CDE7DF"/><g font-family="Arial" fill="#132D2B"><image href="data:image/png;base64,${logo}" x="76" y="56" width="300" height="80" preserveAspectRatio="xMinYMid meet"/><text x="76" y="262" font-size="19" fill="#53716A">${String(index + 1).padStart(2, '0')} / ${phone ? 'iOS' : desktop ? 'WINDOWS' : 'WEB'} ${escape(story.kicker || 'WALKTHROUGH')}</text>${headline}<text x="76" y="786" font-size="20" font-weight="700" fill="#11736F">noctune.ai</text><text x="76" y="820" font-size="20" fill="#4D6963">${escape(story.tagline || 'Your first encounter, step by step.')}</text>${bars}${frame}<text x="960" y="1050" text-anchor="middle" font-size="19" fill="#4D6963">Fictional demo data · ${scene.instructionCard ? 'Instruction card' : motion ? 'Recorded app footage' : 'Static app capture'}${scene.disclosure ? ' · ' + escape(scene.disclosure) : ''}</text></g></svg>`
+                : browserFrame(box, story, scene)
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><rect width="100%" height="100%" fill="#F3F8F2"/><ellipse cx="1680" cy="650" rx="690" ry="880" fill="#CDE7DF"/><g font-family="Arial" fill="#132D2B"><image href="data:image/png;base64,${logo}" x="76" y="56" width="300" height="80" preserveAspectRatio="xMinYMid meet"/><text x="76" y="262" font-size="19" fill="#53716A">${String(index + 1).padStart(2, '0')} / ${scene.device === 'phone' ? 'PHONE' : phone ? 'iOS' : desktop ? 'WINDOWS' : 'WEB'} ${escape(story.kicker || 'WALKTHROUGH')}</text>${headline}<text x="76" y="786" font-size="20" font-weight="700" fill="#11736F">noctune.ai</text><text x="76" y="820" font-size="20" fill="#4D6963">${escape(story.tagline || 'Your first encounter, step by step.')}</text>${bars}${frame}<text x="960" y="1050" text-anchor="middle" font-size="19" fill="#4D6963">Fictional demo data · ${scene.instructionCard ? 'Instruction card' : motion ? 'Recorded app footage' : 'Static app capture'}${scene.disclosure ? ' · ' + escape(scene.disclosure) : ''}</text></g></svg>`
       const card = path.join(work, `${index}-card.png`)
       const segment = path.join(work, `${index}.mp4`)
       if (scene.brandCard) {

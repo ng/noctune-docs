@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "title": "Build your practice website in noctune",
+  "kicker": "WEBSITE BUILDER",
+  "tagline": "Your practice website, built in noctune.",
+  "address": "app.noctune.ai",
+  "transition": 0.4,
+  "scenes": [
+    {
+      "id": "intro",
+      "platform": "web",
+      "headline": ["Your practice website,", "built in noctune."],
+      "brandCard": ["Website builder"],
+      "narration": "Your practice website, built right inside noctune."
+    },
+    {
+      "id": "old-site",
+      "platform": "web",
+      "address": "northstarvet.example.test",
+      "headline": ["Start from the site", "you already have."],
+      "narration": "Start from the website you already have."
+    },
+    {
+      "id": "draft",
+      "platform": "web",
+      "headline": ["noctune writes", "the first draft."],
+      "narration": "Type in its address, and noctune writes a first draft from it, with your services, hours, and contact details. Then pick a look."
+    },
+    {
+      "id": "editor",
+      "platform": "web",
+      "headline": ["Edit with a", "live preview."],
+      "narration": "Your draft opens in the editor, with a live preview beside it. Every section is a simple form. Change a line, and the preview follows."
+    },
+    {
+      "id": "look",
+      "platform": "web",
+      "headline": ["Your look,", "your colors."],
+      "narration": "Try another look, or a color that suits your practice."
+    },
+    {
+      "id": "details",
+      "platform": "web",
+      "headline": ["Service area map,", "hours and pharmacy."],
+      "narration": "Show the towns you visit on a map. Keep your hours current, and point clients to your online pharmacy."
+    },
+    {
+      "id": "address",
+      "platform": "web",
+      "headline": ["A web address,", "included."],
+      "narration": "Your web address is included with your subscription. Or connect a domain you already own."
+    },
+    {
+      "id": "publish",
+      "platform": "web",
+      "headline": ["Publish when", "it's ready."],
+      "narration": "When it looks right, publish. Your edits stay in a draft until you publish again."
+    },
+    {
+      "id": "phone",
+      "platform": "web",
+      "device": "phone",
+      "headline": ["Made for phones", "first."],
+      "narration": "Every site is designed for phones first, so clients can call you, check your hours, or get directions in a tap."
+    },
+    {
+      "id": "outro",
+      "platform": "web",
+      "headline": ["Your website,", "included."],
+      "brandCard": ["Included with your subscription", "noctune.ai"],
+      "narration": "Your website, included with your subscription. Build yours in noctune."
+    }
+  ]
+}
