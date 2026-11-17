@@ -112,7 +112,7 @@ async function installDraftFixture(page, ctx) {
   const jobId = 'd0c5d0c5-0000-4000-8000-00000000d1a7'
   let created = 0
   // The page polls every two seconds; show each stage once, then the finished draft.
-  const stages = ['reading', 'writing', 'saving']
+  const stages = ['reading', 'writing']
   let polls = 0
   await page.route(/\/api\/v1\/sites\/current(?:\?.*)?$/, async (route) => {
     const response = await route.fetch()
@@ -212,7 +212,7 @@ export const siteShots = {
       await wait(1500)
       const url = page.getByPlaceholder('yourpractice.com')
       await point(url)
-      await url.pressSequentially('northstarvet.example.test', { delay: 70 })
+      await url.pressSequentially('northstarvet.example.test', { delay: 55 })
       await wait(800)
       await point(page.getByRole('button', { name: 'Write My First Draft' }))
       await expect(page.getByRole('heading', { name: 'Writing your first draft' })).toBeVisible()
@@ -263,15 +263,15 @@ export const siteShots = {
       await expect(page.getByRole('button', { name: 'Browse Looks' })).toBeVisible()
     },
     act: async (page) => {
-      await wait(1200)
+      await wait(800)
       const colors = page.getByRole('radiogroup', { name: 'Colors' }).getByRole('radio')
       await point(colors.nth(1))
-      await wait(2500)
+      await wait(1800)
       await point(page.getByRole('button', { name: 'Browse Looks' }))
-      await wait(2500)
+      await wait(1800)
       const look = page.getByRole('radio', { name: 'Clean', exact: true })
       await point(look)
-      await wait(2000)
+      await wait(1200)
       await point(page.getByRole('button', { name: /^Use / }))
       await expect(page.getByRole('progressbar', { name: 'Applying the look' })).toHaveCount(0, {
         timeout: 30000,
@@ -292,7 +292,7 @@ export const siteShots = {
       await wait(1200)
       for (const name of ['Service area', 'Hours', 'Pharmacy']) {
         await point(sectionRow(page, name))
-        await wait(3500)
+        await wait(2600)
         await point(page.getByRole('button', { name: 'Back to sections' }))
         await wait(600)
       }
@@ -334,7 +334,7 @@ export const siteShots = {
       await point(page.getByRole('button', { name: 'Publish', exact: true }))
       const dialog = page.getByRole('dialog')
       await expect(dialog.getByRole('heading', { name: 'Publish your website?' })).toBeVisible()
-      await wait(3000)
+      await wait(2000)
       await point(dialog.getByRole('button', { name: 'Publish', exact: true }))
       await expect(dialog.getByRole('heading', { name: 'Your website is live' })).toBeVisible({
         timeout: 30000,

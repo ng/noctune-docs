@@ -645,6 +645,7 @@ test('media assembly verifies recordings and preserves previous output on a chan
         { id: 'start', platform: 'web', narration: 'Start.', source: 'absent.webp' },
         { id: 'process', platform: 'web', narration: 'Wait.', source: 'process.webp' },
         { id: 'review', platform: 'web', narration: 'Review.', instructionCard: ['Review.'] },
+        { id: 'outro', platform: 'web', narration: 'Bye.', brandCard: ['noctune.ai'] },
       ],
     }),
   )
@@ -667,6 +668,7 @@ test('media assembly verifies recordings and preserves previous output on a chan
   const story = JSON.parse(fs.readFileSync(path.join(output, 'story.json')))
   assert.equal(story.scenes[0].source, 'start.mp4')
   assert.deepEqual(story.scenes[2].instructionCard, ['Review.'])
+  assert.equal(story.scenes[3].source, undefined)
   await assert.rejects(
     prepareMedia(storyFile, recordings, output, screenshots, ['review']),
     /Missing instruction card/,

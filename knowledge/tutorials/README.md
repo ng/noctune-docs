@@ -694,7 +694,27 @@ Every site shot restores the seeded draft after the take as well as before it.
   with a real town, so the take stays above it. The story's `device: "phone"` sets it in the
   phone bezel, labelled PHONE.
 
-A scene's own `address` replaces the story's in the browser frame.
+A scene's own `address` replaces the story's in the browser frame. Title cards (`brandCard`) take no
+media, so `prepare-media` passes them through. Story `start` in-points land each action on its
+narration; recheck them and `cover` after a retake or a new narration take.
+
+```sh
+pnpm tutorials:capture-web /absolute/path/to/noctune-docs /absolute/path/to/noctune-core \
+  .tutorial-output/site-capture old-site,draft,editor,look,details,address,publish,phone
+pnpm tutorials:prepare-media tutorials/site-builder-web.json .tutorial-output/site-capture \
+  .tutorial-output/site-builder-web/prepared
+pnpm tutorials:narrate .tutorial-output/site-builder-web/prepared/story.json \
+  .tutorial-output/site-builder-web/narration "$TUTORIAL_ENV_FILE"
+pnpm tutorials:render .tutorial-output/site-builder-web/narration \
+  .tutorial-output/site-builder-web/video .tutorial-output/site-builder-web/prepared/media
+pnpm tutorials:captions .tutorial-output/site-builder-web/narration \
+  .tutorial-output/site-builder-web/captions "$TUTORIAL_ENV_FILE"
+pnpm tutorials:caption-video .tutorial-output/site-builder-web/video \
+  .tutorial-output/site-builder-web/captions .tutorial-output/site-builder-web/delivery
+```
+
+Hold the shared `noctune-docs/capture-db` lock while capturing; the website docs screenshots use the
+same database and reserved login.
 
 ## Publishing to the docs
 
