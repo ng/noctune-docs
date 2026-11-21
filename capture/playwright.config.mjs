@@ -48,6 +48,12 @@ if (!coreEnv.NEXT_PUBLIC_SUPABASE_URL || !coreEnv.SUPABASE_SERVICE_ROLE_KEY) {
 
 const appUrl = requireLoopbackBaseUrl(baseURL)
 const port = appUrl.port || '80'
+// The website editor previews drafts in the public-site renderer (`sites/` in Core), framed
+// from its preview host. `*.localhost` resolves to loopback, so no hosts entries are needed.
+const rendererPort = String(Number(port) + 100)
+const rendererPreviewHost = 'preview.localhost'
+const rendererUrl = `http://${rendererPreviewHost}:${rendererPort}`
+const sitesRootDomain = 'sites.noctune.ai'
 const childEnv = {
   ...process.env,
   ...coreEnv,
@@ -57,7 +63,18 @@ const childEnv = {
   E2E_FAKES: '1',
   NEXT_PUBLIC_APP_ENV: 'development',
   NEXT_PUBLIC_APP_URL: baseURL,
+  NEXT_PUBLIC_SITES_PREVIEW_URL: rendererUrl,
+  SITES_ROOT_DOMAIN: sitesRootDomain,
   SUPABASE_REALTIME_ENABLED: 'false',
+}
+// Only the preview page is used, which renders the draft it is sent and reads no database.
+const rendererEnv = {
+  ...process.env,
+  SITES_ROOT_DOMAIN: sitesRootDomain,
+  SITES_PREVIEW_HOST: rendererPreviewHost,
+  SITES_EDITOR_ORIGINS: appUrl.origin,
+  // The public OpenStreetMap basemap that dev sites use, for service-area and contact maps.
+  SITES_MAP_URL: 'https://sites-assets.noctune.dev/maps',
 }
 const authStatePath = path.join(docsRoot, '.capture/auth/user.json')
 const termsAuthStatePath = path.join(docsRoot, '.capture/auth/terms-user.json')
@@ -112,6 +129,8 @@ export default defineConfig({
             ...deterministicChromiumArgs,
             '--use-fake-ui-for-media-stream',
             '--use-fake-device-for-media-stream',
+            // Software WebGL, so website maps draw without a GPU.
+            '--enable-unsafe-swiftshader',
           ],
         },
       },
@@ -144,13 +163,24 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
-    // Match Core’s webpack resolver configuration in isolated nested worktrees.
-    command: `corepack pnpm exec next dev --webpack -p ${port}`,
-    cwd: runtimeCoreDir,
-    env: childEnv,
-    url: baseURL,
-    reuseExistingServer: false,
-    timeout: 180_000,
-  },
+  webServer: [
+    {
+      // Match Core’s webpack resolver configuration in isolated nested worktrees.
+      command: `corepack pnpm exec next dev --webpack -p ${port}`,
+      cwd: runtimeCoreDir,
+      env: childEnv,
+      url: baseURL,
+      reuseExistingServer: false,
+      timeout: 180_000,
+    },
+    {
+      command: `corepack pnpm exec next dev --webpack -p ${rendererPort}`,
+      cwd: path.join(runtimeCoreDir, 'sites'),
+      env: rendererEnv,
+      // Node does not resolve `*.localhost`, so wait on the port; the browser uses the host.
+      port: Number(rendererPort),
+      reuseExistingServer: false,
+      timeout: 180_000,
+    },
+  ],
 })

@@ -32,4 +32,6 @@
 
 - [Templates](templates.md) - Shape how noctune writes your SOAP notes and discharge instructions.
 
+- [Your practice website](website.md) - Build, edit, and publish your practice website in noctune, from a first draft to your own domain.
+
 - [noctune for Windows](windows-app.md) - Keep your noctune note in a panel beside a practice management system installed on Windows, or running over Remote Desktop or Citrix, and insert it one section at a time.

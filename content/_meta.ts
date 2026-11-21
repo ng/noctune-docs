@@ -41,6 +41,7 @@ export default {
     title: 'Practice',
   },
   practice: 'Practice & Team',
+  website: 'Practice website',
   '--account': {
     type: 'separator',
     title: 'Your Account',

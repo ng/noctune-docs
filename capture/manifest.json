@@ -318,5 +318,65 @@
     "route": "/settings?tab=notifications",
     "output": "public/screenshots/settings/notifications.webp",
     "docs": ["content/settings/index.mdx", "content/settings/notifications.mdx"]
+  },
+  {
+    "id": "website-start",
+    "route": "/website",
+    "output": "public/screenshots/website/start.webp",
+    "docs": ["content/website.mdx"]
+  },
+  {
+    "id": "website-editor",
+    "route": "/website",
+    "output": "public/screenshots/website/editor.webp",
+    "docs": ["content/website.mdx"]
+  },
+  {
+    "id": "website-service-area",
+    "route": "/website?edit=section:docs_area",
+    "output": "public/screenshots/website/service-area.webp",
+    "docs": ["content/website.mdx"]
+  },
+  {
+    "id": "website-contact",
+    "route": "/website?edit=section:docs_contact",
+    "output": "public/screenshots/website/contact.webp",
+    "docs": ["content/website.mdx"]
+  },
+  {
+    "id": "website-hero-video",
+    "route": "/website?edit=section:docs_hero",
+    "output": "public/screenshots/website/hero-video.webp",
+    "docs": ["content/website.mdx"]
+  },
+  {
+    "id": "website-look",
+    "route": "/website?edit=look",
+    "output": "public/screenshots/website/look.webp",
+    "docs": ["content/website.mdx"]
+  },
+  {
+    "id": "website-menu",
+    "route": "/website?edit=settings:menu",
+    "output": "public/screenshots/website/menu.webp",
+    "docs": ["content/website.mdx"]
+  },
+  {
+    "id": "website-address",
+    "route": "/website?edit=settings:address",
+    "output": "public/screenshots/website/address.webp",
+    "docs": ["content/website.mdx"]
+  },
+  {
+    "id": "website-domain",
+    "route": "/website?edit=settings:address",
+    "output": "public/screenshots/website/domain.webp",
+    "docs": ["content/website.mdx"]
+  },
+  {
+    "id": "website-publish",
+    "route": "/website",
+    "output": "public/screenshots/website/publish.webp",
+    "docs": ["content/website.mdx"]
   }
 ]
