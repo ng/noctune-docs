@@ -656,6 +656,75 @@ pnpm tutorials:caption-video .tutorial-output/windows-app/video \
   .tutorial-output/windows-app/captions .tutorial-output/windows-app/delivery
 ```
 
+## Website builder (episode 15)
+
+An overview film for marketing and the docs: the fictional Northstar practice's old website becomes
+a noctune site, from the first draft to the live page on a phone. Footage is the real `/website`
+builder and Core's sites renderer (`sites/`). The site is Core's seeded draft for the practice
+(`…a01`, `northstarvet`), whose content comes from `scripts/fixtures/noctune-demo/site.ts` (Core
+\#1092). The look picker needs Core #1093's `ThemePicker.tsx`, whose cards fill the row. Until both
+merge, capture from a Core worktree with those two files added. Every shot first restores that
+draft, its look and its unpublished state, so takes can be recorded in any order.
+
+Shots with `sites: true` (`scripts/tutorials/site-shots.mjs`) also build Core's sites renderer and
+run it with `next start` on loopback port 3208, reading the capture database. Its development
+server only hydrates pages for localhost hosts, so the public site's maps never drew under
+`next dev`. Core and the renderer use production's sites domain, `sites.noctune.ai`, so the editor
+and publish dialog show the address a vet gets. The renderer's preview host is `localhost`: the
+editor frames its preview there and Core sends revalidations there after publishing. The capture
+browser maps every host under the sites domain to the local renderer (`--host-resolver-rules`), so
+the published site never leaves the machine, and it adds `--enable-unsafe-swiftshader` so headless
+Chrome draws the WebGL maps. Hosting, domain, upload storage, stock search and geocoding settings
+stay unset. The seeded service area and contact address carry stored map positions, which a save keeps;
+the maps draw over the development environment's self-hosted basemap. A shot may set `app: false`
+(no app shell to wait for) and `device` (Playwright context options, such as a phone viewport).
+Every site shot restores the seeded draft after the take as well as before it.
+
+- `old-site`: a dated demo page served only inside the capture browser at
+  `northstarvet.example.test`, labelled as a stand-in for the old website.
+- `draft`: the real start form, with the website address typed in. Reading a website and writing
+  with the model need network access and Bedrock, so the create request and the draft job's
+  stages are answered in the browser and shortened (labelled "Website reading and drafting
+  simulated"). The look picker after it loads the seeded draft through the real API.
+- `editor`, `look`, `details`, `address`: the real editor. They change the hero tagline, a color
+  and the look, open the service area, hours and pharmacy sections, and hover **Connect Your Own
+  Domain** without opening the domain flow, which would call the hosting provider.
+- `uploads`: **Replace** on the hero photo and **Choose a File** for its background video, through
+  the fields' real buttons. The files are the stock `dog-on-cushion` photo and the demo hero video
+  that ship with the renderer (Pexels licence). Capture has no assets bucket, so storage is answered
+  in the browser (labelled "Upload storage simulated"): the shot inserts both as ready assets of the
+  site (`…a11`, `…a12`), starting the upload names the matching asset, the PUT succeeds after a
+  moment, and Core's real completion returns the ready asset. Core's `SITES_ASSETS_URL` is
+  `/capture-assets` in capture, and the shot serves those paths and their `/_next/image` versions:
+  the photo re-encoded to WebP as Core would, the video as uploaded. The restore deletes both rows.
+- `publish`: **Publish** in the real dialog, to **Your website is live**.
+- `phone`: publishes the draft through the real API, then scrolls the live page at a 390×844
+  phone viewport, stopping at the hours. The seeded contact map labels the fictional address's pin
+  with a real town, so the take stays above it. The story's `device: "phone"` sets it in the
+  phone bezel, labelled PHONE.
+
+A scene's own `address` replaces the story's in the browser frame. Title cards (`brandCard`) take no
+media, so `prepare-media` passes them through. Story `start` in-points land each action on its
+narration; recheck them and `cover` after a retake or a new narration take.
+
+```sh
+pnpm tutorials:capture-web /absolute/path/to/noctune-docs /absolute/path/to/noctune-core \
+  .tutorial-output/site-capture old-site,draft,editor,look,uploads,details,address,publish,phone
+pnpm tutorials:prepare-media tutorials/site-builder-web.json .tutorial-output/site-capture \
+  .tutorial-output/site-builder-web/prepared
+pnpm tutorials:narrate .tutorial-output/site-builder-web/prepared/story.json \
+  .tutorial-output/site-builder-web/narration "$TUTORIAL_ENV_FILE"
+pnpm tutorials:render .tutorial-output/site-builder-web/narration \
+  .tutorial-output/site-builder-web/video .tutorial-output/site-builder-web/prepared/media
+pnpm tutorials:captions .tutorial-output/site-builder-web/narration \
+  .tutorial-output/site-builder-web/captions "$TUTORIAL_ENV_FILE"
+pnpm tutorials:caption-video .tutorial-output/site-builder-web/video \
+  .tutorial-output/site-builder-web/captions .tutorial-output/site-builder-web/delivery
+```
+
+Hold the shared `noctune-docs/capture-db` lock while capturing; the website docs screenshots use the
+same database and reserved login.
+
 ## Publishing to the docs
 
 Reviewed videos are served from `https://docs-media.noctune.ai`, a dedicated S3

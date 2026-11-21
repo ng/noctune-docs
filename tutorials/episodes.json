@@ -290,6 +290,20 @@
         "listened": true,
         "listenedBy": "Jonathan Ng"
       }
+    },
+    {
+      "id": "site-builder-web",
+      "series": 15,
+      "title": "Website builder — your practice website in noctune",
+      "platform": "web",
+      "story": "tutorials/site-builder-web.json",
+      "output": ".tutorial-output/site-builder-web",
+      "post": "social/linkedin/15-website-builder.md",
+      "review": {
+        "framesChecked": true,
+        "listened": true,
+        "listenedBy": "Jonathan Ng"
+      }
     }
   ]
 }

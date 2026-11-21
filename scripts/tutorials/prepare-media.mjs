@@ -38,6 +38,8 @@ export async function prepareMedia(
     fs.mkdirSync(media, { recursive: true })
     const sources = []
     for (const scene of story.scenes) {
+      // Title cards are drawn by the renderer and take no media.
+      if (scene.brandCard) continue
       if (scene.instructionCard && !replaceCards.includes(scene.id)) continue
       if (scene.instructionCard) {
         for (const key of [

@@ -645,6 +645,7 @@ test('media assembly verifies recordings and preserves previous output on a chan
         { id: 'start', platform: 'web', narration: 'Start.', source: 'absent.webp' },
         { id: 'process', platform: 'web', narration: 'Wait.', source: 'process.webp' },
         { id: 'review', platform: 'web', narration: 'Review.', instructionCard: ['Review.'] },
+        { id: 'outro', platform: 'web', narration: 'Bye.', brandCard: ['noctune.ai'] },
       ],
     }),
   )
@@ -667,6 +668,7 @@ test('media assembly verifies recordings and preserves previous output on a chan
   const story = JSON.parse(fs.readFileSync(path.join(output, 'story.json')))
   assert.equal(story.scenes[0].source, 'start.mp4')
   assert.deepEqual(story.scenes[2].instructionCard, ['Review.'])
+  assert.equal(story.scenes[3].source, undefined)
   await assert.rejects(
     prepareMedia(storyFile, recordings, output, screenshots, ['review']),
     /Missing instruction card/,
@@ -861,11 +863,17 @@ test('renderer adds brand cards, crossfades, the frame address, and a cover time
     [(s) => (s.scenes[0].source = 'web.png'), /Invalid brand card/],
     [(s) => (s.scenes[0].brandCard = ['x'.repeat(61)]), /Invalid brand card/],
     [(s) => (s.cover = 99), /Cover/],
+    [(s) => (s.scenes[1].address = 'Not a host!'), /Address/],
+    [(s) => (s.scenes[1].device = 'tablet'), /Device/],
+    [(s) => ((s.scenes[1].platform = 'ios'), (s.scenes[1].device = 'phone')), /Device/],
   ]) {
     const copy = structuredClone(timeline)
     change(copy)
     assert.throws(() => validateTimeline(copy), error)
   }
+  const phone = structuredClone(timeline)
+  Object.assign(phone.scenes[1], { address: 'site.example', device: 'phone' })
+  validateTimeline(phone)
 })
 
 test('extension composition docks the panel and slides it in when it opens', async () => {
