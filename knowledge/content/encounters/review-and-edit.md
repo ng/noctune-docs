@@ -2,6 +2,11 @@
 title: Review & Edit
 type: User Guide
 description: Check the draft against the recording, then finish the note.
+sources:
+  - id: swift-1
+    resource: https://github.com/ng/noctune-swift/commit/06dd6a56
+  - id: swift-2
+    resource: https://github.com/ng/noctune-swift/commit/516bc10d
 ---
 
 # Check the draft against the recording, then finish the note
@@ -32,6 +37,8 @@ Choose **Regenerate** to open the **Regenerate Note** dialog, then select the SO
 
 Once anyone has edited or locked a section, regenerating keeps the note's current templates and updates only the unlocked sections. Locked sections stay as they are, and any changes noctune would have made to them appear as suggestions. To rewrite just one section, use [Regenerate one section](collaborative-notes.md#regenerate-one-section).
 
+In the iOS app, open the encounter and choose **More options** (**…**), then **Regenerate note**. On a note nobody has edited or locked, the sheet lets you choose the **SOAP** and **Discharge** templates; leave them as they are to keep the current ones. Once the note has edits, the sheet shows its templates locked and explains that the note keeps them.
+
 ![Regenerate Note dialog with the current SOAP and discharge template selections](https://docs.noctune.ai/screenshots/encounters/detail/regenerate.webp)
 
 ## Review prior visits
@@ -43,6 +50,8 @@ Open **Past Encounters** to see the same patient's earlier notes without leaving
 ## Add later audio
 
 If the visit continued, choose **Add Audio** and select another supported file. noctune appends it to the encounter, extends the transcript, and generates an updated note from the combined record. Teammates in your practice can add recordings to the same encounter too.
+
+In the iOS app, choose **More options** (**…**), then **Add a recording** to record more audio for the encounter. See [Add recordings as a team](collaborative-notes.md#add-recordings-as-a-team).
 
 If anyone has already edited or locked a section, the new recording updates only the unlocked sections. Anything it would change in a locked section arrives as a suggestion you can apply or reject with **Keep mine**. See [how new recordings update the note](collaborative-notes.md#how-new-recordings-update-the-note).
 

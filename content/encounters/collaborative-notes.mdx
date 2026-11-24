@@ -13,6 +13,10 @@ sources:
     resource: https://github.com/ng/noctune-core/blob/33734aea/src/lib/practice/can-send.ts
   - id: core-12
     resource: https://github.com/ng/noctune-core/blob/33734aea/src/app/api/v1/transcriptions/[id]/soap-notes/[noteId]/restore/route.ts
+  - id: swift-1
+    resource: https://github.com/ng/noctune-swift/commit/516bc10d
+  - id: swift-2
+    resource: https://github.com/ng/noctune-swift/commit/d62447dd
 ---
 
 # Build one note together without overwriting each other
@@ -57,6 +61,8 @@ To work on everything at once, switch the **View / Edit** toggle above the note 
 ## Add recordings as a team
 
 Anyone in the practice who can open the encounter can choose **Add Audio** to add another recording, whether it's a technician's intake, the veterinarian's exam, or a later treatment update. noctune keeps every recording with the encounter and remembers who added it.
+
+In the noctune iPhone and iPad app, open the encounter and choose **More options** (**…**), then **Add a recording**. The recorder opens for that encounter's patient and shows **Adding to this encounter** in place of the template choices. On iOS you add more audio by recording it; adding a file from the phone isn't offered there. **Add a recording** is available once the encounter has finished processing and while no other recording is in progress in the app. If the encounter is busy with someone else's recording when yours is sent, noctune waits until it's ready, then adds yours, so several people's recordings all land on the same encounter.
 
 When an encounter has more than one recording, chips above the audio player list them, for example **Recording 2 · Dr. Riley Patel · 8:31 AM**. Select a chip to jump the audio to the start of that recording. Section labels name the recording that wrote them, so you can tell which part of the visit each paragraph came from.
 

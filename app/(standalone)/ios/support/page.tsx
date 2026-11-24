@@ -57,9 +57,11 @@ const helpTopics = [
     body: (
       <>
         Choose the center <strong>Record</strong> tab, select a patient and note templates, then
-        begin recording. The first time, allow noctune to use the microphone. If access was denied,
-        open iOS <strong>Settings → Privacy &amp; Security → Microphone</strong>, enable noctune,
-        return to the app, and try again. Silence calls before a long visit; a call or another audio
+        begin recording. To correct a patient&apos;s name, species, breed, or owner details, choose{' '}
+        <strong>Edit</strong> on the chosen patient, or swipe another patient in the list to the
+        left. The first time, allow noctune to use the microphone. If access was denied, open iOS{' '}
+        <strong>Settings → Privacy &amp; Security → Microphone</strong>, enable noctune, return to
+        the app, and try again. Silence calls before a long visit; a call or another audio
         interruption can pause the recording.
       </>
     ),
@@ -97,10 +99,13 @@ const helpTopics = [
       <>
         A normal encounter moves through <strong>Queued</strong>, <strong>Transcribing</strong>,{' '}
         <strong>Generating SOAP Note</strong>, and <strong>Ready</strong>. The encounter refreshes
-        as work completes. If it shows <strong>Processing failed</strong>, open it and choose{' '}
-        <strong>Retry</strong>. If it shows <strong>On hold</strong>, the audio is saved but cannot
-        be processed at that time; email support with the approximate encounter time and do not
-        include identifying clinical information.
+        as work completes. The <strong>Today</strong> tab lists the day&apos;s encounters, and
+        earlier ones that are still open, each with a one-word status such as <strong>Ready</strong>
+        , <strong>Processing</strong>, <strong>On hold</strong>, <strong>Failed</strong>, or{' '}
+        <strong>Done</strong>. If an encounter shows <strong>Processing failed</strong>, open it and
+        choose <strong>Retry</strong>. If it shows <strong>On hold</strong>, the audio is saved but
+        cannot be processed at that time; email support with the approximate encounter time and do
+        not include identifying clinical information.
       </>
     ),
   },
