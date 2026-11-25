@@ -91,7 +91,7 @@
     "remark-preset-lint-markdown-style-guide": "6.0.1",
     "remark-preset-lint-recommended": "7.0.1",
     "remark-stringify": "^11.0.0",
-    "semantic-release": "^25.0.3",
+    "semantic-release": "^26.0.0",
     "sharp": "0.35.5",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "unified": "^11.0.5",
