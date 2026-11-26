@@ -64,4 +64,4 @@ noctune.ai
 ## Source checks
 
 - [Dental charts](../../content/encounters/dental-charts.md)
-- [Dental charts tutorial](https://github.com/ng/noctune-docs/blob/develop/content/tutorials/dental-charts.mdx)
+- [Dental charts tutorial](../../content/tutorials/dental-charts.md)
