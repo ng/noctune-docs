@@ -6,7 +6,9 @@ import test from 'node:test'
 
 import { findPrerenderRoot } from '../scripts/prerender-root.mjs'
 
-async function buildWith(dir, files = ['index.html', 'encounters/new-encounter.html']) {
+const pages = (suffix) => ['index', 'encounters/new-encounter', 'handouts'].map((r) => r + suffix)
+
+async function buildWith(dir, files = pages('.html')) {
   const base = await fs.mkdtemp(path.join(os.tmpdir(), 'prerender-root-'))
   for (const file of files) {
     const target = path.join(base, dir, file)
@@ -21,11 +23,30 @@ test('finds the pages where a local build writes them', async () => {
   assert.equal(await findPrerenderRoot(base), path.join(base, '.next/server/app'))
 })
 
-test('finds the pages where a Vercel build leaves them', async () => {
-  const base = await buildWith('.next/server/route-cache')
+test('copies the pages a Vercel build leaves to their route names', async () => {
+  const base = await buildWith('.next/output/functions', [
+    ...pages('.prerender-fallback.html'),
+    'handouts.rsc',
+  ])
   // Vercel keeps the folder a local build uses, without the pages in it.
   await fs.mkdir(path.join(base, '.next/server/app/(docs)'), { recursive: true })
-  assert.equal(await findPrerenderRoot(base), path.join(base, '.next/server/route-cache'))
+  const root = await findPrerenderRoot(base)
+  assert.equal(root, path.join(base, '.next/search-pages'))
+  const files = await fs.readdir(root, { recursive: true })
+  assert.deepEqual(files.filter((file) => file.endsWith('.html')).sort(), [
+    'encounters/new-encounter.html',
+    'handouts.html',
+    'index.html',
+  ])
+  assert.ok(!files.some((file) => file.endsWith('.rsc')))
+})
+
+test('copies again without keeping pages from an earlier build', async () => {
+  const base = await buildWith('.next/output/functions', pages('.prerender-fallback.html'))
+  await findPrerenderRoot(base)
+  await fs.rm(path.join(base, '.next/output/functions/handouts.prerender-fallback.html'))
+  const root = await findPrerenderRoot(base)
+  assert.ok(!(await fs.readdir(root)).includes('handouts.html'))
 })
 
 test('finds the pages in a folder Next has not used before', async () => {
