@@ -18,7 +18,7 @@
 
 - [9. Messages](09-messages.md) - Guidance for 9. Messages.
 
-- [10. Email templates](10-email-templates.md) - Guidance for 10. Email templates.
+- [10. Handouts](10-email-templates.md) - Guidance for 10. Handouts, formerly email templates.
 
 - [11. Patients and history](11-patients-history.md) - Guidance for 11. Patients and history.
 
