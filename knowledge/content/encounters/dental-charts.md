@@ -79,8 +79,9 @@ from the Dental Procedure template comes back.
 The **Dental Chart** tab sits next to **SOAP** and **Discharge Notes**. From top to bottom:
 
 - **Status bar.** "Draft: not yet confirmed", or **Confirmed** with who confirmed it and when. An
-  edited draft also says who last edited it. The bar holds **Download**, **Re-extract chart**,
-  **Change to cat chart** (or **Change to dog chart**), and **Confirm chart**.
+  edited draft also says who last edited it. The bar holds **Download**, **Confirm chart**, and
+  a **More chart actions** menu (`⋯`) with **Re-extract chart** and **Change to cat chart** (or
+  **Change to dog chart**).
 - **Review banner**, when something needs checking. See [Review flags](#review-flags).
 - **Summary.** Oral exam, occlusion, radiographs, anaesthesia, procedure notes, and home care, as
   dictated. Click **Edit** to change them.
@@ -201,6 +202,8 @@ picked.
 In **Past Encounters**, encounters with a dental chart carry a **Dental chart** tag.
 
 ## Re-extract, or change dog and cat
+
+Both actions are in the **More chart actions** menu (`⋯`) at the end of the status bar.
 
 **Re-extract chart** builds a new chart from the recording. If the chart has been edited or
 confirmed, noctune asks first, because your edits won't carry over and the new chart needs
