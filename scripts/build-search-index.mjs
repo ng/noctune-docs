@@ -4,12 +4,14 @@ import { gzipSync } from 'node:zlib'
 
 import { parse as parseYaml } from 'yaml'
 
+import { findPrerenderRoot } from './prerender-root.mjs'
+
 // Writes public/search-index.json for the noctune Core global search. Titles,
 // descriptions, and keywords come from the OKF frontmatter; heading anchors come
 // from the prerendered HTML so they match what Nextra serves.
 const base = 'https://docs.noctune.ai'
 const contentRoot = 'content'
-const prerenderRoot = '.next/server/app'
+const prerenderRoot = await findPrerenderRoot()
 const output = 'public/search-index.json'
 // Standalone support and legal pages for the iOS app, not product guides.
 const excludedPrefixes = ['/ios']

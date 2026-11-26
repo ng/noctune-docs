@@ -3,8 +3,10 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import test from 'node:test'
 
+import { findPrerenderRoot } from '../scripts/prerender-root.mjs'
+
 const repositoryRoot = path.resolve(import.meta.dirname, '..')
-const prerenderRoot = path.join(repositoryRoot, '.next/server/app')
+const prerenderRoot = await findPrerenderRoot(repositoryRoot)
 const routesManifestPath = path.join(repositoryRoot, '.next/routes-manifest.json')
 const indexPath = path.join(repositoryRoot, 'public/search-index.json')
 
