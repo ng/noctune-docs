@@ -23,8 +23,9 @@
       "id": "dental-listen",
       "platform": "web",
       "headline": ["A dictated", "dental exam."],
-      "hold": 10,
-      "narration": "Here is Murphy's sample exam. Press play to hear it."
+      "hold": 12,
+      "narration": "Here is Murphy's sample exam. Press play to hear it.",
+      "start": 4
     },
     {
       "id": "dental-chart-dog",
@@ -36,14 +37,15 @@
       "id": "dental-quote-play",
       "platform": "web",
       "headline": ["Hear what", "was said."],
-      "hold": 7,
-      "narration": "Click a flagged tooth to open it. The transcript heard one of four, here. Press play on the quote to hear it."
+      "hold": 9.5,
+      "narration": "Click a flagged tooth to open it. The transcript heard one of four, here. Press play on the quote to hear it.",
+      "start": 3.5
     },
     {
       "id": "dental-review-save",
       "platform": "web",
       "headline": ["You decide.", "Then it's reviewed."],
-      "narration": "It was one-oh-four. Tick Reviewed, and save. Confirm chart stays off until every flag has been looked at."
+      "narration": "Check it against the recording, then mark it reviewed. That saves the tooth and clears its flag. Confirm chart stays off until every flag has been looked at."
     },
     {
       "id": "dental-compare-cat",

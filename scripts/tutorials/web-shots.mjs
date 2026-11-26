@@ -479,10 +479,10 @@ const dentalShots = {
       await wait(800)
       await point(patient)
       await wait(600)
-      await page
-        .getByRole('option', { name: /Murphy/ })
-        .first()
-        .click()
+      // The first open waits on the dev server compiling the patient search
+      const murphy = page.getByRole('option', { name: /Murphy/ }).first()
+      await expect(murphy).toBeVisible({ timeout: 60000 })
+      await murphy.click()
       await expect(patient).toHaveValue('Murphy')
       await wait(1200)
       const soap = page.getByPlaceholder('Select a template').first()
@@ -506,7 +506,9 @@ const dentalShots = {
     act: async (page) => {
       await wait(4500)
       await point(page.getByRole('button', { name: 'Play', exact: true }))
-      await expect.poll(() => page.locator('audio').evaluate((audio) => audio.paused)).toBe(false)
+      await expect
+        .poll(() => page.locator('audio').evaluate((audio) => audio.paused), { timeout: 20000 })
+        .toBe(false)
       await wait(8000)
       await page.getByRole('button', { name: 'Pause', exact: true }).click()
       await wait(2000)
@@ -562,7 +564,9 @@ const dentalShots = {
       await expect(editor).toBeVisible()
       await wait(4000)
       await point(editor.getByRole('button', { name: /^Play/ }).first())
-      await expect.poll(() => page.locator('audio').evaluate((audio) => audio.paused)).toBe(false)
+      await expect
+        .poll(() => page.locator('audio').evaluate((audio) => audio.paused), { timeout: 20000 })
+        .toBe(false)
       await wait(4500)
       await editor
         .getByRole('button', { name: /^Pause/ })
@@ -590,16 +594,20 @@ const dentalShots = {
       await point(tooth)
       const editor = page.getByRole('dialog', { name: /^104 · / })
       await expect(editor).toBeVisible()
-      await wait(2000)
-      await point(editor.getByRole('checkbox', { name: /Reviewed/ }).first())
-      await wait(1500)
-      await point(editor.getByRole('button', { name: 'Save', exact: true }))
+      await expect(editor.getByText(/^Flagged for review:/).first()).toBeVisible()
+      await wait(3000)
+      // Mark reviewed saves the tooth and clears its flags in one step
+      await point(editor.getByRole('button', { name: 'Mark reviewed', exact: true }))
       await expect(editor).toBeHidden()
       await wait(1500)
       const header = panel.getByTestId('dental-chart-header')
       await scrollTo(header)
-      await expect(header).toContainText('Resolve 2 review flags to confirm')
-      await header.getByRole('button', { name: 'Confirm chart' }).hover()
+      await expect(header).toContainText(/Resolve \d+ review flags? to confirm/)
+      // Disabled buttons take no pointer events; move over it instead of hovering
+      const confirm = await header.getByRole('button', { name: 'Confirm chart' }).boundingBox()
+      await page.mouse.move(confirm.x + confirm.width / 2, confirm.y + confirm.height / 2, {
+        steps: 12,
+      })
       await wait(5000)
     },
   },
