@@ -102,7 +102,7 @@ export default defineConfig({
     },
     {
       name: 'authenticated',
-      testMatch: /\/authenticated\.spec\.ts$/,
+      testMatch: /\/(dental-)?authenticated\.spec\.ts$/,
       dependencies: ['auth-setup'],
       use: {
         storageState: authStatePath,

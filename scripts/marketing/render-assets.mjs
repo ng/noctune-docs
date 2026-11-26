@@ -60,6 +60,76 @@ for (const [file, background, name] of [
     400,
   )
 }
+// Dental charts (early preview): browser PNG originals of the verified dental
+// captures, exported to source/dental/ with `pnpm social:export` and recorded
+// with their hashes under `dental` in source/manifest.json. Until then, skip.
+const dental = manifest.dental
+if (!dental?.sha256 || !Object.keys(dental.sha256).length) {
+  console.log('Dental chart sources are not recorded yet; skipped the dental exports.')
+} else {
+  for (const [name, expected] of Object.entries(dental.sha256)) {
+    if (hash(fs.readFileSync(path.join(source, 'dental', name))) !== expected)
+      throw Error(
+        `Source changed: dental/${name}. Verify the replacement and update its provenance.`,
+      )
+  }
+  const shot = (id) => {
+    if (!dental.sha256[`${id}.png`]) throw Error(`Dental source not recorded: ${id}.png`)
+    return uri(fs.readFileSync(path.join(source, 'dental', `${id}.png`)))
+  }
+  const fill = (template, values) =>
+    fs
+      .readFileSync(path.join(root, `marketing/templates/${template}.svg`), 'utf8')
+      .replace(/\{\{([A-Z_]+)\}\}/g, (_, key) => {
+        if (!(key in values)) throw Error(`${template}: no value for ${key}`)
+        return values[key]
+      })
+  const dog = shot('dental-chart-dog')
+  const cat = shot('dental-chart-cat')
+  for (const [template, values, name, width, height] of [
+    [
+      'dental-hero',
+      { LOGO: assets.LOGO, SHOT: dog, SPECIES_LINE: 'Dogs and cats, tooth by tooth.' },
+      'noctune-dental-charts-dog-1200x630.png',
+      1200,
+      630,
+    ],
+    [
+      'dental-hero',
+      { LOGO: assets.LOGO, SHOT: cat, SPECIES_LINE: 'Dogs and cats, tooth by tooth.' },
+      'noctune-dental-charts-cat-1200x630.png',
+      1200,
+      630,
+    ],
+    [
+      'dental-dog-cat',
+      { LOGO: assets.LOGO, DOG: dog, CAT: cat },
+      'noctune-dental-charts-dog-and-cat-1200x630.png',
+      1200,
+      630,
+    ],
+    [
+      'dental-compare',
+      {
+        LOGO: assets.LOGO,
+        SHOT: shot('dental-compare-cat'),
+        // Source pixels of the 1600 × 900 capture shown in the frame; set after inspecting it
+        CROP: dental.compareCrop ?? '320 0 1280 720',
+      },
+      'noctune-dental-charts-compare-1200x630.png',
+      1200,
+      630,
+    ],
+    [
+      'dental-slide',
+      { LOGO: assets.LOGO, DOG: dog, CAT: cat },
+      'noctune-dental-charts-slide-1920x1080.png',
+      1920,
+      1080,
+    ],
+  ])
+    await write(name, fill(template, values), width, height)
+}
 fs.writeFileSync(
   path.join(output, 'manifest.json'),
   JSON.stringify(

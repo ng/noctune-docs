@@ -35,6 +35,16 @@ export default withNextra({
         permanent: true,
       },
       {
+        source: '/email-templates',
+        destination: '/handouts',
+        permanent: true,
+      },
+      {
+        source: '/tutorials/email-templates',
+        destination: '/tutorials/handouts',
+        permanent: true,
+      },
+      {
         source: '/ios',
         destination: '/ios/support',
         permanent: true,

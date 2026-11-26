@@ -28,4 +28,6 @@
 
 - [14. Windows app](14-windows-app.md) - LinkedIn draft for the noctune for Windows film, moving a noctune note into a practice system installed on Windows or running over Remote Desktop or Citrix.
 
+- [15. Dental charts (early preview)](15-dental-charts.md) - LinkedIn draft for the dental charts film, an early preview in which a dictated dog or cat dental exam also becomes a per-tooth chart the vet reviews and confirms.
+
 - [LinkedIn posts for the tutorial series](README.md) - Guidance for linkedIn posts for the tutorial series.

@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "title": "Dental charts in noctune — web (early preview)",
+  "kicker": "DENTAL CHARTS",
+  "tagline": "Early preview · dogs and cats",
+  "transition": 0.3,
+  "cover": 30,
+  "scenes": [
+    {
+      "id": "dental-intro",
+      "platform": "web",
+      "headline": ["Dental charts.", "Early preview."],
+      "brandCard": ["Dental charts · Early preview", "Sample dictations, synthetic voices"],
+      "narration": "This is an early preview of dental charting in noctune. Every chart in this video comes from a sample dictation, read by a synthetic voice. No real patients."
+    },
+    {
+      "id": "dental-drawer",
+      "platform": "web",
+      "headline": ["Pick Dental Procedure.", "The chart comes too."],
+      "narration": "Record the dental exam the way you dictate it now. Choose the Dental Procedure template, and the New Encounter drawer adds a dental chart. With any other template, add it with the Add button."
+    },
+    {
+      "id": "dental-listen",
+      "platform": "web",
+      "headline": ["A dictated", "dental exam."],
+      "hold": 10,
+      "narration": "Here is Murphy's sample exam. Press play to hear it."
+    },
+    {
+      "id": "dental-chart-dog",
+      "platform": "web",
+      "headline": ["Every tooth,", "drawn and in words."],
+      "narration": "noctune writes the note, then the Dental Chart tab. The mouth is drawn tooth by tooth, with each quadrant listed beside it in words. A tooth nobody mentioned stays uncharted. Where noctune is unsure, it flags the tooth for you instead of guessing."
+    },
+    {
+      "id": "dental-quote-play",
+      "platform": "web",
+      "headline": ["Hear what", "was said."],
+      "hold": 7,
+      "narration": "Click a flagged tooth to open it. The transcript heard one of four, here. Press play on the quote to hear it."
+    },
+    {
+      "id": "dental-review-save",
+      "platform": "web",
+      "headline": ["You decide.", "Then it's reviewed."],
+      "narration": "It was one-oh-four. Tick Reviewed, and save. Confirm chart stays off until every flag has been looked at."
+    },
+    {
+      "id": "dental-compare-cat",
+      "platform": "web",
+      "headline": ["Cats too.", "Compare visits."],
+      "narration": "Cats work the same way. Tigger had a chart last year, so today's can be compared with it. Teeth that got worse, newly extracted, or newly missing are marked, with a summary above the chart."
+    },
+    {
+      "id": "dental-confirm-cat",
+      "platform": "web",
+      "headline": ["Confirm it.", "Then download."],
+      "narration": "When you've checked the chart, confirm it. Download it as a PDF or an image. Until a chart is confirmed, every download is marked as a draft."
+    },
+    {
+      "id": "dental-limits",
+      "platform": "web",
+      "headline": ["Early preview.", "Your feedback counts."],
+      "instructionTitle": "What to expect",
+      "instructionStyle": "checklist",
+      "instructionCard": [
+        "Dogs and cats only, adult teeth",
+        "A draft until you review and confirm it",
+        "Check flagged teeth against the audio",
+        "Tell us what your charts need to show"
+      ],
+      "narration": "Dental charting is an early preview. It covers dogs and cats, and every chart is a draft until you review and confirm it. Tooth numbers can be misheard, so check flagged teeth against the recording. We'd like to hear what your charts need to show."
+    },
+    {
+      "id": "dental-outro",
+      "platform": "web",
+      "headline": ["Try it", "in early preview."],
+      "brandCard": ["noctune.ai"],
+      "narration": "noctune. Dental charts, in early preview."
+    }
+  ]
+}

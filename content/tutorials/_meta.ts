@@ -7,7 +7,7 @@ export default {
   templates: 'Make templates your own',
   'discharge-follow-up': 'Discharge and follow-up',
   messages: 'Messages',
-  'email-templates': 'Email templates',
+  handouts: 'Handouts',
   sentinel: 'Sentinel',
   'patients-history': 'Patients and history',
   'locked-sections': 'Section locks',

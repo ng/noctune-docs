@@ -47,9 +47,9 @@ Think of these as the chart, the take-home plan, and the reusable handout:
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **SOAP Template**      | The internal medical-record structure: Subjective, Objective, Assessment, Plan, and a concise record of Client Communications.                                                 |
 | **Discharge Template** | Personalized home care, medication directions, warnings, follow-up, and recheck instructions. noctune uses this content when you choose **Send Email → Send discharge notes**. |
-| **Email Template**     | Reusable delivery or cover messages and client education, such as diet guidance, reminders, greetings, and signatures. See [Email Templates](email-templates.md).              |
+| **Handout**            | Reusable delivery or cover messages and client education, such as diet guidance, reminders, greetings, and signatures, on the **Handouts** tab. See [Handouts](handouts.md).   |
 
-In this workflow, client literature means reusable education rather than a separate template type. Keep it in an Email Template so you can reuse it without adding the same material to every clinical note or discharge summary.
+In this workflow, client literature means reusable education rather than a separate template type. Keep it in a handout so you can reuse it without adding the same material to every clinical note or discharge summary.
 
 One large imported template can be saved as a SOAP or discharge template if it passes validation and stays within the character limit. Splitting it by purpose usually creates a more automated and maintainable workflow: the encounter generates the chart and patient-specific take-home instructions, while evergreen education remains ready to reuse.
 
@@ -118,7 +118,7 @@ noctune supports and preserves human-readable double-brace placeholders and inst
 
 noctune's note generator interprets this text as guidance when it drafts a note. You do not need to rename or reformat the double-brace content before saving it.
 
-This guidance is different from the resolved merge fields in [Email Templates](email-templates.md). SOAP and discharge placeholders are preserved as instructions for note generation; they are not replaced like patient, practice, or date fields in an email. Executable or unsafe template-engine syntax and prompt-injection attempts may still be rejected.
+This guidance is different from the resolved merge fields in [handouts](handouts.md). SOAP and discharge placeholders are preserved as instructions for note generation; they are not replaced like patient, practice, or date fields in an email. Executable or unsafe template-engine syntax and prompt-injection attempts may still be rejected.
 
 ## Review template quality
 
@@ -138,7 +138,7 @@ After you apply one suggestion or edit the draft manually, **Fix All** disables 
 
 ![Template Review tab after one suggestion is fixed, with a remaining Locate and Apply action and Fix All disabled](https://docs.noctune.ai/screenshots/templates/review-single-fix.webp)
 
-The reviewer may recommend moving substantial discharge content out of a SOAP template, internal charting out of a discharge template, or evergreen client education into an Email Template. These are text recommendations only; use the separate import proposal actions to create another template.
+The reviewer may recommend moving substantial discharge content out of a SOAP template, internal charting out of a discharge template, or evergreen client education into a handout. These are text recommendations only; use the separate import proposal actions to create another template.
 
 Review the changed preview, then choose **Save** again to persist applied fixes. New encounters use the saved content, while existing notes are not rewritten.
 
@@ -268,7 +268,7 @@ template is a worked example of this pattern.
 
 1. Read the field-level message and correct the specific issue it identifies.
 2. Confirm that the template does not exceed 50,000 characters.
-3. If it mixes charting, take-home instructions, and reusable education, move each part to the appropriate SOAP, discharge, or Email Template.
+3. If it mixes charting, take-home instructions, and reusable education, move each part to the appropriate SOAP template, discharge template, or handout.
 4. Contact noctune support if a legitimate import is still blocked.
 
 ## Use a community template

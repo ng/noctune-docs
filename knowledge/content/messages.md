@@ -63,9 +63,9 @@ Choose **New Message** in the top bar or from a thread. Add one or more **To** r
 
 ![New message composer with the From picker showing practice and personal noctune inboxes](https://docs.noctune.ai/screenshots/messages/composer.webp)
 
-### Insert an email template
+### Insert a handout
 
-Choose **Templates** to search your [Email Templates](email-templates.md). Insertion preserves text already in the draft, fills an empty subject, and resolves available merge fields. Use the immediate **Undo** action if you picked the wrong template.
+Choose **Handouts** to search your [handouts](handouts.md) in the **Insert a handout** picker. Insertion preserves text already in the draft, fills an empty subject, and resolves available merge fields. Use the immediate **Undo** action if you picked the wrong handout.
 
 Unresolved fields appear with an explanation. Fix the recipient or source data, edit the draft, or explicitly confirm **Send anyway**; the unresolved text is delivered if you proceed.
 

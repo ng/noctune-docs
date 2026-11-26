@@ -39,7 +39,7 @@ noctune is AI for veterinary medicine — not just a scribe. Record a visit from
 ## Templates & Content
 
 - [SOAP & Discharge Templates](templates.md) — shape the medical record and personalized take-home instructions
-- [Email Templates](email-templates.md) — reuse delivery messages and client education
+- [Handouts](handouts.md) — reuse delivery messages and client education
 - [Community Templates](community.md) — browse SOAP and discharge templates shared by other veterinarians
 
 ## Integrations

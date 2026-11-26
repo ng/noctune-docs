@@ -574,7 +574,9 @@ async function openTheoCollaborativeNote(page: Page, route: string): Promise<voi
   await expect(page.getByTestId('section-card-objective')).toContainText(
     'Locked · edited by Dr. Riley Patel',
   )
-  await expect(page.getByTestId('recordings-list')).toContainText('Recording 3 · Morgan Lee')
+  // The player's track shows one labelled segment per recording, and its menu counts them
+  await expect(page.getByTestId('recording-segment-label-2')).toBeVisible()
+  await expect(page.getByRole('button', { name: /3 recordings/ })).toBeVisible()
 }
 
 test('collaborative notes — section cards with locks and attribution', async ({ page }) => {
@@ -1188,14 +1190,18 @@ test('community — report dialog', async ({ page }) => {
   await savePageScreenshot(page, item)
 })
 
-test('email templates — categorized library and preview', async ({ page }) => {
+test('handouts — categorized library and preview', async ({ page }) => {
   const item = capture('email-templates-library')
   await openProductPage(page, item.route)
-  await expect(page.getByRole('heading', { name: 'Email Templates' })).toBeVisible()
-  await expect(page.getByRole('combobox', { name: 'Search templates...' })).toHaveValue(
-    'Post-op check-in',
-  )
-  await expect(page.getByRole('tab', { name: 'Preview' })).toBeVisible()
+  // Email templates are now the Handouts tab of Templates, with a categorized list column
+  await expect(page.getByRole('heading', { name: 'Templates' })).toBeVisible()
+  await expect(page.getByRole('tab', { name: 'Handouts', selected: true })).toBeVisible()
+  await expect(page.getByRole('textbox', { name: 'Search handouts' })).toBeVisible()
+  for (const category of ['Onboarding', 'Reminders', 'Post-visit', 'Admin']) {
+    await expect(page.getByRole('heading', { name: category, exact: true })).toBeVisible()
+  }
+  await expect(page.getByRole('heading', { name: 'Post-op check-in', level: 2 })).toBeVisible()
+  await expect(page.getByRole('tab', { name: 'Preview', selected: true })).toBeVisible()
   await expect(page.getByText(/Sample:/)).toBeVisible()
   await expect(page.getByText(/How is Buddy doing today\?/)).toBeVisible()
   await savePageScreenshot(page, item)

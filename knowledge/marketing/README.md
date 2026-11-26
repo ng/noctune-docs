@@ -71,6 +71,50 @@ Run `pnpm check` before committing. Keep raster sources and exports in Git LFS.
   visually verify it, then update the source and provenance together. Preserve the
   original raw footage outside Git as described in the tutorial workflow.
 
+## Dental charts (early preview)
+
+Reusable images for an email to a vet, a social post or a slide, each labelled **Early preview**
+and saying the chart comes from a sample dictation read by a synthetic voice:
+
+| File in `exports/`                               | Shows                                       | Dimensions  |
+| ------------------------------------------------ | ------------------------------------------- | ----------- |
+| `noctune-dental-charts-dog-1200x630.png`         | Murphy's canine chart in a browser frame    | 1200 × 630  |
+| `noctune-dental-charts-cat-1200x630.png`         | Tigger's feline chart in a browser frame    | 1200 × 630  |
+| `noctune-dental-charts-dog-and-cat-1200x630.png` | The dog and cat charts side by side         | 1200 × 630  |
+| `noctune-dental-charts-compare-1200x630.png`     | A crop of Tigger's chart compared with 2025 | 1200 × 630  |
+| `noctune-dental-charts-slide-1920x1080.png`      | Dog and cat side by side, for a slide       | 1920 × 1080 |
+
+The templates are `templates/dental-*.svg`. Their sources are the browser PNG originals of the
+verified dental captures (`capture/manifest.json`, `dental-*`), so they come only from the real UI.
+Until those sources are recorded, `pnpm marketing:render` skips the dental exports and says so.
+After `pnpm screenshots:update` has produced and verified the dental captures:
+
+```sh
+node scripts/export-linkedin-screenshots.mjs marketing/source/dental \
+  dental-chart-dog dental-chart-cat dental-compare-cat
+```
+
+Then add a `dental` entry to `source/manifest.json` with each file's SHA-256 (`shasum -a 256
+marketing/source/dental/*.png`), the Core commit the captures came from, and, if the default crop
+does not frame the comparison well, `compareCrop` (an SVG viewBox in the 1600 × 900 capture's
+pixels, such as `"320 0 1280 720"`):
+
+```json
+"dental": {
+  "captures": "capture/manifest.json dental-chart-dog, dental-chart-cat, dental-compare-cat",
+  "coreCommit": "<Core commit of the capture>",
+  "fixture": "Dental samples in the capture user's personal workspace; invented dictations, synthetic voices",
+  "sha256": { "dental-chart-dog.png": "…", "dental-chart-cat.png": "…", "dental-compare-cat.png": "…" }
+}
+```
+
+Run `pnpm marketing:render` and inspect each dental export. The export script refuses an original
+that doesn't re-encode to the committed WebP, so only verified captures can be used.
+
+[`dental-charts-one-pager.md`](dental-charts-one-pager.md) is a one-page introduction to forward
+to a veterinarian, with six captures, a placeholder for the video link, and the questions we want
+answered. Replace the video placeholder once the episode is published.
+
 See [tutorial tooling](../tutorials/README.md) for capture and video generation.
 The original source SVG templates use asset placeholders; standalone SVGs containing
 embedded raster data are intentionally not checked in. The PNG exports are the files

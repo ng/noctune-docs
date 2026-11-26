@@ -14,9 +14,9 @@
 
 - [Dashboard](dashboard.md) - See your day at a glance.
 
-- [Email Templates](email-templates.md) - Reuse the client emails you send most.
-
 - [Getting Started](getting-started.md) - Create your account and sign in for the first time.
+
+- [Handouts](handouts.md) - Reuse the client emails you send most.
 
 - [Introduction](overview.md) - Explore noctune guides for encounters, templates, messaging, and practice workflows.
 

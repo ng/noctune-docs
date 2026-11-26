@@ -38,6 +38,8 @@ export async function prepareMedia(
     fs.mkdirSync(media, { recursive: true })
     const sources = []
     for (const scene of story.scenes) {
+      // Brand cards are drawn by the renderer and have no media
+      if (scene.brandCard) continue
       if (scene.instructionCard && !replaceCards.includes(scene.id)) continue
       if (scene.instructionCard) {
         for (const key of [
@@ -59,6 +61,21 @@ export async function prepareMedia(
       if (clip && sha256 !== clip.sha256) throw Error(`Recording checksum changed: ${scene.id}`)
       scene.source = `${scene.id}${path.extname(source)}`
       fs.copyFileSync(source, path.join(media, scene.source))
+      // The audio file the page played during the shot, and when it played (clip time)
+      let appAudioSha256
+      if (clip?.appAudio) {
+        const file = sourcePath(clip.root, clip.appAudio.file)
+        appAudioSha256 = createHash('sha256').update(fs.readFileSync(file)).digest('hex')
+        if (appAudioSha256 !== clip.appAudio.sha256)
+          throw Error(`App audio checksum changed: ${scene.id}`)
+        const appSource = `${scene.id}-app${path.extname(file)}`
+        fs.copyFileSync(file, path.join(media, appSource))
+        scene.appAudio = {
+          source: appSource,
+          label: clip.appAudio.label,
+          segments: clip.appAudio.segments,
+        }
+      }
       sources.push({
         scene: scene.id,
         sha256,
@@ -69,6 +86,7 @@ export async function prepareMedia(
               capturedAt: clip.capturedAt,
             }
           : {}),
+        ...(appAudioSha256 ? { appAudioSha256 } : {}),
       })
     }
     fs.writeFileSync(path.join(stage, 'story.json'), JSON.stringify(story, null, 2) + '\n')
