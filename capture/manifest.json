@@ -356,6 +356,12 @@
     "docs": ["content/encounters/dental-charts.mdx"]
   },
   {
+    "id": "dental-located-findings",
+    "route": "/encounters/63867eed-0f59-568d-a86d-22bb596aa440",
+    "output": "public/screenshots/encounters/dental/located-findings.webp",
+    "docs": ["content/encounters/dental-charts.mdx"]
+  },
+  {
     "id": "dental-chart-cat",
     "route": "/encounters/63867eed-0f59-568d-a86d-22bb596aa440",
     "output": "public/screenshots/encounters/dental/chart-cat.webp",
@@ -401,6 +407,12 @@
     "id": "dental-species-choice",
     "route": "/encounters/6ce9b375-d662-57a3-9d67-8724a061211a",
     "output": "public/screenshots/encounters/dental/species-choice.webp",
+    "docs": ["content/encounters/dental-charts.mdx"]
+  },
+  {
+    "id": "dental-sample-dog",
+    "route": "/encounters/97b9b0c8-d2bd-5792-92c6-f74536b9cffd",
+    "output": "public/screenshots/encounters/dental/sample-dog.webp",
     "docs": ["content/encounters/dental-charts.mdx"]
   }
 ]

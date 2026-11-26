@@ -96,6 +96,21 @@ async function openDentalChart(page: Page) {
   return panel
 }
 
+/** Opens a tooth's editor from the chart drawing. */
+async function openToothEditor(page: Page, panel: ReturnType<Page['locator']>, tooth: number) {
+  const button = panel.locator(`button[data-tooth="${tooth}"]`).first()
+  await button.scrollIntoViewIfNeeded()
+  await button.click()
+  const editor = page.getByRole('dialog', { name: new RegExp(`^${tooth} · `) })
+  await expect(editor).toBeVisible()
+  return editor
+}
+
+/** The one-time "New: dental charts" card on a dog or cat encounter without a chart. */
+function dentalCallout(page: Page) {
+  return page.getByRole('region', { name: 'New: dental charts from your dictation' })
+}
+
 /** Scrolls the note pane so an element sits at the top of the viewport. */
 async function scrollToTop(page: Page, locator: ReturnType<Page['locator']>): Promise<void> {
   await locator.evaluate((element) => element.scrollIntoView({ block: 'start' }))
@@ -139,6 +154,8 @@ test('dental charts — suggestion on a recording with a dental exam', async ({ 
 test('dental charts — Add dental chart from More actions on a cat', async ({ page }) => {
   const item = capture('dental-add-menu')
   await openDentalEncounter(page, item.route, DENTAL.smokeyNoChart.patient)
+  // A finished cat encounter with no chart also shows the one-time discovery card
+  await expect(dentalCallout(page)).toBeVisible()
   await page.getByRole('button', { name: 'More actions' }).click()
   await expect(page.getByRole('menuitem', { name: /Add dental chart/ })).toBeVisible()
   await savePageScreenshot(page, item)
@@ -167,18 +184,33 @@ test('dental charts — review banner stepping to a speaker-side flag', async ({
   await savePageScreenshot(page, item)
 })
 
-test('dental charts — tooth editor with a quote to play', async ({ page }) => {
+test('dental charts — tooth editor with a flag, a quote to play and the probing position', async ({
+  page,
+}) => {
   const item = capture('dental-tooth-editor')
   await openDentalEncounter(page, item.route, DENTAL.murphy.patient)
   const panel = await openDentalChart(page)
-  const tooth = panel.locator('button[data-tooth="104"]').first()
-  await tooth.scrollIntoViewIfNeeded()
-  await tooth.click()
-  const editor = page.getByRole('dialog', { name: /^104 · / })
-  await expect(editor).toBeVisible()
-  await expect(editor.getByText(/One of four/)).toBeVisible()
+  // 208 was heard as "to await": flagged, with a 7 mm pocket probed buccally
+  const editor = await openToothEditor(page, panel, 208)
+  await expect(editor.getByText(/To await/)).toBeVisible()
   await expect(editor.getByRole('button', { name: /^Play/ }).first()).toBeVisible()
-  await expect(editor.getByRole('checkbox', { name: /Reviewed/ }).first()).toBeVisible()
+  await expect(editor.getByText(/^Flagged for review:/).first()).toBeVisible()
+  await expect(editor.getByRole('button', { name: 'Mark reviewed' })).toBeVisible()
+  const position = editor.getByRole('group', { name: 'Where the deepest pocket was probed' })
+  await expect(position.getByRole('button', { name: 'Buccal', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await savePageScreenshot(page, item)
+})
+
+test('dental charts — located findings seen from the side', async ({ page }) => {
+  const item = capture('dental-located-findings')
+  await openDentalEncounter(page, item.route, DENTAL.tigger.patient)
+  const panel = await openDentalChart(page)
+  const located = panel.getByRole('region', { name: 'Located findings' })
+  await expect(located.getByRole('img', { name: /side view/ }).first()).toBeVisible()
+  await scrollToTop(page, located)
   await savePageScreenshot(page, item)
 })
 
@@ -270,7 +302,10 @@ test('dental charts — attaching an unconfirmed chart to a discharge', async ({
   await page.getByRole('button', { name: 'Send Email' }).click()
   await page.getByRole('menuitem', { name: /Send discharge notes/ }).click()
   const dialog = page.getByRole('dialog')
-  await expect(dialog.getByRole('heading', { name: 'Send Discharge Notes' })).toBeVisible()
+  // The title holds the close button, so only the inner heading is named exactly
+  await expect(
+    dialog.getByRole('heading', { name: 'Send Discharge Notes', exact: true }),
+  ).toBeVisible()
   const recipient = dialog.getByLabel('To')
   await recipient.fill('murphys.owner@example.test')
   await recipient.press('Enter')
@@ -290,5 +325,20 @@ test('dental charts — choosing dog or cat when the patient is neither', async 
   await expect(panel.getByText(/Dental charts are available for dogs and cats only/)).toBeVisible()
   await expect(panel.getByRole('button', { name: 'Chart as dog' })).toBeVisible()
   await expect(panel.getByRole('button', { name: 'Chart as cat' })).toBeVisible()
+  await savePageScreenshot(page, item)
+})
+
+test('dental charts — the sample chart from the discovery card', async ({ page }) => {
+  const item = capture('dental-sample-dog')
+  await openDentalEncounter(page, item.route, DENTAL.smokeyNoChart.patient)
+  await dentalCallout(page).getByRole('button', { name: 'See a sample chart' }).click()
+  const dialog = page.getByRole('dialog', { name: /^Sample dental chart/ })
+  await expect(dialog).toBeVisible()
+  const dog = dialog.getByRole('button', { name: 'Dog', exact: true })
+  await dog.click()
+  await expect(dog).toHaveAttribute('aria-pressed', 'true')
+  await expect(dialog.getByRole('button', { name: 'Cat', exact: true })).toBeVisible()
+  await expect(dialog.getByRole('heading', { name: 'Canine dental chart' })).toBeVisible()
+  await expect(dialog.getByTestId('dental-chart-svg')).toBeVisible()
   await savePageScreenshot(page, item)
 })
