@@ -12,7 +12,7 @@ keywords:
   - early preview
 sources:
   - id: core-guide
-    resource: https://github.com/ng/noctune-core/blob/feat/dental-charting-followup/docs/dental-charting-guide.md
+    resource: https://github.com/ng/noctune-core/blob/3d93f627/docs/dental-charting-guide.md
   - id: core-panel
     resource: https://github.com/ng/noctune-core/blob/c4a2d461/src/components/dental/DentalChartPanel.tsx
   - id: core-header
@@ -24,7 +24,15 @@ sources:
   - id: core-email
     resource: https://github.com/ng/noctune-core/blob/c4a2d461/src/components/email/DischargeEmailModal.tsx
   - id: core-export
-    resource: https://github.com/ng/noctune-core/blob/c4a2d461/src/components/dental/DentalChartExportMenu.tsx
+    resource: https://github.com/ng/noctune-core/blob/3d93f627/src/components/dental/DentalChartExportMenu.tsx
+  - id: core-tooth-editor
+    resource: https://github.com/ng/noctune-core/blob/3d93f627/src/components/dental/DentalToothEditor.tsx
+  - id: core-located-findings
+    resource: https://github.com/ng/noctune-core/blob/3d93f627/src/components/dental/DentalLocatedFindings.tsx
+  - id: core-callout
+    resource: https://github.com/ng/noctune-core/blob/3d93f627/src/components/dental/DentalChartCallout.tsx
+  - id: core-sample-dialog
+    resource: https://github.com/ng/noctune-core/blob/3d93f627/src/components/dental/DentalSampleChartDialog.tsx
 ---
 
 # Dental charts
@@ -61,6 +69,9 @@ There are four ways to get one.
   chart?" Click **Add dental chart**, or close the prompt. A closed prompt doesn't come back.
   General remarks such as "teeth look good" or "mild tartar" don't trigger it.
 
+When you add a dental chart in the New Encounter drawer for a patient that isn't a dog or a cat,
+you can pick **Dog** or **Cat** there. It's optional.
+
 <BrowserFrame
   src="/screenshots/encounters/dental/new-encounter-chip.webp"
   alt="New Encounter drawer for Murphy with the Dental Procedure template chosen and a Dental chart chip below the template pickers, reading Charted from the recording, for dogs and cats"
@@ -73,11 +84,28 @@ There are four ways to get one.
 
 <BrowserFrame
   src="/screenshots/encounters/dental/add-menu.webp"
-  alt="Smokey's finished encounter with the More actions menu open on Add dental chart, A tooth chart from this recording"
+  alt="Smokey's finished encounter with the More actions menu open on Add dental chart, A tooth chart from this recording, and the New: dental charts from your dictation card below the encounter header"
 />
 
-If you see no **Dental chart** chip, **Add**, or **More actions** menu, dental charting isn't
-switched on yet. A chart an encounter already has stays readable either way.
+### See a sample chart first
+
+On a finished dog or cat encounter that has no chart, the encounter page shows a small card, "New:
+dental charts from your dictation", marked **Early preview**. **See a sample chart** opens a
+read-only chart of a fictional dog (Otis, a pug) or cat (Tigger, a domestic shorthair). Switch
+between them with **Dog** and **Cat**, and select a tooth to hear the part of the sample
+dictation it came from.
+
+Opening the sample keeps the card. Close the card with its `×` button ("Dismiss, don't show
+again") and it doesn't come back for your account, on any device. The card doesn't appear while a
+suggestion is showing, once the encounter has a chart, or for other species.
+
+<BrowserFrame
+  src="/screenshots/encounters/dental/sample-dog.webp"
+  alt="The Sample dental chart window, marked Early preview, with Dog selected and Cat beside it: the canine chart of Otis, a fictional pug, made from a sample dictation"
+/>
+
+If you see no **Dental chart** chip, **Add**, **More actions** menu, or sample-chart card, dental
+charting isn't switched on yet. A chart an encounter already has stays readable either way.
 
 If the browser closes during a recording, the recovered recording uses the template's choice. A
 chip you added by hand isn't kept (use **Add dental chart** afterwards), and a chip you removed
@@ -100,6 +128,8 @@ The **Dental Chart** tab sits next to **SOAP** and **Discharge Notes**. From top
   quadrant**) give every tooth by its Triadan number, grouped into incisors, canine, premolars,
   and molars, with what was said about it in words.
 - **Legend.**
+- **Located findings**, if any: a card for each tooth with a finding on a part of it, showing
+  that tooth from the side with the finding marked. See [Located findings](#located-findings).
 - **Unplaced findings**, if any: things said in the recording that couldn't be matched to a
   tooth on this chart. For example, no tooth number was heard, or the number doesn't exist for
   the species, such as 105 on a cat.
@@ -127,12 +157,31 @@ The **Dental Chart** tab sits next to **SOAP** and **Discharge Notes**. From top
 | Notch                    | Tooth resorption                                         |
 | Dashed outline           | Missing                                                  |
 | Cross                    | Extracted                                                |
+| Faded, single slash      | Crown amputated: the crown removed, the roots left       |
 | Amber marker             | Needs review                                             |
 
 Colour is never the only signal: every state is also written in the tooth's line. A tooth with no
 entry wasn't charted. noctune never marks a tooth normal unless you said so. If you said
 "everything else is normal", a **Remaining teeth normal** chip appears and the uncharted teeth draw
 as normal. Remove the chip if that isn't right.
+
+### Located findings
+
+Below the legend, teeth with a finding on a particular part of the tooth get a card with a side
+view of that tooth. A finding sits where you said: crown tip, crown, furcation, or a root.
+Fractures, tooth resorption, and periapical lesions get a card even when nobody said where, drawn
+at their usual place.
+
+A pocket deeper than normal is a pin at the gum line: solid over the mesial root, the middle, or
+the distal root for mesiobuccal, buccal, and distobuccal; hollow at the same place for a lingual
+or palatal position, because the far side can't be seen from the cheek; and a dashed band when no
+position was said. A dashed mark always means where on the tooth wasn't dictated. The cards are
+for reading only; edit the tooth to change them.
+
+<BrowserFrame
+  src="/screenshots/encounters/dental/located-findings.webp"
+  alt="The Located findings cards on Tigger's feline chart below the legend: 108, crown amputated with stage 3 resorption, drawn from the side with its crown removed, and 407 and 409 with resorption at a site that was not dictated, marked dashed"
+/>
 
 ## Hear what was said
 
@@ -142,7 +191,7 @@ press it again to pause. The encounter's audio player and transcript follow alon
 
 <BrowserFrame
   src="/screenshots/encounters/dental/tooth-editor.webp"
-  alt="The window for tooth 104 on Murphy's chart, showing the quote One of four, calculus two, gingivitis one with a play button, the review flag explaining the number was read from its place, a Reviewed box, and the tooth's scores"
+  alt="The window for tooth 208 on Murphy's chart, showing the quote To await, calculus three, gingivitis three, buccal pocket seven millimetres with a play button, the review flag explaining the number was heard as to await, Mark reviewed, and the tooth's scores with a 7 mm pocket probed at Buccal"
 />
 
 ## Edit a tooth
@@ -152,13 +201,22 @@ In the tooth's window you can set:
 - the status: present, missing, extracted, unerupted, or retained root
 - **Called normal**
 - the calculus and gingivitis indices, mobility, furcation, and the periodontal stage
-- the deepest probing depth
-- findings and treatments, from searchable AVDC codes (a code that isn't in the list is kept as
-  you typed it)
+- the deepest probing depth, and **Where the deepest pocket was probed**: one of six points,
+  mesiobuccal, buccal, and distobuccal, plus the three lingual points on a lower tooth or the
+  three palatal points on an upper one
+- findings, from searchable AVDC codes, and **Where on the tooth** each one is
+- treatments, from searchable AVDC codes (a code that isn't in the list is kept as you typed it)
+- the **Procedure**
 - a note
 
-"Not said" means no value was given; 0 is a real score. Click **Save**. **Remove entry** takes the
-tooth off the chart, after asking first.
+"Not said" means no value was given; 0 is a real score. Clearing the depth clears where it was
+probed. Click **Save**. **Remove entry** takes the tooth off the chart, after asking first.
+
+**Procedure** records what was done to the tooth. **Extraction** marks it extracted. **Crown
+amputation** keeps it present, because the roots stay, and draws it faded with a single slash; its
+row reads "crown amputation". Choose **None** to clear it. Add the AVDC code (for example **CR/A ·
+Crown amputation**) in **Treatments** as well. Tigger's 108 in [Located findings](#located-findings)
+shows how a crown-amputated tooth looks.
 
 To change several teeth at once, click **Select teeth**, pick the teeth, then click **Edit
 selected** (or **Remove entries**, which asks first). Only the fields you change are applied to
@@ -183,9 +241,10 @@ Flagged teeth carry an amber marker and a **Review** tag. The review banner step
 example "2 teeth and 1 unplaced finding need review".
 
 - **Mark reviewed** in the banner clears that item straight away.
-- In the tooth's window, each flag has a **Reviewed** box. Ticked boxes are cleared when you click
-  **Save**.
-- Each unplaced finding has its own **Mark reviewed** and **Remove** buttons.
+- In the window of a flagged tooth, each flag reads "Flagged for review: …", and **Mark
+  reviewed** saves your changes and clears all of that tooth's flags. noctune records who marked
+  it reviewed and when, and the window shows it. **Save** alone leaves the flags open.
+- Each unplaced finding has its own **Mark reviewed**, **Remove**, and play buttons.
 
 <BrowserFrame
   src="/screenshots/encounters/dental/review-banner.webp"
@@ -195,7 +254,8 @@ example "2 teeth and 1 unplaced finding need review".
 ## Confirm the chart
 
 **Confirm chart** records that you've checked the chart. It stays off while review flags are open,
-for example "Resolve 3 review flags to confirm". Any later edit, including one to the summary,
+for example "Resolve 3 review flags to confirm". You don't need to mark teeth without flags
+reviewed one by one. Any later edit, including one to the summary,
 turns the chart back into a draft, and it needs confirming again.
 
 <BrowserFrame
@@ -240,9 +300,13 @@ confirmed, noctune asks first, because your edits won't carry over and the new c
 confirming. The current chart stays as it is while the new one is built. If you save an edit
 before it finishes, your edit wins and the new chart is discarded.
 
-noctune takes the species from the patient record, because it's rarely said in the recording. You
-can choose instead:
+noctune takes the species from the patient record, because it's rarely said in the recording.
+When the patient record gives no dog or cat (another species, or no patient) and you haven't
+chosen, noctune uses the species the note picked up from the recording, if you said it, and the
+chart says so, for example "Charted as a cat from the recording". You can choose instead:
 
+- **At upload.** When you add a dental chart in the New Encounter drawer for a patient that isn't
+  a dog or a cat, pick **Dog** or **Cat** there.
 - **No patient, or not a dog or cat.** The Dental Chart tab explains why no chart was built and
   offers **Chart as dog** and **Chart as cat**.
 - **Wrong mouth.** On a ready chart, **Change to cat chart** (or **Change to dog chart**) builds a
@@ -263,13 +327,21 @@ a chart the encounter didn't already have.
 
 ## Download
 
-**Download** offers a PDF or an image (PNG). The PDF carries the practice and patient header, the
-chart, then the summary and the per-tooth findings. Until the chart is confirmed, the file carries
-a "Draft: not yet confirmed" mark drawn into it, and the menu says so.
+**Download** offers a PDF or an image (PNG). Both look like the chart on screen: the tooth lists
+for each side either side of the mouth, grouped by quadrant and tooth type, with the key below.
+The PDF adds the noctune logo, the practice and patient header on every page, and the summary; a
+long chart's lists carry on to a second page. Until the chart is confirmed, the file carries a
+"Draft: not yet confirmed" mark drawn into it, and the menu says so.
+
+**Copy as text**, in the same menu, copies the chart as plain text for pasting into a practice
+system that can't take a picture: the summary, one line per charted tooth in codes (for example
+`108: CI 3, GI 3, pocket 6 mm DP, T/FX/CCF crown tip`), the teeth not charted, and a last line
+saying whether the chart is confirmed and how many teeth need review. Until the chart is
+confirmed, the text starts with a DRAFT line.
 
 <BrowserFrame
   src="/screenshots/encounters/dental/download-menu.webp"
-  alt="The Download menu on Murphy's draft chart with Download PDF and Download image, each marked Draft: not yet confirmed"
+  alt="The Download menu on Murphy's draft chart with Download PDF and Download image, each marked Draft: not yet confirmed, and Copy as text, which starts with a DRAFT line"
 />
 
 <BrowserFrame
