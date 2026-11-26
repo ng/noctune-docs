@@ -15,6 +15,7 @@ import {
 import { withStagedOutput } from './staged-output.mjs'
 import { MOCHI, MOCHI_NOTE, TUTORIAL_NOTE, resetNote, shots as registry } from './web-shots.mjs'
 import { locateReadyFrame } from './video-timing.mjs'
+import { MEDIA_EVENT_SCRIPT, mediaEventSegments } from './app-audio.mjs'
 
 const [
   configRootArg,
@@ -204,6 +205,7 @@ try {
   const ctx = {
     baseURL,
     citationTime,
+    core,
     db,
     now,
     uploadAudio: buildSyntheticDemoAudio(180).bytes,
@@ -231,9 +233,13 @@ try {
       })
       const started = performance.now()
       const page = await context.newPage()
+      // The raw video starts with the page; app audio events are timed from here.
+      const openedEpochMs = performance.timeOrigin + performance.now()
       debugPage = page
       const video = page.video()
       const shot = registry[id]
+      const appAudio = shot.appAudio ? shot.appAudio(ctx) : null
+      if (appAudio) await page.addInitScript(MEDIA_EVENT_SCRIPT)
       if (shot.reset) await shot.reset(db, ctx)
       const evidence = shot.setup ? await shot.setup(page, ctx) : null
       await page.clock.setFixedTime(new Date(now))
@@ -302,6 +308,9 @@ try {
       const duration = shot.duration ?? 32
       await wait(Math.max(1000, (begin + duration + 1) * 1000 - (performance.now() - started)))
       await page.screenshot({ path: path.join(stage, `${id}-poster.png`) })
+      const mediaEvents = appAudio
+        ? await page.evaluate(() => window.__noctuneMediaEvents ?? [])
+        : []
       await context.close()
       if (shot.restore) await shot.restore(db, ctx)
       const rawPath = await video.path()
@@ -365,7 +374,28 @@ try {
       )
       if (Math.abs(Number(metadata.format.duration) - duration) > 0.1)
         throw Error(`Incomplete recording: ${id}`)
+      let appAudioRecord
+      if (appAudio) {
+        const segments = mediaEventSegments(mediaEvents, {
+          openedEpochMs,
+          sourceIn,
+          clipDuration: duration,
+          src: appAudio.match,
+        })
+        if (!segments.length) throw Error(`No app audio played in the clip: ${id}`)
+        const file = `${id}-app${path.extname(appAudio.path)}`
+        fs.copyFileSync(appAudio.path, path.join(stage, file))
+        appAudioRecord = {
+          file,
+          label: appAudio.label,
+          sha256: createHash('sha256')
+            .update(fs.readFileSync(path.join(stage, file)))
+            .digest('hex'),
+          segments,
+        }
+      }
       records.push({
+        ...(appAudioRecord ? { appAudio: appAudioRecord } : {}),
         id,
         file: `${id}.mp4`,
         raw: path.relative(stage, rawPath),
@@ -399,7 +429,10 @@ try {
           fictionalData: true,
           removedStrayEncounters: strayEncounters,
           microphone: 'Chromium synthetic audio',
-          playback: 'Local deterministic 284-second synthetic WAV fixture; no clinical speech',
+          playback: records.some((shot) => shot.appAudio)
+            ? 'Local deterministic 284-second synthetic WAV fixture; dental sample shots play ' +
+              "Core's committed synthetic-speech recordings of invented dictations (appAudio)"
+            : 'Local deterministic 284-second synthetic WAV fixture; no clinical speech',
           processing:
             'Upload API responses and cloud storage simulated; example drafts precomputed',
           shots: records,
