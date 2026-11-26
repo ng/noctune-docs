@@ -23,7 +23,7 @@ the next person.
 | 7  | [Sentinel](07-sentinel.md)                               | Web and iPhone captioned MP4s          |
 | 8  | [Getting started](08-getting-started.md)                 | Web captioned MP4                      |
 | 9  | [Messages](09-messages.md)                               | Web captioned MP4                      |
-| 10 | [Email templates](10-email-templates.md)                 | Web captioned MP4                      |
+| 10 | [Handouts](10-email-templates.md)                        | Web captioned MP4                      |
 | 11 | [Patients and history](11-patients-history.md)           | Web captioned MP4 (iPhone history)     |
 | 12 | [Section locks](12-locked-sections-and-inboxes.md)       | Web captioned MP4                      |
 | 13 | [Browser extension](13-chrome-extension.md)              | Web captioned MP4 and cover PNG        |

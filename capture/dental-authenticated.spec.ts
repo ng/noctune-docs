@@ -275,7 +275,8 @@ test('dental charts — the downloaded image of a draft chart', async ({ page },
   const panel = await openDentalChart(page)
   await panel.getByTestId('dental-chart-header').getByRole('button', { name: 'Download' }).click()
   const [download] = await Promise.all([
-    page.waitForEvent('download'),
+    // The first export of a run waits on the dev server compiling the export route
+    page.waitForEvent('download', { timeout: 120_000 }),
     page.getByRole('menuitem', { name: /Download image/ }).click(),
   ])
   const file = testInfo.outputPath('dental-chart.png')

@@ -472,15 +472,17 @@ pnpm tutorials:capture-web /absolute/path/to/noctune-docs /absolute/path/to/noct
   messages-assign-archive,messages-triage,messages-encounter-reply,messages-open-encounter
 ```
 
-## Email templates (episode 10)
+## Handouts, formerly email templates (episode 10)
 
-Web shots: `email-library` (open the picker, filter to the post-op check-in), `email-edit` (type
+Core moved email templates to the **Handouts** tab of Templates (`/templates/handouts`), with a
+categorized list column. Web shots: `email-library` (search the list for the post-op check-in and
+open it), `email-edit` (type
 guidance at the end of the body, type `{phone` and press Enter for the Practice phone field,
-check the preview, **Save Template**), `email-insert` (Mochi's encounter, **Send Email → Send
-message → Templates**, insert the post-op check-in), and `email-recipient` (top-bar **New
+check the preview, **Save**), `email-insert` (Mochi's encounter, **Send Email → Send
+message → Handouts**, insert the post-op check-in), and `email-recipient` (top-bar **New
 Message**, insert the recheck reminder with no recipient, then add `jamie.chen@example.test` so
 the patient's name fills in). Each shot first runs `resetEmailTemplates`, which restores the four
-seeded templates with Core PR #837's registered fields (that PR is still open; the seed's
+seeded templates, and their seeded `modified_at`, with Core PR #837's registered fields (that PR is still open; the seed's
 greetings use the unregistered `{{client.first_name}}`). `email-insert` starts from the post-op
 body that `email-edit` saves, so the shots can be retaken in any order. Capture them as
 `email-edit,email-insert,email-library,email-recipient` so the shared database ends with the

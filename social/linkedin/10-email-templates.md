@@ -1,13 +1,14 @@
 ---
 type: Social Post
-title: 10. Email templates
-description: Guidance for 10. Email templates.
+title: 10. Handouts
+description: Guidance for 10. Handouts, formerly email templates.
 ---
 
-# 10. Email templates
+# 10. Handouts
 
-Video: `email-templates-web` → `walkthrough-captioned.mp4` (about 75 seconds). Email templates
-are created and inserted on the web only; there is no iPhone cut. No email is sent in the video.
+Video: `email-templates-web` → `walkthrough-captioned.mp4` (about 77 seconds). Handouts, which
+noctune called email templates until they moved to the Handouts tab of Templates, are created
+and inserted on the web only; there is no iPhone cut. No email is sent in the video.
 The closing scene is a labelled summary card, not app footage.
 
 ## Post
@@ -16,12 +17,12 @@ The closing scene is a labelled summary card, not app footage.
 "Soft food for three days. Call us if the incision looks red."
 The same three paragraphs, retyped after every post-op.
 
-The advice doesn't change from patient to patient. Only the name does. This video covers email templates in noctune:
+The advice doesn't change from patient to patient. Only the name does. This video covers handouts in noctune:
 
-→ A library of reusable client emails, grouped by category and searchable
+→ A list of reusable client emails, grouped by category and searchable
 → Add guidance once, with placeholders for the patient's name or your practice phone
 → A live preview that fills those placeholders with a sample patient before you save
-→ Insert the template from an encounter, and the patient's name and practice phone fill in
+→ Insert the handout from an encounter, and the patient's name and practice phone fill in
 → Start a message with no recipient, and noctune shows which placeholder is still waiting
 
 Placeholders only fill from what's on file. If one can't be filled, noctune lists it before sending, and you decide whether to fix it or send anyway.
@@ -34,8 +35,8 @@ What's the client email you find yourself rewriting most often?
 ## First comment
 
 ```text
-Email templates guide: https://docs.noctune.ai/email-templates
-Watch the walkthrough: https://docs.noctune.ai/tutorials/email-templates
+Handouts guide: https://docs.noctune.ai/handouts
+Watch the walkthrough: https://docs.noctune.ai/tutorials/handouts
 ```
 
 ## Replies for the first hour
