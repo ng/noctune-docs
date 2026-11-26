@@ -31,8 +31,8 @@
     {
       "id": "email-templates",
       "platform": "web",
-      "headline": ["Reusable", "client emails."],
-      "narration": "Email Templates hold client education you send often. Choose a template to preview it. Placeholders, like the patient's name, fill in when you send, and the Placeholder button adds more."
+      "headline": ["Reusable", "client handouts."],
+      "narration": "Handouts, on their own tab, hold client education you send often. Choose one to preview it. Placeholders, like the patient's name, fill in when you send, and the Placeholder button adds more."
     },
     {
       "id": "iphone",

@@ -1262,7 +1262,10 @@ test('practice — plan, team, and pending invitation', async ({ page }) => {
   const item = capture('practice-overview')
   await mockDeterministicPracticeMembers(page)
   await openProductPage(page, item.route)
-  await expect(page.getByText('Northstar Veterinary Clinic', { exact: true })).toBeVisible()
+  // The sample client email also names the practice, so read it from the practice details
+  await expect(
+    page.getByLabel('Practice details').getByText('Northstar Veterinary Clinic', { exact: true }),
+  ).toBeVisible()
   await expect(page.getByText('Team', { exact: true })).toBeVisible()
   await expect(
     page.getByText('3 paid seats · 2 in use · 1 reserved', { exact: true }),

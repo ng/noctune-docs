@@ -10,8 +10,8 @@ tags:
 
 # 15. Dental charts (early preview)
 
-Draft only; not scheduled or published. Not yet rendered: the film is captured after Core's
-dental charting follow-up merges.
+Draft only; not scheduled or published. Rendered locally (about 2 minutes); it still needs a
+person's full watch and listen before it is published (`review` in `tutorials/episodes.json`).
 
 Video (from `tutorials/episodes.json`):
 
@@ -45,6 +45,7 @@ When you chart a dental today, what has to be on it for you to trust it?
 
 ```text
 Dental charts guide (early preview): https://docs.noctune.ai/encounters/dental-charts
+Watch the walkthrough: https://docs.noctune.ai/tutorials/dental-charts
 noctune.ai
 ```
 
@@ -58,7 +59,9 @@ noctune.ai
 ## Before posting
 
 - Watch the full captioned export and confirm each line above appears in it: the drawer chip,
-  playback of a quote, a flagged tooth, comparison, confirming. Remove any line whose scene was cut.
+  playback of a quote, a flagged tooth marked reviewed, comparison, confirming. Remove any line
+  whose scene was cut.
+- The walkthrough link below only shows the video once the episode is published.
 - Keep "early preview" in the post body. Do not add accuracy or time-saved claims.
 
 ## Source checks

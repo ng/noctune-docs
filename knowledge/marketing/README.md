@@ -112,7 +112,7 @@ Run `pnpm marketing:render` and inspect each dental export. The export script re
 that doesn't re-encode to the committed WebP, so only verified captures can be used.
 
 [`dental-charts-one-pager.md`](dental-charts-one-pager.md) is a one-page introduction to forward
-to a veterinarian, with six captures, a placeholder for the video link, and the questions we want
+to a veterinarian, with eight captures, a placeholder for the video link, and the questions we want
 answered. Replace the video placeholder once the episode is published.
 
 See [tutorial tooling](../tutorials/README.md) for capture and video generation.

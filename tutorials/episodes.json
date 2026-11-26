@@ -226,7 +226,7 @@
     {
       "id": "email-templates-web",
       "series": 10,
-      "title": "Email templates — web",
+      "title": "Handouts — web",
       "platform": "web",
       "story": "tutorials/email-templates-web.json",
       "output": ".tutorial-output/email-templates-web",

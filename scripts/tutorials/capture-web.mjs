@@ -308,9 +308,7 @@ try {
       const duration = shot.duration ?? 32
       await wait(Math.max(1000, (begin + duration + 1) * 1000 - (performance.now() - started)))
       await page.screenshot({ path: path.join(stage, `${id}-poster.png`) })
-      const mediaEvents = appAudio
-        ? await page.evaluate(() => window.__noctuneMediaEvents ?? [])
-        : []
+      const mediaEvents = appAudio ? await pageMediaEvents(page) : []
       await context.close()
       if (shot.restore) await shot.restore(db, ctx)
       const rawPath = await video.path()
@@ -469,4 +467,20 @@ try {
   fs.closeSync(log)
   fs.closeSync(lock)
   fs.rmSync(lockPath, { force: true })
+}
+
+/**
+ * The page's media events on this process's clock. `page.clock.setFixedTime`
+ * moves the page's `performance.timeOrigin` to the fixture date, so the page's
+ * epoch differs from ours by that offset; measure it and remove it.
+ */
+async function pageMediaEvents(page) {
+  const before = performance.timeOrigin + performance.now()
+  const { events, pageNow } = await page.evaluate(() => ({
+    events: window.__noctuneMediaEvents ?? [],
+    pageNow: performance.timeOrigin + performance.now(),
+  }))
+  const after = performance.timeOrigin + performance.now()
+  const offset = pageNow - (before + after) / 2
+  return events.map((event) => ({ ...event, epochMs: event.epochMs - offset }))
 }
