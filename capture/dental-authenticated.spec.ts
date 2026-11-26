@@ -10,7 +10,8 @@ import { savePageScreenshot } from './support/save-screenshot'
 // Dental charts (early preview). Core's docs capture seeder puts the dental
 // samples in the capture user's personal workspace; every encounter's audio is
 // a committed synthetic-speech recording of an invented dictation, served from
-// the Core runtime checkout. Written for the UI after Core's dental charting
+// the Core runtime checkout whenever the page plays it (the player loads audio
+// only on play or seek). Written for the UI after Core's dental charting
 // follow-up (`feat/dental-charting-followup`): the "Dental Chart" tab, quadrant
 // headings, play on a quote in the tooth popover, "Chart as dog / cat", and an
 // unconfirmed chart attachable to a discharge as a draft.
@@ -70,13 +71,20 @@ async function openDentalPage(page: Page, route: string): Promise<void> {
   await expect(page.getByRole('button', { name: 'New Encounter' })).toBeVisible()
 }
 
-/** Opens a sample encounter and waits for its recording to load. */
+/**
+ * Opens a sample encounter and waits for its player to show the recording.
+ * The player signs and loads audio only when the vet plays or seeks
+ * (`<audio preload="none">`), so the element has no duration on its own; the
+ * length it shows comes from the encounter's data.
+ */
 async function openDentalEncounter(page: Page, route: string, patient: string): Promise<void> {
   await openDentalPage(page, route)
   await expect(page.getByText(patient, { exact: true }).first()).toBeVisible()
-  await expect
-    .poll(() => page.locator('audio').evaluate((audio: HTMLAudioElement) => audio.duration))
-    .toBeGreaterThan(30)
+  const rewind = page.getByRole('button', { name: 'Rewind 10 seconds' })
+  await expect(rewind).toBeEnabled()
+  // The controls row reads the elapsed 0:00 then the recording's length, with no space between
+  // ("0:004:43"); wait for a non-zero length. Some samples are shorter than 30 seconds.
+  await expect(rewind.locator('xpath=..')).toContainText(/(?:[1-9]\d*:\d\d|0:(?!00)\d\d)$/)
 }
 
 /** Opens the Dental Chart tab and waits for the mouth to draw. */
@@ -101,14 +109,17 @@ test('dental charts — New Encounter drawer with the Dental chart chip', async 
   const patient = page.getByPlaceholder('Search or type a new name...')
   await expect(patient).toBeVisible()
   await patient.click()
-  await page
-    .getByRole('option', { name: /Murphy/ })
-    .first()
-    .click()
+  // The first open of a run waits on the dev server compiling the patient search,
+  // longer than a click's timeout; wait for the results like any other content
+  const murphy = page.getByRole('option', { name: /Murphy/ }).first()
+  await expect(murphy).toBeVisible()
+  await murphy.click()
   await expect(patient).toHaveValue('Murphy')
   const soap = page.getByPlaceholder('Select a template').first()
   await soap.click()
-  await page.getByRole('option', { name: 'Dental Procedure', exact: true }).click()
+  const dentalProcedure = page.getByRole('option', { name: 'Dental Procedure', exact: true })
+  await expect(dentalProcedure).toBeVisible()
+  await dentalProcedure.click()
   await expect(soap).toHaveValue('Dental Procedure')
   await expect(page.getByText('Dental chart', { exact: true })).toBeVisible()
   await expect(page.getByText('Charted from the recording, for dogs and cats.')).toBeVisible()
