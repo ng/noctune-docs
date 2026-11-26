@@ -318,5 +318,89 @@
     "route": "/settings?tab=notifications",
     "output": "public/screenshots/settings/notifications.webp",
     "docs": ["content/settings/index.mdx", "content/settings/notifications.mdx"]
+  },
+  {
+    "id": "dental-new-encounter-chip",
+    "route": "/dashboard",
+    "output": "public/screenshots/encounters/dental/new-encounter-chip.webp",
+    "docs": ["content/encounters/dental-charts.mdx"]
+  },
+  {
+    "id": "dental-suggestion",
+    "route": "/encounters/42a21a93-5e93-5961-802c-d584e0691fa8",
+    "output": "public/screenshots/encounters/dental/suggestion.webp",
+    "docs": ["content/encounters/dental-charts.mdx"]
+  },
+  {
+    "id": "dental-add-menu",
+    "route": "/encounters/97b9b0c8-d2bd-5792-92c6-f74536b9cffd",
+    "output": "public/screenshots/encounters/dental/add-menu.webp",
+    "docs": ["content/encounters/dental-charts.mdx"]
+  },
+  {
+    "id": "dental-chart-dog",
+    "route": "/encounters/5c81afb0-47f7-5d5b-aff2-58376539ac28",
+    "output": "public/screenshots/encounters/dental/chart-dog.webp",
+    "docs": ["content/encounters/dental-charts.mdx"]
+  },
+  {
+    "id": "dental-review-banner",
+    "route": "/encounters/2d52ba7b-241a-552c-b216-e90a6c685265",
+    "output": "public/screenshots/encounters/dental/review-banner.webp",
+    "docs": ["content/encounters/dental-charts.mdx"]
+  },
+  {
+    "id": "dental-tooth-editor",
+    "route": "/encounters/5c81afb0-47f7-5d5b-aff2-58376539ac28",
+    "output": "public/screenshots/encounters/dental/tooth-editor.webp",
+    "docs": ["content/encounters/dental-charts.mdx"]
+  },
+  {
+    "id": "dental-chart-cat",
+    "route": "/encounters/63867eed-0f59-568d-a86d-22bb596aa440",
+    "output": "public/screenshots/encounters/dental/chart-cat.webp",
+    "docs": ["content/encounters/dental-charts.mdx"]
+  },
+  {
+    "id": "dental-compare-dog",
+    "route": "/encounters/30e92f3c-1f0c-584a-a8f1-efbe752ee3b3",
+    "output": "public/screenshots/encounters/dental/compare-dog.webp",
+    "docs": ["content/encounters/dental-charts.mdx"]
+  },
+  {
+    "id": "dental-compare-cat",
+    "route": "/encounters/63867eed-0f59-568d-a86d-22bb596aa440",
+    "output": "public/screenshots/encounters/dental/compare-cat.webp",
+    "docs": ["content/encounters/dental-charts.mdx"]
+  },
+  {
+    "id": "dental-confirmed",
+    "route": "/encounters/cdf7cdcc-a9dc-54ab-ab7e-a45717441589",
+    "output": "public/screenshots/encounters/dental/confirmed.webp",
+    "docs": ["content/encounters/dental-charts.mdx"]
+  },
+  {
+    "id": "dental-download-menu",
+    "route": "/encounters/5c81afb0-47f7-5d5b-aff2-58376539ac28",
+    "output": "public/screenshots/encounters/dental/download-menu.webp",
+    "docs": ["content/encounters/dental-charts.mdx"]
+  },
+  {
+    "id": "dental-export-png",
+    "route": "/encounters/5c81afb0-47f7-5d5b-aff2-58376539ac28",
+    "output": "public/screenshots/encounters/dental/export-png.webp",
+    "docs": ["content/encounters/dental-charts.mdx"]
+  },
+  {
+    "id": "dental-discharge-attach",
+    "route": "/encounters/5c81afb0-47f7-5d5b-aff2-58376539ac28",
+    "output": "public/screenshots/encounters/dental/discharge-attach.webp",
+    "docs": ["content/encounters/dental-charts.mdx"]
+  },
+  {
+    "id": "dental-species-choice",
+    "route": "/encounters/6ce9b375-d662-57a3-9d67-8724a061211a",
+    "output": "public/screenshots/encounters/dental/species-choice.webp",
+    "docs": ["content/encounters/dental-charts.mdx"]
   }
 ]

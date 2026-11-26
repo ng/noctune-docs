@@ -27,6 +27,7 @@ the next person.
 | 11 | [Patients and history](11-patients-history.md)           | Web captioned MP4 (iPhone history)     |
 | 12 | [Section locks](12-locked-sections-and-inboxes.md)       | Web captioned MP4                      |
 | 13 | [Browser extension](13-chrome-extension.md)              | Web captioned MP4 and cover PNG        |
+| 15 | [Dental charts (early preview)](15-dental-charts.md)     | Web captioned MP4 and cover PNG        |
 
 Each file contains the post, a first comment carrying the docs link, and extra questions for
 replying to commenters. Copy the text inside each code block exactly; line breaks are deliberate.

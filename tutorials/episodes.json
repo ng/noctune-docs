@@ -290,6 +290,19 @@
         "listened": true,
         "listenedBy": "Jonathan Ng"
       }
+    },
+    {
+      "id": "dental-charts-web",
+      "series": 15,
+      "title": "Dental charts — web (early preview)",
+      "platform": "web",
+      "story": "tutorials/dental-charts-web.json",
+      "output": ".tutorial-output/dental-charts-web",
+      "post": "social/linkedin/15-dental-charts.md",
+      "review": {
+        "framesChecked": false,
+        "listened": false
+      }
     }
   ]
 }

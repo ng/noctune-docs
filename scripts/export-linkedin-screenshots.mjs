@@ -3,16 +3,28 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
 
+// Export the original browser PNGs of verified captures, for native social
+// uploads and marketing sources. Usage:
+//   node scripts/export-linkedin-screenshots.mjs                      (the 2026-10-27 post)
+//   node scripts/export-linkedin-screenshots.mjs TARGET_DIR ID [ID…]  (any verified captures)
+// Each original must re-encode to exactly the committed WebP, so only the
+// capture that was verified and committed can be exported.
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const manifest = JSON.parse(await fs.readFile(path.join(root, 'capture/manifest.json'), 'utf8'))
 const policy = JSON.parse(await fs.readFile(path.join(root, 'capture/image-policy.json'), 'utf8'))
-const ids = [
-  'collaborative-section-cards',
-  'collaborative-suggestion',
-  'collaborative-regenerate-section',
-  'collaborative-version-history',
-]
-const target = path.join(root, 'social/linkedin/assets/2026-10-27')
+const [targetArg, ...idArgs] = process.argv.slice(2)
+if (targetArg && !idArgs.length) throw new Error('Name at least one capture ID after the target')
+const ids = idArgs.length
+  ? idArgs
+  : [
+      'collaborative-section-cards',
+      'collaborative-suggestion',
+      'collaborative-regenerate-section',
+      'collaborative-version-history',
+    ]
+const target = path.resolve(root, targetArg || 'social/linkedin/assets/2026-10-27')
+if (!target.startsWith(`${root}${path.sep}`))
+  throw new Error('Target must be inside the repository')
 const pending = []
 for (const id of ids) {
   const capture = manifest.find((item) => item.id === id)
@@ -35,4 +47,4 @@ for (const id of ids) {
 }
 await fs.mkdir(target, { recursive: true })
 for (const { id, original } of pending) await fs.writeFile(path.join(target, `${id}.png`), original)
-console.log(`Exported ${pending.length} original browser PNGs for LinkedIn.`)
+console.log(`Exported ${pending.length} original browser PNGs to ${path.relative(root, target)}.`)

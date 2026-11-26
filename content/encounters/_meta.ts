@@ -4,4 +4,5 @@ export default {
   'review-and-edit': 'Review & Edit',
   'collaborative-notes': 'Collaborative Notes',
   'discharge-copies': 'Discharge Copies',
+  'dental-charts': 'Dental Charts (Early Preview)',
 }

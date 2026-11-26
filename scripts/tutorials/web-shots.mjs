@@ -5,6 +5,13 @@
 import { setTimeout as wait } from 'node:timers/promises'
 import { expect } from '@playwright/test'
 import { installUploadFixture } from './web-upload-fixture.mjs'
+import {
+  DENTAL,
+  dentalAudioKey,
+  dentalRecordingPath,
+  serveDentalRecordings,
+  usePersonalWorkspace,
+} from '../../capture/support/dental-samples.mjs'
 
 export const MOCHI = 'd0c50000-0000-4000-8000-000000000201'
 // Mochi's seeded note, and the reserved tutorial version the runner copies from
@@ -400,6 +407,248 @@ async function installPlanRewriteFixture(page) {
       },
     })
   })
+}
+
+// Dental charts (episode 15, early preview). The samples are in the capture
+// user's personal workspace; each encounter plays its committed synthetic-speech
+// recording of an invented dictation, served locally (capture/support/dental-samples.mjs).
+// Written for the UI after Core's dental charting follow-up: the "Dental Chart"
+// tab, quadrant headings, and play/pause on a quote in the tooth popover.
+const dentalDisclosure = 'Early preview · sample dictation'
+const dictationLabel = 'Sample dictation · synthetic voice'
+
+async function dentalSetup(page, ctx) {
+  await usePersonalWorkspace(page.context(), ctx.baseURL)
+  await serveDentalRecordings(page, ctx.core)
+}
+
+/** The recording the page plays, so the renderer can mix the same seconds in */
+const dentalAppAudio = (sample) => (ctx) => ({
+  path: dentalRecordingPath(ctx.core, sample),
+  match: dentalAudioKey(sample),
+  label: dictationLabel,
+})
+
+// Unconfirmed samples are edited or confirmed on camera; put them back as seeded.
+async function resetDentalChart(db, sample) {
+  await db`update dental_charts set current = original, revision = 0, edited_at = null, edited_by = null, confirmed_revision = null, confirmed_at = null, confirmed_by = null, updated_at = created_at where transcription_id = ${sample.id} and is_current and status = 'ready'`
+}
+
+async function dentalEncounterReady(page, sample) {
+  await expect(page.getByText(sample.patient, { exact: true }).first()).toBeVisible({
+    timeout: 60000,
+  })
+  await expect
+    .poll(() => page.locator('audio').evaluate((audio) => audio.readyState))
+    .toBeGreaterThan(0)
+  await expect
+    .poll(() => page.locator('audio').evaluate((audio) => audio.duration))
+    .toBeGreaterThan(30)
+}
+
+async function openDentalChart(page) {
+  await page.getByRole('tab', { name: 'Dental Chart', exact: true }).click()
+  const panel = page.getByTestId('dental-chart-panel')
+  await expect(panel.getByTestId('dental-chart-svg')).toBeVisible({ timeout: 30000 })
+  return panel
+}
+
+const scrollTo = (locator, block = 'start') =>
+  locator.evaluate(
+    (element, where) => element.scrollIntoView({ behavior: 'smooth', block: where }),
+    block,
+  )
+
+const dentalShots = {
+  'dental-drawer': {
+    path: '/dashboard',
+    setup: dentalSetup,
+    disclosure: dentalDisclosure,
+    ready: (page) =>
+      expect(page.getByText('Murphy', { exact: true }).first()).toBeVisible({ timeout: 60000 }),
+    act: async (page) => {
+      await wait(1500)
+      await point(page.getByRole('button', { name: 'New Encounter', exact: true }))
+      const patient = page.getByPlaceholder('Search or type a new name...')
+      await expect(patient).toBeVisible()
+      await wait(800)
+      await point(patient)
+      await wait(600)
+      await page
+        .getByRole('option', { name: /Murphy/ })
+        .first()
+        .click()
+      await expect(patient).toHaveValue('Murphy')
+      await wait(1200)
+      const soap = page.getByPlaceholder('Select a template').first()
+      await point(soap)
+      await wait(700)
+      await page.getByRole('option', { name: 'Dental Procedure', exact: true }).click()
+      await expect(soap).toHaveValue('Dental Procedure')
+      await expect(page.getByText('Charted from the recording, for dogs and cats.')).toBeVisible()
+      await page.getByText('Dental chart', { exact: true }).hover()
+      await wait(5000)
+    },
+  },
+  // True playback: the page plays Murphy's sample recording; the renderer mixes
+  // the same seconds of the same file in where the footage shows it playing.
+  'dental-listen': {
+    path: encounter(DENTAL.murphy.id),
+    setup: dentalSetup,
+    appAudio: dentalAppAudio(DENTAL.murphy),
+    disclosure: 'Early preview',
+    ready: (page) => dentalEncounterReady(page, DENTAL.murphy),
+    act: async (page) => {
+      await wait(4500)
+      await point(page.getByRole('button', { name: 'Play', exact: true }))
+      await expect.poll(() => page.locator('audio').evaluate((audio) => audio.paused)).toBe(false)
+      await wait(8000)
+      await page.getByRole('button', { name: 'Pause', exact: true }).click()
+      await wait(2000)
+    },
+  },
+  'dental-chart-dog': {
+    path: encounter(DENTAL.murphy.id),
+    setup: dentalSetup,
+    reset: (db) => resetDentalChart(db, DENTAL.murphy),
+    disclosure: dentalDisclosure,
+    ready: async (page) => {
+      await dentalEncounterReady(page, DENTAL.murphy)
+      await openDentalChart(page)
+    },
+    act: async (page) => {
+      const panel = page.getByTestId('dental-chart-panel')
+      await wait(3500)
+      await scrollTo(page.getByRole('heading', { name: 'Canine dental chart' }))
+      await wait(3500)
+      await panel.getByRole('heading', { name: 'Upper right quadrant' }).hover()
+      await wait(2500)
+      await panel.locator('button[data-tooth="104"]').first().hover()
+      await wait(3000)
+      await scrollTo(panel.getByLabel('Chart legend'), 'center')
+      await wait(4000)
+      await scrollTo(panel.getByTestId('dental-review-banner'))
+      await wait(1500)
+      await point(panel.getByLabel('Next item to review'))
+      await wait(2500)
+      await point(panel.getByLabel('Next item to review'))
+      await wait(3000)
+    },
+  },
+  // Play/pause on the quote in the tooth popover (Core's follow-up). Tooth 104's
+  // quote is where the transcript heard "one of four", the reason it is flagged.
+  'dental-quote-play': {
+    path: encounter(DENTAL.murphy.id),
+    setup: dentalSetup,
+    reset: (db) => resetDentalChart(db, DENTAL.murphy),
+    appAudio: dentalAppAudio(DENTAL.murphy),
+    disclosure: 'Early preview',
+    ready: async (page) => {
+      await dentalEncounterReady(page, DENTAL.murphy)
+      await openDentalChart(page)
+    },
+    act: async (page) => {
+      const panel = page.getByTestId('dental-chart-panel')
+      await wait(3000)
+      const tooth = panel.locator('button[data-tooth="104"]').first()
+      await tooth.scrollIntoViewIfNeeded()
+      await point(tooth)
+      const editor = page.getByRole('dialog', { name: /^104 · / })
+      await expect(editor).toBeVisible()
+      await wait(4000)
+      await point(editor.getByRole('button', { name: /^Play/ }).first())
+      await expect.poll(() => page.locator('audio').evaluate((audio) => audio.paused)).toBe(false)
+      await wait(4500)
+      await editor
+        .getByRole('button', { name: /^Pause/ })
+        .first()
+        .click()
+      await expect.poll(() => page.locator('audio').evaluate((audio) => audio.paused)).toBe(true)
+      await wait(3000)
+    },
+  },
+  'dental-review-save': {
+    path: encounter(DENTAL.murphy.id),
+    setup: dentalSetup,
+    reset: (db) => resetDentalChart(db, DENTAL.murphy),
+    restore: (db) => resetDentalChart(db, DENTAL.murphy),
+    disclosure: dentalDisclosure,
+    ready: async (page) => {
+      await dentalEncounterReady(page, DENTAL.murphy)
+      await openDentalChart(page)
+    },
+    act: async (page) => {
+      const panel = page.getByTestId('dental-chart-panel')
+      await wait(2000)
+      const tooth = panel.locator('button[data-tooth="104"]').first()
+      await tooth.scrollIntoViewIfNeeded()
+      await point(tooth)
+      const editor = page.getByRole('dialog', { name: /^104 · / })
+      await expect(editor).toBeVisible()
+      await wait(2000)
+      await point(editor.getByRole('checkbox', { name: /Reviewed/ }).first())
+      await wait(1500)
+      await point(editor.getByRole('button', { name: 'Save', exact: true }))
+      await expect(editor).toBeHidden()
+      await wait(1500)
+      const header = panel.getByTestId('dental-chart-header')
+      await scrollTo(header)
+      await expect(header).toContainText('Resolve 2 review flags to confirm')
+      await header.getByRole('button', { name: 'Confirm chart' }).hover()
+      await wait(5000)
+    },
+  },
+  'dental-compare-cat': {
+    path: encounter(DENTAL.tigger.id),
+    setup: dentalSetup,
+    reset: (db) => resetDentalChart(db, DENTAL.tigger),
+    disclosure: dentalDisclosure,
+    ready: async (page) => {
+      await dentalEncounterReady(page, DENTAL.tigger)
+      await openDentalChart(page)
+    },
+    act: async (page) => {
+      const panel = page.getByTestId('dental-chart-panel')
+      await wait(2500)
+      await scrollTo(page.getByRole('heading', { name: 'Feline dental chart' }))
+      await wait(2000)
+      await point(panel.getByLabel('Compare with'))
+      await wait(800)
+      await page.getByRole('option', { name: /2025/ }).first().click()
+      await expect(panel.getByTestId('dental-compare-summary')).toBeVisible()
+      await wait(4000)
+      await panel.locator('button[data-tooth="407"]').first().hover()
+      await wait(3000)
+      await panel.locator('button[data-tooth="108"]').first().hover()
+      await wait(4000)
+    },
+  },
+  'dental-confirm-cat': {
+    path: encounter(DENTAL.tigger.id),
+    setup: dentalSetup,
+    reset: (db) => resetDentalChart(db, DENTAL.tigger),
+    restore: (db) => resetDentalChart(db, DENTAL.tigger),
+    disclosure: dentalDisclosure,
+    ready: async (page) => {
+      await dentalEncounterReady(page, DENTAL.tigger)
+      await openDentalChart(page)
+    },
+    act: async (page) => {
+      const header = page.getByTestId('dental-chart-header')
+      await wait(3000)
+      await point(header.getByRole('button', { name: 'Confirm chart' }))
+      await expect(header).toContainText('Confirmed')
+      await wait(4000)
+      await point(header.getByRole('button', { name: 'Download' }))
+      await expect(page.getByRole('menuitem', { name: /Download PDF/ })).toBeVisible()
+      await page.getByRole('menuitem', { name: /Download PDF/ }).hover()
+      await wait(2500)
+      await page.getByRole('menuitem', { name: /Download image/ }).hover()
+      await wait(2500)
+      await page.keyboard.press('Escape')
+      await wait(2000)
+    },
+  },
 }
 
 async function recordFor(page, seconds) {
@@ -1836,4 +2085,5 @@ export const shots = {
       if (await reply.count()) await reply.first().click()
     },
   },
+  ...dentalShots,
 }

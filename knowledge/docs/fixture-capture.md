@@ -19,6 +19,8 @@ start by searching for a production demo account or placing real patient data in
 | Shared fictional story         | `noctune-core/scripts/fixtures/noctune-demo/story.ts` | Northstar Veterinary Clinic, patients, conversations, SOAP/discharge drafts, and messages |
 | Reserved fixture IDs           | `noctune-core/scripts/fixtures/noctune-demo/ids.ts`   | Stable IDs for fixture-owned rows                                                         |
 | Docs database/auth seeder      | `noctune-core/scripts/seed-docs-capture.ts`           | Populates synthetic product data and reserved development auth identities                 |
+| Dental chart samples           | `noctune-core/scripts/dental-samples/docs-capture.ts` | Dental charting on; sample dogs and cats with charts and recordings, personal workspace   |
+| Dental sample IDs and audio    | `noctune-docs/capture/support/dental-samples.mjs`     | Encounter IDs the dental captures open; serves each committed synthetic-speech recording  |
 | Web capture runner             | `noctune-docs/scripts/capture-screenshots.mjs`        | Guards, migrates, seeds, captures, verifies, and atomically publishes docs images         |
 
 The docs runner generates a fresh ephemeral password each run. It is not a password to

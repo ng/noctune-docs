@@ -656,6 +656,82 @@ pnpm tutorials:caption-video .tutorial-output/windows-app/video \
   .tutorial-output/windows-app/captions .tutorial-output/windows-app/delivery
 ```
 
+## Dental charts (episode 15, early preview)
+
+Web only, one episode with both species: a dog (Murphy, a full COHAT with review flags) for the
+drawer, playback, review and saving, and a cat (Tigger, tooth resorption over two visits) for
+comparing and confirming. The workflow is the same for both, so per-species episodes would repeat
+the same narration; the series plan splits episodes by platform, not species. The story is
+`dental-charts-web.json`. It says **early preview** on the opening card, in the narration, in each
+scene's footer, and on the closing card, and says the charts come from sample dictations read by
+synthetic voices.
+
+The samples come from Core's docs capture seeder (`scripts/dental-samples/docs-capture.ts`), in the
+capture user's **personal** workspace, so practice shots are unchanged; the dental shots set the
+`noctune-practice-id` cookie to `personal` in `setup`. Every sample encounter's audio is Core's
+committed synthetic-speech recording of its invented dictation
+(`scripts/dental-samples/recordings/*.m4a`, Git LFS; run `git lfs pull` in the Core checkout). The
+shots serve it for the encounter's signed audio key with byte ranges
+(`capture/support/dental-samples.mjs`), so the player plays and seeks real audio, and the chart's
+quotes seek to where each tooth was said. The shots are written for the UI after Core's dental
+charting follow-up (`feat/dental-charting-followup`): the **Dental Chart** tab, quadrant headings,
+and play/pause on a quote in the tooth's window. Capture from a Core checkout that has the
+follow-up and the docs capture seeder.
+
+`dental-chart-dog`, `dental-quote-play`, `dental-review-save`, `dental-compare-cat` and
+`dental-confirm-cat` reset their sample chart to its seeded state first (`current = original`, no
+edits or confirmation); the two that save also restore it afterwards.
+
+### App audio
+
+Playwright's screencast has no sound. A shot with `appAudio` (here `dental-listen` and
+`dental-quote-play`) instead records the page's `<audio>` events (`playing`, `pause`, `seeking`,
+`seeked`, `waiting`, `ended`, with the media position) from an init script, and the runner turns
+them into clip-time segments of the file it served (`scripts/tutorials/app-audio.mjs`). The capture
+manifest keeps the file beside the clip with its SHA-256; `prepare-media` copies it into `media/`
+as `<scene>-app.m4a` and puts the segments on the scene; the renderer mixes those seconds of that
+file in at full level and adds the scene's label to the footer ("Sample dictation · synthetic
+voice"). The sound is the bytes the browser played, at the positions it played them.
+
+The times, for one segment:
+
+- **raw** t is seconds since the shot's page opened (the raw video starts there);
+  clip `c = t − sourceIn`, where `sourceIn` is the shot's in-point.
+- A segment is `[c0, c1)` playing from media position `m0` (from `playing`, or `seeked` while
+  playing). Segments before the in-point are dropped; one that straddles it starts at `c = 0` with
+  `m0` advanced by the same amount.
+- In a scene with in-point `start` and length `L`, the segment is heard from scene time
+  `a = max(0, c0 − start)` to `b = min(c1 − start, L)`, from media position `m0 + (a − (c0 − start))`.
+- Narration and app audio never overlap: the renderer refuses a piece with
+  `a < speechSeconds + 0.2`. Lengthen the shot's lead-in before playback, or lower `start`.
+- A scene's optional `hold` (seconds, at most 20) adds silence after the narration, so
+  `L = ceil((speechSeconds + 0.45 + hold) × 30) / 30`. Choose `hold` so `L` covers the playback;
+  the renderer cuts audio at the scene's end.
+
+`hold` and `start` follow the narration, so recheck them after each narration take, as for cuts.
+
+```sh
+# Core: the same checkout as CAPTURE_CORE_DIR, with the dental follow-up and the dental seed
+git -C /absolute/path/to/noctune-core lfs pull --include "scripts/dental-samples/recordings/*"
+pnpm tutorials:capture-web /absolute/path/to/noctune-docs /absolute/path/to/noctune-core \
+  .tutorial-output/web-dental \
+  dental-drawer,dental-listen,dental-chart-dog,dental-quote-play,dental-review-save,dental-compare-cat,dental-confirm-cat
+pnpm tutorials:prepare-media tutorials/dental-charts-web.json .tutorial-output/web-dental \
+  .tutorial-output/dental-charts-web/prepared
+pnpm tutorials:narrate .tutorial-output/dental-charts-web/prepared/story.json \
+  .tutorial-output/dental-charts-web/narration "$TUTORIAL_ENV_FILE"
+pnpm tutorials:render .tutorial-output/dental-charts-web/narration \
+  .tutorial-output/dental-charts-web/video .tutorial-output/dental-charts-web/prepared/media
+pnpm tutorials:captions .tutorial-output/dental-charts-web/narration \
+  .tutorial-output/dental-charts-web/captions "$TUTORIAL_ENV_FILE"
+pnpm tutorials:caption-video .tutorial-output/dental-charts-web/video \
+  .tutorial-output/dental-charts-web/captions .tutorial-output/dental-charts-web/delivery
+```
+
+Listen to every scene with app audio: check that the dictation starts after the narration, that
+the quote heard in `dental-quote-play` is tooth 104's ("One of four…"), and that the player's
+position on screen moves with the sound.
+
 ## Publishing to the docs
 
 Reviewed videos are served from `https://docs-media.noctune.ai`, a dedicated S3
