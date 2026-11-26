@@ -2,8 +2,6 @@
 
 - [Browser extension](browser-extension.md) - Move a noctune note into your practice system, one keystroke per section.
 
-- [Dental charts (early preview)](dental-charts.md) - Turn a dictated dog or cat dental exam into a chart you check, play back, compare, and confirm. Early preview.
-
 - [Discharge and follow-up](discharge-follow-up.md) - Send discharge instructions and keep replies with the visit.
 
 - [Your first encounter](first-encounter.md) - Follow one visit from recording to finished note.

@@ -13,5 +13,4 @@ export default {
   'locked-sections': 'Section locks',
   'browser-extension': 'Browser extension',
   'windows-app': 'Windows app',
-  'dental-charts': 'Dental charts (early preview)',
 }
