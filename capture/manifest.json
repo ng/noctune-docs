@@ -267,9 +267,9 @@
   },
   {
     "id": "email-templates-library",
-    "route": "/email-library",
+    "route": "/templates/handouts",
     "output": "public/screenshots/email-templates/library.webp",
-    "docs": ["content/email-templates.mdx"]
+    "docs": ["content/handouts.mdx"]
   },
   {
     "id": "messages-inbox",

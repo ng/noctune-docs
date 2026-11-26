@@ -6,11 +6,11 @@
 
 - [Discharge and follow-up](discharge-follow-up.md) - Send discharge instructions and keep replies with the visit.
 
-- [Email templates](email-templates.md) - Write the client emails you send most, once.
-
 - [Your first encounter](first-encounter.md) - Follow one visit from recording to finished note.
 
 - [Getting started](getting-started.md) - Set up once, then just record.
+
+- [Handouts](handouts.md) - Write the client emails you send most, once.
 
 - [Video Tutorials](overview.md) - Watch noctune in short walkthroughs.
 
