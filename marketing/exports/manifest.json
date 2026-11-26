@@ -1,20 +1,20 @@
 {
   "version": 1,
-  "sourceManifestSha256": "141518fe87fbda0328e32a022a0e160c9a1ae833a12c260be97fc4e2d3e16f04",
+  "sourceManifestSha256": "ad5dd54f41594135d512efcbb2861c71c40378a1a4858a6b9bb2eca6660cac67",
   "exports": [
     {
       "file": "noctune-vetsoftwarehub-hero-1200x630.png",
       "width": 1200,
       "height": 630,
-      "bytes": 151641,
-      "sha256": "b115634b2732360366ea610444b9f16131ceebc0041df45447a4837a071c73a1"
+      "bytes": 151639,
+      "sha256": "2998b7c09dda83bf015c746db0276968032291e5def50676c10db6e2118a4fd8"
     },
     {
       "file": "noctune-linkedin-cover-1512x256.png",
       "width": 1512,
       "height": 256,
-      "bytes": 49283,
-      "sha256": "2c29f55f5624ce1e2f62548a86a51001099f788a1afd0fd2ad892e9743db557b"
+      "bytes": 49280,
+      "sha256": "de26f85bd76eae4143c192f0ba3ca7f9b6a29e39668e41554e5cc74865a69b36"
     },
     {
       "file": "noctune-linkedin-workflow-cover-1512x256.png",
@@ -36,6 +36,41 @@
       "height": 400,
       "bytes": 20436,
       "sha256": "4a87385b97924d1a534de51a9c1e0a6785db3ecc3235aee9546188238caaa31c"
+    },
+    {
+      "file": "noctune-dental-charts-dog-1200x630.png",
+      "width": 1200,
+      "height": 630,
+      "bytes": 151235,
+      "sha256": "1b687d442a2f8b581a10357eb119a46949b206e163a4dd1eac25008cf8af2a77"
+    },
+    {
+      "file": "noctune-dental-charts-cat-1200x630.png",
+      "width": 1200,
+      "height": 630,
+      "bytes": 137389,
+      "sha256": "462c0bb4562d3f7d31699c59e2d0d2ddcc05e51f8035c611ae50d43c14fb6e2a"
+    },
+    {
+      "file": "noctune-dental-charts-dog-and-cat-1200x630.png",
+      "width": 1200,
+      "height": 630,
+      "bytes": 139552,
+      "sha256": "ac393d6417aa19f39e3ed13f464af2d61dd9e923c110b060ef6d3e2af1ed872a"
+    },
+    {
+      "file": "noctune-dental-charts-compare-1200x630.png",
+      "width": 1200,
+      "height": 630,
+      "bytes": 150812,
+      "sha256": "693a48336dd2d80e968677ec101be4594f1fdce2fd898caaab2ea3d07a5cf787"
+    },
+    {
+      "file": "noctune-dental-charts-slide-1920x1080.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 310872,
+      "sha256": "58e4d468593102644621f31b3a730415f6015fb70cd9a60c9eee809f72e59ba7"
     }
   ]
 }

@@ -18,5 +18,16 @@
     "logo-stacked-white.png": "f0e8c69d4f850730de6e3fe611e10efc6ffe1c2d789da6710a88a32be073ac75",
     "web-review.png": "1313aebec48601429317c5787553b5984cb4001635c2972e7c2975d4ff3ee348",
     "ios-recording.png": "96da28c386b69d2b9386534a3246f15ba30490fe325d74d743570ec4a622d79c"
+  },
+  "dental": {
+    "captures": "capture/manifest.json dental-chart-dog, dental-chart-cat, dental-compare-cat",
+    "coreCommit": "1449987a5c83513b8afb640ac0b4ed06600c3257",
+    "fixture": "Dental samples in the capture user's personal workspace; invented dictations, synthetic voices",
+    "sha256": {
+      "dental-chart-dog.png": "a417f219f6d6a6374a2d1b7f5ce5e1988f5c8393fdafe96318fa0e0a039acdbb",
+      "dental-chart-cat.png": "5e2366268ecf8c153f6049fd5cef5197daf62ba9ef8ea0cbecadcd49f78d0d0e",
+      "dental-compare-cat.png": "abb9e4e16ad6951e9243ce79a364cc190c8c22f72c77b952d5196f813cc04340"
+    },
+    "compareCrop": "88 190 860 484"
   }
 }
