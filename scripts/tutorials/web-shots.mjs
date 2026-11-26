@@ -52,10 +52,20 @@ async function noteReady(page) {
     timeout: 60000,
   })
   await expect(page.getByText('Accepted', { exact: true })).toHaveCount(0)
-  await expect
-    .poll(() => page.locator('audio').evaluate((audio) => audio.readyState))
-    .toBeGreaterThan(0)
-  await expect.poll(() => page.locator('audio').evaluate((audio) => audio.duration)).toBe(284)
+  await playerShowsLength(page, MOCHI_LENGTH)
+}
+
+// The player signs and loads audio only when it is played or sought
+// (`<audio preload="none">` until then), so the element has no duration on
+// load. Wait for the length the player shows from the encounter's data; its
+// controls row reads the elapsed time then the length, unspaced ("0:004:44").
+const MOCHI_LENGTH = /4:44$/
+const NON_ZERO_LENGTH = /(?:[1-9]\d*:\d\d|0:(?!00)\d\d)$/
+
+async function playerShowsLength(page, length) {
+  const rewind = page.getByRole('button', { name: 'Rewind 10 seconds' })
+  await expect(rewind).toBeEnabled({ timeout: 60000 })
+  await expect(rewind.locator('xpath=..')).toContainText(length)
 }
 
 const uploadDisclosure = 'Demo upload · cloud services simulated'
@@ -438,12 +448,7 @@ async function dentalEncounterReady(page, sample) {
   await expect(page.getByText(sample.patient, { exact: true }).first()).toBeVisible({
     timeout: 60000,
   })
-  await expect
-    .poll(() => page.locator('audio').evaluate((audio) => audio.readyState))
-    .toBeGreaterThan(0)
-  await expect
-    .poll(() => page.locator('audio').evaluate((audio) => audio.duration))
-    .toBeGreaterThan(30)
+  await playerShowsLength(page, NON_ZERO_LENGTH)
 }
 
 async function openDentalChart(page) {
@@ -1105,40 +1110,40 @@ export const shots = {
     },
   },
   'email-templates': {
-    path: '/email-library',
+    path: '/templates/handouts',
     reset: (db) => resetEmailTemplates(db),
     ready: (page) =>
-      expect(page.getByRole('button', { name: 'New Template' })).toBeVisible({ timeout: 60000 }),
+      expect(page.getByRole('textbox', { name: 'Search handouts' })).toBeVisible({
+        timeout: 60000,
+      }),
     act: async (page) => {
       await wait(4000)
-      await page.locator('input[value="Post-op check-in"]').click()
-      await wait(2500)
-      await page.getByRole('option', { name: /Recheck reminder/ }).click()
+      await page.getByRole('button', { name: 'Recheck reminder', exact: true }).click()
       await wait(4000)
       await page.getByRole('button', { name: 'Placeholder' }).click()
       await wait(3500)
       await page.keyboard.press('Escape')
     },
   },
-  // Email templates (episode 10): browse, edit and save, insert on an
-  // encounter, and late fill from the To recipient. Nothing is sent.
+  // Handouts, formerly email templates (episode 10): browse, edit and save,
+  // insert on an encounter, and late fill from the To recipient. Nothing is sent.
   'email-library': {
-    path: `/email-library?template=${emailTemplate(2)}`,
+    path: `/templates/handouts/${emailTemplate(2)}`,
     reset: (db) => resetEmailTemplates(db),
     ready: (page) =>
-      expect(page.locator('input[value="Recheck reminder"]')).toBeVisible({ timeout: 60000 }),
+      expect(page.getByRole('heading', { name: 'Recheck reminder', level: 2 })).toBeVisible({
+        timeout: 60000,
+      }),
     act: async (page) => {
       await wait(2000)
-      const search = page.locator('input[value="Recheck reminder"]')
+      const search = page.getByRole('textbox', { name: 'Search handouts' })
       await search.hover()
       await wait(400)
       await search.click()
-      await expect(page.getByRole('option', { name: /Post-op check-in/ })).toBeVisible()
       await wait(4500)
-      await page.keyboard.press('ControlOrMeta+a')
       await page.keyboard.type('post', { delay: 120 })
       await wait(1500)
-      const option = page.getByRole('option', { name: /Post-op check-in/ })
+      const option = page.getByRole('button', { name: 'Post-op check-in', exact: true })
       await option.hover()
       await wait(400)
       await option.click()
@@ -1148,7 +1153,7 @@ export const shots = {
     },
   },
   'email-edit': {
-    path: `/email-library?template=${emailTemplate(3)}`,
+    path: `/templates/handouts/${emailTemplate(3)}`,
     reset: (db) => resetEmailTemplates(db),
     ready: (page) =>
       expect(page.getByRole('textbox', { name: 'Body' })).toContainText('worsening pain', {
@@ -1178,7 +1183,7 @@ export const shots = {
       await page.keyboard.type('.', { delay: 90 })
       await expect(page.getByText(/Call us at \(555\) 010-2233\./)).toBeVisible()
       await wait(3500)
-      const save = page.getByRole('button', { name: 'Save Template' })
+      const save = page.getByRole('button', { name: 'Save', exact: true })
       await save.hover()
       await wait(400)
       await save.click()
@@ -1211,11 +1216,11 @@ export const shots = {
       await expect(page.getByRole('textbox', { name: 'Subject' })).toBeVisible({ timeout: 30000 })
       await wait(800)
       const composer = page.getByTestId('composer-full')
-      const templates = composer.getByRole('button', { name: 'Templates' })
+      const templates = composer.getByRole('button', { name: 'Handouts' })
       await templates.hover()
       await wait(400)
       await templates.click()
-      await expect(page.getByText('Insert a template')).toBeVisible()
+      await expect(page.getByText('Insert a handout')).toBeVisible()
       await expect(page.getByTestId('template-picker-loading')).toHaveCount(0)
       await wait(1200)
       const postOp = page.getByRole('button', { name: /^Post-op check-in/ })
@@ -1252,11 +1257,11 @@ export const shots = {
       const dialog = page.getByRole('dialog')
       await expect(dialog.getByText('New message', { exact: true })).toBeVisible()
       await wait(900)
-      const templates = dialog.getByRole('button', { name: 'Templates' })
+      const templates = dialog.getByRole('button', { name: 'Handouts' })
       await templates.hover()
       await wait(400)
       await templates.click()
-      await expect(page.getByText('Insert a template')).toBeVisible()
+      await expect(page.getByText('Insert a handout')).toBeVisible()
       await expect(page.getByTestId('template-picker-loading')).toHaveCount(0)
       await wait(1200)
       const recheck = page.getByRole('button', { name: /^Recheck reminder/ })
@@ -1329,8 +1334,8 @@ export const shots = {
       await to.pressSequentially('jamie.chen@example.test', { delay: 45 })
       await to.press('Enter')
       await wait(1500)
-      await page.getByTestId('composer-full').getByRole('button', { name: 'Templates' }).click()
-      await expect(page.getByText('Insert a template')).toBeVisible()
+      await page.getByTestId('composer-full').getByRole('button', { name: 'Handouts' }).click()
+      await expect(page.getByText('Insert a handout')).toBeVisible()
       await wait(2000)
       await page.getByText('Recheck reminder').first().click()
       await wait(3500)
@@ -1521,7 +1526,7 @@ export const shots = {
         timeout: 60000,
       })
       await expect(page.getByText('Mochi is eating normally again').first()).toBeVisible()
-      await expect.poll(() => page.locator('audio').evaluate((audio) => audio.duration)).toBe(284)
+      await playerShowsLength(page, MOCHI_LENGTH)
       await wait(3500)
     },
   },
@@ -1540,7 +1545,7 @@ export const shots = {
       await expect(page.getByRole('button', { name: 'Reply', exact: true }).last()).toBeVisible({
         timeout: 60000,
       })
-      await expect.poll(() => page.locator('audio').evaluate((audio) => audio.duration)).toBe(284)
+      await playerShowsLength(page, MOCHI_LENGTH)
     },
     act: async (page) => {
       await wait(1500)
@@ -1548,8 +1553,8 @@ export const shots = {
       const composer = page.getByTestId('composer-full')
       await expect(composer).toContainText('jamie.chen@example.test', { timeout: 30000 })
       await wait(3500)
-      await point(composer.getByRole('button', { name: 'Templates' }))
-      await expect(page.getByText('Insert a template')).toBeVisible()
+      await point(composer.getByRole('button', { name: 'Handouts' }))
+      await expect(page.getByText('Insert a handout')).toBeVisible()
       await wait(1800)
       await point(page.getByText('Recheck reminder').first())
       await expect(composer).toContainText(/schedule Mochi.s recommended recheck/)
