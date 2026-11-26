@@ -33,7 +33,7 @@ background, dark teal typography, roomy layouts, and authentic app captures.
    and without implying automatic outside contact.
 
 Source topics: `content/setup-guide.mdx`, `content/encounters/`,
-`content/templates.mdx`, `content/email-templates.mdx`, `content/messages.mdx`,
+`content/templates.mdx`, `content/handouts.mdx`, `content/messages.mdx`,
 `content/patients.mdx`, `content/practice.mdx`, and `content/reference/sentinel.mdx`.
 
 The first audio audition uses the same text with three Deepgram voices: Haley

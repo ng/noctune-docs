@@ -1,0 +1,60 @@
+---
+title: Handouts
+type: User Guide
+description: Reuse the client emails you send most.
+---
+
+# Reuse the client emails you send most
+
+Handouts are reusable client emails: a subject and a message for onboarding, reminders, post-visit follow-up, and administrative communication. Use them for delivery or cover messages and reusable client education, such as diet guidance, greetings, and signatures. They live in **Templates**, on the **Handouts** tab next to **SOAP** and **Discharge**. Handouts used to be called Email Templates.
+
+<TutorialVideo id="email-templates-web" />
+
+Think of a handout as reusable message text. Keep internal medical-record structure in a [SOAP Template](/templates#soap-templates), and keep patient-specific home care, medication directions, warnings, follow-up, and recheck instructions in a [Discharge Template](/templates#discharge-templates).
+
+<BrowserFrame
+  src="/screenshots/email-templates/library.webp"
+  alt="The Handouts tab of Templates: a searchable list of handouts grouped by category beside the open Post-op check-in handout, with its subject and category fields, a markdown body, and a live preview"
+  url="app.noctune.ai/templates/handouts"
+/>
+
+## Find and organize handouts
+
+The list beside the editor groups your handouts by category: **Onboarding**, **Reminders**, **Post-visit**, **Admin**, or **Uncategorized**. Use **Search handouts** at the top of the list to find one by name. Choose **Favorite** above the editor to mark the open handout **Favorited**; favorites show a star in the list.
+
+Favorites belong to the current user.
+
+## Create or edit a handout
+
+Choose **New handout** (the **+** beside the search), then set the name, optional **Category**, **Subject**, and **Body**. To rename a saved handout, select the pencil beside its name. The body supports markdown for bold, italics, underline, and bulleted lists, and the **Preview** pane shows the rendered message. noctune shows **Unsaved changes** until you choose **Save**, then **All changes saved**.
+
+To remove a handout you no longer need, open **More actions** (`⋯`) above the editor and choose **Delete**.
+
+## Add merge fields
+
+Type `{` at the cursor to open the searchable field menu, or choose **Placeholder** in the body toolbar. The editor displays a recognized field as a labeled chip.
+
+Email merge fields are different from the human-readable double-brace guidance accepted in SOAP and discharge templates. Email fields are selected from this menu and resolve to patient, sender, practice, or date values when the handout is inserted into a message. Double-brace text in a SOAP or discharge template is preserved as guidance for noctune's note generator instead.
+
+| Group    | Available values                       |
+| -------- | -------------------------------------- |
+| Patient  | Patient's name, species, breed, gender |
+| You      | Your display name                      |
+| Practice | Practice name, phone, email            |
+| Date     | Today's date                           |
+
+Preview uses example values to show the finished shape. An unrecognized or unresolved field appears in amber.
+
+## Insert into a message
+
+You insert a handout from a message rather than from the Handouts tab. In a new message or reply, choose **Handouts** to open the **Insert a handout** picker, search by name, and choose **Insert**.
+
+When inserted:
+
+- the subject fills only when the current subject is empty
+- the body is appended without replacing text you already wrote
+- sender, practice, and date fields resolve from the active workspace
+- patient fields resolve when a recipient matches an owner email on a patient record
+- **Undo** restores the draft to its pre-insert state
+
+Before sending, noctune identifies fields it could not resolve. Correct the recipient or source record, edit the message, or explicitly choose **Send anyway**. Sending anyway leaves that field text in the delivered email.

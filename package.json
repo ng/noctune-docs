@@ -5,7 +5,7 @@
   "scripts": {
     "assets:verify": "node scripts/verify-raster-assets.mjs",
     "build": "pnpm assets:verify && next build",
-    "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind && node scripts/build-search-index.mjs",
+    "postbuild": "node scripts/build-pagefind.mjs && node scripts/build-search-index.mjs",
     "check": "pnpm okf:check && pnpm test:okf && pnpm format:check && pnpm lint:md && pnpm test:wordmark && pnpm test:tutorials && pnpm test:assets && pnpm test:capture-safety && pnpm test:ios-line-markers && pnpm screenshots:verify && pnpm tsc && pnpm build && pnpm test:ios-support && pnpm test:search-index",
     "dev": "next dev",
     "format": "prettier --write .",
@@ -28,7 +28,7 @@
     "test:ios-line-markers": "node --experimental-strip-types --test tests/ios-line-markers.test.mjs",
     "test:ios-support": "node --test tests/ios-support-render.test.mjs",
     "test:okf": "node --test tests/okf.test.mjs",
-    "test:search-index": "node --test tests/search-index.test.mjs",
+    "test:search-index": "node --test tests/search-index.test.mjs tests/prerender-root.test.mjs",
     "test:tutorials": "node --test scripts/tutorials/*.test.mjs",
     "test:wordmark": "node --test tests/wordmark-style.test.mjs",
     "tsc": "tsc --noEmit",
@@ -57,7 +57,7 @@
   "dependencies": {
     "@theguild/remark-mermaid": "0.3.0",
     "@vercel/analytics": "^2.0.1",
-    "next": "16.3.6",
+    "next": "16.3.8",
     "nextra": "^4.2.17",
     "nextra-theme-docs": "^4.2.17",
     "react": "^19.0.0",
@@ -66,7 +66,7 @@
     "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
-    "@playwright/test": "1.65.0",
+    "@playwright/test": "1.65.1",
     "@semantic-release/changelog": "^7.0.0",
     "@semantic-release/git": "^11.0.0",
     "@semantic-release/github": "^12.0.6",
@@ -75,7 +75,7 @@
     "@types/react-dom": "^19.0.0",
     "@typescript/native": "npm:typescript@^7.0.2",
     "conventional-changelog-conventionalcommits": "^10.0.0",
-    "dotenv": "18.0.9",
+    "dotenv": "18.0.10",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.0",
     "pagefind": "^1.5.2",
@@ -97,7 +97,7 @@
     "unified": "^11.0.5",
     "yaml": "^2.9.1"
   },
-  "packageManager": "pnpm@12.18.0",
+  "packageManager": "pnpm@12.20.0",
   "engines": {
     "node": ">=24.22.1 <25"
   }

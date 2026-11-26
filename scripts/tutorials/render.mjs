@@ -6,6 +6,7 @@ import { execFileSync } from 'node:child_process'
 import sharp from 'sharp'
 import { withStagedOutput } from './staged-output.mjs'
 import { validateStory } from './narrate.mjs'
+import { sceneAppAudio, validateAppAudio } from './app-audio.mjs'
 
 const run = (args) => execFileSync('ffmpeg', ['-v', 'error', '-y', ...args], { stdio: 'pipe' })
 const probe = (file) =>
@@ -137,6 +138,7 @@ export function validateTimeline(story) {
         throw Error(`Invalid instruction labels: ${scene.id}`)
     } else if (!scene.source) throw Error(`Missing media: ${scene.id}`)
     if (!scene.audio) throw Error(`Missing audio: ${scene.id}`)
+    validateAppAudio(scene)
     at += scene.duration
   }
   if (!Number.isFinite(story.duration) || Math.abs(story.duration - at) > 0.001)
@@ -375,7 +377,18 @@ export async function render(timelineDir, output, roots) {
     const measuredAudio = Number(probe(audio).format.duration)
     if (!Number.isFinite(measuredAudio) || Math.abs(measuredAudio - scene.speechSeconds) > 0.1)
       throw Error(`Audio changed since narration: ${scene.id}`)
-    return { scene, source, audio, motion, start }
+    // The product's own audio, from the file the page played, where the footage plays it
+    let appAudio = null
+    if (scene.appAudio) {
+      if (!motion) throw Error(`App audio needs recorded footage: ${scene.id}`)
+      const file = sourcePath(root, scene.appAudio.source)
+      const pieces = sceneAppAudio(scene)
+      const length = Number(probe(file).format.duration)
+      if (pieces.some((piece) => piece.from + piece.length > length + 0.05))
+        throw Error(`App audio runs past its file: ${scene.id}`)
+      appAudio = { file, pieces, gain: scene.appAudio.gain ?? 1 }
+    }
+    return { scene, source, audio, motion, start, appAudio }
   })
   await withStagedOutput(output, async (stage) => {
     const work = path.join(stage, 'work'),
@@ -390,7 +403,7 @@ export async function render(timelineDir, output, roots) {
     fs.mkdirSync(work, { recursive: true })
     fs.mkdirSync(qa, { recursive: true })
     const segments = []
-    for (const [index, { scene, source, audio, motion, start }] of inputs.entries()) {
+    for (const [index, { scene, source, audio, motion, start, appAudio }] of inputs.entries()) {
       const phone = scene.platform === 'ios'
       const desktop = !phone && story.frame === 'window'
       const box = phone
@@ -426,7 +439,7 @@ export async function render(timelineDir, output, roots) {
               : desktop
                 ? windowFrame(box)
                 : browserFrame(box, story)
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><rect width="100%" height="100%" fill="#F3F8F2"/><ellipse cx="1680" cy="650" rx="690" ry="880" fill="#CDE7DF"/><g font-family="Arial" fill="#132D2B"><image href="data:image/png;base64,${logo}" x="76" y="56" width="300" height="80" preserveAspectRatio="xMinYMid meet"/><text x="76" y="262" font-size="19" fill="#53716A">${String(index + 1).padStart(2, '0')} / ${phone ? 'iOS' : desktop ? 'WINDOWS' : 'WEB'} ${escape(story.kicker || 'WALKTHROUGH')}</text>${headline}<text x="76" y="786" font-size="20" font-weight="700" fill="#11736F">noctune.ai</text><text x="76" y="820" font-size="20" fill="#4D6963">${escape(story.tagline || 'Your first encounter, step by step.')}</text>${bars}${frame}<text x="960" y="1050" text-anchor="middle" font-size="19" fill="#4D6963">Fictional demo data · ${scene.instructionCard ? 'Instruction card' : motion ? 'Recorded app footage' : 'Static app capture'}${scene.disclosure ? ' · ' + escape(scene.disclosure) : ''}</text></g></svg>`
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><rect width="100%" height="100%" fill="#F3F8F2"/><ellipse cx="1680" cy="650" rx="690" ry="880" fill="#CDE7DF"/><g font-family="Arial" fill="#132D2B"><image href="data:image/png;base64,${logo}" x="76" y="56" width="300" height="80" preserveAspectRatio="xMinYMid meet"/><text x="76" y="262" font-size="19" fill="#53716A">${String(index + 1).padStart(2, '0')} / ${phone ? 'iOS' : desktop ? 'WINDOWS' : 'WEB'} ${escape(story.kicker || 'WALKTHROUGH')}</text>${headline}<text x="76" y="786" font-size="20" font-weight="700" fill="#11736F">noctune.ai</text><text x="76" y="820" font-size="20" fill="#4D6963">${escape(story.tagline || 'Your first encounter, step by step.')}</text>${bars}${frame}<text x="960" y="1050" text-anchor="middle" font-size="19" fill="#4D6963">Fictional demo data · ${scene.instructionCard ? 'Instruction card' : motion ? 'Recorded app footage' : 'Static app capture'}${scene.disclosure ? ' · ' + escape(scene.disclosure) : ''}${scene.appAudio ? ' · ' + escape(scene.appAudio.label) : ''}</text></g></svg>`
       const card = path.join(work, `${index}-card.png`)
       const segment = path.join(work, `${index}.mp4`)
       if (scene.brandCard) {
@@ -526,6 +539,26 @@ export async function render(timelineDir, output, roots) {
       const visual = motion
         ? ['-ss', String(start), '-i', visualSource]
         : ['-loop', '1', '-framerate', '30', '-i', visualSource]
+      // App audio pieces follow the masks as inputs; each is cut from the file,
+      // delayed to its scene time, and mixed with the narration at full level.
+      const firstAppInput = 3 + (roundedScreen ? 1 : 0) + paneMasks.length
+      const appInputs = (appAudio?.pieces ?? []).flatMap((piece) => [
+        '-ss',
+        String(piece.from),
+        '-t',
+        String(piece.length),
+        '-i',
+        appAudio.file,
+      ])
+      const appFilters = (appAudio?.pieces ?? [])
+        .map(
+          (piece, i) =>
+            `;[${firstAppInput + i}:a]aresample=48000,aformat=channel_layouts=mono,volume=${appAudio.gain},adelay=${Math.round(piece.at * 1000)}:all=1[app${i}]`,
+        )
+        .join('')
+      const audioFilter = appAudio
+        ? `[2:a]aresample=48000,aformat=channel_layouts=mono,apad[narration]${appFilters};[narration]${appAudio.pieces.map((_, i) => `[app${i}]`).join('')}amix=inputs=${appAudio.pieces.length + 1}:duration=first:normalize=0[a]`
+        : '[2:a]apad,aresample=48000[a]'
       run([
         '-loop',
         '1',
@@ -538,8 +571,9 @@ export async function render(timelineDir, output, roots) {
         audio,
         ...(roundedScreen ? ['-loop', '1', '-framerate', '30', '-i', mask] : []),
         ...paneMasks.flatMap((file) => ['-loop', '1', '-framerate', '30', '-i', file]),
+        ...appInputs,
         '-filter_complex',
-        `${composite};[2:a]apad,aresample=48000[a]`,
+        `${composite};${audioFilter}`,
         '-map',
         '[v]',
         '-map',
@@ -616,6 +650,21 @@ export async function render(timelineDir, output, roots) {
             at: scene.at,
             duration: scene.duration,
           })),
+          // Kept beside `scenes`, which the caption pass compares field for field
+          ...(inputs.some((input) => input.appAudio)
+            ? {
+                appAudio: inputs
+                  .filter((input) => input.appAudio)
+                  .map(({ scene, appAudio }) => ({
+                    scene: scene.id,
+                    label: scene.appAudio.label,
+                    sha256: createHash('sha256')
+                      .update(fs.readFileSync(appAudio.file))
+                      .digest('hex'),
+                    pieces: appAudio.pieces,
+                  })),
+              }
+            : {}),
           ...(story.cover !== undefined ? { cover: story.cover } : {}),
           fullDecodePassed: true,
           visualReviewPassed: false,

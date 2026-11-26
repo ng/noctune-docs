@@ -28,7 +28,7 @@ export default {
     title: 'Templates & Content',
   },
   templates: 'SOAP & Discharge Templates',
-  'email-templates': 'Email Templates',
+  handouts: 'Handouts',
   community: 'Community Templates',
   '--integrations': {
     type: 'separator',

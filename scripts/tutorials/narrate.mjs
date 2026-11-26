@@ -42,6 +42,13 @@ export function validateStory(story) {
       throw Error(`Scene ${scene.id}: narration must contain 1–1800 characters`)
     if (!['ios', 'web'].includes(scene.platform))
       throw Error(`Scene ${scene.id}: platform must be ios or web`)
+    // Optional silence after the narration, in seconds, so the footage can play
+    // on with the product's own audio (`appAudio`) heard by itself.
+    if (
+      scene.hold !== undefined &&
+      !(Number.isFinite(scene.hold) && scene.hold > 0 && scene.hold <= 20)
+    )
+      throw Error(`Scene ${scene.id}: hold must be 0–20 seconds`)
   }
 }
 export const fingerprint = (value) =>
@@ -118,8 +125,8 @@ export async function narrate(story, config, env, output, cache) {
         }
       }
       const speechSeconds = duration(cached)
-      // Quantize to 30 fps, retaining a short pause after each scene.
-      const seconds = Math.ceil((speechSeconds + 0.45) * 30) / 30
+      // Quantize to 30 fps, retaining a short pause (and any hold) after each scene.
+      const seconds = Math.ceil((speechSeconds + 0.45 + (scene.hold ?? 0)) * 30) / 30
       const audio = `${scene.id}.wav`
       fs.copyFileSync(cached, path.join(stage, audio))
       scenes.push({ ...scene, audio, at, speechSeconds, duration: seconds, cacheKey: key })
