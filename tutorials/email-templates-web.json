@@ -1,32 +1,32 @@
 {
   "version": 1,
-  "title": "Email templates in noctune — web",
-  "kicker": "EMAIL TEMPLATES",
+  "title": "Handouts in noctune — web",
+  "kicker": "HANDOUTS",
   "tagline": "Write the client email once.",
   "scenes": [
     {
       "id": "email-library",
       "platform": "web",
       "headline": ["The emails you", "send every week."],
-      "narration": "This video covers email templates. Email Templates hold the client messages you send again and again, like a recheck reminder or a post-op check-in. Search the library, grouped by category, and choose a template to open it."
+      "narration": "This video covers handouts: the client emails you send again and again, like a recheck reminder or a post-op check-in. They live in Templates, on the Handouts tab. Search the list, grouped by category, and choose one to open it."
     },
     {
       "id": "email-edit",
       "platform": "web",
       "headline": ["Write the diet", "handout once."],
-      "narration": "Click into the body, and add the guidance you'd otherwise retype after every surgery. Type a brace to add a field, such as the practice phone. It appears as a labeled chip, and the preview fills it in with a sample patient. Choose Save Template, and it's ready for the next client."
+      "narration": "Click into the body, and add the guidance you'd otherwise retype after every surgery. Type a brace to add a field, such as the practice phone. It appears as a labeled chip, and the preview fills it in with a sample patient. Choose Save, and it's ready for the next client."
     },
     {
       "id": "email-insert",
       "platform": "web",
       "headline": ["Use it on", "the visit."],
-      "narration": "On an encounter, choose Send Email, then Send message. Choose Templates, and pick the post-op check-in. noctune fills in Mochi's name and the practice phone. Read it over before you send."
+      "narration": "On an encounter, choose Send Email, then Send message. Choose Handouts, and pick the post-op check-in. noctune fills in Mochi's name and the practice phone. Read it over before you send."
     },
     {
       "id": "email-recipient",
       "platform": "web",
       "headline": ["Placeholders fill", "from the recipient."],
-      "narration": "From New Message in the top bar, insert a template before you choose a recipient. The patient's name waits as a placeholder, and noctune tells you why. Add the owner's email in To. noctune matches it to the patient record, and fills in the name in both the subject and the message."
+      "narration": "From New Message in the top bar, insert a handout before you choose a recipient. The patient's name waits as a placeholder, and noctune tells you why. Add the owner's email in To. noctune matches it to the patient record, and fills in the name in both the subject and the message."
     },
     {
       "id": "what-fills-in",

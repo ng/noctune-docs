@@ -115,8 +115,12 @@ async function resetEmailTemplates(db, postOp = postOpBody) {
       'Hello,\n\nThe requested records for {{patient.name}} are ready. Let us know if another hospital needs them sent directly.',
     ],
   ])
-    await db`update email_templates set subject = ${subject}, body = ${body} where id = ${id}`
+    // The seed stamps modified_at with the capture date; a saved take leaves today's
+    await db`update email_templates set subject = ${subject}, body = ${body}, modified_at = ${SEEDED_AT} where id = ${id}`
 }
+
+/** Core's docs capture seeder's default capture time (`DOCS_CAPTURE_NOW`) */
+const SEEDED_AT = '2026-07-15T17:00:00.000Z'
 
 // Fictional practice material a clinic might already have: SOAP headings,
 // client discharge wording, and reusable home-care education in one paste.
