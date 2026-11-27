@@ -2,6 +2,11 @@
 title: Data Storage & Retention
 type: Reference
 description: What noctune stores, where, and for how long.
+sources:
+  - id: swift-1
+    resource: https://github.com/ng/noctune-swift/pull/190
+  - id: swift-2
+    resource: https://github.com/ng/noctune-swift/pull/184
 ---
 
 # What noctune stores, where, and for how long
@@ -30,6 +35,8 @@ noctune then stores the audio, transcript, and generated notes in its own system
 | Audio, first 31 days                 | Playable and downloadable                                                         |
 | Audio older than 31 days             | Gated unless the billing workspace has Long-term Storage or Sentinel preservation |
 | In-progress browser recording chunks | Stored temporarily in that browser for crash recovery                             |
+| iOS recordings not yet uploaded      | Stored on that iPhone or iPad until noctune confirms the upload                   |
+| Discarded iOS recordings             | Kept on that device in Recently deleted for up to 31 days, never uploaded         |
 
 The retention check uses the encounter creation time. Audio becomes gated when it is more than 31 whole days old—not at the start of day 31.
 
@@ -61,6 +68,14 @@ flowchart TD
 During a live browser take, noctune writes recovery chunks to IndexedDB on that device. The local copy lets the recovery prompt offer upload, download, or discard after a crash. Successful upload or explicit discard removes the corresponding local session.
 
 If IndexedDB is unavailable, the recording stays in memory and the drawer warns that crash protection is unavailable. Closing the tab can then lose the unprocessed take.
+
+## Recordings on iPhone and iPad
+
+The iOS app keeps each recording on the device until noctune confirms the upload. A recording that hasn't uploaded stays there through a sign-out or an expired sign-in, and uploads after the account that recorded it signs back in. Only that account can see or upload it, under **You → Not yet uploaded**.
+
+A recording you discard moves to **You → Recently deleted** on the same device. It is never uploaded. You can recover it for up to 31 days; after that, or when you choose **Delete**, it is deleted from the device for good. See [Get back a recording you discarded](../tutorials/record-and-recover.md#get-back-a-recording-you-discarded).
+
+Deleting your account removes your recordings from the device, including discarded ones. On a shared device, the recordings of anyone who hasn't used noctune on it for more than 30 days are removed the next time someone else signs in, so a discarded recording can be removed before its 31 days are up.
 
 ## Deletion and account policy
 

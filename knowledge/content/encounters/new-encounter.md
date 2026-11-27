@@ -55,6 +55,8 @@ See [Supported Formats & Limits](../reference/supported-formats.md) for accepted
 
 The noctune iOS app can record an appointment and upload it into the same account. Select the patient and note templates in the app, record the visit, then stop and submit. The encounter appears in the web queue for review. The current iOS controls are shown in the app itself and can differ slightly by release.
 
+A recording you discard in the iOS app moves to **Recently deleted** on the **You** tab, where you can recover it for up to 31 days. See [Get back a recording you discarded](../tutorials/record-and-recover.md#get-back-a-recording-you-discarded).
+
 ## What happens next
 
 Submitted audio appears under **In progress** while noctune transcribes and generates notes. When the note is ready, the encounter moves to **Needs review**. Processing problems appear under **Issues**.

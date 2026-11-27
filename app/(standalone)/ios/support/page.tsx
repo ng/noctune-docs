@@ -86,7 +86,9 @@ const helpTopics = [
         locked. The Live Activity shows elapsed time and the current state; tap it to return to the
         recording. If an interruption pauses capture, return to noctune and choose{' '}
         <strong>Resume recording</strong>. The Live Activity reports the app&apos;s recording; it
-        does not capture audio on its own.
+        does not capture audio on its own. If your sign-in expires during a visit, the recording
+        keeps going and uploads after you sign back in. A recording that hasn&apos;t uploaded stays
+        on the device when you sign out, and only the account that recorded it can upload it.
       </>
     ),
   },
@@ -114,6 +116,22 @@ const helpTopics = [
         <strong>Messages</strong>. The source-audio player stays available above{' '}
         <strong>Transcript</strong> and <strong>SOAP</strong>. Tap a timestamp in the transcript or
         generated note to seek to the matching moment in the source audio.
+      </>
+    ),
+  },
+  {
+    number: '08',
+    id: 'recently-deleted',
+    title: 'Recover a recording you discarded',
+    body: (
+      <>
+        Discarding a recording, in the recorder or under <strong>You → Not yet uploaded</strong>,
+        moves it to <strong>Recently deleted</strong> instead of deleting it, and nothing is
+        uploaded. Open <strong>You → Recently deleted</strong>, play the recording to check it, and
+        choose <strong>Recover</strong>. It returns to <strong>Not yet uploaded</strong>, ready to
+        upload. Each recording shows how many days it has left; after up to 31 days, or when you
+        choose <strong>Delete</strong>, it is deleted from the device for good. It was never
+        uploaded, so there is no other copy. Only the account that recorded it can see it.
       </>
     ),
   },
@@ -214,7 +232,7 @@ export default function IOSSupportPage() {
         </div>
         <div className={styles.topicGrid}>
           {helpTopics.map((topic) => (
-            <section className={styles.topic} key={topic.number}>
+            <section className={styles.topic} key={topic.number} id={topic.id}>
               <div className={styles.topicNumber} aria-hidden="true">
                 {topic.number}
               </div>
